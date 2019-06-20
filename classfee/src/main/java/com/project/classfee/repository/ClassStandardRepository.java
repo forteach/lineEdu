@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  * 课时费标准
  */
 @Repository("classStandardRepository")
-public interface  ClassStandardRepository extends JpaRepository<ClassStandard, String>, JpaSpecificationExecutor<ClassStandardRepository> {
+public interface  ClassStandardRepository extends JpaRepository<ClassStandard, String>, JpaSpecificationExecutor<ClassStandard> {
 
 }

@@ -2,13 +2,15 @@ package com.project.classfee.domain;
 
 
 import com.project.mysql.domain.Entitys;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.Id;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -21,6 +23,8 @@ import javax.persistence.Table;
 @org.hibernate.annotations.Table(appliesTo = "class_standard", comment = "课时费标准")
 @Table(name = "class_standard")
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class ClassStandard extends Entitys {
 
     @Id
@@ -51,8 +55,8 @@ public class ClassStandard extends Entitys {
         this.class_fee = class_fee;
         super.setCenterAreaId(centerId);
     }
-
-    public ClassStandard(){
-
-    }
+//
+//    public ClassStandard(){
+//
+//    }
 }
