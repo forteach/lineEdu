@@ -34,6 +34,9 @@ public class ClassStandard extends Entitys {
     @Column(name = "create_year", columnDefinition = "VARCHAR(32) COMMENT '创建所属的学年'")
     private String createYear;
 
+    @Column(name = "specialty_ids", columnDefinition = "VARCHAR(32) COMMENT '所属专业'")
+    private String specialtyIds;
+
     @Column(name = "student_sum", columnDefinition = "VARCHAR(32) COMMENT '学生总人数'")
     private int studentSum;
 
@@ -46,9 +49,10 @@ public class ClassStandard extends Entitys {
     @Column(name = "class_fee", columnDefinition = "VARCHAR(32) COMMENT '每节课的课时费'")
     private int class_fee;
 
-    public ClassStandard(String standardId, String createYear, int studentSum, int studentSubsidies, int subsidiesSum, int class_fee,String centerId) {
+    public ClassStandard(String standardId, String createYear,String specialtyIds, int studentSum, int studentSubsidies, int subsidiesSum, int class_fee,String centerId) {
         this.standardId = standardId;
         this.createYear = createYear;
+        this.specialtyIds=specialtyIds;
         this.studentSum = studentSum;
         this.studentSubsidies = studentSubsidies;
         this.subsidiesSum = subsidiesSum;
