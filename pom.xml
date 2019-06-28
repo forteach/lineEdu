@@ -15,6 +15,9 @@
         <module>redis</module>
         <module>token</module>
         <module>classfee</module>
+        <module>teachplan</module>
+        <module>roll</module>
+        <module>user</module>
     </modules>
 
     <parent>

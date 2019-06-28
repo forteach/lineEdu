@@ -31,8 +31,8 @@ public class ClassStandardService extends BaseMySqlService {
      * @param class_fee
      * @return
      */
-    public ClassStandard save(String createYear,int studentSum,int studentSubsidies,int subsidiesSum,int class_fee,String centerId){
-        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,studentSum,studentSubsidies,subsidiesSum,class_fee,centerId);
+    public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,int class_fee,String centerId){
+        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,class_fee,centerId);
         return classStandardRepository.save(classStandard);
     }
 
@@ -46,11 +46,12 @@ public class ClassStandardService extends BaseMySqlService {
      * @param class_fee
      * @return
      */
-    public ClassStandard update(String standardId,String createYear,int studentSum,int studentSubsidies,int subsidiesSum,int class_fee){
+    public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,int class_fee){
         ClassStandard obj= findId(standardId);
         ClassStandard classStandard=new ClassStandard();
         UpdateUtil.copyProperties(obj,classStandard);
         classStandard.setCreateYear(createYear);
+        classStandard.setSpecialtyIds(specialtyIds);
         classStandard.setStudentSum(studentSum);
         classStandard.setStudentSubsidies(studentSubsidies);
         classStandard.setSubsidiesSum(subsidiesSum);

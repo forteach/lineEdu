@@ -44,6 +44,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
             //保存课时费标准
              cls=classStandardService.save(
                     request.getCreateYear(),
+                    request.getSpecialtyIds(),
                     request.getStudentSum(),
                     request.getStudentSubsidies(),
                     request.getSubsidiesSum(),
@@ -54,6 +55,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
              cls=classStandardService.update(
                     staId,
                     request.getCreateYear(),
+                     request.getSpecialtyIds(),
                     request.getStudentSum(),
                     request.getStudentSubsidies(),
                     request.getSubsidiesSum(),

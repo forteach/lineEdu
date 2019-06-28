@@ -30,6 +30,9 @@ public class ClassStandardSaveReq implements Serializable {
     @ApiModelProperty(value = "课时费年份", name = "createYear")
     private String createYear;
 
+    @ApiModelProperty(value = "学习中心专业", name = "specialtyIds")
+    private String specialtyIds;
+
     @ApiModelProperty(value = "所属的教学中心编号", name = "centerAreaId")
     public String centerAreaId;
 
