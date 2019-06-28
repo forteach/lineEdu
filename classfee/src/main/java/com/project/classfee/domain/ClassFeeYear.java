@@ -29,14 +29,14 @@ import javax.persistence.Table;
 public class ClassFeeYear extends Entitys {
 
     @Id
-    @Column(name = "class_fee_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")
-    private String classFeeId;
+    @Column(name = "fee_year_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")
+    private String feeYearId;
 
     @Column(name = "create_year", columnDefinition = "VARCHAR(32) COMMENT '创建所属的学年'")
     private String createYear;
 
-    @Column(name = "calss_fee_sum", columnDefinition = " COMMENT '课时费总金额'")
-    private int calssFeeSum;
+    @Column(name = "class_fee_sum", columnDefinition = " COMMENT '课时费总金额'")
+    private int classFeeSum;
 
     @Column(name = "create_month", columnDefinition = "VARCHAR(32) COMMENT '课时费所属月份'")
     private int create_month;
@@ -53,10 +53,10 @@ public class ClassFeeYear extends Entitys {
     @Column(name = "out_state", columnDefinition = "VARCHAR(32) COMMENT '课时费超出状态  Y 超出 N 未超出")
     private String outState;
 
-    public ClassFeeYear(String classFeeId, String createYear, int calssFeeSum, int create_month, int classSum, int outMonth, int outFee,String outState, String centerId) {
-        this.classFeeId = classFeeId;
+    public ClassFeeYear(String feeYearId, String createYear, int classFeeSum, int create_month, int classSum, int outMonth, int outFee,String outState, String centerId) {
+        this.feeYearId = feeYearId;
         this.createYear = createYear;
-        this.calssFeeSum = calssFeeSum;
+        this.classFeeSum = classFeeSum;
         this.create_month = create_month;
         this.classSum = classSum;
         this.outMonth = outMonth;

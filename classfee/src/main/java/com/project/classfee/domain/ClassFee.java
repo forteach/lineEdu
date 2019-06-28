@@ -37,8 +37,8 @@ public class ClassFee extends Entitys {
     @Column(name = "specialty_ids", columnDefinition = "VARCHAR(32) COMMENT '所属专业'")
     private String specialtyIds;
 
-    @Column(name = "calss_fee_sum", columnDefinition = "VARCHAR(32) COMMENT '课时费总金额'")
-    private int calssFeeSum;
+    @Column(name = "class_fee_sum", columnDefinition = "VARCHAR(32) COMMENT '课时费总金额'")
+    private int classFeeSum;
 
     @Column(name = "create_month", columnDefinition = "VARCHAR(32) COMMENT '课时费所属月份'")
     private int create_month;
@@ -52,10 +52,10 @@ public class ClassFee extends Entitys {
     @Column(name = "balance_sum", columnDefinition = "VARCHAR(32) COMMENT '课时费已结算金额'")
     private int balanceSum;
 
-    public ClassFee(String classFeeId, String createYear, int calssFeeSum, int create_month, int classSum, int balanceState, int balanceSum, String centerId) {
+    public ClassFee(String classFeeId, String createYear, int classFeeSum, int create_month, int classSum, int balanceState, int balanceSum, String centerId) {
         this.classFeeId = classFeeId;
         this.createYear = createYear;
-        this.calssFeeSum = calssFeeSum;
+        this.classFeeSum = classFeeSum;
         this.create_month = create_month;
         this.classSum = classSum;
         this.balanceState = balanceState;
