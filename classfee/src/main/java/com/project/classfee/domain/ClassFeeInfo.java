@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 课时费管理明细
@@ -26,7 +27,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassFeeInfo extends Entitys {
+public class ClassFeeInfo extends Entitys implements Serializable {
 
     @Id
     @Column(name = "serial_id", columnDefinition = "VARCHAR(32) COMMENT '课时费明细流水号'")
@@ -41,7 +42,7 @@ public class ClassFeeInfo extends Entitys {
     @Column(name = "create_year", columnDefinition = "VARCHAR(32) COMMENT '创建所属的学年'")
     private String createYear;
 
-    @Column(name = "create_year", columnDefinition = "VARCHAR(32) COMMENT '创建所属的月份'")
+    @Column(name = "create_month", columnDefinition = "VARCHAR(32) COMMENT '创建所属的月份'")
     private String createMonth;
 
     @Column(name = "specialty_ids", columnDefinition = "VARCHAR(32) COMMENT '所属专业'")

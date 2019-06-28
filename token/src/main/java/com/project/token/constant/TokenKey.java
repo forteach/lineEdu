@@ -1,4 +1,4 @@
-package com.project.token;
+package com.project.token.constant;
 
 public class TokenKey {
     /**

@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 学籍异动信息
@@ -26,7 +27,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class SchoolRoll_change extends Entitys {
+public class SchoolRollChange extends Entitys implements Serializable {
 
     @Id
     @Column(name = "change_id", columnDefinition = "VARCHAR(32) COMMENT '异动ID'")
@@ -44,7 +45,7 @@ public class SchoolRoll_change extends Entitys {
     @Column(name = "type_name", columnDefinition = "VARCHAR(32) COMMENT '异动类型名称'")
     private String typeName;
 
-    public SchoolRoll_change(String changeId,String studentId, String studentCode,String typeId,String typeName, String centerId) {
+    public SchoolRollChange(String changeId, String studentId, String studentCode, String typeId, String typeName, String centerId) {
         this.changeId = changeId;
         this.studentId = studentId;
         this.studentCode = studentCode;

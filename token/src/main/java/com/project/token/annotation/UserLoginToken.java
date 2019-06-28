@@ -1,4 +1,4 @@
-package com.project.token;
+package com.project.token.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

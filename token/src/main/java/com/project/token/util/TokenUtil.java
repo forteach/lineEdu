@@ -1,4 +1,4 @@
-package com.project.token;
+package com.project.token.util;
 
 
 import com.project.redis.service.ObjectRedisService;

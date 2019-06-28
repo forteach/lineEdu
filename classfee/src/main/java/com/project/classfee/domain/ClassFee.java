@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 课时费标准
@@ -25,7 +26,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassFee extends Entitys {
+public class ClassFee extends Entitys implements Serializable {
 
     @Id
     @Column(name = "class_fee_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")
@@ -43,7 +44,7 @@ public class ClassFee extends Entitys {
     @Column(name = "create_month", columnDefinition = "VARCHAR(32) COMMENT '课时费所属月份'")
     private int create_month;
 
-    @Column(name = "class_sum", columnDefinition = "VARCHAR(32) COMMENT '课时数量'")
+    @Column(name = "class_sum", columnDefinition = "int(11) COMMENT '课时数量'")
     private int classSum;
 
     @Column(name = "balance_state", columnDefinition = "VARCHAR(32) COMMENT '课时费结算状态 no 未结算，part部分结算、all全部结算'")

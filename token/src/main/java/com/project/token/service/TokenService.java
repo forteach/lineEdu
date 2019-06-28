@@ -1,4 +1,4 @@
-package com.project.token;
+package com.project.token.service;
 
 import com.auth0.jwt.JWTVerifier;
 

@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 课时费标准
@@ -25,7 +26,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassStandard extends Entitys {
+public class ClassStandard extends Entitys implements Serializable {
 
     @Id
     @Column(name = "standard_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")

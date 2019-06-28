@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 年度课时费汇总记录
@@ -26,7 +27,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassFeeYear extends Entitys {
+public class ClassFeeYear extends Entitys implements Serializable {
 
     @Id
     @Column(name = "fee_year_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")
@@ -35,22 +36,22 @@ public class ClassFeeYear extends Entitys {
     @Column(name = "create_year", columnDefinition = "VARCHAR(32) COMMENT '创建所属的学年'")
     private String createYear;
 
-    @Column(name = "class_fee_sum", columnDefinition = " COMMENT '课时费总金额'")
+    @Column(name = "class_fee_sum", columnDefinition = "INT(11) COMMENT '课时费总金额'")
     private int classFeeSum;
 
     @Column(name = "create_month", columnDefinition = "VARCHAR(32) COMMENT '课时费所属月份'")
     private int create_month;
 
-    @Column(name = "class_sum", columnDefinition = " COMMENT '课时数量'")
+    @Column(name = "class_sum", columnDefinition = "INT(11) COMMENT '课时数量'")
     private int classSum;
 
-    @Column(name = "out_month", columnDefinition = " COMMENT '课时费超出月份'")
+    @Column(name = "out_month", columnDefinition = "INT(11) COMMENT '课时费超出月份'")
     private int outMonth;
 
-    @Column(name = "out_fee", columnDefinition = "VARCHAR(32) COMMENT '课时费超出金额")
+    @Column(name = "out_fee", columnDefinition = "VARCHAR(32) COMMENT '课时费超出金额'")
     private int outFee;
 
-    @Column(name = "out_state", columnDefinition = "VARCHAR(32) COMMENT '课时费超出状态  Y 超出 N 未超出")
+    @Column(name = "out_state", columnDefinition = "VARCHAR(32) COMMENT '课时费超出状态  Y 超出 N 未超出'")
     private String outState;
 
     public ClassFeeYear(String feeYearId, String createYear, int classFeeSum, int create_month, int classSum, int outMonth, int outFee,String outState, String centerId) {

@@ -6,17 +6,18 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.project.base.exception.MyAssert;
 import com.project.base.common.keyword.DefineCode;
-import com.project.token.PassToken;
-import com.project.token.TokenService;
-import com.project.token.UserLoginToken;
+import com.project.token.annotation.PassToken;
+import com.project.token.service.TokenService;
+import com.project.token.annotation.UserLoginToken;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.method.HandlerMethod;
+
+import javax.annotation.Resource;
 import java.lang.reflect.Method;
 
-import static com.project.token.TokenKey.USER_TOKEN_PREFIX;
+import static com.project.token.constant.TokenKey.USER_TOKEN_PREFIX;
 
 /**
  * @Description:
@@ -28,10 +29,10 @@ import static com.project.token.TokenKey.USER_TOKEN_PREFIX;
 @NoArgsConstructor
 public class SysUserLoginInterceptor{
 
-    @Autowired
+    @Resource
     private TokenService tokenService;
 
-    @Autowired
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
 
     public boolean TokenVal(String token,Object handler){

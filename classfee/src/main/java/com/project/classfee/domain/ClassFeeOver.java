@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 课时费管理结算明细
@@ -26,7 +27,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassFeeOver extends Entitys {
+public class ClassFeeOver extends Entitys implements Serializable {
 
     @Id
     @Column(name = "over_id", columnDefinition = "VARCHAR(32) COMMENT '课时费结算明细流水号'")

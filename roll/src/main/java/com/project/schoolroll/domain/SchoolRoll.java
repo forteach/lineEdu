@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 学籍信息
@@ -26,7 +27,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class SchoolRoll extends Entitys {
+public class SchoolRoll extends Entitys implements Serializable {
 
     @Id
     @Column(name = "roll_id", columnDefinition = "VARCHAR(32) COMMENT '学籍ID'")

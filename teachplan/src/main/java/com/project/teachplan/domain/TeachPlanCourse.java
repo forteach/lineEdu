@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * 教学计划课程
@@ -26,7 +27,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeachPlanCourse extends Entitys {
+public class TeachPlanCourse extends Entitys implements Serializable {
 
     @Id
     @Column(name = "plan_course_id", columnDefinition = "VARCHAR(32) COMMENT '教学计划编号'")

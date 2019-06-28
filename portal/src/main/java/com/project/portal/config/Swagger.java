@@ -31,7 +31,7 @@ public class Swagger {
                 .enable(swaggerShow)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.forteach.education"))
+                .apis(RequestHandlerSelectors.basePackage("com.project"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -39,10 +39,10 @@ public class Swagger {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("api文档")
-                .description("教育系统文档接口")
+                .description("在线教育系统文档接口")
                 //服务条款网址
                 .version("1.0")
-                .contact(new Contact("education", "https://github.com/forteach/education/", ""))
+                .contact(new Contact("lineEdu", "https://github.com/forteach/lineEdu/", ""))
                 .build();
     }
 
