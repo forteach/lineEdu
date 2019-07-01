@@ -24,7 +24,7 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class classFeeService extends BaseMySqlService {
+public class ClassFeeService extends BaseMySqlService {
 
     @Resource
     private ClassFeeRepository classFeeRepository;
