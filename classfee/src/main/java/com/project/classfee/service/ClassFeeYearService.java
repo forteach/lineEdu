@@ -38,8 +38,8 @@ public class ClassFeeYearService extends BaseMySqlService {
      * @param centerId
      * @return
      */
-    public ClassFeeYear save( String createYear, int classFeeSum, int create_month, int classSum, int outMonth, int outFee,String outState, String centerId){
-        ClassFeeYear classFeeInfo=new ClassFeeYear(IdUtil.fastSimpleUUID(),createYear,classFeeSum,create_month,classSum,outMonth,outFee,outState,centerId);
+    public ClassFeeYear save( String createYear, int classFeeSum, int createMonth, int classSum, int outMonth, int outFee,String outState, String centerId){
+        ClassFeeYear classFeeInfo=new ClassFeeYear(IdUtil.fastSimpleUUID(),createYear,classFeeSum,createMonth,classSum,outMonth,outFee,outState,centerId);
         return classFeeYearRepository.save(classFeeInfo);
     }
 

@@ -37,13 +37,13 @@ public class ClassFeeInfoService extends BaseMySqlService {
      * @param createYear     年份
      * @param createMonth    月份
      * @param specialtyIds   专业
-     * @param class_fee     课时费标准
-     * @param class_count  课时
+     * @param classFee     课时费标准
+     * @param classCount  课时
      * @param centerId
      * @return
      */
-    public ClassFeeInfo save(String classFeeId, String fullName, String createYear, String createMonth, String specialtyIds, int class_fee, int class_count,String centerId){
-        ClassFeeInfo classFeeInfo=new ClassFeeInfo(IdUtil.fastSimpleUUID(),classFeeId,fullName,createYear,createMonth,specialtyIds,class_fee,class_count,centerId);
+    public ClassFeeInfo save(String classFeeId, String fullName, String createYear, String createMonth, String specialtyIds, int classFee, int classCount,String centerId){
+        ClassFeeInfo classFeeInfo=new ClassFeeInfo(IdUtil.fastSimpleUUID(),classFeeId,fullName,createYear,createMonth,specialtyIds,classFee,classCount,centerId);
         return classFeeInfoRepository.save(classFeeInfo);
     }
 

@@ -40,7 +40,9 @@ public abstract class Entitys{
     @Column(name = "u_user", columnDefinition = "VARCHAR(32) COMMENT '修改人'")
     public String updateUser;
 
-    //在线教育公共字段
+    /**
+     * 在线教育公共字段
+     */
     @Column(name = "center_area_id", columnDefinition = "VARCHAR(40) COMMENT '归属的学习中心编号'")
     public String centerAreaId;
 

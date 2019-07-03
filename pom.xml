@@ -6,18 +6,19 @@
 
     <groupId>com.project</groupId>
     <artifactId>lineEdu</artifactId>
-    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
     <modules>
         <module>base</module>
-        <module>portal</module>
         <module>mysql</module>
         <module>redis</module>
         <module>token</module>
+        <module>user</module>
         <module>classfee</module>
         <module>teachplan</module>
         <module>schoolroll</module>
-        <module>user</module>
+        <module>portal</module>
     </modules>
 
     <parent>
@@ -69,7 +70,12 @@
             <artifactId>hutool-all</artifactId>
             <version>4.4.0</version>
         </dependency>
-
+        <!-- json -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.40</version>
+        </dependency>
     </dependencies>
 <!--    <build>-->
 <!--        <plugins>-->

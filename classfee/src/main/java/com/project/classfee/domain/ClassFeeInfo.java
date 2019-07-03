@@ -50,20 +50,20 @@ public class ClassFeeInfo extends Entitys implements Serializable {
     private String specialtyIds;
 
     @Column(name = "class_fee", columnDefinition = "VARCHAR(32) COMMENT '每节课的课时费'")
-    private int class_fee;
+    private int classFee;
 
     @Column(name = "class_count", columnDefinition = "VARCHAR(32) COMMENT '课时'")
-    private int class_count;
+    private int classCount;
 
-    public ClassFeeInfo(String serialId, String classFeeId, String fullName, String createYear, String createMonth, String specialtyIds, int class_fee, int class_count,String centerId) {
+    public ClassFeeInfo(String serialId, String classFeeId, String fullName, String createYear, String createMonth, String specialtyIds, int classFee, int classCount,String centerId) {
         this.serialId = serialId;
         this.classFeeId = classFeeId;
         this.fullName = fullName;
         this.createYear = createYear;
         this.createMonth = createMonth;
         this.specialtyIds = specialtyIds;
-        this.class_fee = class_fee;
-        this.class_count = class_count;
+        this.classFee = classFee;
+        this.classCount = classCount;
         super.setCenterAreaId(centerId);
     }
 }

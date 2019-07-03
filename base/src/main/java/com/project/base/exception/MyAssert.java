@@ -1,9 +1,8 @@
 package com.project.base.exception;
 
-import java.util.Collection;
-
 import cn.hutool.core.util.StrUtil;
-import com.project.base.exception.AssertErrorException;
+
+import java.util.Collection;
 
 
 /**

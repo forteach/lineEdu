@@ -37,12 +37,12 @@ public class LearnCenter extends Entitys implements Serializable {
      * 学习中心编号
      */
     @Id
-    @Column(name = "center_id", columnDefinition = "学习中心编号")
+    @Column(name = "center_id", columnDefinition = "VARCHAR(32) COMMENT '学习中心编号'")
     private String centerId;
     /**
      * 学习中心名称
      */
-    @Column(name = "centerName", columnDefinition = "学习中心名称")
+    @Column(name = "centerName", columnDefinition = "VARCHAR(64) COMMENT '学习中心名称'")
     private String centerName;
 
 }

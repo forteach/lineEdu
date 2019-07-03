@@ -32,7 +32,7 @@ public class ClassStandardTest {
         request.setStudentSum(20);
         request.setStudentSubsidies(100);
         request.setSubsidiesSum(2000);
-        request.setClass_fee(100);
+        request.setClassFee(100);
         request.setCenterAreaId("100001");
         System.out.println("json------" + JSON.toJSONString(request));
         WebResult r =classStandardController.saveOrUpdate(request);

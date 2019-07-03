@@ -34,15 +34,15 @@ public class ClassFeeService extends BaseMySqlService {
      * 课时费管理
      * @param createYear     创建年份
      * @param classFeeSum    课时费总金额
-     * @param create_month  创建月份
+     * @param createMonth  创建月份
      * @param classSum   课时总数量
      * @param balanceState  课时费结算状态 no 未结算，part部分结算、all全部结算
      * @param balanceSum  课时费已结算金额
      * @param centerId
      * @return
      */
-    public ClassFee save( String createYear, int classFeeSum, int create_month, int classSum, int balanceState, int balanceSum, String centerId){
-        ClassFee classFeeInfo=new ClassFee(IdUtil.fastSimpleUUID(),createYear,classFeeSum,balanceState,create_month,classSum,balanceSum,centerId);
+    public ClassFee save( String createYear, int classFeeSum, int createMonth, int classSum, int balanceState, int balanceSum, String centerId){
+        ClassFee classFeeInfo=new ClassFee(IdUtil.fastSimpleUUID(),createYear,classFeeSum,balanceState,createMonth,classSum,balanceSum,centerId);
         return classFeeRepository.save(classFeeInfo);
     }
 
@@ -50,7 +50,7 @@ public class ClassFeeService extends BaseMySqlService {
     /**
      * 修改按月导入的课时费信息
      * @param classFeeId
-     * @param calssFeeSum
+     * @param classFeeSum
      * @param classSum
      * @param balanceState
      * @param balanceSum

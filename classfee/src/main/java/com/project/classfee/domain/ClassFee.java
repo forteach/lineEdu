@@ -43,7 +43,7 @@ public class ClassFee extends Entitys implements Serializable {
     private int classFeeSum;
 
     @Column(name = "create_month", columnDefinition = "VARCHAR(32) COMMENT '课时费所属月份'")
-    private int create_month;
+    private int createMonth;
 
     @Column(name = "class_sum", columnDefinition = "int(11) COMMENT '课时数量'")
     private int classSum;
@@ -54,11 +54,11 @@ public class ClassFee extends Entitys implements Serializable {
     @Column(name = "balance_sum", columnDefinition = "VARCHAR(32) COMMENT '课时费已结算金额'")
     private int balanceSum;
 
-    public ClassFee(String classFeeId, String createYear, int classFeeSum, int create_month, int classSum, int balanceState, int balanceSum, String centerId) {
+    public ClassFee(String classFeeId, String createYear, int classFeeSum, int createMonth, int classSum, int balanceState, int balanceSum, String centerId) {
         this.classFeeId = classFeeId;
         this.createYear = createYear;
         this.classFeeSum = classFeeSum;
-        this.create_month = create_month;
+        this.createMonth = createMonth;
         this.classSum = classSum;
         this.balanceState = balanceState;
         this.balanceSum = balanceSum;

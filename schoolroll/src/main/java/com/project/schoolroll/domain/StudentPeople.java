@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.print.attribute.standard.MediaSize;
@@ -21,6 +22,7 @@ import java.io.Serializable;
  * @version: 1.0
  * @description: 学生个人信息
  */
+@Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "student_people")
