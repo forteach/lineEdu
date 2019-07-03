@@ -28,6 +28,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TeachPlan extends Entitys implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "plan_id", columnDefinition = "VARCHAR(32) COMMENT '计划编号'")

@@ -22,16 +22,18 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /.idea/
-/logs/
 *.log
+*.logs
 *.yml
 *.DS_Store
 *.properties
 *.conf
 *.factorypath
 *.classpath
-.project
+*.project
+*.prefs
 *.iml
+*.sh
 /target/
 /.vscode/
 /portal/target/
@@ -43,6 +45,7 @@ hs_err_pid*
 /classfee/.settings/
 /mysql/.settings/
 /portal/.settings/
+/portal/logs/
 /redis/.settings/
 /roll/.settings/
 /teachplan/.settings/

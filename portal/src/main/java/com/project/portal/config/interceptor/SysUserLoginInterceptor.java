@@ -1,4 +1,4 @@
-package com.project.portal.config.Interceptor;
+package com.project.portal.config.interceptor;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;

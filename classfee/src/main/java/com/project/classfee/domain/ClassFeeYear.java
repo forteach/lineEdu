@@ -29,6 +29,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ClassFeeYear extends Entitys implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "fee_year_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")
     private String feeYearId;

@@ -29,6 +29,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ClassFeeOver extends Entitys implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "over_id", columnDefinition = "VARCHAR(32) COMMENT '课时费结算明细流水号'")
     private String overId;

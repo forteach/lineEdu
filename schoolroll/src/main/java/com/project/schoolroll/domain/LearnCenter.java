@@ -1,6 +1,5 @@
 package com.project.schoolroll.domain;
 
-
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,36 +15,34 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * 学籍信息
+ * @author: zhangyy
+ * @email: zhang10092009@hotmail.com
+ * @date: 19-7-2 18:14
+ * @version: 1.0
+ * @description:　学习中心
  */
 @Data
 @Entity
 @DynamicUpdate
 @DynamicInsert
-@org.hibernate.annotations.Table(appliesTo = "school_roll", comment = "学籍信息")
-@Table(name = "school_roll")
+@org.hibernate.annotations.Table(appliesTo = "learn_center", comment = "学生中心")
+@Table(name = "learn_center")
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class SchoolRoll extends Entitys implements Serializable {
+public class LearnCenter extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 学籍id
+     * 学习中心编号
      */
     @Id
-    @Column(name = "roll_id", columnDefinition = "VARCHAR(32) COMMENT '学籍ID'")
-    private String rollId;
-
+    @Column(name = "center_id", columnDefinition = "学习中心编号")
+    private String centerId;
     /**
-     * 学籍编号
+     * 学习中心名称
      */
-    @Column(name = "roll_code", columnDefinition = "VARCHAR(32) COMMENT '学籍学校编号'")
-    private String rollCode;
+    @Column(name = "centerName", columnDefinition = "学习中心名称")
+    private String centerName;
 
-    public SchoolRoll(String rollId, String rollCode, String centerId) {
-        this.rollId = rollId;
-        this.rollCode = rollCode;
-        super.centerAreaId=centerId;
-    }
 }

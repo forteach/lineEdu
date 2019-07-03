@@ -28,17 +28,120 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Student extends Entitys implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生ID'")
-    private String studentId;
+    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
+    private String stuId;
 
-    @Column(name = "student_code", columnDefinition = "VARCHAR(32) COMMENT '学生学校编号'")
-    private String studentCode;
+    /**
+     * 专业id
+     */
+    @Column(name = "specialty_id", columnDefinition = "VARCHAR(32) COMMENT '专业id'")
+    private String specialtyId;
 
-    public Student(String studentId, String studentCode, String centerId) {
-        this.studentId = studentId;
-        this.studentCode = studentCode;
-        super.centerAreaId=centerId;
-    }
+    /**
+     * 个人id
+     */
+    @Column(name = "people_id", columnDefinition = "VARCHAR(32) COMMENT '个人id'")
+    private String peopleId;
+
+    /**
+     * 姓名
+     */
+    @Column(name = "stu_name", columnDefinition = "VARCHAR(32) COMMENT '学生姓名'")
+    private String stuName;
+    /**
+     * 学习中心编号
+     */
+    @Column(name = "center_id", columnDefinition = "VARCHAR(32) COMMENT '学习中心编号'")
+    private String centerId;
+
+    /**
+     * 学习类型
+     */
+    @Column(name = "student_type", columnDefinition = "VARCHAR(32) COMMENT '学生类别'")
+    private String studentType;
+
+    /**
+     * 班级名称
+     */
+    @Column(name = "className", columnDefinition = "VARCHAR(32) COMMENT '班级名称'")
+    private String className;
+    /**
+     * 专业简称
+     */
+    @Column(name = "specialty_name", columnDefinition = "VARCHAR(32) COMMENT '专业简称'")
+    private String specialtyName;
+
+    /**
+     * 学制
+     * 三年制，四年制，五年制，一年制
+     */
+    @Column(name = "educational_system", columnDefinition = "VARCHAR(32) COMMENT '学制'")
+    private String educationalSystem;
+
+    /**
+     * 就读方式/学习方式
+     */
+    @Column(name = "ways_study", columnDefinition = "VARCHAR(32) COMMENT '就读方式/学习方式'")
+    private String waysStudy;
+
+    /**
+     * 学习形式
+     * 全日制
+     * 非全日制
+     */
+    @Column(name = "learning_modality", columnDefinition = "VARCHAR(32) COMMENT '学习形式'")
+    private String learningModality;
+
+    /**
+     * 入学方式
+     * 统一招生考试/普通入学
+     * 保送
+     * 民族班
+     * 定向培养
+     */
+    @Column(name = "ways_enrollment", columnDefinition = "VARCHAR(32) COMMENT '入学方式'")
+    private String waysEnrollment;
+    /**
+     * 入学时间(年/月)
+     */
+    @Column(name = "enrollment_date", columnDefinition = "VARCHAR(32) COMMENT '入学时间(年/月)'")
+    private String enrollmentDate;
+
+    /**
+     * 年级
+     */
+    @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '年级'")
+    private String grade;
+    /**
+     * 准考证号码
+     */
+    @Column(name = "candidate_number", columnDefinition = "VARCHAR(32) COMMENT '准考证号码'")
+    private String candidateNumber;
+    /**
+     * 考生号
+     */
+    @Column(name = "examinee_number", columnDefinition = "VARCHAR(32) COMMENT '考生号码'")
+    private String examineeNumber;
+
+    /**
+     * 考试总成绩
+     */
+    @Column(name = "total_examination_achievement", columnDefinition = "VARCHAR(32) COMMENT '考试总成绩'")
+    private String totalExaminationAchievement;
+
+//    @Column(name = "student_code", columnDefinition = "VARCHAR(32) COMMENT '学生学校编号'")
+//    private String studentCode;
+
+//    @Column(name = "birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生日期'")
+//    private String birthDate;
+
+
+//    public Student(String studentId, String studentCode, String centerId) {
+//        this.studentId = studentId;
+//        this.studentCode = studentCode;
+//        super.centerAreaId=centerId;
+//    }
 }

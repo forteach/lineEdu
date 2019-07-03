@@ -15,9 +15,10 @@ public abstract class BaseController<T,T1> {
 
     /**
      * 设置分页参数
+     * 
      * @param result
      * @param dr
-     * @return
+     * @return AbsPageResponse
      */
    public AbsPageResponse getPageResult(AbsPageResponse res, Page<T> result, T1 dr){
         res.setCurrentPage(result.getNumber()); //第几页

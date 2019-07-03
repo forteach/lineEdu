@@ -28,6 +28,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ClassStandard extends Entitys implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "standard_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")
     private String standardId;

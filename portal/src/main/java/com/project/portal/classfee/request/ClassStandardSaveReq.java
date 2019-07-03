@@ -23,6 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ApiModel(value = "课时费标准添加、保存")
 public class ClassStandardSaveReq implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "课时费编号", name = "standardId")
     private String standardId;

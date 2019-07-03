@@ -28,20 +28,36 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SchoolRollChange extends Entitys implements Serializable {
+    private static final long serialVersionUID = 1L;
 
+    /**
+     * 移动
+     */
     @Id
     @Column(name = "change_id", columnDefinition = "VARCHAR(32) COMMENT '异动ID'")
     private String changeId;
 
-    @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生学校编号'")
+    /**
+     * 学生id
+     */
+    @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
     private String studentId;
 
-    @Column(name = "student_code", columnDefinition = "VARCHAR(32) COMMENT '学生学校编号'")
+    /**
+     * 学生编号
+     */
+    @Column(name = "student_code", columnDefinition = "VARCHAR(32) COMMENT '学生编号'")
     private String studentCode;
 
+    /**
+     * 移动类型编号
+     */
     @Column(name = "type_id", columnDefinition = "VARCHAR(32) COMMENT '异动类型编号'")
     private String typeId;
 
+    /**
+     * 移动类型名称
+     */
     @Column(name = "type_name", columnDefinition = "VARCHAR(32) COMMENT '异动类型名称'")
     private String typeName;
 

@@ -7,6 +7,7 @@ package com.project.base.exception;
  * @date: 2018/10/31 12:36
  */
 public class RoleException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be

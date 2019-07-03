@@ -28,6 +28,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends Entitys implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "user_id", columnDefinition = "VARCHAR(32) COMMENT '用户编号'")

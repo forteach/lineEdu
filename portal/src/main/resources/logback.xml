@@ -52,7 +52,7 @@
         <File>${LOG_PATH}/biz.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <MaxHistory>100</MaxHistory>
-            <FileNamePattern>biz-%d{yyyy-MM-dd}_%i.log.zip</FileNamePattern>
+            <FileNamePattern>lineEdu-%d{yyyy-MM-dd}_%i.log.zip</FileNamePattern>
             <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <MaxFileSize>100MB</MaxFileSize>
             </TimeBasedFileNamingAndTriggeringPolicy>
@@ -65,7 +65,7 @@
     </appender>
 
     <appender name="monitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/education.log</File>
+        <File>${LOG_PATH}/lineEdu.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <MaxHistory>100</MaxHistory>
             <FileNamePattern>monitor-%d{yyyy-MM-dd}_%i.log.zip</FileNamePattern>
@@ -90,7 +90,7 @@
         <appender-ref ref="monitor"/>
     </appender>
 
-    <logger name="com.forteach.education" additivty="false" level="err">
+    <logger name="com.project" additivty="false" level="err">
         <appender-ref ref="err"/>
     </logger>
 
@@ -100,12 +100,12 @@
     <!--</logger>-->
 
 
-    <logger name="com.forteach.education.service" additivity="false" level="debug">
+    <logger name="com.project" additivity="false" level="debug">
         <appender-ref ref="biz"/>
         <appender-ref ref="console"/>
     </logger>
 
-    <logger name="com.forteach.education.dao" additivity="false" level="debug">
+    <logger name="com.project.*.*" additivity="false" level="debug">
         <appender-ref ref="biz"/>
         <appender-ref ref="console"/>
     </logger>
@@ -115,9 +115,10 @@
     <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE"/>
-    <!--<logger name="com.yule.fishter" level="debug">-->
-    <!--<appender-ref ref="console" />-->
-    <!--</logger>-->
+
+    <logger name="com.project.*.*" level="debug">
+        <appender-ref ref="console" />
+    </logger>
 
     <root level="info">
         <appender-ref ref="ASYNC"/>

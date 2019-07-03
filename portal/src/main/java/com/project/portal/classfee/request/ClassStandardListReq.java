@@ -23,6 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ApiModel(value = "课程标准查询")
 public class ClassStandardListReq implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(name = "centerAreaId", value = "学习中心", dataType = "string", required = true)
     private String centerAreaId;
