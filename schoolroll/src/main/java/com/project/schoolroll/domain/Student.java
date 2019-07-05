@@ -33,19 +33,16 @@ public class Student extends Entitys implements Serializable {
     @Id
     @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
     private String stuId;
-
     /**
      * 专业id
      */
     @Column(name = "specialty_id", columnDefinition = "VARCHAR(32) COMMENT '专业id'")
     private String specialtyId;
-
     /**
      * 个人id
      */
     @Column(name = "people_id", columnDefinition = "VARCHAR(32) COMMENT '个人id'")
     private String peopleId;
-
     /**
      * 姓名
      */
@@ -56,12 +53,16 @@ public class Student extends Entitys implements Serializable {
      */
     @Column(name = "center_id", columnDefinition = "VARCHAR(32) COMMENT '学习中心编号'")
     private String centerId;
-
     /**
-     * 学习类型
+     * 学习类别
      */
-    @Column(name = "student_type", columnDefinition = "VARCHAR(32) COMMENT '学生类别'")
-    private String studentType;
+    @Column(name = "student_category", columnDefinition = "VARCHAR(32) COMMENT '学生类别'")
+    private String studentCategory;
+    /**
+     * 班级id
+     */
+    @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '班级id'")
+    private String classId;
 
     /**
      * 班级名称
@@ -73,20 +74,17 @@ public class Student extends Entitys implements Serializable {
      */
     @Column(name = "specialty_name", columnDefinition = "VARCHAR(32) COMMENT '专业简称'")
     private String specialtyName;
-
     /**
      * 学制
      * 三年制，四年制，五年制，一年制
      */
     @Column(name = "educational_system", columnDefinition = "VARCHAR(32) COMMENT '学制'")
     private String educationalSystem;
-
     /**
      * 就读方式/学习方式
      */
     @Column(name = "ways_study", columnDefinition = "VARCHAR(32) COMMENT '就读方式/学习方式'")
     private String waysStudy;
-
     /**
      * 学习形式
      * 全日制
@@ -94,7 +92,6 @@ public class Student extends Entitys implements Serializable {
      */
     @Column(name = "learning_modality", columnDefinition = "VARCHAR(32) COMMENT '学习形式'")
     private String learningModality;
-
     /**
      * 入学方式
      * 统一招生考试/普通入学
@@ -109,7 +106,6 @@ public class Student extends Entitys implements Serializable {
      */
     @Column(name = "enrollment_date", columnDefinition = "VARCHAR(32) COMMENT '入学时间(年/月)'")
     private String enrollmentDate;
-
     /**
      * 年级
      */
@@ -118,14 +114,13 @@ public class Student extends Entitys implements Serializable {
     /**
      * 准考证号码
      */
-    @Column(name = "candidate_number", columnDefinition = "VARCHAR(32) COMMENT '准考证号码'")
-    private String candidateNumber;
+    @Column(name = "entrance_certificate_number", columnDefinition = "VARCHAR(32) COMMENT '准考证号码'")
+    private String entranceCertificateNumber;
     /**
      * 考生号
      */
-    @Column(name = "examinee_number", columnDefinition = "VARCHAR(32) COMMENT '考生号码'")
-    private String examineeNumber;
-
+    @Column(name = "candidate_number", columnDefinition = "VARCHAR(32) COMMENT '考生号码'")
+    private String candidateNumber;
     /**
      * 考试总成绩
      */

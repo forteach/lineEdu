@@ -12,4 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface StudentExpandRepository extends JpaRepository<StudentExpand, String> {
 
+    /**
+     * 查询扩展信息
+     * @param isValidated
+     * @param stuId
+     * @return
+     */
+    StudentExpand findAllByIsValidatedEqualsAndStuId(String isValidated, String stuId);
 }

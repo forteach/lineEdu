@@ -3,6 +3,7 @@ package com.project.schoolroll.repository;
 import com.project.schoolroll.domain.SchoolRollChange;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author: zhangyy
@@ -14,4 +15,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SchoolRollChangeRepository extends JpaRepository<SchoolRollChange, String> {
 
+    @Transactional(readOnly = true)
+    public SchoolRollChange findAllByIsValidatedEqualsAndStudentCode(String isValidated, String studentCode);
 }

@@ -26,28 +26,28 @@ public interface TokenService {
 
     /**
      * 根据用户请求token 信息获取请求的用户信息
-     * @param request
+     * @param token
      * @return
      */
     String getUserId(String token);
 
     /**
      * 查询对应学生id信息
-     * @param request
+     * @param token
      * @return
      */
     String getStudentId(String token);
 
     /**
      * 查找老师id
-     * @param request
+     * @param token
      * @return
      */
     String getTeacherId(String token);
 
     /**
      * 通过token 获取学生班级id信息
-     * @param request
+     * @param token
      * @return
      */
     String getClassId(String token);

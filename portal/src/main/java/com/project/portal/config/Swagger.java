@@ -42,6 +42,8 @@ public class Swagger {
                 .description("在线教育系统文档接口")
                 //服务条款网址
                 .version("1.0")
+                .license("APACHE LICENSE, VERSION 2.0")
+                .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
                 .contact(new Contact("lineEdu", "https://github.com/forteach/lineEdu/", ""))
                 .build();
     }

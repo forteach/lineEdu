@@ -64,12 +64,12 @@ public class TokenServiceImpl implements TokenService {
      * @param token
      * @return
      */
-//    @Override
+    @Override
     public String getUserId(String token) {
         return getValue(token, 0);
     }
 
-//    @Override
+    @Override
     public String getStudentId(String token){
 //        String token = request.getHeader("token");
         if (TOKEN_STUDENT.equals(getValue(token, 1))){
@@ -78,7 +78,7 @@ public class TokenServiceImpl implements TokenService {
         return null;
     }
 
-//    @Override
+    @Override
     public String getTeacherId(String token) {
 //        String token = request.getHeader("token");
         if (TOKEN_TEACHER.equals(getValue(token, 1))){
@@ -87,7 +87,7 @@ public class TokenServiceImpl implements TokenService {
         return null;
     }
 
-//    @Override
+    @Override
     public String getClassId(String token) {
 //        String token = request.getHeader("token");
         if (TOKEN_STUDENT.equals(getValue(token, 1))){

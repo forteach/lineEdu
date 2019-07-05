@@ -2,6 +2,7 @@ package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
  * @description:
  */
 @Repository
-public interface StudentRepository extends JpaRepository<Student, String> {
+public interface StudentRepository extends JpaRepository<Student, String>, JpaSpecificationExecutor<Student> {
+
 
 }

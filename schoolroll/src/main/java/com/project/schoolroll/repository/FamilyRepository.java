@@ -1,7 +1,12 @@
 package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.Family;
+import com.project.schoolroll.dto.FamilyDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -12,4 +17,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface FamilyRepository extends JpaRepository<Family, String> {
 
+    @Transactional(readOnly = true)
+    public List<Family> findAllByIsValidatedEqualsAndStuId(String isValidated, String stuId);
+
+    @Transactional(readOnly = true)
+    @Query(value = "SELECT familyId AS familyId, stuId AS stuId, name AS name, phone AS phone, familyRelationship AS familyRelationship, isGuardian as isGuardian FROM Family WHERE isValidated = '0' AND stuId = ?1")
+    public List<FamilyDto> findAllByStuIdDto(String stuId);
 }
