@@ -17,4 +17,6 @@ public interface LearnCenterService {
      * @return
      */
     public List<LearnCenterDto> findAll();
+
+    public void removeById(String centerId);
 }

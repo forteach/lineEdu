@@ -31,7 +31,7 @@ public class Student extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
+    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学生Id(学号代码)'")
     private String stuId;
     /**
      * 专业id

@@ -1,5 +1,7 @@
 package com.project.schoolroll.service;
 
+import com.project.schoolroll.domain.Student;
+import com.project.schoolroll.domain.StudentPeople;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
 import com.project.schoolroll.web.vo.StudentVo;
 import org.springframework.data.domain.Page;
@@ -13,5 +15,9 @@ import org.springframework.data.domain.Page;
  */
 public interface StudentService {
 
-    Page<StudentVo> findStudentsPageAll(FindStudentDtoPageAllVo vo);
+    public Page<StudentVo> findStudentsPageAll(FindStudentDtoPageAllVo vo);
+
+    public void saveOrUpdate(Student student, StudentPeople studentPeople);
+
+    public void deleteById(String stuId);
 }

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
+
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
@@ -27,5 +29,13 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     @Override
     public List<LearnCenterDto> findAll() {
         return learnCenterRepository.findAllByIsValidatedEquals();
+    }
+
+    @Override
+    public void removeById(String centerId) {
+        learnCenterRepository.findById(centerId).ifPresent(learnCenter -> {
+            learnCenter.setIsValidated(TAKE_EFFECT_CLOSE);
+            learnCenterRepository.save(learnCenter);
+        });
     }
 }

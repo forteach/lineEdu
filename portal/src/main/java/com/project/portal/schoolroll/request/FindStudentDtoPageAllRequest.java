@@ -3,8 +3,6 @@ package com.project.portal.schoolroll.request;
 import com.project.portal.request.SortVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;

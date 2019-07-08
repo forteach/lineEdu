@@ -17,7 +17,7 @@ import java.io.Serializable;
 @ApiModel(value = "学生成绩信息")
 public class StudentScoreRequest implements Serializable {
 
-    @ApiModelProperty(name = "stuId", value = "学生id", dataType = "string", required = true)
+    @ApiModelProperty(name = "stuId", value = "学生Id", dataType = "string", required = true)
     private String stuId;
 
     @ApiModelProperty(name = "courseId", value = "课程Id", dataType = "string")

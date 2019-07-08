@@ -63,7 +63,7 @@ public class Family extends Entitys implements Serializable {
     /**
      * 是否是监护人
      */
-    @Column(name = "is_guardian", columnDefinition = "VARCHAR(2) COMMENT '是否是监护人'")
+    @Column(name = "is_guardian", columnDefinition = "VARCHAR(2) COMMENT '是否是监护人(Y/N)'")
     private String isGuardian;
     /**
      * 身份证件类型

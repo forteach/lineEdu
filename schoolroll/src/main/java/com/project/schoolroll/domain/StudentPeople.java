@@ -12,7 +12,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.print.attribute.standard.MediaSize;
 import java.io.Serializable;
 
 /**
@@ -129,5 +128,9 @@ public class StudentPeople extends Entitys implements Serializable {
      */
     @Column(name = "is_immigrant_children", columnDefinition = "VARCHAR(32) COMMENT '是否随迁子女'")
     private String isImmigrantChildren;
-
+    /**
+     * 备注
+     */
+    @Column(name = "remark", columnDefinition = "VARCHAR(255) COMMENT '备注'")
+    private String remark;
 }

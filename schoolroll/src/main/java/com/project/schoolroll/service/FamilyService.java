@@ -29,4 +29,5 @@ public interface FamilyService {
     List<Family> findFamilies(String stuId);
 
     void removeFamilyById(String familyId);
+
 }
