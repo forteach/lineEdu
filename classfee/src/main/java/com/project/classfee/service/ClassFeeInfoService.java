@@ -8,6 +8,7 @@ import com.project.classfee.domain.ClassFeeInfo;
 import com.project.classfee.domain.ClassStandard;
 import com.project.classfee.repository.ClassFeeInfoRepository;
 import com.project.classfee.repository.ClassFeeRepository;
+import com.project.classfee.repository.ClassFeeYearRepository;
 import com.project.classfee.repository.ClassStandardRepository;
 import com.project.mysql.service.BaseMySqlService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +20,24 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * 课时详情信息
+ * 课时详情信息导入，创建课时费管理、年度课时费汇总、初始记录
  */
 
 @Slf4j
 @Service
 public class ClassFeeInfoService extends BaseMySqlService {
 
+    //课时详情信息
     @Resource
     private ClassFeeInfoRepository classFeeInfoRepository;
+
+    //年度课时费汇总
+    @Resource
+    private ClassFeeYearRepository classFeeYearRepository;
+
+    //课时费管理
+    @Resource
+    private ClassFeeRepository classFeeRepository;
 
 
     /**

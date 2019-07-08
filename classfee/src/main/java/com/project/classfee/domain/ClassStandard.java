@@ -48,10 +48,8 @@ public class ClassStandard extends Entitys implements Serializable {
     @Column(name = "subsidies_sum", columnDefinition = "VARCHAR(32) COMMENT '中心补贴总金额'")
     private int subsidiesSum;
 
-    @Column(name = "class_fee", columnDefinition = "VARCHAR(32) COMMENT '每节课的课时费'")
-    private int classFee;
 
-    public ClassStandard(String standardId, String createYear,String specialtyIds, int studentSum, int studentSubsidies, int subsidiesSum, int classFee,String centerId) {
+    public ClassStandard(String standardId, String createYear,String specialtyIds, int studentSum, int studentSubsidies, int subsidiesSum, String centerId) {
         super.setCenterAreaId(centerId);
         this.standardId = standardId;
         this.createYear = createYear;
@@ -59,6 +57,5 @@ public class ClassStandard extends Entitys implements Serializable {
         this.studentSum = studentSum;
         this.studentSubsidies = studentSubsidies;
         this.subsidiesSum = subsidiesSum;
-        this.classFee = classFee;
     }
 }
