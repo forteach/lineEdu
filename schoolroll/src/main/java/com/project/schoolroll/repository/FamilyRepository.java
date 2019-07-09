@@ -1,7 +1,7 @@
 package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.Family;
-import com.project.schoolroll.dto.FamilyDto;
+import com.project.schoolroll.repository.dto.FamilyDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

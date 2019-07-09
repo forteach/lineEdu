@@ -1,4 +1,4 @@
-package com.project.schoolroll.dto;
+package com.project.schoolroll.repository.dto;
 
 /**
  * @author: zhangyy

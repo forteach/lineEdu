@@ -94,7 +94,7 @@ public class StudentController {
             @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "studentCategory", value = "学习类别", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "specialtyId", value = "专业简称(名称)", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "specialtyId", value = "专业id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "educationalSystem", value = "学制", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "waysStudy", value = "就读方式/学习方式", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "learningModality", value = "学习形式", dataType = "string", paramType = "query"),

@@ -1,7 +1,7 @@
 package com.project.schoolroll.service;
 
 import com.project.schoolroll.domain.Family;
-import com.project.schoolroll.dto.FamilyDto;
+import com.project.schoolroll.repository.dto.FamilyDto;
 
 import java.util.List;
 
@@ -19,15 +19,19 @@ public interface FamilyService {
      * @param stuId
      * @return
      */
-    List<FamilyDto> findFamilyDtoList(String stuId);
+    public List<FamilyDto> findFamilyDtoList(String stuId);
 
     /**
      * 查询全部字段家庭成员信息
      * @param stuId
      * @return
      */
-    List<Family> findFamilies(String stuId);
+    public List<Family> findFamilies(String stuId);
 
-    void removeFamilyById(String familyId);
+    /**
+     * 将学生的家庭成员信息设置无效状态
+     * @param familyId
+     */
+    public void removeFamilyById(String familyId);
 
 }

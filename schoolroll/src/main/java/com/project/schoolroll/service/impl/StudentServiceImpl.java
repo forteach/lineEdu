@@ -176,9 +176,9 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
                 });
             });
         }else {
-            studentPeople.setPeopleId(IdUtil.fastSimpleUUID());
-            StudentPeople sp = studentPeopleRepository.save(studentPeople);
-            String peopleId = sp.getPeopleId();
+            String peopleId = IdUtil.fastSimpleUUID();
+            studentPeople.setPeopleId(peopleId);
+            studentPeopleRepository.save(studentPeople);
             student.setStuId(IdUtil.fastSimpleUUID());
             student.setPeopleId(peopleId);
             studentRepository.save(student);

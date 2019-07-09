@@ -27,7 +27,7 @@ public class FindStudentDtoPageAllRequest implements Serializable {
     private String studentCategory;
     @ApiModelProperty(name = "classId", value = "班级id", dataType = "string")
     private String classId;
-    @ApiModelProperty(name = "specialtyId", value = "专业简称(名称)", dataType = "string")
+    @ApiModelProperty(name = "specialtyId", value = "专业Id", dataType = "string")
     private String specialtyId;
     @ApiModelProperty(name = "educationalSystem", value = "学制", dataType = "string")
     private String educationalSystem;

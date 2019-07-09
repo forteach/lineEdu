@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.schoolroll.domain.StudentExpand;
-import com.project.schoolroll.dto.StudentExpandDto;
+import com.project.schoolroll.repository.dto.StudentExpandDto;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.service.StudentExpandService;
 import com.project.schoolroll.web.vo.StudentExpandVo;

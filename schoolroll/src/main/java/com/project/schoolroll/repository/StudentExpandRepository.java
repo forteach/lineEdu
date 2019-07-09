@@ -1,7 +1,7 @@
 package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.StudentExpand;
-import com.project.schoolroll.dto.StudentExpandDto;
+import com.project.schoolroll.repository.dto.StudentExpandDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
