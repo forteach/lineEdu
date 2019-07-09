@@ -1,6 +1,6 @@
 package com.project.schoolroll.service;
 
-import com.project.schoolroll.dto.LearnCenterDto;
+import com.project.schoolroll.repository.dto.LearnCenterDto;
 
 import java.util.List;
 
@@ -17,4 +17,6 @@ public interface LearnCenterService {
      * @return
      */
     public List<LearnCenterDto> findAll();
+
+    public void removeById(String centerId);
 }

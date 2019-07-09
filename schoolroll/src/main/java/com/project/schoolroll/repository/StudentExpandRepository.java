@@ -1,7 +1,13 @@
 package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.StudentExpand;
+import com.project.schoolroll.repository.dto.StudentExpandDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -18,5 +24,23 @@ public interface StudentExpandRepository extends JpaRepository<StudentExpand, St
      * @param stuId
      * @return
      */
+    @Transactional(readOnly = true)
     StudentExpand findAllByIsValidatedEqualsAndStuId(String isValidated, String stuId);
+
+    /**
+     * 查询有效的学生扩展信息
+     * @param stuId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    @Query(value = "SELECT expandId AS expandId, expandName AS expandName, expandValue AS expandValue FROM StudentExpand WHERE isValidated = '0' AND stuId = ?1")
+    List<StudentExpandDto> findByIsValidatedEqualsAndStuId(String stuId);
+
+    /**
+     * 删除扩展信息根据学生id
+     * @param stuId
+     * @return
+     */
+    @Modifying(clearAutomatically = true)
+    int deleteAllByStuId(String stuId);
 }

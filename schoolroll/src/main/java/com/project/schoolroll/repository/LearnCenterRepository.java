@@ -1,7 +1,7 @@
 package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.LearnCenter;
-import com.project.schoolroll.dto.LearnCenterDto;
+import com.project.schoolroll.repository.dto.LearnCenterDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +21,6 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
     public List<LearnCenter> findAllByIsValidatedEquals(String isValidated);
 
     @Transactional(readOnly = true)
-    @Query(value = "SELECT centerId, centerName FROM LearnCenter WHERE isValidated = '0'")
+    @Query(value = "SELECT centerId AS centerId, centerName AS centerName FROM LearnCenter WHERE isValidated = '0'")
     public List<LearnCenterDto> findAllByIsValidatedEquals();
 }

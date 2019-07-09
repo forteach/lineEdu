@@ -3,8 +3,6 @@ package com.project.portal.schoolroll.request;
 import com.project.portal.request.SortVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,7 +27,7 @@ public class FindStudentDtoPageAllRequest implements Serializable {
     private String studentCategory;
     @ApiModelProperty(name = "classId", value = "班级id", dataType = "string")
     private String classId;
-    @ApiModelProperty(name = "specialtyId", value = "专业简称(名称)", dataType = "string")
+    @ApiModelProperty(name = "specialtyId", value = "专业Id", dataType = "string")
     private String specialtyId;
     @ApiModelProperty(name = "educationalSystem", value = "学制", dataType = "string")
     private String educationalSystem;

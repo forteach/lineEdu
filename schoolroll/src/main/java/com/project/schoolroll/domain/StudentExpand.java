@@ -37,7 +37,7 @@ public class StudentExpand extends Entitys implements Serializable {
      * 补充编号
      */
     @Id
-    @Column(name = "expand_id", columnDefinition = "VARCHAR(32) COMMENT '补充编号'")
+    @Column(name = "expand_id", columnDefinition = "VARCHAR(32) COMMENT '补充编号/扩展编号'")
     private String expandId;
     /**
      * 学生id
@@ -52,6 +52,6 @@ public class StudentExpand extends Entitys implements Serializable {
     /**
      * 补充字段值
      */
-    @Column(name = "expand_", columnDefinition = "VARCHAR(200) COMMENT '补充字段值'")
-    private String expand_;
+    @Column(name = "expand_value", columnDefinition = "VARCHAR(200) COMMENT '补充字段值'")
+    private String expandValue;
 }

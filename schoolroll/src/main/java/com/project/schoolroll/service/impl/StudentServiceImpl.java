@@ -1,7 +1,14 @@
 package com.project.schoolroll.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.mysql.service.BaseMySqlService;
+import com.project.schoolroll.domain.Student;
+import com.project.schoolroll.domain.StudentPeople;
+import com.project.schoolroll.repository.FamilyRepository;
+import com.project.schoolroll.repository.StudentExpandRepository;
+import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
 import com.project.schoolroll.service.StudentService;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
@@ -11,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,12 +39,20 @@ import java.util.List;
 public class StudentServiceImpl extends BaseMySqlService implements StudentService {
 
     private final StudentRepository studentRepository;
+    private final StudentPeopleRepository studentPeopleRepository;
+    private final FamilyRepository familyRepository;
+    private final StudentExpandRepository studentExpandRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository,
+                              StudentExpandRepository studentExpandRepository, FamilyRepository familyRepository) {
         this.studentRepository = studentRepository;
+        this.studentPeopleRepository = studentPeopleRepository;
+        this.studentExpandRepository = studentExpandRepository;
+        this.familyRepository = familyRepository;
     }
 
 
@@ -145,5 +161,38 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         long total = count.longValue();
         List<StudentVo> content2 = total > vo.getPageable().getOffset() ? dataQuery.getResultList() : Collections.<StudentVo> emptyList();
         return new PageImpl<>(content2, vo.getPageable(), total);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveOrUpdate(Student student, StudentPeople studentPeople) {
+        if (StrUtil.isNotBlank(student.getStuId())){
+            studentRepository.findById(student.getStuId()).ifPresent(s -> {
+                studentPeopleRepository.findById(s.getPeopleId()).ifPresent(sp -> {
+                    BeanUtil.copyProperties(studentPeople, sp);
+                    studentPeopleRepository.save(sp);
+                    BeanUtil.copyProperties(student, s);
+                    studentRepository.save(s);
+                });
+            });
+        }else {
+            String peopleId = IdUtil.fastSimpleUUID();
+            studentPeople.setPeopleId(peopleId);
+            studentPeopleRepository.save(studentPeople);
+            student.setStuId(IdUtil.fastSimpleUUID());
+            student.setPeopleId(peopleId);
+            studentRepository.save(student);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteById(String stuId) {
+        studentRepository.findById(stuId).ifPresent(student -> {
+            studentPeopleRepository.deleteById(student.getPeopleId());
+            studentExpandRepository.deleteAllByStuId(stuId);
+            familyRepository.deleteAllByStuId(stuId);
+            studentRepository.deleteById(stuId);
+        });
     }
 }

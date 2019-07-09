@@ -1,7 +1,7 @@
 package com.project.schoolroll.service.impl;
 
 import com.project.schoolroll.domain.Family;
-import com.project.schoolroll.dto.FamilyDto;
+import com.project.schoolroll.repository.dto.FamilyDto;
 import com.project.schoolroll.repository.FamilyRepository;
 import com.project.schoolroll.service.FamilyService;
 import lombok.extern.slf4j.Slf4j;

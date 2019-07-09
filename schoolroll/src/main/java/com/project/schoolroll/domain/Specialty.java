@@ -28,8 +28,6 @@ import java.io.Serializable;
 @org.hibernate.annotations.Table(appliesTo = "specialty", comment = "专业信息")
 @Table(name = "specialty")
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
-@NoArgsConstructor
 public class Specialty extends Entitys implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,4 +43,12 @@ public class Specialty extends Entitys implements Serializable {
      */
     @Column(name = "specialty_name", columnDefinition = "VARCHAR(255) COMMENT '专业名称'")
     private String specialtyName;
+
+    public Specialty() {
+    }
+
+    public Specialty(String specialtyId, String specialtyName) {
+        this.specialtyId = specialtyId;
+        this.specialtyName = specialtyName;
+    }
 }
