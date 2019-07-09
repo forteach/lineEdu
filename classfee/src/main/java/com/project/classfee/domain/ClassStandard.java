@@ -52,7 +52,7 @@ public class ClassStandard extends Entitys implements Serializable {
     private int classFee;
 
 
-    public ClassStandard(String standardId, String createYear,String specialtyIds, int studentSum, int studentSubsidies, int subsidiesSum, int classFee, String centerId) {
+    public ClassStandard(String standardId, String createYear,String specialtyIds, int studentSum, int studentSubsidies, int subsidiesSum, String centerId) {
         super.setCenterAreaId(centerId);
         this.standardId = standardId;
         this.createYear = createYear;
@@ -60,6 +60,5 @@ public class ClassStandard extends Entitys implements Serializable {
         this.studentSum = studentSum;
         this.studentSubsidies = studentSubsidies;
         this.subsidiesSum = subsidiesSum;
-        this.classFee = classFee;
     }
 }
