@@ -30,7 +30,7 @@ public class ClassFeeYearService extends BaseMySqlService {
      * 年度课时费汇总记录
      * @param createYear
      * @param classFeeSum
-     * @param create_month
+     * @param createMonth
      * @param classSum   课时数量'
      * @param outMonth   课时费超出那个月份超出
      * @param outFee     课时费超出金额
@@ -38,8 +38,8 @@ public class ClassFeeYearService extends BaseMySqlService {
      * @param centerId
      * @return
      */
-    public ClassFeeYear save( String createYear, int classFeeSum, int createMonth, int classSum, int outMonth, int outFee,String outState, String centerId){
-        ClassFeeYear classFeeInfo=new ClassFeeYear(IdUtil.fastSimpleUUID(),createYear,classFeeSum,createMonth,classSum,outMonth,outFee,outState,centerId);
+    public ClassFeeYear save( String createYear,String specialtyIds, int classFeeSum, int createMonth, int classSum, int outMonth, int outFee,String outState, String centerId){
+        ClassFeeYear classFeeInfo=new ClassFeeYear(IdUtil.fastSimpleUUID(),createYear,specialtyIds,classFeeSum,createMonth,classSum,outMonth,outFee,outState,centerId);
         return classFeeYearRepository.save(classFeeInfo);
     }
 

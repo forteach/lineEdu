@@ -1,23 +1,26 @@
 package com.project.classfee.service;
 
+
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
+import com.project.classfee.domain.ClassFee;
 import com.project.classfee.domain.ClassFeeInfo;
-import com.project.classfee.domain.ClassStandard;
+import com.project.classfee.domain.ClassFeeYear;
 import com.project.classfee.repository.ClassFeeInfoRepository;
 import com.project.classfee.repository.ClassFeeRepository;
 import com.project.classfee.repository.ClassFeeYearRepository;
-import com.project.classfee.repository.ClassStandardRepository;
 import com.project.mysql.service.BaseMySqlService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 课时详情信息导入，创建课时费管理、年度课时费汇总、初始记录
@@ -41,6 +44,67 @@ public class ClassFeeInfoService extends BaseMySqlService {
 
 
     /**
+     * 导入的课时文件
+     * @param roms
+     * @param year   年份
+     * @param month  月份
+     * @param centerId  中心ID
+     * @return
+     */
+    @Transactional
+    public boolean impFile(List<ClassFeeInfo> roms,String year,String month,String centerId){
+
+        //获得文件里面的专业信息
+        List<String> sepcialtyIds=filterSpecialty(roms);
+
+        //判断和执行导入数据,并初始化年度和月份数据
+        sepcialtyIds.stream().forEach(id->isExecImp(year,month,id,centerId));
+
+        //保存课时文件记录
+        int saveCount= saveAllInfo(roms);
+        MyAssert.isNull(saveCount>0,DefineCode.ERR0012,"导入课时信息记录失败！");
+
+        //汇总导入的数据课时和课时费
+
+        return true;
+    }
+
+    //判断和执行导入数据,并初始化年度和月份数据
+    private boolean isExecImp(String year,String month,String sepcialtyId,String centerId){
+
+        //创建年度学年汇总记录
+        boolean isExists= classFeeYearRepository.existsByFeeYearIdAndSpecialtyIdsAndCenterAreaId(year,sepcialtyId,centerId);
+        if(!isExists){
+            ClassFeeYear classFeeYear=new ClassFeeYear();
+            classFeeYear.setFeeYearId(year);
+            classFeeYear.setSpecialtyIds(sepcialtyId);
+            classFeeYear.setOutState("N");  //未超出
+            classFeeYearRepository.save(classFeeYear);
+        }
+
+        //创建该月份的课时费管理记录
+        //创建年度学年汇总记录
+        int feeMonth=Integer.parseInt(month);
+        isExists= classFeeRepository.existsByFeeYearIdAndCenterAreaIdAndCreateMonth(year,centerId,feeMonth);
+        if(!isExists) {
+            ClassFee classFee = new ClassFee();
+            classFee.setFeeYearId(year);
+            classFee.setSpecialtyIds(sepcialtyId);
+            classFee.setCreateMonth(feeMonth);
+            classFee.setBalanceState("no");  //未结算
+            classFeeRepository.save(classFee);
+        }
+        return true;
+    }
+
+
+    //过滤文件包含的专业信息
+    private List<String> filterSpecialty(List<ClassFeeInfo> roms){
+        return  roms.stream().map(obj->obj.getSpecialtyIds()).distinct().collect(Collectors.toList());
+    }
+
+
+    /**
      * 添加课时费
      * @param classFeeId
      * @param fullName       姓名
@@ -61,7 +125,6 @@ public class ClassFeeInfoService extends BaseMySqlService {
      * 课时费列表导入添加
      */
     private int saveAllInfo(List<ClassFeeInfo> list){
-
         return classFeeInfoRepository.saveAll(list).size();
     }
 

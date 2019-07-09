@@ -5,10 +5,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.classfee.domain.ClassFee;
-import com.project.classfee.domain.ClassFeeInfo;
-import com.project.classfee.repository.ClassFeeInfoRepository;
 import com.project.classfee.repository.ClassFeeRepository;
-import com.project.classfee.repository.ClassStandardRepository;
 import com.project.mysql.service.BaseMySqlService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -41,9 +38,9 @@ public class ClassFeeService extends BaseMySqlService {
      * @param centerId
      * @return
      */
-    public ClassFee save( String createYear, int classFeeSum, int createMonth, int classSum, int balanceState, int balanceSum, String centerId){
-        ClassFee classFeeInfo=new ClassFee(IdUtil.fastSimpleUUID(),createYear,classFeeSum,balanceState,createMonth,classSum,balanceSum,centerId);
-        return classFeeRepository.save(classFeeInfo);
+    public ClassFee save( String createYear, int classFeeSum, int createMonth, int classSum, String balanceState, int balanceSum, String centerId){
+        ClassFee classFee=new ClassFee(IdUtil.fastSimpleUUID(),createYear,classFeeSum,createMonth,classSum,balanceState,balanceSum,centerId);
+        return classFeeRepository.save(classFee);
     }
 
 
@@ -56,7 +53,7 @@ public class ClassFeeService extends BaseMySqlService {
      * @param balanceSum
      * @return
      */
-    public ClassFee update(String classFeeId,int classFeeSum, int classSum, int balanceState, int balanceSum){
+    public ClassFee update(String classFeeId,int classFeeSum, int classSum, String balanceState, int balanceSum){
         ClassFee obj= findId(classFeeId);
         ClassFee classFee=new ClassFee();
         UpdateUtil.copyProperties(obj,classFee);

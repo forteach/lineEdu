@@ -28,11 +28,10 @@ public class ClassStandardService extends BaseMySqlService {
      * @param studentSum
      * @param studentSubsidies
      * @param subsidiesSum
-     * @param classFee
      * @return
      */
-    public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,int classFee,String centerId){
-        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,classFee,centerId);
+    public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,String centerId){
+        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,centerId);
         return classStandardRepository.save(classStandard);
     }
 
@@ -43,10 +42,9 @@ public class ClassStandardService extends BaseMySqlService {
      * @param studentSum
      * @param studentSubsidies
      * @param subsidiesSum
-     * @param classFee
      * @return
      */
-    public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,int classFee){
+    public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum){
         ClassStandard obj= findId(standardId);
         ClassStandard classStandard=new ClassStandard();
         UpdateUtil.copyProperties(obj,classStandard);
@@ -55,7 +53,6 @@ public class ClassStandardService extends BaseMySqlService {
         classStandard.setStudentSum(studentSum);
         classStandard.setStudentSubsidies(studentSubsidies);
         classStandard.setSubsidiesSum(subsidiesSum);
-        classStandard.setClassFee(classFee);
         return classStandardRepository.save(classStandard);
     }
 

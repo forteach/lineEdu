@@ -39,13 +39,13 @@ public class ClassStandard extends Entitys implements Serializable {
     @Column(name = "specialty_ids", columnDefinition = "VARCHAR(32) COMMENT '所属专业'")
     private String specialtyIds;
 
-    @Column(name = "student_sum", columnDefinition = "VARCHAR(32) COMMENT '学生总人数'")
+    @Column(name = "student_sum", columnDefinition = "Int(11) COMMENT '学生总人数'")
     private int studentSum;
 
-    @Column(name = "student_subsidies", columnDefinition = "VARCHAR(32) COMMENT '每人补贴金额'")
+    @Column(name = "student_subsidies", columnDefinition = "Int(11) COMMENT '每人补贴金额'")
     private int studentSubsidies;
 
-    @Column(name = "subsidies_sum", columnDefinition = "VARCHAR(32) COMMENT '中心补贴总金额'")
+    @Column(name = "subsidies_sum", columnDefinition = "Int(11) COMMENT '中心补贴总金额'")
     private int subsidiesSum;
 
 

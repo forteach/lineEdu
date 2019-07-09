@@ -64,7 +64,6 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
                     request.getStudentSum(),
                     request.getStudentSubsidies(),
                     request.getSubsidiesSum(),
-                    request.getClassFee(),
                     request.getCenterAreaId());
         }else{
             //保存课时费标准
@@ -74,8 +73,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
                      request.getSpecialtyIds(),
                     request.getStudentSum(),
                     request.getStudentSubsidies(),
-                    request.getSubsidiesSum(),
-                    request.getClassFee());
+                    request.getSubsidiesSum());
         }
 
         MyAssert.isNull(cls, DefineCode.ERR0010,"操作课时费标准失败！");

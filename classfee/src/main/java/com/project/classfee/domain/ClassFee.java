@@ -33,30 +33,30 @@ public class ClassFee extends Entitys implements Serializable {
     @Column(name = "class_fee_id", columnDefinition = "VARCHAR(32) COMMENT '课时费编号'")
     private String classFeeId;
 
-    @Column(name = "create_year", columnDefinition = "VARCHAR(32) COMMENT '创建所属的学年'")
-    private String createYear;
+    @Column(name = "fee_year_id", columnDefinition = "VARCHAR(32) COMMENT '创建所属的学年'")
+    private String feeYearId;
 
     @Column(name = "specialty_ids", columnDefinition = "VARCHAR(32) COMMENT '所属专业'")
     private String specialtyIds;
 
-    @Column(name = "class_fee_sum", columnDefinition = "VARCHAR(32) COMMENT '课时费总金额'")
+    @Column(name = "class_fee_sum", columnDefinition = "int(11) COMMENT '课时费总金额'")
     private int classFeeSum;
 
-    @Column(name = "create_month", columnDefinition = "VARCHAR(32) COMMENT '课时费所属月份'")
+    @Column(name = "create_month", columnDefinition = "int(11) COMMENT '课时费所属月份'")
     private int createMonth;
 
     @Column(name = "class_sum", columnDefinition = "int(11) COMMENT '课时数量'")
     private int classSum;
 
     @Column(name = "balance_state", columnDefinition = "VARCHAR(32) COMMENT '课时费结算状态 no 未结算，part部分结算、all全部结算'")
-    private int balanceState;
+    private String balanceState;
 
-    @Column(name = "balance_sum", columnDefinition = "VARCHAR(32) COMMENT '课时费已结算金额'")
+    @Column(name = "balance_sum", columnDefinition = "int(11) COMMENT '课时费已结算金额'")
     private int balanceSum;
 
-    public ClassFee(String classFeeId, String createYear, int classFeeSum, int createMonth, int classSum, int balanceState, int balanceSum, String centerId) {
+    public ClassFee(String classFeeId, String feeYearId, int classFeeSum, int createMonth, int classSum, String balanceState, int balanceSum, String centerId) {
         this.classFeeId = classFeeId;
-        this.createYear = createYear;
+        this.feeYearId = feeYearId;
         this.classFeeSum = classFeeSum;
         this.createMonth = createMonth;
         this.classSum = classSum;
