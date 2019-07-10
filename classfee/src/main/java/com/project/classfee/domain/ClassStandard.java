@@ -48,10 +48,6 @@ public class ClassStandard extends Entitys implements Serializable {
     @Column(name = "subsidies_sum", columnDefinition = "Int(11) COMMENT '中心补贴总金额'")
     private int subsidiesSum;
 
-    @Column(name = "class_fee", columnDefinition = "INT(11) COMMENT '每节课课时费'")
-    private int classFee;
-
-
     public ClassStandard(String standardId, String createYear,String specialtyIds, int studentSum, int studentSubsidies, int subsidiesSum, String centerId) {
         super.setCenterAreaId(centerId);
         this.standardId = standardId;

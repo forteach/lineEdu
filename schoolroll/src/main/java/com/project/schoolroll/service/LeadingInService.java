@@ -1,5 +1,7 @@
 package com.project.schoolroll.service;
 
+import java.io.InputStream;
+
 /**
  * @Auther: zhangyy
  * @Email: zhang10092009@hotmail.com
@@ -8,4 +10,6 @@ package com.project.schoolroll.service;
  * @Description:
  */
 public interface LeadingInService {
+
+    void studentsSave(InputStream inputStream);
 }

@@ -1,5 +1,9 @@
 package com.project.schoolroll.service.impl;
 
+import cn.hutool.core.lang.Console;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.sax.Excel07SaxReader;
+import cn.hutool.poi.excel.sax.handler.RowHandler;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
@@ -7,6 +11,9 @@ import com.project.schoolroll.service.LeadingInService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -29,9 +36,20 @@ public class LeadingInServiceImpl implements LeadingInService {
         this.studentPeopleRepository = studentPeopleRepository;
     }
 
-    public void saveStudent(){
+    @Override
+    public void studentsSave(InputStream inputStream) {
 
+        Excel07SaxReader reader = new Excel07SaxReader(createRowHandler());
+        ExcelUtil.getWriter(true);
+        reader.read("aaa.xlsx", 0);
     }
 
-
+    private RowHandler createRowHandler() {
+        return new RowHandler() {
+            @Override
+            public void handle(int sheetIndex, int rowIndex, List<Object> rowlist) {
+                Console.log("[{}] [{}] [{}]", sheetIndex, rowIndex, rowlist);
+            }
+        };
+    }
 }
