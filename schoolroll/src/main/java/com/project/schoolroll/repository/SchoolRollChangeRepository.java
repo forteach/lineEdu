@@ -17,4 +17,7 @@ public interface SchoolRollChangeRepository extends JpaRepository<SchoolRollChan
 
     @Transactional(readOnly = true)
     public SchoolRollChange findAllByIsValidatedEqualsAndStudentCode(String isValidated, String studentCode);
+
+    @Transactional(readOnly = true)
+    public SchoolRollChange findAllByIsValidatedEqualsAndStudentId(String isValidated, String studentId);
 }

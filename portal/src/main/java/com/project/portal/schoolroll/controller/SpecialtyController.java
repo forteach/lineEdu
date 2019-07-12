@@ -1,10 +1,12 @@
 package com.project.portal.schoolroll.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.SpecialtySaveUpdateRequest;
+import com.project.schoolroll.domain.Specialty;
 import com.project.schoolroll.service.SpecialtyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -39,8 +41,11 @@ public class SpecialtyController {
             @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody SpecialtySaveUpdateRequest request){
-        specialtyService.saveUpdate(request.getSpecialtyId(), request.getSpecialtyName());
-        return WebResult.okResult();
+        if (StrUtil.isBlank(request.getSpecialtyId())) {
+            Specialty specialty = specialtyService.findBySpecialtyName(request.getSpecialtyName());
+            MyAssert.notNull(specialty, DefineCode.ERR0014, "已经存在相同专业名称");
+        }
+        return WebResult.okResult(specialtyService.saveUpdate(request.getSpecialtyId(), request.getSpecialtyName()));
     }
 
     @ApiOperation(value = "查询全部专业信息")

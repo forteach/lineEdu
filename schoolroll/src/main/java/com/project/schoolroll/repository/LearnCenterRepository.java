@@ -21,6 +21,8 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
     public List<LearnCenter> findAllByIsValidatedEquals(String isValidated);
 
     @Transactional(readOnly = true)
-    @Query(value = "SELECT centerId AS centerId, centerName AS centerName FROM LearnCenter WHERE isValidated = '0'")
+    @Query(value = "SELECT centerId AS centerId, centerName AS centerName, address as address, principal as principal, " +
+            " phone as phone, bankingAccount as bankingAccount, accountHolder as accountHolder, accountHolderPhone as accountHolderPhone, " +
+            " bankingAccountAddress as bankingAccountAddress FROM LearnCenter WHERE isValidated = '0'")
     public List<LearnCenterDto> findAllByIsValidatedEquals();
 }

@@ -7,7 +7,7 @@ import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
-import com.project.portal.schoolroll.request.FindStudentDtoPageAllRequest;
+import com.project.portal.schoolroll.request.StudentDtoFindPageAllRequest;
 import com.project.portal.schoolroll.request.StudentExpandRequest;
 import com.project.portal.schoolroll.request.StudentSaveUpdateRequest;
 import com.project.schoolroll.domain.Student;
@@ -104,7 +104,7 @@ public class StudentController {
             @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "sortVo", value = "分页排序字段", dataTypeClass = SortVo.class, required = true, paramType = "query")
     })
-    public WebResult findStudentsPageAll(@RequestBody FindStudentDtoPageAllRequest request) {
+    public WebResult findStudentsPageAll(@RequestBody StudentDtoFindPageAllRequest request) {
         MyAssert.blank(String.valueOf(request.getSortVo().getPage()), DefineCode.ERR0010, "页码参数不为空");
         MyAssert.blank(String.valueOf(request.getSortVo().getSize()), DefineCode.ERR0010, "每页条数不为空");
         MyAssert.gt(request.getSortVo().getPage(), 0, DefineCode.ERR0010, "页码参数不正确");

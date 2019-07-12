@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "查询学生信息条件")
-public class FindStudentDtoPageAllRequest implements Serializable {
+public class StudentDtoFindPageAllRequest implements Serializable {
     @ApiModelProperty(name = "stuId", value = "学生id", dataType = "string")
     private String stuId;
     @ApiModelProperty(name = "stuName", value = "学生名字", dataType = "string")

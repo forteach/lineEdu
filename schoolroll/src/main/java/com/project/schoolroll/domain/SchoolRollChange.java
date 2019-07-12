@@ -60,6 +60,33 @@ public class SchoolRollChange extends Entitys implements Serializable {
      */
     @Column(name = "type_name", columnDefinition = "VARCHAR(32) COMMENT '异动类型名称'")
     private String typeName;
+//
+//    /**
+//     * 异动状态
+//     * 待处理,处理中,审核中,审核未通过
+//     */
+//    @Column(name = "status", columnDefinition = "VARCHAR(32) COMMENT '异动状态'")
+//    private String status;
+//    /**
+//     * 审批人
+//     */
+//    @Column(name = "approver", columnDefinition = "VARCHAR(32) COMMENT '审批人'")
+//    private String approver;
+//    /**
+//     * 审批意见
+//     */
+//    @Column(name = "comments", columnDefinition = "VARCHAR(32) COMMENT '审批意见'")
+//    private String comments;
+//    /**
+//     * 审批说明
+//     */
+//    @Column(name = "approval_note", columnDefinition = "VARCHAR(255) COMMENT '审批说明'")
+//    private String approvalNote;
+//    /**
+//     * 审批时间
+//     */
+//    @Column(name = "approval_date", columnDefinition = "VARCHAR(32) COMMENT '审批时间'")
+//    private String approvalDate;
 
     public SchoolRollChange(String changeId, String studentId, String studentCode, String typeId, String typeName, String centerId) {
         this.changeId = changeId;

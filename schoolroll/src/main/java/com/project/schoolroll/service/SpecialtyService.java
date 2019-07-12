@@ -1,5 +1,6 @@
 package com.project.schoolroll.service;
 
+import com.project.schoolroll.domain.Specialty;
 import com.project.schoolroll.repository.dto.SpecialtyDto;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface SpecialtyService {
      * @param specialtyId
      * @param specialtyName
      */
-    public void saveUpdate(String specialtyId, String specialtyName);
+    public Specialty saveUpdate(String specialtyId, String specialtyName);
 
     /**
      * 查询对应专业信息(全部)
@@ -30,4 +31,6 @@ public interface SpecialtyService {
      * @param specialtyId
      */
     public void deleteById(String specialtyId);
+
+    public Specialty findBySpecialtyName(String specialtyName);
 }

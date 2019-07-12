@@ -70,7 +70,7 @@ public class LearnCenterController {
     }
 
     @ApiOperation(value = "查询中心信息")
-    @GetMapping(path = "/select")
+    @GetMapping(path = "/findAll")
     public WebResult findAll(){
         return WebResult.okResult(learnCenterService.findAll());
     }

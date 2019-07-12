@@ -29,4 +29,7 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, String> {
     @Transactional(readOnly = true)
     @Query(value = "SELECT specialtyId AS specialtyId, specialtyName AS specialtyName FROM Specialty WHERE isValidated = '0' ")
     public List<SpecialtyDto> findAllByIsValidatedEqualsDto();
+
+    @Transactional(readOnly = true)
+    public Specialty findBySpecialtyName(String specialtyName);
 }

@@ -56,6 +56,6 @@ public class StudentScore extends Entitys implements Serializable {
     /**
      * 课程分数
      */
-    @Column(name = "course_score", columnDefinition = "FLOAT(3,2) COMMENT '课程分数'")
+    @Column(name = "course_score", columnDefinition = "FLOAT(5,2) COMMENT '课程分数'")
     private float courseScore;
 }
