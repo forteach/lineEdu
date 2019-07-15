@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
+import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.LearnCenterSaveUpdateRequest;
 import com.project.schoolroll.domain.LearnCenter;
@@ -15,8 +15,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
  * @author: zhangyy
@@ -45,40 +51,57 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "address", value = "学习中心地址", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "principal", value = "负责人", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "phone", value = "负责人联系电话", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "bankName", value = "银行名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccount", value = "银行账户", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "accountHolder", value = "开户人", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "accountHolderPhone", value = "开户人电话", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccountAddress", value = "开户行地址", dataType = "string", paramType = "form")
     })
-    public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request){
-        if (StrUtil.isNotBlank(request.getCenterId())){
+    public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request) {
+        if (StrUtil.isNotBlank(request.getCenterId())) {
             learnCenterRepository.findById(request.getCenterId()).ifPresent(learnCenter -> {
-                UpdateUtil.copyNullProperties(request, learnCenter);
+                BeanUtils.copyProperties(request, learnCenter);
                 learnCenterRepository.save(learnCenter);
             });
-        }else {
+        } else {
             MyAssert.isNull(request.getCenterName(), DefineCode.ERR0010, "学习中心名称不为空");
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "学习中心联系人电话不为空");
             MyAssert.isNull(request.getPrincipal(), DefineCode.ERR0010, "学习中心负责人不为空");
             MyAssert.isNull(request.getAddress(), DefineCode.ERR0010, "学习中心地址不为空");
+            List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
+            if (!learnCenters.isEmpty() && learnCenters.size() > 0) {
+                MyAssert.isNull(null, DefineCode.ERR0011, "已经存在同名学习中心");
+            }
             LearnCenter learnCenter = new LearnCenter();
-            UpdateUtil.copyNullProperties(request, learnCenter);
+            BeanUtils.copyProperties(request, learnCenter);
             learnCenter.setCenterId(IdUtil.fastSimpleUUID());
             learnCenterRepository.save(learnCenter);
         }
         return WebResult.okResult();
     }
 
-    @ApiOperation(value = "查询中心信息")
+    @ApiOperation(value = "查询中心信息", notes = "查询简介信息学习中心")
     @GetMapping(path = "/select")
-    public WebResult findAll(){
-        return WebResult.okResult(learnCenterService.findAll());
+    public WebResult findAllDto() {
+        return WebResult.okResult(learnCenterService.findAllDto());
+    }
+
+    @ApiOperation(value = "分页查询学习中心")
+    @PostMapping(path = "/findAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+    })
+    public WebResult findAllPage(@RequestBody SortVo vo) {
+        MyAssert.gt(vo.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
+        MyAssert.gt(vo.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        return WebResult.okResult(learnCenterRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, PageRequest.of(vo.getPage(), vo.getSize())));
     }
 
     @ApiOperation(value = "移除学习中心信息")
     @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/removeById")
-    public WebResult removeById(@RequestBody String centerId){
+    public WebResult removeById(@RequestBody String centerId) {
         MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id");
         learnCenterService.removeById(JSONObject.parseObject(centerId).getString("centerId"));
         return WebResult.okResult();

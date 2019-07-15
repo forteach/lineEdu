@@ -1,7 +1,7 @@
 package com.project.schoolroll.service.impl;
 
-import com.project.schoolroll.repository.dto.LearnCenterDto;
 import com.project.schoolroll.repository.LearnCenterRepository;
+import com.project.schoolroll.repository.dto.LearnCenterDto;
 import com.project.schoolroll.service.LearnCenterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     }
 
     @Override
-    public List<LearnCenterDto> findAll() {
+    public List<LearnCenterDto> findAllDto() {
         return learnCenterRepository.findAllByIsValidatedEquals();
     }
 
