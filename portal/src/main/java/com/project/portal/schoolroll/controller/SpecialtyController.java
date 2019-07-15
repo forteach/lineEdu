@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.SpecialtySaveUpdateRequest;
 import com.project.schoolroll.domain.Specialty;
@@ -52,6 +53,18 @@ public class SpecialtyController {
     @GetMapping(path = "/findAll")
     public WebResult finaAll(){
         return WebResult.okResult(specialtyService.findAllSpecialty());
+    }
+
+    @ApiOperation(value = "分页查询专业信息")
+    @PostMapping(path = "/findAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+    })
+    public WebResult findAllPage(@RequestBody SortVo vo) {
+        MyAssert.gt(vo.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
+        MyAssert.gt(vo.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        return WebResult.okResult(specialtyService.findAllPage(vo.getPage(), vo.getSize()));
     }
 
     @ApiOperation(value = "删除专业信息")

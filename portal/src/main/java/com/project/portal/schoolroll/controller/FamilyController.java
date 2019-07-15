@@ -1,11 +1,11 @@
 package com.project.portal.schoolroll.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.FamilySaveUpdateRequest;
 import com.project.schoolroll.domain.Family;
@@ -57,7 +57,7 @@ public class FamilyController {
         if (StrUtil.isNotBlank(request.getFamilyId())){
             //是修改
             familyRepository.findById(request.getFamilyId()).ifPresent(family -> {
-                UpdateUtil.copyNullProperties(request, family);
+                BeanUtil.copyProperties(request, family);
                 familyRepository.save(family);
             });
         }else {
@@ -67,7 +67,7 @@ public class FamilyController {
             MyAssert.isNull(request.getName(), DefineCode.ERR0010, "家庭成员名称不为空");
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "电话号码不为空");
             Family family = new Family();
-            UpdateUtil.copyNullProperties(request, family);
+            BeanUtil.copyProperties(request, family);
             family.setFamilyId(IdUtil.fastSimpleUUID());
             familyRepository.save(family);
         }

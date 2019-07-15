@@ -2,6 +2,7 @@ package com.project.schoolroll.service;
 
 import com.project.schoolroll.domain.Specialty;
 import com.project.schoolroll.repository.dto.SpecialtyDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface SpecialtyService {
     public void deleteById(String specialtyId);
 
     public Specialty findBySpecialtyName(String specialtyName);
+
+    public Page<Specialty> findAllPage(int page, int size);
 }

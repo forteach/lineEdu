@@ -5,16 +5,20 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.Specialty;
-import com.project.schoolroll.repository.dto.SpecialtyDto;
 import com.project.schoolroll.repository.SpecialtyRepository;
+import com.project.schoolroll.repository.dto.SpecialtyDto;
 import com.project.schoolroll.service.SpecialtyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
  * @Auther: zhangyy
@@ -63,5 +67,10 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(String specialtyId) {
         specialtyRepository.deleteById(specialtyId);
+    }
+
+    @Override
+    public Page<Specialty> findAllPage(int page, int size) {
+        return specialtyRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, PageRequest.of(page, size));
     }
 }
