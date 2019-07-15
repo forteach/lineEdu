@@ -60,6 +60,11 @@ public class LearnCenter extends Entitys implements Serializable {
     @Column(name = "phone", columnDefinition = "VARCHAR(32) COMMENT '联系电话'")
     private String phone;
     /**
+     * 银行名称
+     */
+    @Column(name = "bank_name", columnDefinition = "VARCHAR(128) COMMENT '银行名称'")
+    private String bankName;
+    /**
      * 银行账户
      */
     @Column(name = "banking_account", columnDefinition = "VARCHAR(64) COMMENT '银行账户'")

@@ -42,6 +42,9 @@ public class LearnCenterSaveUpdateRequest implements Serializable {
      */
     @ApiModelProperty(name = "phone", value = "负责人电话", dataType = "string")
     private String phone;
+
+    @ApiModelProperty(name = "bankName", value = "银行名称", dataType = "string")
+    private String bankName;
     /**
      * 银行账户
      */

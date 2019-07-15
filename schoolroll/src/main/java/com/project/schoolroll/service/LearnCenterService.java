@@ -14,9 +14,11 @@ import java.util.List;
 public interface LearnCenterService {
     /**
      * 查询全部有效学习中心
+     *
      * @return
      */
-    public List<LearnCenterDto> findAll();
+    public List<LearnCenterDto> findAllDto();
 
     public void removeById(String centerId);
+
 }

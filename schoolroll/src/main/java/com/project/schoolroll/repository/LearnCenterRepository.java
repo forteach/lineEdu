@@ -2,6 +2,8 @@ package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.dto.LearnCenterDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +20,14 @@ import java.util.List;
 public interface LearnCenterRepository extends JpaRepository<LearnCenter, String> {
 
     @Transactional(readOnly = true)
-    public List<LearnCenter> findAllByIsValidatedEquals(String isValidated);
+    public Page<LearnCenter> findAllByIsValidatedEquals(String isValidated, Pageable pageable);
 
     @Transactional(readOnly = true)
     @Query(value = "SELECT centerId AS centerId, centerName AS centerName, address as address, principal as principal, " +
             " phone as phone, bankingAccount as bankingAccount, accountHolder as accountHolder, accountHolderPhone as accountHolderPhone, " +
             " bankingAccountAddress as bankingAccountAddress FROM LearnCenter WHERE isValidated = '0'")
     public List<LearnCenterDto> findAllByIsValidatedEquals();
+
+    @Transactional(readOnly = true)
+    public List<LearnCenter> findByCenterName(String centerName);
 }
