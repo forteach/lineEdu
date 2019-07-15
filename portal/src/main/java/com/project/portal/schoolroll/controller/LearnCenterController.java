@@ -47,7 +47,7 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "phone", value = "负责人联系电话", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccount", value = "银行账户", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "accountHolder", value = "开户人", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "accountHolderPhone", value = "开户人账户", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "accountHolderPhone", value = "开户人电话", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccountAddress", value = "开户行地址", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request){
