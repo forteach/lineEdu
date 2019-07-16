@@ -18,6 +18,8 @@
         <module>classfee</module>
         <module>teachplan</module>
         <module>schoolroll</module>
+        <module>course</module>
+        <module>coursedata</module>
         <module>portal</module>
     </modules>
 

@@ -45,6 +45,8 @@ hs_err_pid*
 /classfee/target/
 /schoolroll/target/
 /teachplan/target/
+/course/target/
+/coursedata/target/
 /user/target/
 /.settings/
 /base/.settings/
@@ -57,3 +59,5 @@ hs_err_pid*
 /teachplan/.settings/
 /token/.settings/
 /user/.settings/
+/coursedata/.settings/
+/course/.settings/

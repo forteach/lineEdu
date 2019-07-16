@@ -51,6 +51,16 @@
             <artifactId>teachplan</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>course</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>coursedata</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
