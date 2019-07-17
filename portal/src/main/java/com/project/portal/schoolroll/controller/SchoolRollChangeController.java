@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description:
  */
 @RestController
-@Api(value = "学籍异动管理")
+@Api(value = "学籍异动管理", tags = {"学籍移动管理"})
 @RequestMapping(path = "/schoolRollChange", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class SchoolRollChangeController {
 

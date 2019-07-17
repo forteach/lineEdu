@@ -30,7 +30,7 @@ import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
  * @description:
  */
 @RestController
-@Api(value = "学习中心")
+@Api(value = "学习中心", tags = {"学习中心管理"})
 @RequestMapping(path = "/learnCenter", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class LearnCenterController {
     private final LearnCenterService learnCenterService;
