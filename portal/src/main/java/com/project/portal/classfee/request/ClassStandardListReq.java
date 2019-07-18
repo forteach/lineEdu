@@ -22,7 +22,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "课程标准查询")
-public class ClassStandardListReq implements Serializable {
+public class ClassStandardListReq extends SortVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(name = "centerAreaId", value = "学习中心", dataType = "string", required = true)
@@ -31,8 +31,8 @@ public class ClassStandardListReq implements Serializable {
     @ApiModelProperty(value = "所属年份", name = "createYear", dataType = "string")
     private String createYear;
 
-    @Builder.Default
-    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
-    private SortVo sortVo = new SortVo();
+//    @Builder.Default
+//    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
+//    private SortVo sortVo = new SortVo();
 
 }

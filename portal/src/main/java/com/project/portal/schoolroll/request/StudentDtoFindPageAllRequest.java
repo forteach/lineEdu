@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "查询学生信息条件")
-public class StudentDtoFindPageAllRequest implements Serializable {
+public class StudentDtoFindPageAllRequest extends SortVo implements Serializable {
     @ApiModelProperty(name = "stuId", value = "学生id", dataType = "string")
     private String stuId;
     @ApiModelProperty(name = "stuName", value = "学生名字", dataType = "string")
@@ -44,6 +44,6 @@ public class StudentDtoFindPageAllRequest implements Serializable {
     @ApiModelProperty(name = "grade", value = "年级", dataType = "string")
     private String grade;
 
-    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
-    private SortVo sortVo = new SortVo();
+//    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
+//    private SortVo sortVo = new SortVo();
 }

@@ -99,15 +99,18 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
     }
 
     @ApiOperation(value = "分页查询课程标准")
-    @PostMapping("/findAll")
+    @PostMapping("/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "所属年份", name = "createYear", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "sortVo", value = "分页信息", dataTypeClass = SortVo.class, required = true, paramType = "query")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+//            @ApiImplicitParam(name = "sortVo", value = "分页信息", dataTypeClass = SortVo.class, required = true, paramType = "query")
     })
-    public WebResult findAll(@RequestBody ClassStandardListReq request){
-        SortVo sortVo = request.getSortVo();
-        PageRequest pageReq = PageRequest.of(sortVo.getPage(), sortVo.getSize());
+    public WebResult findAllPage(@RequestBody ClassStandardListReq request){
+        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
+        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        PageRequest pageReq = PageRequest.of(request.getPage(), request.getSize());
         Page<ClassStandard> result= classStandardService.findAllPage(request.getCenterAreaId(),request.getCreateYear(),pageReq);
         //设置分页返回对象
         return WebResult.okResult(getPageResult(new PageListRes<ClassStandardSaveReq>(),result,new ClassStandardSaveReq()));
