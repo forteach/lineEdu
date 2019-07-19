@@ -102,16 +102,18 @@ public class StudentController {
             @ApiImplicitParam(name = "enrollmentDateStartDate", value = "开始入学时间", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "enrollmentDateEndDate", value = "结束入学时间", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "sortVo", value = "分页排序字段", dataTypeClass = SortVo.class, required = true, paramType = "query")
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
+//            @ApiImplicitParam(name = "sortVo", value = "分页排序字段", dataTypeClass = SortVo.class, required = true, paramType = "query")
     })
     public WebResult findStudentsPageAll(@RequestBody StudentDtoFindPageAllRequest request) {
-        MyAssert.blank(String.valueOf(request.getSortVo().getPage()), DefineCode.ERR0010, "页码参数不为空");
-        MyAssert.blank(String.valueOf(request.getSortVo().getSize()), DefineCode.ERR0010, "每页条数不为空");
-        MyAssert.gt(request.getSortVo().getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
-        MyAssert.gt(request.getSortVo().getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        MyAssert.blank(String.valueOf(request.getPage()), DefineCode.ERR0010, "页码参数不为空");
+        MyAssert.blank(String.valueOf(request.getSize()), DefineCode.ERR0010, "每页条数不为空");
+        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
+        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
         FindStudentDtoPageAllVo vo = new FindStudentDtoPageAllVo();
         BeanUtil.copyProperties(request, vo);
-        vo.setPageable(PageRequest.of(request.getSortVo().getPage(), request.getSortVo().getSize()));
+        vo.setPageable(PageRequest.of(request.getPage(), request.getSize()));
         return WebResult.okResult(studentService.findStudentsPageAll(vo));
     }
 
