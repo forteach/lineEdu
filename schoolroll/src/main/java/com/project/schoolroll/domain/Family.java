@@ -47,8 +47,8 @@ public class Family extends Entitys implements Serializable {
     /**
      * 姓名
      */
-    @Column(name = "name", columnDefinition = "VARCHAR(32) COMMENT '姓名'")
-    private String name;
+    @Column(name = "family_name", columnDefinition = "VARCHAR(32) COMMENT '姓名'")
+    private String familyName;
     /**
      * 家庭成员关系
      * 父亲，母亲，其他亲属
@@ -58,8 +58,8 @@ public class Family extends Entitys implements Serializable {
     /**
      * 联系电话
      */
-    @Column(name = "phone", columnDefinition = "VARCHAR(32) COMMENT '联系电话'")
-    private String phone;
+    @Column(name = "family_phone", columnDefinition = "VARCHAR(32) COMMENT '联系电话'")
+    private String familyPhone;
     /**
      * 是否是监护人
      */
@@ -68,18 +68,18 @@ public class Family extends Entitys implements Serializable {
     /**
      * 身份证件类型
      */
-    @Column(name = "card_type", columnDefinition = "VARCHAR(32) COMMENT '身份证件类型'")
-    private String cardType;
+    @Column(name = "family_card_type", columnDefinition = "VARCHAR(32) COMMENT '身份证件类型'")
+    private String familyCardType;
     /**
      * 身份证号
      */
-    @Column(name = "id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号'")
-    private String IDCard;
+    @Column(name = "family_id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号'")
+    private String familyIDCard;
     /**
      * 出生日期
      */
-    @Column(name = "birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生日期'")
-    private String birthDate;
+    @Column(name = "family_birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生日期'")
+    private String familyBirthDate;
     /**
      * 健康状态
      * 健康/良好

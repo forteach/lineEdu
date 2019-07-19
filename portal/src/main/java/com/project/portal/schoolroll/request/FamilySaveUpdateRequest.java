@@ -27,10 +27,10 @@ public class FamilySaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "stuId", value = "学生id")
     private String stuId;
     /**
-     * 姓名
+     * 家庭姓名
      */
-    @ApiModelProperty(name = "name", value = "姓名")
-    private String name;
+    @ApiModelProperty(name = "familyName", value = "姓名")
+    private String familyName;
     /**
      * 家庭成员关系
      * 父亲，母亲，其他亲属
@@ -40,8 +40,8 @@ public class FamilySaveUpdateRequest implements Serializable {
     /**
      * 联系电话
      */
-    @ApiModelProperty(name = "phone", value = "联系电话")
-    private String phone;
+    @ApiModelProperty(name = "familyPhone", value = "联系电话")
+    private String familyPhone;
     /**
      * 是否是监护人
      */
@@ -50,18 +50,18 @@ public class FamilySaveUpdateRequest implements Serializable {
     /**
      * 身份证件类型
      */
-    @ApiModelProperty(name = "cardType", value = "身份证件类型")
+    @ApiModelProperty(name = "familyCardType", value = "身份证件类型")
     private String cardType;
     /**
      * 身份证号
      */
-    @ApiModelProperty(name = "IDCard", value = "身份证号")
-    private String IDCard;
+    @ApiModelProperty(name = "familyIDCard", value = "身份证号")
+    private String familyIDCard;
     /**
      * 出生日期
      */
     @ApiModelProperty(name = "birthDate", value = "出生日期")
-    private String birthDate;
+    private String familyBirthDate;
     /**
      * 健康状态
      * 健康/良好

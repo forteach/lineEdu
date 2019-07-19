@@ -24,13 +24,13 @@ public interface FamilyDto {
      * 姓名
      * @return
      */
-    public String getName();
+    public String getFamilyName();
 
     /**
      * 电话
      * @return
      */
-    public String getPhone();
+    public String getFamilyPhone();
 
     /**
      * 家庭关系
