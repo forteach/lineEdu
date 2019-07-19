@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "分页查询对象")
-public abstract class SortVo {
+public class SortVo {
     private static final long serialVersionUID = 1L;
 
     @Builder.Default
