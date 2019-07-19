@@ -11,5 +11,7 @@ import java.io.InputStream;
  */
 public interface LeadingInService {
 
-    void studentsSave(InputStream inputStream);
+    void studentsExcel07Reader(InputStream inputStream);
+
+    void studentsExcel03Reader(InputStream inputStream);
 }

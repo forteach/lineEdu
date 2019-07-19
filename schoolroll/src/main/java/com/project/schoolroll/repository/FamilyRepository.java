@@ -22,7 +22,7 @@ public interface FamilyRepository extends JpaRepository<Family, String> {
     public List<Family> findAllByIsValidatedEqualsAndStuId(String isValidated, String stuId);
 
     @Transactional(readOnly = true)
-    @Query(value = "SELECT familyId AS familyId, stuId AS stuId, name AS name, phone AS phone, familyRelationship AS familyRelationship, isGuardian as isGuardian FROM Family WHERE isValidated = '0' AND stuId = ?1")
+    @Query(value = "SELECT familyId AS familyId, stuId AS stuId, familyName AS familyName, familyPhone AS familyPhone, familyRelationship AS familyRelationship, isGuardian as isGuardian FROM Family WHERE isValidated = '0' AND stuId = ?1")
     public List<FamilyDto> findAllByStuIdDto(String stuId);
 
     @Transactional(rollbackFor = Exception.class)

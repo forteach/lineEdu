@@ -42,13 +42,13 @@ public class FamilyController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "familyId", value = "家庭成员id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", paramType = "form", example = "添加不能为空"),
-            @ApiImplicitParam(name = "name", value = "姓名", dataType = "string", paramType = "form", example = "添加不能为空"),
+            @ApiImplicitParam(name = "familyName", value = "姓名", dataType = "string", paramType = "form", example = "添加不能为空"),
             @ApiImplicitParam(name = "familyRelationship", value = "家庭关系", dataType = "string", paramType = "form", example = "添加不能为空"),
-            @ApiImplicitParam(name = "phone", value = "电话", dataType = "string", paramType = "form", example = "添加不能为空"),
+            @ApiImplicitParam(name = "familyPhone", value = "电话", dataType = "string", paramType = "form", example = "添加不能为空"),
             @ApiImplicitParam(name = "isGuardian", value = "是都是监护人", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "cardType", value = "身份证件类型", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "IDCard", value = "身份证号码", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "birthDate", value = "出生日期", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "familyCardType", value = "身份证件类型", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "familyIDCard", value = "身份证号码", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "familyBirthDate", value = "出生日期", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "healthCondition", value = "健康状态", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "companyOrganization", value = "工作单位", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "politicalStatus", value = "政治面貌", dataType = "string", paramType = "form"),
@@ -64,8 +64,8 @@ public class FamilyController {
             //添加
             MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
             MyAssert.isNull(request.getFamilyRelationship(), DefineCode.ERR0010, "家庭成员关系不为空");
-            MyAssert.isNull(request.getName(), DefineCode.ERR0010, "家庭成员名称不为空");
-            MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "电话号码不为空");
+            MyAssert.isNull(request.getFamilyName(), DefineCode.ERR0010, "家庭成员名称不为空");
+            MyAssert.isNull(request.getFamilyPhone(), DefineCode.ERR0010, "电话号码不为空");
             Family family = new Family();
             BeanUtil.copyProperties(request, family);
             family.setFamilyId(IdUtil.fastSimpleUUID());

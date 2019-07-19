@@ -62,23 +62,23 @@ public class StudentPeople extends Entitys implements Serializable {
      * 护照
      * 其他
      */
-    @Column(name = "card_type", columnDefinition = "VARCHAR(32) COMMENT '身份证件类型'")
-    private String cardType;
+    @Column(name = "stu_card_type", columnDefinition = "VARCHAR(32) COMMENT '身份证件类型'")
+    private String stuCardType;
     /**
      * 身份证号
      */
-    @Column(name = "id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号'")
-    private String IDCard;
+    @Column(name = "stu_id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号'")
+    private String stuIDCard;
     /**
      * 联系电话
      */
-    @Column(name = "phone", columnDefinition = "VARCHAR(32) COMMENT '电话'")
-    private String phone;
+    @Column(name = "stu_phone", columnDefinition = "VARCHAR(32) COMMENT '电话'")
+    private String stuPhone;
     /**
      * 出生日期
      */
-    @Column(name = "birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生日期'")
-    private String birthDate;
+    @Column(name = "stu_birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生日期'")
+    private String stu_birthDate;
     /**
      * 国籍/地区
      * 中国
@@ -133,4 +133,25 @@ public class StudentPeople extends Entitys implements Serializable {
      */
     @Column(name = "remark", columnDefinition = "VARCHAR(255) COMMENT '备注'")
     private String remark;
+    /**
+     * 考试地区市县
+     */
+    @Column(name = "examinationArea", columnDefinition = "VARCHAR(32) COMMENT '考试地区(市县)'")
+    private String examinationArea;
+    /**
+     * 毕业学校
+     */
+    @Column(name = "school", columnDefinition = "VARCHAR(64) COMMENT '毕业学校'")
+    private String school;
+    /**
+     * 入学报道日期
+     */
+    @Column(name = "arrival_date", columnDefinition = "VARCHAR(32) COMMENT '入学报到日期'")
+    private String arrivalDate;
+//    /**
+//     * 学生邮箱
+//     */
+//    @Column(name = "stu_email", columnDefinition = "VARCHAR(128) COMMENT '学生邮箱'")
+//    private String stuEmail;
+
 }

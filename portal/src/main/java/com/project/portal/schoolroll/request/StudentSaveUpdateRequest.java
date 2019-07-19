@@ -40,23 +40,23 @@ public class StudentSaveUpdateRequest implements Serializable {
     /**
      * 身份证件类型
      */
-    @ApiModelProperty(name = "cardType", value = "身份证类型", dataType = "string")
-    private String cardType;
+    @ApiModelProperty(name = "stuCardType", value = "身份证类型", dataType = "string")
+    private String stuCardType;
     /**
      * 身份证件号
      */
-    @ApiModelProperty(name = "IDCard", value = "身份证件号", dataType = "string")
-    private String IDCard;
+    @ApiModelProperty(name = "stuIDCard", value = "身份证件号", dataType = "string")
+    private String stuIDCard;
     /**
      * 联系电话
      */
-    @ApiModelProperty(name = "phone", value = "联系电话", dataType = "string")
-    private String phone;
+    @ApiModelProperty(name = "stuPhone", value = "联系电话", dataType = "string")
+    private String stuPhone;
     /**
      * 出生日期(年/月)
      */
-    @ApiModelProperty(name = "birthDate", value = "出生日期(年/月)", dataType = "string")
-    private String birthDate;
+    @ApiModelProperty(name = "stuBirthDate", value = "出生日期(年/月)", dataType = "string")
+    private String stuBirthDate;
     /**
      * 国籍地区
      */
