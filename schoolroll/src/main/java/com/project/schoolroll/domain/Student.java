@@ -82,6 +82,7 @@ public class Student extends Entitys implements Serializable {
     private String educationalSystem;
     /**
      * 就读方式/学习方式
+     * 走读,住校,借宿,其它
      */
     @Column(name = "ways_study", columnDefinition = "VARCHAR(32) COMMENT '就读方式/学习方式'")
     private String waysStudy;

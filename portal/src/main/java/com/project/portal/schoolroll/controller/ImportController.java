@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
-import com.project.schoolroll.service.LeadingInService;
+import com.project.schoolroll.service.ImportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 
@@ -32,15 +31,16 @@ import java.io.IOException;
 @RestController
 @Slf4j
 @Api(value = "导入接口", tags = {"导入相关数据接口"})
-@RequestMapping(path = "/leadingIn", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class LeadingInController {
-    private final LeadingInService leadingInService;
+@RequestMapping(path = "/import", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+public class ImportController {
+    private final ImportService importService;
 
     @Autowired
-    public LeadingInController(LeadingInService leadingInService) {
-        this.leadingInService = leadingInService;
+    public ImportController(ImportService importService) {
+        this.importService = importService;
     }
 
+//    @UserLoginToken
     @ApiOperation(value = "导入学生信息")
     @PostMapping(path = "/students")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
@@ -51,10 +51,10 @@ public class LeadingInController {
         try {
             String type = FileUtil.extName(file.getOriginalFilename());
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type)){
-                leadingInService.studentsExcel07Reader(file.getInputStream());
+                importService.studentsExcel07Reader(file.getInputStream());
                 return WebResult.okResult();
             }else if (StrUtil.isNotBlank(type) && "xls".equals(type)){
-                leadingInService.studentsExcel03Reader(file.getInputStream());
+                importService.studentsExcel03Reader(file.getInputStream());
                 return WebResult.okResult();
             }
         } catch (IOException e) {

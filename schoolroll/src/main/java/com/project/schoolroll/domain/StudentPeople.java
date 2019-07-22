@@ -62,7 +62,7 @@ public class StudentPeople extends Entitys implements Serializable {
      * 护照
      * 其他
      */
-    @Column(name = "stu_card_type", columnDefinition = "VARCHAR(32) COMMENT '身份证件类型'")
+    @Column(name = "stu_card_type", columnDefinition = "VARCHAR(32) DEFAULT '身份证' COMMENT '身份证件类型'")
     private String stuCardType;
     /**
      * 身份证号
@@ -148,6 +148,11 @@ public class StudentPeople extends Entitys implements Serializable {
      */
     @Column(name = "arrival_date", columnDefinition = "VARCHAR(32) COMMENT '入学报到日期'")
     private String arrivalDate;
+    /**
+     * 招生批次 春季,秋季
+     */
+    @Column(name = "recruit_batch", columnDefinition = "VARCHAR(32) COMMENT '招生批次'")
+    private String recruitBatch;
 //    /**
 //     * 学生邮箱
 //     */

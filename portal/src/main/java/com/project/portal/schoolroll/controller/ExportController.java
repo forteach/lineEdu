@@ -1,7 +1,8 @@
 package com.project.portal.schoolroll.controller;
 
 import com.project.portal.response.WebResult;
-import com.project.schoolroll.service.LeadingOutService;
+import com.project.schoolroll.service.ExportService;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Api(value = "导出接口", tags = {"导出相关数据接口"})
-@RequestMapping(path = "/leadingOut", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class LeadingOutController {
+@RequestMapping(path = "/export", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+public class ExportController {
 
-    private final LeadingOutService leadingOutService;
+    private final ExportService leadingOutService;
 
     @Autowired
-    public LeadingOutController(LeadingOutService leadingOutService) {
+    public ExportController(ExportService leadingOutService) {
         this.leadingOutService = leadingOutService;
     }
 
+//    @UserLoginToken
     @ApiOperation(value = "导出学生需要信息模版")
-    @PostMapping(path = "/leadingOutStudentTemplate")
+    @PostMapping(path = "/exportStudentTemplate")
     public WebResult leadingOutStudentTemplate(){
-        leadingOutService.leadingOutStudentTemplate();
+        leadingOutService.exportStudentTemplate();
         return WebResult.okResult();
     }
 }

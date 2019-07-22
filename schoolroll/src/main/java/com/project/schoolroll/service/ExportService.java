@@ -7,6 +7,6 @@ package com.project.schoolroll.service;
  * @Version: 1.0
  * @Description:
  */
-public interface LeadingOutService {
-    public void leadingOutStudentTemplate();
+public interface ExportService {
+    public void exportStudentTemplate();
 }

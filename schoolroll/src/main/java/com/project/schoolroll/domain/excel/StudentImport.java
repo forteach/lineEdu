@@ -1,6 +1,8 @@
 package com.project.schoolroll.domain.excel;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -12,7 +14,9 @@ import java.io.Serializable;
  * @description:
  */
 @Data
-public class StudentInfo implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class StudentImport implements Serializable {
     /**
      * 学生学号id
      */
@@ -33,6 +37,10 @@ public class StudentInfo implements Serializable {
      * 入学年度
      */
     private String enrollmentDate;
+    /**
+     * 招生批次 (招募批次)
+     */
+    private String recruitBatch;
     /**
      * 专业名称
      */
@@ -57,6 +65,23 @@ public class StudentInfo implements Serializable {
      * 准考证号
      */
     private String entranceCertificateNumber;
+    /**
+     * 考试市县/地区
+     */
+    private String examinationArea;
+    /**
+     * 毕业学校地区
+     */
+    private String school;
+    /**
+     * 就读方式/学习方式
+     * 走读,住校,借宿,其它
+     */
+    private String waysStudy;
+    /**
+     * 报道日期
+     */
+    private String arrivalDate;
     /**
      * 家长姓名
      */

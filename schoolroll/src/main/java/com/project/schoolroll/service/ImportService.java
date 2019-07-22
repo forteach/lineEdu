@@ -9,7 +9,7 @@ import java.io.InputStream;
  * @Version: 1.0
  * @Description:
  */
-public interface LeadingInService {
+public interface ImportService {
 
     void studentsExcel07Reader(InputStream inputStream);
 

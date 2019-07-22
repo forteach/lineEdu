@@ -7,15 +7,13 @@ import cn.hutool.poi.excel.ExcelWriter;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
-import com.project.schoolroll.service.LeadingOutService;
+import com.project.schoolroll.service.ExportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,21 +25,21 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class LeadingOutServiceImpl implements LeadingOutService {
+public class ExportServiceImpl implements ExportService {
 
     private final StudentExpandRepository studentExpandRepository;
     private final StudentRepository studentRepository;
     private final StudentPeopleRepository studentPeopleRepository;
 
     @Autowired
-    public LeadingOutServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository) {
+    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository) {
         this.studentExpandRepository = studentExpandRepository;
         this.studentRepository = studentRepository;
         this.studentPeopleRepository = studentPeopleRepository;
     }
 
     @Override
-    public void leadingOutStudentTemplate() {
+    public void exportStudentTemplate() {
         Map<String, Object> row1 = new LinkedHashMap<>();
         row1.put("姓名", "张三");
         row1.put("年龄", 23);
