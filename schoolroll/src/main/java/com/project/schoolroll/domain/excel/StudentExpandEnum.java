@@ -23,24 +23,39 @@ public enum StudentExpandEnum {
     //户口所在地行政区划码
     HOUSEHOLD_ADMINISTRATIVE_CODE("户口所在地行政代码"),
     //户口所在地县以下详细地址
-    HOUSEHOLD_ADDRESS_DETAILS("户口所在地县以下详细地址")
+    HOUSEHOLD_ADDRESS_DETAILS("户口所在地县以下详细地址"),
     //所属派出所
-
+    LOCAL_POLICE_STATION("所属派出所"),
     //学生居住地类型
+    STUDENT_HABITATION_TYPE("学生居住地类型"),
     //健康状况
+    HEALTHY_STATUS("健康状况"),
     //学生来源
+    STUDENT_SOURCE("学生来源"),
     //招生对象
+    RECRUIT("招生对象"),
     //是否建档立卡贫困户
+    IS_DESTITUTE_FAMILY("是否建档立卡贫困户"),
     //招生方式
+    STUDENT_RECRUITING_WAYS("招生方式"),
     //联招合作类型
+    JOINT_RECRUITMENT_COOPERATION_TYPE("联招合作类型"),
     //考生特长
+    STUDENT_SPECIALITY("考生特长"),
     //考生既往病史
+    STUDENT_MEDICAL_HISTORY("考生既往病史"),
     //体检结论
+    HEALTH_REPORT("体检结论"),
     //联招合作办学形式
+    JOINT_RECRUITMENT_COOPERATION_STYLE("联招合作办学形式"),
     //联招合作学校代码
+    JOINT_RECRUITMENT_COOPERATION_SCHOOL_CODE("联招合作学校代码"),
     //校外教学点
+    OFF_CAMPUS_TEACHING_ADDRESS("校外教学点"),
     //分阶段培养方式
+    STAGE_BY_STAGE_EDUCATION_TYPE("分阶段培养方式"),
     //英文姓名
+    ENGLISH_NAME("英文姓名"),
     //其他联系方式
     ;
 

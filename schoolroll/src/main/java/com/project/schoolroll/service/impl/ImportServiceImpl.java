@@ -134,11 +134,11 @@ public class ImportServiceImpl implements ImportService {
         studentExpandRepository.saveAll(studentExpandList);
 
         //花费毫秒数
-        System.out.println("花费毫秒数 : " + timer.interval());
+        log.debug("花费毫秒数 : [{}]", timer.interval());
         //花费分钟数
-        System.out.println("花费分钟数 : " + timer.intervalMinute());
+        log.debug("花费分钟数 : [{}]", timer.intervalMinute());
         //返回花费时间，并重置开始时间
-        System.out.println("返回花费时间，并重置开始时间 : " + timer.intervalRestart());
+        log.debug("返回花费时间,并重置开始时间 : [{}]", timer.intervalRestart());
     }
 
     private void setStudentExpandValue(String stuId, String studentExpandName, String studentExpandValue, List<StudentExpand> studentExpandList) {
