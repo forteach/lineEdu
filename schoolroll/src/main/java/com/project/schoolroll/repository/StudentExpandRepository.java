@@ -43,4 +43,13 @@ public interface StudentExpandRepository extends JpaRepository<StudentExpand, St
      */
     @Modifying(clearAutomatically = true)
     int deleteAllByStuId(String stuId);
+
+    /**
+     * 根据学生id查询对应的扩展信息
+     * @param stuId
+     * @param expandName
+     * @return
+     */
+    @Transactional(readOnly = true)
+    List<StudentExpand> findAllByStuIdAndExpandName(String stuId, String expandName);
 }

@@ -3,6 +3,8 @@ package com.project.schoolroll.repository;
 import com.project.schoolroll.domain.StudentPeople;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
@@ -12,4 +14,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface StudentPeopleRepository extends JpaRepository<StudentPeople, String> {
 
+//    List<StudentPeople> findAllByStu
 }

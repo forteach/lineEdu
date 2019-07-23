@@ -78,7 +78,7 @@ public class StudentPeople extends Entitys implements Serializable {
      * 出生日期
      */
     @Column(name = "stu_birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生日期'")
-    private String stu_birthDate;
+    private String stuBirthDate;
     /**
      * 国籍/地区
      * 中国
