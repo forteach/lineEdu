@@ -99,6 +99,7 @@ public class ImportServiceImpl implements ImportService {
                         studentPeopleRepository.findById(student.getPeopleId())
                                 .ifPresent(studentPeople -> {
                                     BeanUtil.copyProperties(studentImport, studentPeople);
+                                    setStuBirthDate(studentImport.getStuIDCard(), studentPeople);
                                     studentPeopleList.add(studentPeople);
                                 });
                     } else {
@@ -106,10 +107,7 @@ public class ImportServiceImpl implements ImportService {
                         BeanUtil.copyProperties(studentImport, studentPeople);
                         String peopleId = IdUtil.fastSimpleUUID();
                         studentPeople.setPeopleId(peopleId);
-                        if (IdcardUtil.isValidCard(studentImport.getStuIDCard())) {
-                            //验证是合法身份证信息获取生日信息
-                            studentPeople.setStuBirthDate(IdcardUtil.getBirth(studentImport.getStuIDCard()));
-                        }
+                        setStuBirthDate(studentImport.getStuIDCard(), studentPeople);
                         studentPeopleList.add(studentPeople);
                         Student student = new Student();
                         BeanUtil.copyProperties(studentImport, student);
@@ -170,6 +168,13 @@ public class ImportServiceImpl implements ImportService {
                 }
             }
         };
+    }
+
+    private void setStuBirthDate(String stuIDCard, StudentPeople studentPeople){
+        if (IdcardUtil.isValidCard(StrUtil.trim(stuIDCard))) {
+            //验证是合法身份证信息获取生日信息
+            studentPeople.setStuBirthDate(IdcardUtil.getBirth(stuIDCard));
+        }
     }
 
     private void setHeaderAlias(ExcelReader reader) {

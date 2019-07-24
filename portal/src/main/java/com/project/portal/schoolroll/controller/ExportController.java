@@ -23,18 +23,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/export", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ExportController {
 
-    private final ExportService leadingOutService;
+    private final ExportService exportService;
 
     @Autowired
-    public ExportController(ExportService leadingOutService) {
-        this.leadingOutService = leadingOutService;
+    public ExportController(ExportService exportService) {
+        this.exportService = exportService;
     }
 
 //    @UserLoginToken
-    @ApiOperation(value = "导出学生需要信息模版")
+    @ApiOperation(value = "导入学生需要信息模版")
     @PostMapping(path = "/exportStudentTemplate")
     public WebResult leadingOutStudentTemplate(){
-        leadingOutService.exportStudentTemplate();
+        exportService.exportStudentTemplate();
         return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "导出学生信息")
+    @PostMapping(path = "exportStudents")
+    public WebResult exportStudents(){
+
+        return WebResult.okResult(exportService.exportStudents());
     }
 }

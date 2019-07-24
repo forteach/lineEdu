@@ -1,5 +1,7 @@
 package com.project.schoolroll.service;
 
+import java.io.OutputStream;
+
 /**
  * @Auther: zhangyy
  * @Email: zhang10092009@hotmail.com
@@ -9,4 +11,6 @@ package com.project.schoolroll.service;
  */
 public interface ExportService {
     public void exportStudentTemplate();
+
+    OutputStream exportStudents();
 }
