@@ -1,6 +1,7 @@
 package com.project.schoolroll.service;
 
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -12,5 +13,5 @@ import java.io.OutputStream;
 public interface ExportService {
     public void exportStudentTemplate();
 
-    OutputStream exportStudents();
+    List<List<?>>  exportStudents();
 }

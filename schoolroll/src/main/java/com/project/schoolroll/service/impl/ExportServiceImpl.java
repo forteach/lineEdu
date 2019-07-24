@@ -2,6 +2,7 @@ package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.project.schoolroll.repository.StudentExpandRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +35,8 @@ public class ExportServiceImpl implements ExportService {
     private final StudentPeopleRepository studentPeopleRepository;
 
     @Autowired
-    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository) {
+    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository,
+                             StudentPeopleRepository studentPeopleRepository) {
         this.studentExpandRepository = studentExpandRepository;
         this.studentRepository = studentRepository;
         this.studentPeopleRepository = studentPeopleRepository;
@@ -45,8 +48,18 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public OutputStream exportStudents() {
-        return null;
+    public List<List<?>>  exportStudents() {
+        List<?> row1 = CollUtil.newArrayList("aa", "bb", "cc", "dd", DateUtil.date(), 3.22676575765);
+        List<?> row2 = CollUtil.newArrayList("aa1", "bb1", "cc1", "dd1", DateUtil.date(), 250.7676);
+        List<?> row3 = CollUtil.newArrayList("aa2", "bb2", "cc2", "dd2", DateUtil.date(), 0.111);
+        List<?> row4 = CollUtil.newArrayList("aa3", "bb3", "cc3", "dd3", DateUtil.date(), 35);
+        List<?> row5 = CollUtil.newArrayList("aa4", "bb4", "cc4", "dd4", DateUtil.date(), 28.00);
+
+        return CollUtil.newArrayList(row1, row2, row3, row4, row5);
+//        BigExcelWriter writer= ExcelUtil.getBigWriter("/home/yy/Downloads/stu.xlsx", "学生信息");
+//        writer.write(rows);
+//        writer.close();
+//        return null;
     }
 
     //    @Override

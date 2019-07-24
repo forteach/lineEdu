@@ -2,6 +2,9 @@ package com.project.schoolroll.web.vo;
 
 import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -12,10 +15,14 @@ import java.io.Serializable;
  * @description:
  */
 @Data
+@Entity
 public class StudentVo implements Serializable {
+    @Transient
+    private static final long serialVersionUID = 1L;
     /**
      * 学生id
      */
+    @Id
     public String stuId;
     /**
      * 学生名字
