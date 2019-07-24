@@ -2,9 +2,7 @@ package com.project.schoolroll.web.vo;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -16,6 +14,8 @@ import java.io.Serializable;
  */
 @Data
 @Entity
+@Table(name = "v_student_vo")
+@org.hibernate.annotations.Table(appliesTo = "v_student_vo", comment = "查询学生信息结果视图实体")
 public class StudentVo implements Serializable {
     @Transient
     private static final long serialVersionUID = 1L;
@@ -96,4 +96,13 @@ public class StudentVo implements Serializable {
      * 考试总成绩
      */
     public String totalExaminationAchievement;
+    /**
+     * 性别
+     */
+    public String gender;
+    /**
+     * 身份证号码
+     */
+    @Column(name = "stu_id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号'")
+    public String stuIDCard;
 }

@@ -60,11 +60,12 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
     public Page<StudentVo> findStudentsPageAll(FindStudentDtoPageAllVo vo) {
         StringBuilder dataSql = new StringBuilder(" SELECT s.stu_id,s.stu_name,s.specialty_id,s.specialty_name,s.people_id,s.center_id,lc.center_name,s.student_category, " +
                 " s.class_id,s.class_name,s.educational_system,s.ways_study,s.learning_modality,s.ways_enrollment,s.enrollment_date, " +
-                " s.grade,s.entrance_certificate_number,s.candidate_number,s.total_examination_achievement " +
+                " s.grade,s.entrance_certificate_number,s.candidate_number,s.total_examination_achievement,sp.gender,sp.stu_id_card " +
                 " FROM student as s " +
-                " JOIN learn_center as lc ON s.center_id = lc.center_id ");
-        StringBuilder whereSql = new StringBuilder(" WHERE s.is_validated = '0' AND lc.is_validated = '0' ");
-        StringBuilder countSql = new StringBuilder(" SELECT COUNT(1) FROM student AS s JOIN learn_center AS lc ON lc.center_id = s.center_id ");
+                " LEFT JOIN learn_center as lc ON s.center_id = lc.center_id " +
+                " LEFT JOIN student_people as sp on s.people_id = sp.people_id ");
+        StringBuilder whereSql = new StringBuilder(" WHERE s.is_validated = '0' AND lc.is_validated = '0' AND sp.is_validated = '0' ");
+        StringBuilder countSql = new StringBuilder(" SELECT COUNT(1) FROM student AS s LEFT JOIN learn_center AS lc ON lc.center_id = s.center_id LEFT JOIN student_people as sp on s.people_id = sp.people_id ");
         // 拼接whereSql
         if (StrUtil.isNotBlank(vo.getStuId())){
             whereSql.append(" AND s.stu_id = :stuId");
