@@ -1,30 +1,23 @@
 package com.project.portal.schoolroll.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.poi.excel.BigExcelWriter;
-import cn.hutool.poi.excel.ExcelUtil;
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.service.ExportService;
-import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URLDecoder;
 
 /**
  * @Auther: zhangyy
@@ -46,27 +39,46 @@ public class ExportController {
         this.exportService = exportService;
     }
 
-//    @UserLoginToken
+    //    @UserLoginToken
     @ApiOperation(value = "导入学生需要信息模版")
     @PostMapping(path = "/exportStudentTemplate")
-    public WebResult leadingOutStudentTemplate(){
+    public WebResult leadingOutStudentTemplate() {
         exportService.exportStudentTemplate();
         return WebResult.okResult();
     }
 
     @ApiOperation(value = "导出学生信息")
     @GetMapping(path = "/exportStudents")
-    public WebResult exportStudents(HttpServletResponse response) throws IOException {
-        // 告诉浏览器用什么软件可以打开此文件
-//        response.setHeader("content-Type", "application/vnd.ms-excel");
-        //响应头信息
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/ms-excel; charset=UTF-8");
-        List<List<?>> rows = exportService.exportStudents();
-        BigExcelWriter writer= ExcelUtil.getBigWriter("/home/yy/Downloads/stu.xlsx", "学生信息");
-        writer.write(rows);
-//        response.getOutputStream()
-        writer.close();
+    public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
+        String fileName = "students" + ".xlsx";
+        ServletOutputStream out;
+        res.setContentType("multipart/form-data");
+        res.setCharacterEncoding("UTF-8");
+        res.setContentType("text/html");
+        String filePath = getClass().getResource("/template/" + fileName).getPath();
+        String userAgent = req.getHeader("User-Agent");
+        if (userAgent.contains("MSIE") || userAgent.contains("Trident")) {
+            fileName = java.net.URLEncoder.encode(fileName, "UTF-8");
+        } else {
+// 非IE浏览器的处理：
+            fileName = new String((fileName).getBytes("UTF-8"), "ISO-8859-1");
+        }
+        filePath = URLDecoder.decode(filePath, "UTF-8");
+        res.setHeader("Content-Disposition", "attachment;fileName=" + fileName);
+        FileInputStream inputStream = new FileInputStream(filePath);
+        out = res.getOutputStream();
+        int b = 0;
+        byte[] buffer = new byte[1024];
+        while ((b = inputStream.read(buffer)) != -1) {
+// 4.写到输出流(out)中
+            out.write(buffer, 0, b);
+        }
+        inputStream.close();
+
+        if (out != null) {
+            out.flush();
+            out.close();
+        }
         return WebResult.okResult();
     }
 

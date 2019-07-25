@@ -104,7 +104,6 @@ public class StudentController {
             @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
-//            @ApiImplicitParam(name = "sortVo", value = "分页排序字段", dataTypeClass = SortVo.class, required = true, paramType = "query")
     })
     public WebResult findStudentsPageAll(@RequestBody StudentDtoFindPageAllRequest request) {
         MyAssert.blank(String.valueOf(request.getPage()), DefineCode.ERR0010, "页码参数不为空");
@@ -127,7 +126,7 @@ public class StudentController {
     }
 
     @ApiOperation(value = "查询扩展学生信息")
-    @GetMapping(path = "/findStudentExpandInfo")
+    @PostMapping(path = "/findStudentExpandInfo")
     @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "form")
     public WebResult findStudentExpandInfo(@RequestBody String stuId){
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
