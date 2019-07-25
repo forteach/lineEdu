@@ -81,6 +81,11 @@ public class ExportServiceImpl implements ExportService {
         List<?> row4 = CollUtil.newArrayList("aa3", "bb3", "cc3", "dd3", DateUtil.date(), 35);
         List<?> row5 = CollUtil.newArrayList("aa4", "bb4", "cc4", "dd4", DateUtil.date(), 28.00);
 
+
+        ExcelWriter excelWriter = new ExcelWriter(true);
+        excelWriter.write(row5);
+        excelWriter.autoSizeColumnAll();
+
         return CollUtil.newArrayList(row1, row2, row3, row4, row5);
 //        BigExcelWriter writer= ExcelUtil.getBigWriter("/home/yy/Downloads/stu.xlsx", "学生信息");
 //        writer.write(rows);

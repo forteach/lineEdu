@@ -2,11 +2,13 @@ package com.project.portal.schoolroll.controller;
 
 import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.service.ExportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -44,15 +47,40 @@ public class ExportController {
 
     //    @UserLoginToken
     @ApiOperation(value = "导入学生需要信息模版")
-    @PostMapping(path = "/exportStudentTemplate")
-    public WebResult leadingOutStudentTemplate(HttpServletResponse res, HttpServletRequest req) {
+    @GetMapping(path = "/exportStudentTemplate")
+    public WebResult leadingOutStudentTemplate(HttpServletResponse res, HttpServletRequest req) throws IOException {
+        ServletOutputStream out = res.getOutputStream();
+        res.setContentType("multipart/form-data");
+        res.setCharacterEncoding("utf-8");
+        res.setHeader("Content-disposition", "attachment;filename=学生数据模版.xlsx");
         List<List<String>> list = exportService.exportStudentTemplate();
-        BigExcelWriter writer = ExcelUtil.getBigWriter("/home/yy/Downloads/xxx.xlsx");
+        ExcelWriter writer = new ExcelWriter(true);
+        writer.write(list);
+        writer.autoSizeColumnAll();
+        writer.flush();
+//        out.write(writer.);
+        out.flush();
+//        BigExcelWriter writer = ExcelUtil.getBigWriter("/home/yy/Downloads/xxx.xlsx");
 //        ExcelUtil.
 // 一次性写出内容，使用默认样式
-        writer.write(list);
+//        writer.write(list);
 // 关闭writer，释放内存
         writer.close();
+
+
+//        ServletOutputStream out = res.getOutputStream();
+//        res.setContentType("multipart/form-data");
+//        res.setCharacterEncoding("utf-8");
+//        res.setHeader("Content-disposition", "attachment;filename="+fileName+".xlsx");
+//        ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX, true);
+//        String fileName = new String(("UserInfo " + new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+//                .getBytes(), "UTF-8");
+//        Sheet sheet1 = new Sheet(1, 0);
+//        sheet1.setSheetName("第一个sheet");
+//        writer.write0(getListString(), sheet1);
+//        writer.finish();
+//        out.flush();
+//    }
 
         return WebResult.okResult();
     }
