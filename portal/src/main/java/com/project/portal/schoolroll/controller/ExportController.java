@@ -1,5 +1,7 @@
 package com.project.portal.schoolroll.controller;
 
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.service.ExportService;
 import io.swagger.annotations.Api;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -42,8 +45,15 @@ public class ExportController {
     //    @UserLoginToken
     @ApiOperation(value = "导入学生需要信息模版")
     @PostMapping(path = "/exportStudentTemplate")
-    public WebResult leadingOutStudentTemplate() {
-        exportService.exportStudentTemplate();
+    public WebResult leadingOutStudentTemplate(HttpServletResponse res, HttpServletRequest req) {
+        List<List<String>> list = exportService.exportStudentTemplate();
+        BigExcelWriter writer = ExcelUtil.getBigWriter("/home/yy/Downloads/xxx.xlsx");
+//        ExcelUtil.
+// 一次性写出内容，使用默认样式
+        writer.write(list);
+// 关闭writer，释放内存
+        writer.close();
+
         return WebResult.okResult();
     }
 

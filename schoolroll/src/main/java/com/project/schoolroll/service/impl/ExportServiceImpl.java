@@ -43,8 +43,34 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public void exportStudentTemplate() {
-        studentRepository.findAll();
+    public List<List<String>> exportStudentTemplate() {
+        List<String> stringList = CollUtil.newArrayList(
+                "学号",
+                "学生姓名",
+                "学生性别",
+                "身份证号",
+                "入学年度",
+                "招生批次",
+                "专业名称",
+                "政治面貌",
+                "民族",
+                "学制及计划类别",
+                "中招考试成绩/考试成绩",
+                "准考证号",
+                "考试市县/地区",
+                "毕业学校",
+                "就读方式 走读,住校,借宿,其它",
+                "报道日期",
+                "家长姓名",
+                "家长电话",
+                "工作单位",
+                "学生电话",
+                "学生邮箱",
+                "家庭住址",
+                "备注"
+        );
+        List<List<String>> list = CollUtil.newArrayList(stringList, CollUtil.newArrayList());
+        return list;
     }
 
     @Override

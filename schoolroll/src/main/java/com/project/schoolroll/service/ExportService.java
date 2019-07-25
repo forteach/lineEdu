@@ -11,7 +11,7 @@ import java.util.List;
  * @Description:
  */
 public interface ExportService {
-    public void exportStudentTemplate();
+    public List<List<String>> exportStudentTemplate();
 
     List<List<?>>  exportStudents();
 }
