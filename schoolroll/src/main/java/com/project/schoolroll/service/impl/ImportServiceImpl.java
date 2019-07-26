@@ -9,7 +9,6 @@ import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.sax.handler.RowHandler;
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentExpand;
 import com.project.schoolroll.domain.StudentPeople;
@@ -20,16 +19,18 @@ import com.project.schoolroll.repository.StudentRepository;
 import com.project.schoolroll.service.ImportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
-import static com.project.schoolroll.domain.excel.StudentExpandEnum.FAMILY_ADDRESS;
-import static com.project.schoolroll.domain.excel.StudentExpandEnum.STU_EMAIL;
+import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
+import static com.project.schoolroll.domain.excel.StudentEnum.*;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @Auther: zhangyy
@@ -44,12 +45,15 @@ public class ImportServiceImpl implements ImportService {
     private final StudentRepository studentRepository;
     private final StudentExpandRepository studentExpandRepository;
     private final StudentPeopleRepository studentPeopleRepository;
+    private final RedisTemplate redisTemplate;
 
     @Autowired
-    public ImportServiceImpl(StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository, StudentExpandRepository studentExpandRepository) {
+    public ImportServiceImpl(StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository,
+                             StudentExpandRepository studentExpandRepository, RedisTemplate redisTemplate) {
         this.studentRepository = studentRepository;
         this.studentExpandRepository = studentExpandRepository;
         this.studentPeopleRepository = studentPeopleRepository;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -58,6 +62,9 @@ public class ImportServiceImpl implements ImportService {
         setHeaderAlias(reader);
         List<StudentImport> list = reader.readAll(StudentImport.class);
         saveStudent(list);
+
+        //导入成功删除对应键值
+        redisTemplate.delete(IMPORT_STUDENTS);
     }
 
     @Override
@@ -68,13 +75,8 @@ public class ImportServiceImpl implements ImportService {
 
         saveStudent(list);
 
-//        ExcelReader reader = ExcelUtil.getReader(inputStream);
-//        List<Map<String,Object>> readAll = reader.readAll();
-
-//        readAll.forEach(stringObjectMap -> {
-//            stringObjectMap.forEach((k, v) -> Console.log("key : [{}] value : [{}]", k, v));
-//        });
-//        readAll.forEach((k, v) -> System.out.println("key : [" + k + "], value : [" + v + "]"));
+        //导入成功删除对应键值
+        redisTemplate.delete(IMPORT_STUDENTS);
 
 //        Excel03SaxReader reader = new Excel03SaxReader(createRowHandler());
 //        reader.read(inputStream, 0);
@@ -86,7 +88,20 @@ public class ImportServiceImpl implements ImportService {
         List<StudentPeople> studentPeopleList = CollUtil.newArrayList();
         List<Student> studentList = CollUtil.newArrayList();
         List<StudentExpand> studentExpandList = CollUtil.newArrayList();
-        list.parallelStream()
+        //查询全部学生信息
+//        List<Student> students = studentRepository.findAll();
+//        List<String> peopleIds = students
+//                .parallelStream()
+//                .map(Student::getPeopleId)
+//                .collect(toList());
+//        List<Map<String, Object>> mapList = new ArrayList<>();
+//        students.parallelStream()
+//                .filter(Objects::nonNull)
+//                .forEach(s -> redisTemplate.opsForHash()
+//                        .putAll(IMPORT_STUDENTS.concat(s.getStuId()), BeanUtil.beanToMap(s, false, true)));
+
+
+                list.parallelStream()
                 .filter(Objects::nonNull)
                 .forEach(studentImport -> {
 
@@ -116,11 +131,11 @@ public class ImportServiceImpl implements ImportService {
                     }
 
                     if (StrUtil.isNotBlank(studentImport.getStuEmail())) {
-                        setStudentExpandValue(studentImport.getStuId(), STU_EMAIL.getExpandName(), studentImport.getFamilyAddress(), studentExpandList);
+                        setStudentExpandValue(studentImport.getStuId(), stuEmail.getName(), studentImport.getFamilyAddress(), studentExpandList);
                     }
 
                     if (StrUtil.isNotBlank(studentImport.getFamilyAddress())) {
-                        setStudentExpandValue(studentImport.getStuId(), FAMILY_ADDRESS.getExpandName(), studentImport.getFamilyAddress(), studentExpandList);
+                        setStudentExpandValue(studentImport.getStuId(), familyAddress.getName(), studentImport.getFamilyAddress(), studentExpandList);
                     }
                     log.info("thread id : [{}] , thread name : [{}]", Thread.currentThread().getId(), Thread.currentThread().getName());
                 });
@@ -154,21 +169,21 @@ public class ImportServiceImpl implements ImportService {
         studentExpandList.add(studentExpand);
     }
 
-    private RowHandler createRowHandler() {
-        return new RowHandler() {
-            @Override
-            public void handle(int sheetIndex, int rowIndex, List<Object> rowlist) {
-                if (rowIndex > 0) {
-                    rowlist.stream()
-                            .filter(Objects::nonNull)
-                            .filter(o -> StrUtil.isNotBlank(String.valueOf(o)))
-                            .forEachOrdered(o -> {
-                                log.debug("Object : [{}], [{}]", o.getClass(), o);
-                            });
-                }
-            }
-        };
-    }
+//    private RowHandler createRowHandler() {
+//        return new RowHandler() {
+//            @Override
+//            public void handle(int sheetIndex, int rowIndex, List<Object> rowlist) {
+//                if (rowIndex > 0) {
+//                    rowlist.stream()
+//                            .filter(Objects::nonNull)
+//                            .filter(o -> StrUtil.isNotBlank(String.valueOf(o)))
+//                            .forEachOrdered(o -> {
+//                                log.debug("Object : [{}], [{}]", o.getClass(), o);
+//                            });
+//                }
+//            }
+//        };
+//    }
 
     private void setStuBirthDate(String stuIDCard, StudentPeople studentPeople){
         if (IdcardUtil.isValidCard(StrUtil.trim(stuIDCard))) {
@@ -179,79 +194,80 @@ public class ImportServiceImpl implements ImportService {
 
     private void setHeaderAlias(ExcelReader reader) {
 
-        reader.addHeaderAlias("姓名", "remark");
-        reader.addHeaderAlias("性别", "remark");
-        reader.addHeaderAlias("出生日期", "remark");
-        reader.addHeaderAlias("身份证件类型", "remark");
-        reader.addHeaderAlias("身份证件号", "remark");
-        reader.addHeaderAlias("姓名拼音", "remark");
-        reader.addHeaderAlias("班级名称", "remark");
-        reader.addHeaderAlias("学号", "remark");
-        reader.addHeaderAlias("学生类别", "remark");
-        reader.addHeaderAlias("学习形式", "remark");
-        reader.addHeaderAlias("入学方式", "remark");
-        reader.addHeaderAlias("就读方式", "remark");
-        reader.addHeaderAlias("国籍/地区", "remark");
-        reader.addHeaderAlias("港澳台侨外", "remark");
-        reader.addHeaderAlias("婚姻状况", "remark");
-        reader.addHeaderAlias("乘火车区间", "remark");
-        reader.addHeaderAlias("是否随迁子女", "remark");
-        reader.addHeaderAlias("生源地行政区划码", "remark");
-        reader.addHeaderAlias("出生地行政区划码", "remark");
-        reader.addHeaderAlias("籍贯地行政区划码", "remark");
-        reader.addHeaderAlias("户口所在地区县以下详细地址", "remark");
-        reader.addHeaderAlias("所属派出所", "remark");
-        reader.addHeaderAlias("户口所在地行政区划码", "remark");
-        reader.addHeaderAlias("户口性质", "remark");
-        reader.addHeaderAlias("学生居住地类型", "remark");
-        reader.addHeaderAlias("入学年月", "remark");
-        reader.addHeaderAlias("专业简称", "remark");
-        reader.addHeaderAlias("学制", "remark");
-        reader.addHeaderAlias("民族", "remark");
-        reader.addHeaderAlias("政治面貌", "remark");
-        reader.addHeaderAlias("健康状况", "remark");
-        reader.addHeaderAlias("学生来源", "remark");
-        reader.addHeaderAlias("招生对象", "remark");
-        reader.addHeaderAlias("联系电话", "remark");
-        reader.addHeaderAlias("是否建档立卡贫困户", "remark");
-        reader.addHeaderAlias("招生方式", "remark");
-        reader.addHeaderAlias("联招合作类型", "remark");
-        reader.addHeaderAlias("准考证号", "remark");
-        reader.addHeaderAlias("考生号", "remark");
-        reader.addHeaderAlias("考试总分", "remark");
-        reader.addHeaderAlias("联招合作办学形式", "remark");
-        reader.addHeaderAlias("联招合作学校代码", "remark");
-        reader.addHeaderAlias("校外教学点", "remark");
-        reader.addHeaderAlias("分段培养方式", "remark");
-        reader.addHeaderAlias("英文姓名", "remark");
-        reader.addHeaderAlias("电子信箱/其他联系方式", "remark");
-        reader.addHeaderAlias("家庭现地址", "remark");
-        reader.addHeaderAlias("家庭邮政编码", "remark");
-        reader.addHeaderAlias("家庭电话", "remark");
-        reader.addHeaderAlias("成员1姓名", "remark");
-        reader.addHeaderAlias("成员1关系", "remark");
-        reader.addHeaderAlias("成员1是否监护人", "remark");
-        reader.addHeaderAlias("成员1联系电话", "remark");
-        reader.addHeaderAlias("成员1出生年月", "remark");
-        reader.addHeaderAlias("成员1身份证件类型", "remark");
-        reader.addHeaderAlias("成员1身份证件号", "remark");
-        reader.addHeaderAlias("成员1民族", "remark");
-        reader.addHeaderAlias("成员1政治面貌", "remark");
-        reader.addHeaderAlias("成员1健康状况", "remark");
-        reader.addHeaderAlias("成员1工作或学习单位", "remark");
-        reader.addHeaderAlias("成员1职务", "remark");
-        reader.addHeaderAlias("成员2姓名", "remark");
-        reader.addHeaderAlias("成员2关系", "remark");
-        reader.addHeaderAlias("成员2是否监护人", "remark");
-        reader.addHeaderAlias("成员2联系电话", "remark");
-        reader.addHeaderAlias("成员2出生年月", "remark");
-        reader.addHeaderAlias("成员2身份证件类型", "remark");
-        reader.addHeaderAlias("成员2身份证件号", "remark");
-        reader.addHeaderAlias("成员2民族", "remark");
-        reader.addHeaderAlias("成员2政治面貌", "remark");
-        reader.addHeaderAlias("成员2健康状况", "remark");
-        reader.addHeaderAlias("成员2工作或学习单位", "remark");
-        reader.addHeaderAlias("成员2职务", "remark");
+        reader.addHeaderAlias(stuName.getName(), stuName.name());
+        reader.addHeaderAlias(gender.getName(), gender.name());
+        reader.addHeaderAlias(stuBirthDate.getName(), stuBirthDate.name());
+        reader.addHeaderAlias(stuCardType.getName(), stuCardType.name());
+        reader.addHeaderAlias(stuIDCard.getName(), stuIDCard.name());
+        reader.addHeaderAlias(namePinYin.getName(), namePinYin.name());
+        reader.addHeaderAlias(className.getName(), className.name());
+        reader.addHeaderAlias(stuId.getName(), stuId.name());
+        reader.addHeaderAlias(studentCategory.getName(), studentCategory.name());
+        reader.addHeaderAlias(learningModality.getName(), learningModality.name());
+        reader.addHeaderAlias(waysEnrollment.getName(), waysEnrollment.name());
+        reader.addHeaderAlias(waysStudy.getName(), waysStudy.name());
+        reader.addHeaderAlias(nationality.getName(), nationality.name());
+        reader.addHeaderAlias(nationalityType.getName(), nationalityType.name());
+        reader.addHeaderAlias(marriage.getName(), marriage.name());
+        reader.addHeaderAlias(trainSpace.getName(), trainSpace.name());
+        reader.addHeaderAlias(isImmigrantChildren.getName(), isImmigrantChildren.name());
+        reader.addHeaderAlias(studentFormAdministrativeCode.getName(), studentFormAdministrativeCode.name());
+        reader.addHeaderAlias(birthplaceAdministrativeCode.getName(), birthplaceAdministrativeCode.name());
+        reader.addHeaderAlias(nativePlaceFormAdministrativeCode.getName(), nativePlaceFormAdministrativeCode.name());
+        reader.addHeaderAlias(householdAddressDetails.getName(), householdAddressDetails.name());
+        reader.addHeaderAlias(localPoliceStation.getName(), localPoliceStation.name());
+        reader.addHeaderAlias(householdAdministrativeCode.getName(), householdAdministrativeCode.name());
+        reader.addHeaderAlias(householdType.getName(), householdType.name());
+        reader.addHeaderAlias(studentHabitationType.getName(), studentHabitationType.name());
+        reader.addHeaderAlias(enrollmentDate.getName(), enrollmentDate.name());
+        reader.addHeaderAlias(specialtyName.getName(), specialtyName.name());
+        reader.addHeaderAlias(educationalSystem.getName(), educationalSystem.name());
+        reader.addHeaderAlias(nation.getName(), nation.name());
+        reader.addHeaderAlias(politicalStatus.getName(), politicalStatus.name());
+        reader.addHeaderAlias(healthCondition.getName(), healthCondition.name());
+        reader.addHeaderAlias(studentSource.getName(), studentSource.name());
+        reader.addHeaderAlias(recruit.getName(), recruit.name());
+        reader.addHeaderAlias(stuPhone.getName(), stuPhone.name());
+        reader.addHeaderAlias(isDestituteFamily.getName(), isDestituteFamily.name());
+        reader.addHeaderAlias(studentRecruitingWays.getName(), studentRecruitingWays.name());
+        reader.addHeaderAlias(jointRecruitmentCooperationType.getName(), jointRecruitmentCooperationType.name());
+        reader.addHeaderAlias(entranceCertificateNumber.getName(), entranceCertificateNumber.name());
+        reader.addHeaderAlias(candidateNumber.getName(), candidateNumber.name());
+        reader.addHeaderAlias(totalExaminationAchievement.getName(), totalExaminationAchievement.name());
+        reader.addHeaderAlias(jointRecruitmentCooperationStyle.getName(), jointRecruitmentCooperationStyle.name());
+        reader.addHeaderAlias(jointRecruitmentCooperationSchoolCode.getName(), jointRecruitmentCooperationSchoolCode.name());
+        reader.addHeaderAlias(offCampusTeachingAddress.getName(), offCampusTeachingAddress.name());
+        reader.addHeaderAlias(stageByStageEducationType.getName(), stageByStageEducationType.name());
+        reader.addHeaderAlias(englishName.getName(), englishName.name());
+        reader.addHeaderAlias(stuEmail.getName(), stuEmail.name());
+        reader.addHeaderAlias(familyAddress.getName(), familyAddress.name());
+        reader.addHeaderAlias(familyPostalCode.getName(), familyPostalCode.name());
+        reader.addHeaderAlias(familyPhone.getName(), familyPhone.name());
+        reader.addHeaderAlias(family1Name.getName(), family1Name.name());
+        reader.addHeaderAlias(family1Relationship.getName(), family1Relationship.name());
+        reader.addHeaderAlias(family1IsGuardian.getName(), family1IsGuardian.name());
+        reader.addHeaderAlias(family1Phone.getName(), family1Phone.name());
+        reader.addHeaderAlias(family1BirthDate.getName(), family1BirthDate.name());
+        reader.addHeaderAlias(family1CardType.getName(), family1CardType.name());
+        reader.addHeaderAlias(family1IDCard.getName(), family1IDCard.name());
+        reader.addHeaderAlias(family1Nation.getName(), family1Nation.name());
+        reader.addHeaderAlias(family1PoliticalStatus.getName(), family1PoliticalStatus.name());
+        reader.addHeaderAlias(family1HealthCondition.getName(), family1HealthCondition.name());
+        reader.addHeaderAlias(family1CompanyOrganization.getName(), family1CompanyOrganization.name());
+        reader.addHeaderAlias(family1Position.getName(), family1Position.name());
+        reader.addHeaderAlias(family2Name.getName(), family2Name.name());
+        reader.addHeaderAlias(family2Relationship.getName(), family2Relationship.name());
+        reader.addHeaderAlias(family2IsGuardian.getName(), family2IsGuardian.name());
+        reader.addHeaderAlias(family2Phone.getName(), family2Phone.name());
+        reader.addHeaderAlias(family2BirthDate.getName(), family2BirthDate.name());
+        reader.addHeaderAlias(family2CardType.getName(), family2CardType.name());
+        reader.addHeaderAlias(family2IDCard.getName(), family2IDCard.name());
+        reader.addHeaderAlias(family2Nation.getName(), family2Nation.name());
+        reader.addHeaderAlias(family2PoliticalStatus.getName(), family2PoliticalStatus.name());
+        reader.addHeaderAlias(family2HealthCondition.getName(), family2HealthCondition.name());
+        reader.addHeaderAlias(family2CompanyOrganization.getName(), family2CompanyOrganization.name());
+        reader.addHeaderAlias(family2Position.getName(), family2Position.name());
+        reader.addHeaderAlias(remark.getName(), remark.name());
 
 //        //学号
 //        reader.addHeaderAlias(String.valueOf(reader.readCellValue(0, 0)), "stuId");

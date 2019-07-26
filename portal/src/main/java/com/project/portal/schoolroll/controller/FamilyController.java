@@ -76,7 +76,7 @@ public class FamilyController {
 
     @ApiOperation(value = "查询基本家庭成员信息")
     @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "query")
-    @GetMapping("/findFamilyDtoList")
+    @PostMapping("/findFamilyDtoList")
     public WebResult findFamilyDtoList(@RequestBody String stuId){
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生id不为空");
         return WebResult.okResult(familyService.findFamilyDtoList(JSONObject.parseObject(stuId).getString("stuId")));
@@ -84,7 +84,7 @@ public class FamilyController {
 
     @ApiOperation(value = "查询全部有效家庭成员信息")
     @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "query")
-    @GetMapping("/findFamilies")
+    @PostMapping("/findFamilies")
     public WebResult findFamilies(@RequestBody String stuId){
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生id不为空");
         return WebResult.okResult(familyService.findFamilies(JSONObject.parseObject(stuId).getString("stuId")));

@@ -86,16 +86,26 @@ public class Family extends Entitys implements Serializable {
      * 一般/较弱
      * 残疾
      */
-    @Column(name = "health_condition", columnDefinition = "VARCHAR(32) COMMENT '健康状态'")
-    private String healthCondition;
+    @Column(name = "family_health_condition", columnDefinition = "VARCHAR(32) COMMENT '健康状态'")
+    private String familyHealthCondition;
     /**
      * 工作单位
      */
-    @Column(name = "company_organization", columnDefinition = "VARCHAR(32) COMMENT '工作单位'")
-    private String companyOrganization;
+    @Column(name = "family_company_organization", columnDefinition = "VARCHAR(32) COMMENT '工作单位'")
+    private String familyCompanyOrganization;
     /**
      * 政治面貌
      */
-    @Column(name = "political_status", columnDefinition = "VARCHAR(32) COMMENT '政治面貌'")
-    private String politicalStatus;
+    @Column(name = "family_political_status", columnDefinition = "VARCHAR(32) COMMENT '政治面貌'")
+    private String familyPoliticalStatus;
+    /**
+     * 家庭成员民族
+     */
+    @Column(name = "family_nation", columnDefinition = "VARCHAR(32) COMMENT '民族'")
+    private String familyNation;
+    /**
+     * 家庭成员职务
+     */
+    @Column(name = "family_position", columnDefinition = "VARCHAR(32) COMMENT '职务'")
+    private String familyPosition;
 }

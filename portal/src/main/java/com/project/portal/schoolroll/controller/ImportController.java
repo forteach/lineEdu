@@ -1,5 +1,7 @@
 package com.project.portal.schoolroll.controller;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 
 /**
  * @Auther: zhangyy
@@ -34,10 +40,12 @@ import java.io.IOException;
 @RequestMapping(path = "/import", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ImportController {
     private final ImportService importService;
+    private final RedisTemplate redisTemplate;
 
     @Autowired
-    public ImportController(ImportService importService) {
+    public ImportController(ImportService importService, RedisTemplate redisTemplate) {
         this.importService = importService;
+        this.redisTemplate = redisTemplate;
     }
 
 //    @UserLoginToken
@@ -49,6 +57,12 @@ public class ImportController {
             MyAssert.isNull(null, DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         }
         try {
+            if (redisTemplate.hasKey(IMPORT_STUDENTS)){
+                MyAssert.isNull(null, DefineCode.ERR0013, "有人操作，请稍后再试!");
+            }
+            //设置导入修改时间 防止失败没有过期时间
+            redisTemplate.opsForValue().set(IMPORT_STUDENTS, DateUtil.now());
+            redisTemplate.expire(IMPORT_STUDENTS, 30, TimeUnit.MINUTES);
             String type = FileUtil.extName(file.getOriginalFilename());
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type)){
                 importService.studentsExcel07Reader(file.getInputStream());

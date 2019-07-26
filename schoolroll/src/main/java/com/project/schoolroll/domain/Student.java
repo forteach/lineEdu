@@ -54,7 +54,7 @@ public class Student extends Entitys implements Serializable {
     @Column(name = "center_id", columnDefinition = "VARCHAR(32) COMMENT '学习中心编号'")
     private String centerId;
     /**
-     * 学习类别
+     * 学生类别
      */
     @Column(name = "student_category", columnDefinition = "VARCHAR(32) COMMENT '学生类别'")
     private String studentCategory;

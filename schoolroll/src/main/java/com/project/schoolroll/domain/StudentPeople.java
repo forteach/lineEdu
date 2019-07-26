@@ -72,7 +72,7 @@ public class StudentPeople extends Entitys implements Serializable {
     /**
      * 联系电话
      */
-    @Column(name = "stu_phone", columnDefinition = "VARCHAR(32) COMMENT '电话'")
+    @Column(name = "stu_phone", columnDefinition = "VARCHAR(32) COMMENT '联系电话'")
     private String stuPhone;
     /**
      * 出生日期
@@ -158,5 +158,8 @@ public class StudentPeople extends Entitys implements Serializable {
 //     */
 //    @Column(name = "stu_email", columnDefinition = "VARCHAR(128) COMMENT '学生邮箱'")
 //    private String stuEmail;
+
+    @Column(name = "health_condition", columnDefinition = "VARCHAR(32) COMMENT '健康状态'")
+    private String healthCondition;
 
 }
