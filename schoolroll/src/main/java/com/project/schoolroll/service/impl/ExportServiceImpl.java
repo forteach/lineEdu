@@ -44,135 +44,89 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public List<List<String>> exportStudentTemplate() {
-        List<String> stringList = CollUtil.newArrayList(
+        List<List<String>> list = new ArrayList<>();
+        list.add(CollUtil.newArrayList(
+                "姓名",
+                "性别",
+                "出生日期",
+                "身份证件类型",
+                "身份证件号",
+                "姓名拼音",
+                "班级名称",
                 "学号",
-                "学生姓名",
-                "学生性别",
-                "身份证号",
-                "入学年度",
-                "招生批次",
-                "专业名称",
-                "政治面貌",
+                "学生类别",
+                "学习形式",
+                "入学方式",
+                "就读方式",
+                "国籍/地区",
+                "港澳台侨外",
+                "婚姻状况",
+                "乘火车区间",
+                "是否随迁子女",
+                "生源地行政区划码",
+                "出生地行政区划码",
+                "籍贯地行政区划码",
+                "户口所在地区县以下详细地址",
+                "所属派出所",
+                "户口所在地行政区划码",
+                "户口性质",
+                "学生居住地类型",
+                "入学年月",
+                "专业简称",
+                "学制",
                 "民族",
-                "学制及计划类别",
-                "中招考试成绩/考试成绩",
+                "政治面貌",
+                "健康状况",
+                "学生来源",
+                "招生对象",
+                "联系电话",
+                "是否建档立卡贫困户",
+                "招生方式",
+                "联招合作类型",
                 "准考证号",
-                "考试市县/地区",
-                "毕业学校",
-                "就读方式 走读,住校,借宿,其它",
-                "报道日期",
-                "家长姓名",
-                "家长电话",
-                "工作单位",
-                "学生电话",
-                "学生邮箱",
-                "家庭住址",
-                "备注"
-        );
-        List<List<String>> list = CollUtil.newArrayList(stringList, CollUtil.newArrayList());
+                "考生号",
+                "考试总分",
+                "联招合作办学形式",
+                "联招合作学校代码",
+                "校外教学点",
+                "分段培养方式",
+                "英文姓名",
+                "电子信箱/其他联系方式",
+                "家庭现地址",
+                "家庭邮政编码",
+                "家庭电话",
+                "成员1姓名",
+                "成员1关系",
+                "成员1是否监护人",
+                "成员1联系电话",
+                "成员1出生年月",
+                "成员1身份证件类型",
+                "成员1身份证件号",
+                "成员1民族",
+                "成员1政治面貌",
+                "成员1健康状况",
+                "成员1工作或学习单位",
+                "成员1职务",
+                "成员2姓名",
+                "成员2关系",
+                "成员2是否监护人",
+                "成员2联系电话",
+                "成员2出生年月",
+                "成员2身份证件类型",
+                "成员2身份证件号",
+                "成员2民族",
+                "成员2政治面貌",
+                "成员2健康状况",
+                "成员2工作或学习单位",
+                "成员2职务"
+        ));
         return list;
     }
 
     @Override
     public List<List<?>>  exportStudents() {
-        List<?> row1 = CollUtil.newArrayList("aa", "bb", "cc", "dd", DateUtil.date(), 3.22676575765);
-        List<?> row2 = CollUtil.newArrayList("aa1", "bb1", "cc1", "dd1", DateUtil.date(), 250.7676);
-        List<?> row3 = CollUtil.newArrayList("aa2", "bb2", "cc2", "dd2", DateUtil.date(), 0.111);
-        List<?> row4 = CollUtil.newArrayList("aa3", "bb3", "cc3", "dd3", DateUtil.date(), 35);
-        List<?> row5 = CollUtil.newArrayList("aa4", "bb4", "cc4", "dd4", DateUtil.date(), 28.00);
 
-
-        ExcelWriter excelWriter = new ExcelWriter(true);
-        excelWriter.write(row5);
-        excelWriter.autoSizeColumnAll();
-
-        return CollUtil.newArrayList(row1, row2, row3, row4, row5);
-//        BigExcelWriter writer= ExcelUtil.getBigWriter("/home/yy/Downloads/stu.xlsx", "学生信息");
-//        writer.write(rows);
-//        writer.close();
-//        return null;
+        return null;
     }
 
-    //    @Override
-//    public void exportStudentTemplate() {
-//        Map<String, Object> row1 = new LinkedHashMap<>();
-//        row1.put("姓名", "张三");
-//        row1.put("年龄", 23);
-//        row1.put("成绩", 88.32);
-//        row1.put("是否合格", true);
-//        row1.put("考试日期", DateUtil.date());
-//
-//        Map<String, Object> row2 = new LinkedHashMap<>();
-//        row2.put("姓名", "李四");
-//        row2.put("年龄", 33);
-//        row2.put("成绩", 59.50);
-//        row2.put("是否合格", false);
-//        row2.put("考试日期", DateUtil.date());
-//
-//        ArrayList<Map<String, Object>> rows = CollUtil.newArrayList(row1, row2);
-//        // 通过工具类创建writer
-//        ExcelWriter writer = ExcelUtil.getWriter("/home/yy/Downloads/writeMapTest.xlsx");
-//        //设置自动宽度
-//        writer.autoSizeColumn(0, true);
-//        writer.addHeaderAlias("test1", "test2");
-//        writer.renameSheet("一般成绩但");
-//// 合并单元格后的标题行，使用默认标题样式
-//        writer.merge(row1.size() - 1, "一班成绩单");
-//// 一次性写出内容，使用默认样式
-//        writer.write(rows);
-//// 关闭writer，释放内存
-//        writer.close();
-//    }
-
-    //    @Override
-//    public void leadingOutStudentTemplate() {
-//        Map<String, Object> row1 = new LinkedHashMap<>();
-//        row1.put("姓名", "张三");
-//        row1.put("年龄", 23);
-//        row1.put("成绩", 88.32);
-//        row1.put("是否合格", true);
-//        row1.put("考试日期", DateUtil.date());
-//
-//        Map<String, Object> row2 = new LinkedHashMap<>();
-//        row2.put("姓名", "李四");
-//        row2.put("年龄", 33);
-//        row2.put("成绩", 59.50);
-//        row2.put("是否合格", false);
-//        row2.put("考试日期", DateUtil.date());
-//
-//        ArrayList<Map<String, Object>> rows = CollUtil.newArrayList(row1, row2);
-//        // 通过工具类创建writer
-//        ExcelWriter writer = ExcelUtil.getWriter("d:/writeMapTest.xlsx");
-//// 合并单元格后的标题行，使用默认标题样式
-//        writer.merge(row1.size() - 1, "一班成绩单");
-//// 一次性写出内容，使用默认样式
-//        writer.write(rows);
-//// 关闭writer，释放内存
-//        writer.close();
-//    }
-
-//    @Override
-//    public void leadingOutStudentTemplate() {
-//        List<String> row1 = CollUtil.newArrayList("aa", "bb", "cc", "dd");
-//        List<String> row2 = CollUtil.newArrayList("aa1", "bb1", "cc1", "dd1");
-//        List<String> row3 = CollUtil.newArrayList("aa2", "bb2", "cc2", "dd2");
-//        List<String> row4 = CollUtil.newArrayList("aa3", "bb3", "cc3", "dd3");
-//        List<String> row5 = CollUtil.newArrayList("aa4", "bb4", "cc4", "dd4");
-//
-//        List<List<String>> rows = CollUtil.newArrayList(row1, row2, row3, row4, row5);
-//        //通过工具类创建writerDocuments
-//        ExcelWriter writer = ExcelUtil.getWriter("/home/yy/Documents/writeTest.xlsx");
-////通过构造方法创建writer
-////ExcelWriter writer = new ExcelWriter("d:/writeTest.xls");
-//
-////跳过当前行，既第一行，非必须，在此演示用
-//        writer.passCurrentRow();
-//
-////合并单元格后的标题行，使用默认标题样式
-//        writer.merge(rows.size()-2, "测试标题");
-////一次性写出内容
-//        writer.write(rows);
-////关闭writer，释放内存
-//        writer.close();
-//    }
 }
