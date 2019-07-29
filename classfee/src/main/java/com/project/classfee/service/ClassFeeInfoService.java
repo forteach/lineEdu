@@ -1,6 +1,5 @@
 package com.project.classfee.service;
 
-
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -12,7 +11,6 @@ import com.project.classfee.repository.ClassFeeRepository;
 import com.project.classfee.repository.ClassFeeYearRepository;
 import com.project.mysql.service.BaseMySqlService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,13 +56,36 @@ public class ClassFeeInfoService extends BaseMySqlService {
         List<String> sepcialtyIds=filterSpecialty(roms);
 
         //判断和执行导入数据,并初始化年度和月份数据
-        sepcialtyIds.stream().forEach(id->isExecImp(year,month,id,centerId));
+        sepcialtyIds.stream()
+                .filter(Objects::nonNull).
+                forEach(id->isExecImp(year,month,id,centerId));
 
         //保存课时文件记录
         int saveCount= saveAllInfo(roms);
         MyAssert.isNull(saveCount>0,DefineCode.ERR0012,"导入课时信息记录失败！");
 
-        //汇总导入的数据课时和课时费
+        //按专业汇总导入的数据课时,
+        Map<String, Integer> classCount =  roms.stream().collect(Collectors.groupingBy(ClassFeeInfo::getSpecialtyIds,Collectors.summingInt(ClassFeeInfo::getClassCount)));
+
+        //按专业汇总导入数据的课时费
+        Map<String, Integer>classFeeMap =  roms.stream().collect(Collectors.groupingBy(ClassFeeInfo::getSpecialtyIds,Collectors.summingInt(ClassFeeInfo::getClassFee)));
+
+        //根据专业名称数据更新课时费和课时
+        sepcialtyIds.stream().distinct().forEach(id->{
+            //年度数据更新
+            ClassFeeYear feeYear= classFeeYearRepository.findByFeeYearIdAndSpecialtyIdsAndCenterAreaId(year,id,centerId);
+           int classFeeValue= classFeeMap.get("id"); //课时费
+           int classCountValue= classCount.get("id");//课时
+            feeYear.setClassFeeSum(feeYear.getClassFeeSum()+classFeeValue);
+            feeYear.setClassSum(feeYear.getClassSum()+classCountValue);
+            classFeeYearRepository.save(feeYear);
+
+            //课时费管理数据更新
+            ClassFee  classFee=classFeeRepository.findByFeeYearIdAndCenterAreaIdAndCreateMonth(year,centerId,Integer.parseInt(month));
+            classFee.setClassFeeSum(feeYear.getClassFeeSum()+classFeeValue);
+            classFee.setClassSum(feeYear.getClassSum()+classCountValue);
+            classFeeRepository.save(classFee);
+        });
 
         return true;
     }
