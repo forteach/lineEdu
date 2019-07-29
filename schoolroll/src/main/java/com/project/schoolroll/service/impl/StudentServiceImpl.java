@@ -64,7 +64,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
     public Page<StudentVo> findStudentsPageAll(FindStudentDtoPageAllVo vo) {
         StringBuilder dataSql = new StringBuilder(" SELECT s.stu_id,s.stu_name,s.specialty_id,s.specialty_name,s.people_id,s.center_id,lc.center_name,s.student_category, " +
                 " s.class_id,s.class_name,s.educational_system,s.ways_study,s.learning_modality,s.ways_enrollment,s.enrollment_date, " +
-                " s.grade,s.entrance_certificate_number,s.candidate_number,s.total_examination_achievement,sp.gender,sp.stu_id_card " +
+                " s.grade,s.entrance_certificate_number,s.candidate_number,s.total_examination_achievement,sp.gender,sp.stu_phone,sp.stu_id_card " +
                 " FROM student as s " +
                 " LEFT JOIN learn_center as lc ON s.center_id = lc.center_id " +
                 " LEFT JOIN student_people as sp on s.people_id = sp.people_id ");
@@ -119,6 +119,9 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         if (StrUtil.isNotBlank(vo.getEnrollmentDateEndDate())) {
             whereSql.append(" AND s.enrollment_date <= ").append(vo.getEnrollmentDateEndDate());
         }
+        if (StrUtil.isNotBlank(vo.getStuPhone())){
+            whereSql.append(" AND sp.stu_phone = :stuPhone");
+        }
         //组装sql 语句
         dataSql.append(whereSql).append(" ORDER BY s.c_time DESC");
         countSql.append(whereSql);
@@ -159,6 +162,10 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         if (StrUtil.isNotBlank(vo.getWaysEnrollment())) {
             dataQuery.setParameter("waysEnrollment", vo.getWaysEnrollment());
             countQuery.setParameter("waysEnrollment", vo.getWaysEnrollment());
+        }
+        if (StrUtil.isNotBlank(vo.getStuPhone())){
+            dataQuery.setParameter("stuPhone", vo.getStuPhone());
+            countQuery.setParameter("stuPhone", vo.getStuPhone());
         }
         //设置分页
         dataQuery.setFirstResult((int) vo.getPageable().getOffset());

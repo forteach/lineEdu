@@ -48,5 +48,6 @@ public class StudentDtoFindPageAllRequest extends SortVo implements Serializable
     private String enrollmentDateEndDate;
     @ApiModelProperty(name = "grades", value = "年级", dataType = "list")
     private List<String> grades;
-
+    @ApiModelProperty(name = "stuPhone", value = "学生手机号码", dataType = "string")
+    private String stuPhone;
 }

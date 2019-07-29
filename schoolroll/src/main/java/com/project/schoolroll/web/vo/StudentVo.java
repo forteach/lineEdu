@@ -121,6 +121,11 @@ public class StudentVo implements Serializable {
     @Column(length = 32)
     public String gender;
     /**
+     * 学生手机号码
+     */
+    @Column(length = 32)
+    public String stuPhone;
+    /**
      * 身份证号码
      */
     @Column(name = "stu_id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号'")

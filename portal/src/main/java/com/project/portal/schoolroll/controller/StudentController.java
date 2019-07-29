@@ -112,6 +112,7 @@ public class StudentController {
             @ApiImplicitParam(name = "enrollmentDateStartDate", value = "开始入学时间", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "enrollmentDateEndDate", value = "结束入学时间", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "grades", value = "年级", dataTypeClass = List.class, paramType = "query"),
+            @ApiImplicitParam(name = "stuPhone", value = "学生手机号码", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })

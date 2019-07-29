@@ -72,6 +72,10 @@ public class FindStudentDtoPageAllVo implements Serializable {
      */
     private List<String> grades;
     /**
+     * 学生手机号
+     */
+    private String stuPhone;
+    /**
      * 分页信息
      */
     private Pageable pageable;
