@@ -87,6 +87,7 @@ public class StudentController {
             @ApiImplicitParam(name = "remark", value = "备注", dataType = "string", paramType = "form"),
     })
     public WebResult saveUpdate(@RequestBody StudentSaveUpdateRequest request) {
+        MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
         Student student = new Student();
         UpdateUtil.copyNullProperties(request, student);
         StudentPeople studentPeople = new StudentPeople();
