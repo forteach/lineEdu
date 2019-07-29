@@ -28,6 +28,7 @@ import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -91,7 +92,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         if (StrUtil.isNotBlank(vo.getSpecialtyId())) {
             whereSql.append(" AND s.specialty_id = :specialtyId");
         }
-        if (CollUtil.isNotEmpty(vo.getSpecialtyNames())){
+        if (CollUtil.isNotEmpty(vo.getSpecialtyNames())) {
             whereSql.append(" AND s.specialty_name in (");
             whereSql.append(String.join(",", vo.getSpecialtyNames().stream().map(s -> "'".concat(s).concat("'")).collect(toList())));
             whereSql.append(")");
@@ -119,7 +120,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         if (StrUtil.isNotBlank(vo.getEnrollmentDateEndDate())) {
             whereSql.append(" AND s.enrollment_date <= ").append(vo.getEnrollmentDateEndDate());
         }
-        if (StrUtil.isNotBlank(vo.getStuPhone())){
+        if (StrUtil.isNotBlank(vo.getStuPhone())) {
             whereSql.append(" AND sp.stu_phone = :stuPhone");
         }
         //组装sql 语句
@@ -163,7 +164,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
             dataQuery.setParameter("waysEnrollment", vo.getWaysEnrollment());
             countQuery.setParameter("waysEnrollment", vo.getWaysEnrollment());
         }
-        if (StrUtil.isNotBlank(vo.getStuPhone())){
+        if (StrUtil.isNotBlank(vo.getStuPhone())) {
             dataQuery.setParameter("stuPhone", vo.getStuPhone());
             countQuery.setParameter("stuPhone", vo.getStuPhone());
         }
@@ -179,14 +180,14 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(Student student, StudentPeople studentPeople) {
-        if (StrUtil.isNotBlank(student.getStuId())) {
-            studentRepository.findById(student.getStuId()).ifPresent(s -> {
-                studentPeopleRepository.findById(s.getPeopleId()).ifPresent(sp -> {
-                    BeanUtil.copyProperties(studentPeople, sp);
-                    studentPeopleRepository.save(sp);
-                    BeanUtil.copyProperties(student, s);
-                    studentRepository.save(s);
-                });
+        Optional<Student> studentOptional = studentRepository.findById(student.getStuId());
+        if (studentOptional.isPresent()) {
+            Student s = studentOptional.get();
+            studentPeopleRepository.findById(s.getPeopleId()).ifPresent(sp -> {
+                BeanUtil.copyProperties(studentPeople, sp);
+                studentPeopleRepository.save(sp);
+                BeanUtil.copyProperties(student, s);
+                studentRepository.save(s);
             });
         } else {
             String peopleId = IdUtil.fastSimpleUUID();
