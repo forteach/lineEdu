@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -17,20 +18,11 @@ import java.io.Serializable;
 @ApiModel(value = "保存修改学生扩展信息")
 public class StudentExpandRequest implements Serializable {
     /**
-     * 补充编号/扩展编号
+     * 修改的扩展学生id
      */
-    @ApiModelProperty(name = "expandId", value = "扩展编号", dataType = "string")
-    private String expandId;
+    @ApiModelProperty(name = "stuId", value = "学生id", dataType = "string")
+    private String stuId;
 
-    /**
-     * 补充字段名称
-     */
-    @ApiModelProperty(name = "expandName", value = "补充字段名称", dataType = "string")
-    private String expandName;
-
-    /**
-     * 补充字段值
-     */
-    @ApiModelProperty(name = "expandValue", value = "补充字段值", dataType = "string")
-    private String expandValue;
+    @ApiModelProperty(name = "expandValues", value = "扩展字段需要修改添加的值", required = true)
+    private List<StudentExpandValueRequest> expandValues;
 }

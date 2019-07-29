@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -50,6 +49,6 @@ public class StudentExpand extends Entitys implements Serializable {
     /**
      * 补充字段值
      */
-    @Column(name = "expand_value", columnDefinition = "VARCHAR(200) COMMENT '补充字段值'")
+    @Column(name = "expand_value", columnDefinition = "VARCHAR(255) COMMENT '补充字段值'")
     private String expandValue;
 }

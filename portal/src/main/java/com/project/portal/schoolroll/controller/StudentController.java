@@ -8,6 +8,7 @@ import com.project.base.util.UpdateUtil;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.StudentDtoFindPageAllRequest;
 import com.project.portal.schoolroll.request.StudentExpandRequest;
+import com.project.portal.schoolroll.request.StudentExpandValueRequest;
 import com.project.portal.schoolroll.request.StudentSaveUpdateRequest;
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentPeople;
@@ -27,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -125,7 +129,7 @@ public class StudentController {
     @ApiOperation(value = "删除学生信息")
     @PostMapping(path = "/deleteStudentByStuId")
     @ApiImplicitParam(name = "stuId", value = "学生id", required = true, dataType = "string", paramType = "form")
-    public WebResult deleteStudentByStuId(@RequestBody String stuId){
+    public WebResult deleteStudentByStuId(@RequestBody String stuId) {
         MyAssert.isNull(stuId, DefineCode.ERR0010, "删除学生信息");
         studentService.deleteById(JSONObject.parseObject(stuId).getString("stuId"));
         return WebResult.okResult();
@@ -134,7 +138,7 @@ public class StudentController {
     @ApiOperation(value = "查询扩展学生信息")
     @PostMapping(path = "/findStudentExpandInfo")
     @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "form")
-    public WebResult findStudentExpandInfo(@RequestBody String stuId){
+    public WebResult findStudentExpandInfo(@RequestBody String stuId) {
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
         return WebResult.okResult(studentExpandService.findStudentExpandInfo(JSONObject.parseObject(stuId).getString("stuId")));
     }
@@ -142,7 +146,7 @@ public class StudentController {
     @ApiOperation(value = "删除学生对应的扩展信息")
     @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/deleteAllStudentExpandByStuId")
-    public WebResult deleteAllStudentExpandByStuId(@RequestBody String stuId){
+    public WebResult deleteAllStudentExpandByStuId(@RequestBody String stuId) {
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
         return WebResult.okResult(studentExpandService.deleteAllStudentExpandByStuId(JSONObject.parseObject(stuId).getString("stuId")));
     }
@@ -150,7 +154,7 @@ public class StudentController {
     @ApiOperation(value = "删除扩展字段")
     @PostMapping(path = "/deleteStudentExpandById")
     @ApiImplicitParam(name = "expandId", value = "扩展编号", required = true, paramType = "form")
-    public WebResult deleteStudentExpandById(@RequestBody String expandId){
+    public WebResult deleteStudentExpandById(@RequestBody String expandId) {
         MyAssert.isNull(expandId, DefineCode.ERR0010, "扩展编号不为空");
         studentExpandService.deleteById(JSONObject.parseObject(expandId).getString("expandId"));
         return WebResult.okResult();
@@ -158,22 +162,29 @@ public class StudentController {
 
     @ApiOperation(value = "保存修改学生扩展字段")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "expandId", value = "补充编号/扩展编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "expandName", value = "补充字段名称", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "expandValue", value = "补充字段的值", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "expandValues", value = "需要修改保存的值", dataTypeClass = StudentExpandValueRequest.class, dataType = "list", paramType = "form"),
     })
     @PostMapping("/saveUpdateStudentExpand")
-    public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request){
-        StudentExpandVo vo = new StudentExpandVo();
-        BeanUtil.copyProperties(request, vo);
-        studentExpandService.saveUpdateStudentExpand(vo);
+    public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request) {
+        MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
+        MyAssert.isNull(request.getExpandValues(), DefineCode.ERR0010, "需要修改或修改的扩展字段不为空");
+        List<StudentExpandVo> voList = request.getExpandValues()
+                .stream().filter(Objects::nonNull)
+                .map(v -> {
+                    StudentExpandVo vo = new StudentExpandVo();
+                    BeanUtil.copyProperties(v, vo);
+                    vo.setStuId(request.getStuId());
+                    return vo;
+                }).collect(toList());
+        studentExpandService.saveUpdateStudentExpand(voList);
         return WebResult.okResult();
     }
 
     @ApiOperation(value = "查询学生详细信息")
     @PostMapping(path = "/findStudentPeopleByStuId")
     @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "query")
-    public WebResult findStudentPeopleByStuId(@RequestBody String stuId){
+    public WebResult findStudentPeopleByStuId(@RequestBody String stuId) {
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
         return WebResult.okResult(studentService.findStudentPeopleDtoByStuId(JSONObject.parseObject(stuId).getString("stuId")));
     }

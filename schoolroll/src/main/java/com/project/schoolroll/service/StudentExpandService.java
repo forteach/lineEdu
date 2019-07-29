@@ -37,5 +37,5 @@ public interface StudentExpandService {
      * 保存修改学生的扩展信息
      * @param studentExpandVo
      */
-    public void saveUpdateStudentExpand(StudentExpandVo studentExpandVo);
+    public void saveUpdateStudentExpand(List<StudentExpandVo> studentExpandVo);
 }

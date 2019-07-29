@@ -13,6 +13,10 @@ import java.io.Serializable;
  */
 @Data
 public class StudentExpandVo implements Serializable {
+    /**
+     * 学生id
+     */
+    private String stuId;
 
     /**
      * 补充编号/扩展编号

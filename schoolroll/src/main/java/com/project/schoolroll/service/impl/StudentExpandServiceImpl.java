@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author: zhangyy
@@ -49,17 +50,19 @@ public class StudentExpandServiceImpl implements StudentExpandService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveUpdateStudentExpand(StudentExpandVo studentExpandVo) {
-        if (StrUtil.isNotBlank(studentExpandVo.getExpandId())){
-            studentExpandRepository.findById(studentExpandVo.getExpandId()).ifPresent(studentExpand -> {
-                BeanUtil.copyProperties(studentExpandVo, studentExpand);
+    public void saveUpdateStudentExpand(List<StudentExpandVo> studentExpandVos) {
+        studentExpandVos.parallelStream().filter(Objects::nonNull).forEach(v -> {
+            if (StrUtil.isNotBlank(v.getExpandId())) {
+                studentExpandRepository.findById(v.getExpandId()).ifPresent(studentExpand -> {
+                    BeanUtil.copyProperties(v, studentExpand);
+                    studentExpandRepository.save(studentExpand);
+                });
+            } else {
+                StudentExpand studentExpand = new StudentExpand();
+                BeanUtil.copyProperties(v, studentExpand);
+                studentExpand.setExpandId(IdUtil.fastSimpleUUID());
                 studentExpandRepository.save(studentExpand);
-                    });
-        }else {
-            StudentExpand studentExpand = new StudentExpand();
-            BeanUtil.copyProperties(studentExpandVo, studentExpand);
-            studentExpand.setExpandId(IdUtil.fastSimpleUUID());
-            studentExpandRepository.save(studentExpand);
-        }
+            }
+        });
     }
 }
