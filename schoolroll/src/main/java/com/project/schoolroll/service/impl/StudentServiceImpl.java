@@ -183,7 +183,8 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         Optional<Student> studentOptional = studentRepository.findById(student.getStuId());
         if (studentOptional.isPresent()) {
             Student s = studentOptional.get();
-            studentPeopleRepository.findById(s.getPeopleId()).ifPresent(sp -> {
+            String peopleId = s.getPeopleId();
+            studentPeopleRepository.findById(peopleId).ifPresent(sp -> {
                 BeanUtil.copyProperties(studentPeople, sp);
                 studentPeopleRepository.save(sp);
                 BeanUtil.copyProperties(student, s);
