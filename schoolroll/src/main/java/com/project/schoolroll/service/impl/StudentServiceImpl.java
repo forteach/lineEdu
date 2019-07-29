@@ -1,6 +1,7 @@
 package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.mysql.service.BaseMySqlService;
@@ -10,6 +11,7 @@ import com.project.schoolroll.repository.FamilyRepository;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
+import com.project.schoolroll.repository.dto.StudentPeopleDto;
 import com.project.schoolroll.service.StudentService;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
 import com.project.schoolroll.web.vo.StudentVo;
@@ -26,6 +28,8 @@ import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -67,43 +71,52 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         StringBuilder whereSql = new StringBuilder(" WHERE s.is_validated = '0' AND lc.is_validated = '0' AND sp.is_validated = '0' ");
         StringBuilder countSql = new StringBuilder(" SELECT COUNT(1) FROM student AS s LEFT JOIN learn_center AS lc ON lc.center_id = s.center_id LEFT JOIN student_people as sp on s.people_id = sp.people_id ");
         // 拼接whereSql
-        if (StrUtil.isNotBlank(vo.getStuId())){
+        if (StrUtil.isNotBlank(vo.getStuId())) {
             whereSql.append(" AND s.stu_id = :stuId");
         }
         if (StrUtil.isNotBlank(vo.getStuName())) {
             whereSql.append(" AND s.stu_name like '").append(vo.getStuName()).append("%'");
         }
-        if (StrUtil.isNotBlank(vo.getCenterId())){
-            whereSql.append(" AND s.center_id = :centerId");
+        if (CollUtil.isNotEmpty(vo.getCenterIds())) {
+            whereSql.append(" AND s.center_id in (");
+            whereSql.append(String.join(",", vo.getCenterIds().stream().map(s -> "'".concat(s).concat("'")).collect(toList())));
+            whereSql.append(")");
         }
-        if (StrUtil.isNotBlank(vo.getClassId())){
+        if (StrUtil.isNotBlank(vo.getClassId())) {
             whereSql.append(" AND s.class_id = :classId");
         }
-        if (StrUtil.isNotBlank(vo.getEducationalSystem())){
+        if (StrUtil.isNotBlank(vo.getEducationalSystem())) {
             whereSql.append(" AND s.educational_system = :educationalSystem");
         }
-        if (StrUtil.isNotBlank(vo.getSpecialtyId())){
+        if (StrUtil.isNotBlank(vo.getSpecialtyId())) {
             whereSql.append(" AND s.specialty_id = :specialtyId");
         }
-        if (StrUtil.isNotBlank(vo.getGrade())){
-            whereSql.append(" AND s.grade = :grade");
+        if (CollUtil.isNotEmpty(vo.getSpecialtyNames())){
+            whereSql.append(" AND s.specialty_name in (");
+            whereSql.append(String.join(",", vo.getSpecialtyNames().stream().map(s -> "'".concat(s).concat("'")).collect(toList())));
+            whereSql.append(")");
         }
-        if (StrUtil.isNotBlank(vo.getLearningModality())){
+        if (CollUtil.isNotEmpty(vo.getGrades())) {
+            whereSql.append(" AND s.grade in (");
+            whereSql.append(String.join(",", vo.getGrades().stream().map(s -> "'".concat(s).concat("'")).collect(toList())));
+            whereSql.append(")");
+        }
+        if (StrUtil.isNotBlank(vo.getLearningModality())) {
             whereSql.append(" AND s.learning_modality = :learningModality");
         }
-        if (StrUtil.isNotBlank(vo.getStudentCategory())){
+        if (StrUtil.isNotBlank(vo.getStudentCategory())) {
             whereSql.append(" AND s.student_category = :studentCategory");
         }
-        if (StrUtil.isNotBlank(vo.getWaysStudy())){
+        if (StrUtil.isNotBlank(vo.getWaysStudy())) {
             whereSql.append(" AND s.ways_study = :waysStudy");
         }
-        if (StrUtil.isNotBlank(vo.getWaysEnrollment())){
+        if (StrUtil.isNotBlank(vo.getWaysEnrollment())) {
             whereSql.append(" AND s.ways_enrollment = :waysEnrollment");
         }
-        if (StrUtil.isNotBlank(vo.getEnrollmentDateStartDate())){
+        if (StrUtil.isNotBlank(vo.getEnrollmentDateStartDate())) {
             whereSql.append(" AND s.enrollment_date >= ").append(vo.getEnrollmentDateStartDate());
         }
-        if (StrUtil.isNotBlank(vo.getEnrollmentDateEndDate())){
+        if (StrUtil.isNotBlank(vo.getEnrollmentDateEndDate())) {
             whereSql.append(" AND s.enrollment_date <= ").append(vo.getEnrollmentDateEndDate());
         }
         //组装sql 语句
@@ -114,44 +127,36 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         Query dataQuery = entityManager.createNativeQuery(dataSql.toString(), StudentVo.class);
         Query countQuery = entityManager.createNativeQuery(countSql.toString());
         //设置参数
-        if (StrUtil.isNotBlank(vo.getStuId())){
+        if (StrUtil.isNotBlank(vo.getStuId())) {
             dataQuery.setParameter("stuId", vo.getStuId());
             countQuery.setParameter("stuId", vo.getStuId());
         }
-        if (StrUtil.isNotBlank(vo.getCenterId())){
-            dataQuery.setParameter("centerId", vo.getCenterId());
-            countQuery.setParameter("centerId", vo.getCenterId());
-        }
-        if (StrUtil.isNotBlank(vo.getClassId())){
+        if (StrUtil.isNotBlank(vo.getClassId())) {
             dataQuery.setParameter("classId", vo.getClassId());
             countQuery.setParameter("classId", vo.getClassId());
         }
 
-        if (StrUtil.isNotBlank(vo.getEducationalSystem())){
+        if (StrUtil.isNotBlank(vo.getEducationalSystem())) {
             dataQuery.setParameter("educationalSystem", vo.getEducationalSystem());
             countQuery.setParameter("educationalSystem", vo.getEducationalSystem());
         }
-        if (StrUtil.isNotBlank(vo.getSpecialtyId())){
+        if (StrUtil.isNotBlank(vo.getSpecialtyId())) {
             dataQuery.setParameter("specialtyId", vo.getSpecialtyId());
             countQuery.setParameter("specialtyId", vo.getSpecialtyId());
         }
-        if (StrUtil.isNotBlank(vo.getGrade())){
-            dataQuery.setParameter("grade", vo.getGrade());
-            countQuery.setParameter("grade", vo.getGrade());
-        }
-        if (StrUtil.isNotBlank(vo.getLearningModality())){
+        if (StrUtil.isNotBlank(vo.getLearningModality())) {
             dataQuery.setParameter("learningModality", vo.getLearningModality());
             countQuery.setParameter("learningModality", vo.getLearningModality());
         }
-        if (StrUtil.isNotBlank(vo.getStudentCategory())){
+        if (StrUtil.isNotBlank(vo.getStudentCategory())) {
             dataQuery.setParameter("studentCategory", vo.getStudentCategory());
             countQuery.setParameter("studentCategory", vo.getStudentCategory());
         }
-        if (StrUtil.isNotBlank(vo.getWaysStudy())){
+        if (StrUtil.isNotBlank(vo.getWaysStudy())) {
             dataQuery.setParameter("waysStudy", vo.getWaysStudy());
             countQuery.setParameter("waysStudy", vo.getWaysStudy());
         }
-        if (StrUtil.isNotBlank(vo.getWaysEnrollment())){
+        if (StrUtil.isNotBlank(vo.getWaysEnrollment())) {
             dataQuery.setParameter("waysEnrollment", vo.getWaysEnrollment());
             countQuery.setParameter("waysEnrollment", vo.getWaysEnrollment());
         }
@@ -160,14 +165,14 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         dataQuery.setMaxResults(vo.getPageable().getPageSize());
         BigInteger count = (BigInteger) countQuery.getSingleResult();
         long total = count.longValue();
-        List<StudentVo> content2 = total > vo.getPageable().getOffset() ? dataQuery.getResultList() : Collections.<StudentVo> emptyList();
+        List<StudentVo> content2 = total > vo.getPageable().getOffset() ? dataQuery.getResultList() : Collections.<StudentVo>emptyList();
         return new PageImpl<>(content2, vo.getPageable(), total);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(Student student, StudentPeople studentPeople) {
-        if (StrUtil.isNotBlank(student.getStuId())){
+        if (StrUtil.isNotBlank(student.getStuId())) {
             studentRepository.findById(student.getStuId()).ifPresent(s -> {
                 studentPeopleRepository.findById(s.getPeopleId()).ifPresent(sp -> {
                     BeanUtil.copyProperties(studentPeople, sp);
@@ -176,7 +181,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
                     studentRepository.save(s);
                 });
             });
-        }else {
+        } else {
             String peopleId = IdUtil.fastSimpleUUID();
             studentPeople.setPeopleId(peopleId);
             studentPeopleRepository.save(studentPeople);
@@ -195,5 +200,10 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
             familyRepository.deleteAllByStuId(stuId);
             studentRepository.deleteById(stuId);
         });
+    }
+
+    @Override
+    public StudentPeopleDto findStudentPeopleDtoByStuId(String stuId) {
+        return studentPeopleRepository.findByStuId(stuId);
     }
 }

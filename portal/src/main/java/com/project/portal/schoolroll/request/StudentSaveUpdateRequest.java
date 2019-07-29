@@ -113,6 +113,11 @@ public class StudentSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "className", value = "班级名称", dataType = "string")
     private String className;
     /**
+     * 章节id
+     */
+    @ApiModelProperty(name = "specialtyId", value = "章节id", dataType = "string")
+    private String specialtyId;
+    /**
      * 专业简称
      */
     @ApiModelProperty(name = "specialtyName", value = "专业简称(名称)", dataType = "string")
@@ -150,7 +155,7 @@ public class StudentSaveUpdateRequest implements Serializable {
     /**
      * 考试总成绩
      */
-    @ApiModelProperty(name = "totalExaminationAchievement", value = "考试总成绩", dataType = "string")
+    @ApiModelProperty(name = "totalExaminationAchievement", value = "考试总成绩(考试总分)", dataType = "string")
     private String totalExaminationAchievement;
     /**
      * 入学时间(年/月)

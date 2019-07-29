@@ -2,6 +2,7 @@ package com.project.schoolroll.service;
 
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentPeople;
+import com.project.schoolroll.repository.dto.StudentPeopleDto;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
 import com.project.schoolroll.web.vo.StudentVo;
 import org.springframework.data.domain.Page;
@@ -20,4 +21,6 @@ public interface StudentService {
     public void saveOrUpdate(Student student, StudentPeople studentPeople);
 
     public void deleteById(String stuId);
+
+    public StudentPeopleDto findStudentPeopleDtoByStuId(String stuId);
 }

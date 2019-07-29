@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -25,7 +26,7 @@ public class FindStudentDtoPageAllVo implements Serializable {
     /**
      * 学习中心id
      */
-    private String centerId;
+    private List<String> centerIds;
     /**
      * 学习类别
      */
@@ -38,6 +39,10 @@ public class FindStudentDtoPageAllVo implements Serializable {
      * 专业id
      */
     private String specialtyId;
+    /**
+     * 专业名称集合
+     */
+    private List<String> specialtyNames;
     /**
      * 学制
      */
@@ -65,7 +70,7 @@ public class FindStudentDtoPageAllVo implements Serializable {
     /**
      * 年级
      */
-    private String grade;
+    private List<String> grades;
     /**
      * 分页信息
      */

@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
-import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.StudentDtoFindPageAllRequest;
 import com.project.portal.schoolroll.request.StudentExpandRequest;
@@ -22,7 +21,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -51,7 +55,7 @@ public class StudentController {
             @ApiImplicitParam(name = "stuName", value = "学生名字", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "gender", value = "性别", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "namePinYin", value = "姓名拼音", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "cardType", value = "身份证类型", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "stuCardType", value = "身份证类型", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuIDCard", value = "身份证号码", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuPhone", value = "联系电话", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuBirthDate", value = "出生日期(年月)", dataType = "string", paramType = "form"),
@@ -66,6 +70,7 @@ public class StudentController {
             @ApiImplicitParam(name = "studentCategory", value = "学习类别", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级Id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "className", value = "班级名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "specialtyId", value = "章节Id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "specialtyName", value = "专业简称(名称)", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "educationalSystem", value = "学制", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "waysStudy", value = "就读方式/学习方式", dataType = "string", paramType = "form"),
@@ -91,17 +96,18 @@ public class StudentController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "stuName", value = "学生名字", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "centerIds", value = "学习中心id", dataTypeClass = List.class, paramType = "query"),
             @ApiImplicitParam(name = "studentCategory", value = "学习类别", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "specialtyId", value = "专业id", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "specialtyNames", value = "专业id", dataTypeClass = List.class, paramType = "query"),
             @ApiImplicitParam(name = "educationalSystem", value = "学制", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "waysStudy", value = "就读方式/学习方式", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "learningModality", value = "学习形式", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "waysEnrollment", value = "入学方式", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "enrollmentDateStartDate", value = "开始入学时间", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "enrollmentDateEndDate", value = "结束入学时间", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "grades", value = "年级", dataTypeClass = List.class, paramType = "query"),
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
@@ -162,5 +168,13 @@ public class StudentController {
         BeanUtil.copyProperties(request, vo);
         studentExpandService.saveUpdateStudentExpand(vo);
         return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "查询学生详细信息")
+    @PostMapping(path = "/findStudentPeopleByStuId")
+    @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "query")
+    public WebResult findStudentPeopleByStuId(@RequestBody String stuId){
+        MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
+        return WebResult.okResult(studentService.findStudentPeopleDtoByStuId(JSONObject.parseObject(stuId).getString("stuId")));
     }
 }
