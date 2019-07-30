@@ -21,6 +21,7 @@
         <module>course</module>
         <module>coursedata</module>
         <module>portal</module>
+        <module>information</module>
     </modules>
 
     <parent>
