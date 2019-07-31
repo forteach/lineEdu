@@ -43,8 +43,7 @@ public enum StudentEnum {
 //    trainSpace("乘火车区间"),
     /** 是否随迁子女*/
     isImmigrantChildren("是否随迁子女"),
-    /** 籍贯地行政区划码*/
-    nativePlaceFormAdministrativeCode("籍贯地行政区划码"),
+
     /** 出生地行政区划码*/
 //    /** 户口所在地行政区划码*/
 //    householdAdministrativeCode("户口所在地行政区划码"),
@@ -116,6 +115,8 @@ public enum StudentEnum {
     studentFormAdministrativeCode("生源地行政区划码"),
     /** 出生地行政区划码*/
     birthplaceAdministrativeCode("出生地行政区划码"),
+    /** 籍贯地行政区划码*/
+    nativePlaceFormAdministrativeCode("籍贯地行政区划码"),
     /** 家庭现地址*/
     familyAddress("家庭现地址"),
     /** 家庭邮政编码*/
