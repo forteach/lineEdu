@@ -33,8 +33,8 @@ public interface IArticle {
 
     public String getUserTortrait();
 
-    public String getClassName();
-
+//    public String getClassName();
+//
     /** 判断是否精华.**/
     public String getIsNice();
 

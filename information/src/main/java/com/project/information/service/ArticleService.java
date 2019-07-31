@@ -11,11 +11,14 @@ import com.project.base.util.RegexUtils;
 import com.project.information.domain.Article;
 import com.project.information.dto.IArticle;
 import com.project.information.repository.ArticleDao;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 @Service
 public class ArticleService {
@@ -91,8 +94,9 @@ public class ArticleService {
      * @param pageable
      * @return
      */
-    public List<IArticle> findAllDesc(String articleType,String isValidated, Pageable pageable) {
-        return articleDao.findAllByAndArticleTypeAndIsValidatedOrderByCreateTimeDesc(articleType,isValidated,pageable).getContent();
+    public Page<IArticle> findAllDesc(String articleType, Pageable pageable) {
+        Page<IArticle> page =  articleDao.findAllByArticleTypeAndIsValidatedOrderByCreateTimeDesc(articleType,TAKE_EFFECT_OPEN, pageable);
+        return page;
     }
 
 

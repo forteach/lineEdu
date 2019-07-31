@@ -3,10 +3,7 @@ package com.project.portal.information.request.article;
 import com.project.portal.request.SortVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -22,6 +19,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "资讯所有列表")
 public class FindAllRequest extends SortVo implements Serializable {
 

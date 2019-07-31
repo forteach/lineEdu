@@ -13,6 +13,9 @@ import com.project.portal.information.response.article.ArticleResponse;
 import com.project.portal.information.valid.ArticleValide;
 import com.project.portal.response.WebResult;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,8 +39,9 @@ public class ArticleController {
     /**
      * 保存资讯、资讯所属模块信息
      */
-
+    @ApiOperation(value = "保存资讯、资讯所属模块信息", tags = {"保存资讯、资讯所属模块信息"})
     @PostMapping("/saveOrUpdate")
+    @ApiImplicitParam(name = "request", dataTypeClass = SaveArticleRequest.class, paramType = "form")
     public WebResult save(@RequestBody SaveArticleRequest request) {
 
         // 验证资讯信息
@@ -62,7 +66,9 @@ public class ArticleController {
      * @param req
      * @return
      */
+    @ApiOperation(value = "获得资讯详情", tags = {"获得资讯详情"})
     @PostMapping("/findId")
+    @ApiImplicitParam(name = "id", value = "主键编号", dataType = "string", paramType = "form")
     public WebResult findById(@RequestBody ByIdRequest req) {
         MyAssert.isNull(req.getId(), DefineCode.ERR0010, "编号不能为空");
         Article article = articleService.findById(req.getId());
@@ -78,6 +84,8 @@ public class ArticleController {
      * @param req
      * @return
      */
+    @ApiOperation(value = "逻辑删除资讯内容", tags = {"逻辑删除资讯内容"})
+    @ApiImplicitParam(name = "id", value = "主键编号", dataType = "string", paramType = "form")
     @PostMapping("/delId")
     public WebResult deleteArticleById(@RequestBody ByIdRequest req) {
         MyAssert.isNull(req.getId(), DefineCode.ERR0010, "编号不能为空");
@@ -89,21 +97,23 @@ public class ArticleController {
     /**
      * 所有资讯倒序分页获取
      *
-     * @param req
+     * @param request
      * @return
      */
+    @ApiOperation(value = "所有资讯倒序分页获取", tags = {"所有资讯倒序分页获取"})
     @PostMapping("/findAllDesc")
-    public WebResult findAllDesc(@RequestBody FindAllRequest req) {
-        PageRequest page = PageRequest.of(req.getPage(), req.getSize());
-        return WebResult.okResult(articleService.findAllDesc(req.getArticleType(), "1", page)
-                .stream()
-                .map(item -> {
-                    ArticleListResponse ar = new ArticleListResponse();
-                    BeanUtil.copyProperties(item, ar);
-                    return ar;
-                })
-                .collect(toList()));
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "articleType", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
+    })
+    public WebResult findAllDesc(@RequestBody FindAllRequest request) {
+        MyAssert.blank(String.valueOf(request.getPage()), DefineCode.ERR0010, "页码参数不为空");
+        MyAssert.blank(String.valueOf(request.getSize()), DefineCode.ERR0010, "每页条数不为空");
+        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
+        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        PageRequest page = PageRequest.of(request.getPage(), request.getSize());
+        return WebResult.okResult(articleService.findAllDesc(request.getArticleType(), page));
     }
 
 }
