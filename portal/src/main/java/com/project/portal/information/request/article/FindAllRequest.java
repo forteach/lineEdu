@@ -23,13 +23,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "资讯所有列表")
-public class FindAllRequest implements Serializable {
+public class FindAllRequest extends SortVo implements Serializable {
 
     @ApiModelProperty(value = "资讯分类", name = "articleType")
     private String articleType;
 
 
-    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
-    private SortVo sortVo = new SortVo();
+//    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
+//    private SortVo sortVo = new SortVo();
 
 }

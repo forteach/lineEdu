@@ -32,4 +32,8 @@ public class StudentExpandVo implements Serializable {
      * 补充字段值
      */
     private String expandValue;
+    /**
+     * 字段说明
+     */
+    private String expandExplain;
 }

@@ -1,9 +1,9 @@
 package com.project.portal.classfee.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.classfee.domain.ClassStandard;
 import com.project.classfee.service.ClassStandardService;
 import com.project.portal.classfee.request.ClassStandardListReq;
@@ -11,7 +11,6 @@ import com.project.portal.classfee.request.ClassStandardSaveReq;
 import com.project.portal.request.ByIdReq;
 import com.project.portal.response.PageListRes;
 import com.project.portal.controller.BaseController;
-import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -80,7 +79,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
 
         //创建输出对象
         ClassStandardSaveReq res= new ClassStandardSaveReq();
-        UpdateUtil.copyNullProperties(cls, res);
+        BeanUtil.copyProperties(cls, res);
 
         return WebResult.okResult(res);
     }
@@ -93,7 +92,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
         MyAssert.isNull(cls, DefineCode.ERR0010,"操作课时费标准失败！");
         //创建输出对象
         ClassStandardSaveReq res= new ClassStandardSaveReq();
-        UpdateUtil.copyNullProperties(cls, res);
+        BeanUtil.copyProperties(cls, res);
 
         return WebResult.okResult(res);
     }

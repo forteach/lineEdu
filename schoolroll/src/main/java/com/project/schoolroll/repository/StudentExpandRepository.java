@@ -33,7 +33,7 @@ public interface StudentExpandRepository extends JpaRepository<StudentExpand, St
      * @return
      */
     @Transactional(readOnly = true)
-    @Query(value = "SELECT expandId AS expandId, expandName AS expandName, expandValue AS expandValue FROM StudentExpand WHERE isValidated = '0' AND stuId = ?1")
+    @Query(value = "SELECT expandId AS expandId, expandName AS expandName, expandValue AS expandValue, expandExplain AS expandExplain FROM StudentExpand WHERE isValidated = '0' AND stuId = ?1")
     List<StudentExpandDto> findByIsValidatedEqualsAndStuId(String stuId);
 
     /**

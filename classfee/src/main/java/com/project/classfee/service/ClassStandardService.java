@@ -1,9 +1,9 @@
 package com.project.classfee.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.classfee.domain.ClassStandard;
 import com.project.classfee.repository.ClassStandardRepository;
 import com.project.mysql.service.BaseMySqlService;
@@ -47,7 +47,7 @@ public class ClassStandardService extends BaseMySqlService {
     public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum){
         ClassStandard obj= findId(standardId);
         ClassStandard classStandard=new ClassStandard();
-        UpdateUtil.copyProperties(obj,classStandard);
+        BeanUtil.copyProperties(obj,classStandard);
         classStandard.setCreateYear(createYear);
         classStandard.setSpecialtyIds(specialtyIds);
         classStandard.setStudentSum(studentSum);

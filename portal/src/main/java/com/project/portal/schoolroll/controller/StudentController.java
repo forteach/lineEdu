@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.StudentDtoFindPageAllRequest;
 import com.project.portal.schoolroll.request.StudentExpandRequest;
@@ -91,9 +90,9 @@ public class StudentController {
     public WebResult saveUpdate(@RequestBody StudentSaveUpdateRequest request) {
         MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
         Student student = new Student();
-        UpdateUtil.copyNullProperties(request, student);
+        BeanUtil.copyProperties(request, student);
         StudentPeople studentPeople = new StudentPeople();
-        UpdateUtil.copyNullProperties(request, studentPeople);
+        BeanUtil.copyProperties(request, studentPeople);
         studentService.saveOrUpdate(student, studentPeople);
         return WebResult.okResult();
     }

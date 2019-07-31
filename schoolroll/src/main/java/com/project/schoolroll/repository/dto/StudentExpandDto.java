@@ -24,4 +24,8 @@ public interface StudentExpandDto {
      * @return
      */
     public String getExpandValue();
+    /**
+     * 扩展字段说明
+     */
+    public String getExpandExplain();
 }

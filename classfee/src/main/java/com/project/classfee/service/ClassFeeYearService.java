@@ -1,9 +1,9 @@
 package com.project.classfee.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.classfee.domain.ClassFeeYear;
 import com.project.classfee.repository.ClassFeeYearRepository;
 import com.project.mysql.service.BaseMySqlService;
@@ -57,7 +57,7 @@ public class ClassFeeYearService extends BaseMySqlService {
     public ClassFeeYear update(String feeYearId,int classFeeSum, int classSum, int outMonth, int outFee,String outState){
         ClassFeeYear obj= findId(feeYearId);
         ClassFeeYear classFee=new ClassFeeYear();
-        UpdateUtil.copyProperties(obj,classFee);
+        BeanUtil.copyProperties(obj,classFee);
         classFee.setOutMonth(outMonth);
         classFee.setOutFee(outFee);
         classFee.setOutState(outState);
