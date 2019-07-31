@@ -1,6 +1,7 @@
 package com.project.portal.schoolroll.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -10,12 +11,12 @@ import com.project.portal.schoolroll.request.StudentExpandRequest;
 import com.project.portal.schoolroll.request.StudentExpandValueRequest;
 import com.project.portal.schoolroll.request.StudentSaveUpdateRequest;
 import com.project.schoolroll.domain.Student;
+import com.project.schoolroll.domain.StudentExpand;
 import com.project.schoolroll.domain.StudentPeople;
 import com.project.schoolroll.service.StudentExpandDictionaryService;
 import com.project.schoolroll.service.StudentExpandService;
 import com.project.schoolroll.service.StudentService;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
-import com.project.schoolroll.web.vo.StudentExpandVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -172,11 +173,13 @@ public class StudentController {
     public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request) {
         MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
         MyAssert.isNull(request.getExpandValues(), DefineCode.ERR0010, "需要修改或修改的扩展字段不为空");
-        List<StudentExpandVo> voList = request.getExpandValues()
+        List<StudentExpand> voList = request.getExpandValues()
                 .stream().filter(Objects::nonNull)
                 .map(v -> {
-                    StudentExpandVo vo = new StudentExpandVo();
+                    StudentExpand vo = new StudentExpand();
                     BeanUtil.copyProperties(v, vo);
+                    vo.setStuId(request.getStuId());
+                    vo.setExpandId(IdUtil.fastSimpleUUID());
                     return vo;
                 }).collect(toList());
         studentExpandService.saveUpdateStudentExpand(voList, request.getStuId());

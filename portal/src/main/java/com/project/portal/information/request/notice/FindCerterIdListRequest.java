@@ -4,10 +4,7 @@ package com.project.portal.information.request.notice;
 import com.project.portal.request.SortVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -23,13 +20,10 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "中心公告的倒序列表")
 public class FindCerterIdListRequest extends SortVo implements Serializable {
 
     @ApiModelProperty(value = "centerId", name = "centerId")
     private String centerId;
-
-//    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
-//    private SortVo sortVo = new SortVo();
-
 }
