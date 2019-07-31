@@ -41,7 +41,7 @@ public class ArticleController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "articleId", value = "文章编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "userId", value = "发布人编号", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "title", value = "文章题目", dataType = "string", required = true,  paramType = "form"),
+            @ApiImplicitParam(name = "title", value = "文章题目", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "imgUrl", value = "图片连接", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "linkUrl", value = "文章连接", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "description", value = "文章描述", dataType = "string", paramType = "form"),

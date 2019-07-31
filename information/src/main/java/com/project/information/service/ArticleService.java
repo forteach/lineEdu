@@ -58,17 +58,21 @@ public class ArticleService {
             String createTime=art.getCreateTime();
             BeanUtil.copyProperties(art, newArt);
             newArt.setCreateTime(createTime);
-            String newContent= replaceImgWidth(newArt.getArticleConten());
-            newArt.setArticleConten(newContent);
+            if (StrUtil.isNotBlank(newArt.getArticleConten())) {
+                String newContent = replaceImgWidth(newArt.getArticleConten());
+                newArt.setArticleConten(newContent);
+            }
 
         }else {
-            Article art=new Article();
-            BeanUtil.copyProperties(newArt, art);
-            art.setArticleId(IdUtil.fastSimpleUUID());
-            String newContent= replaceImgWidth(newArt.getArticleConten());
-            art.setArticleConten(newContent);
-            art.setCreateUser(newArt.getUserId());
-            art.setIsNice("false");
+//            Article art=new Article();
+//            BeanUtil.copyProperties(newArt, art);
+            newArt.setArticleId(IdUtil.fastSimpleUUID());
+            if (StrUtil.isNotBlank(newArt.getArticleConten())) {
+                String newContent = replaceImgWidth(newArt.getArticleConten());
+                newArt.setArticleConten(newContent);
+            }
+            newArt.setCreateUser(newArt.getUserId());
+            newArt.setIsNice("false");
 
         }
 
