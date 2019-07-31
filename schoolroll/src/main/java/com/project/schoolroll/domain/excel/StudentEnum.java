@@ -43,8 +43,7 @@ public enum StudentEnum {
 //    trainSpace("乘火车区间"),
     /** 是否随迁子女*/
     isImmigrantChildren("是否随迁子女"),
-    /** 籍贯地行政区划码*/
-    nativePlaceFormAdministrativeCode("籍贯地行政区划码"),
+
     /** 出生地行政区划码*/
 //    /** 户口所在地行政区划码*/
 //    householdAdministrativeCode("户口所在地行政区划码"),
@@ -62,8 +61,8 @@ public enum StudentEnum {
     nation("民族"),
     /** 政治面貌*/
     politicalStatus("政治面貌"),
-    /** 健康状况*/
-    healthCondition("健康状况"),
+//    /** 健康状况*/
+//    healthCondition("健康状况"),
     stuPhone("联系电话"),
     /** 准考证号 */
     entranceCertificateNumber("准考证号"),
@@ -71,8 +70,6 @@ public enum StudentEnum {
     candidateNumber("考生号"),
     /** 考试总分*/
     totalExaminationAchievement("考试总分"),
-    /** 家庭电话*/
-    familyPhone("家庭电话"),
     /*× 入学年月*/
     enrollmentDate("入学年月"),
     /** 招生批次 招生批次 春季,秋季*/
@@ -112,19 +109,20 @@ public enum StudentEnum {
 
     /** 扩展字段 */
 
-
-    /** 电子信箱/其他联系方式 */
-    stuEmail("电子信箱/其他联系方式"),
-    /** 家庭现地址*/
-    familyAddress("家庭现地址"),
     /** 乘火车区间*/
     trainSpace("乘火车区间"),
     /** 生源地行政区划码*/
     studentFormAdministrativeCode("生源地行政区划码"),
     /** 出生地行政区划码*/
     birthplaceAdministrativeCode("出生地行政区划码"),
+    /** 籍贯地行政区划码*/
+    nativePlaceFormAdministrativeCode("籍贯地行政区划码"),
+    /** 家庭现地址*/
+    familyAddress("家庭现地址"),
     /** 家庭邮政编码*/
     familyPostalCode("家庭邮政编码"),
+    /** 家庭电话*/
+    familyPhone("家庭电话"),
     /** 户口所在地行政区划码 */
     householdAdministrativeCode("户口所在地行政区划码"),
     /** 户口所在地区县以下详细地址 */
@@ -135,10 +133,14 @@ public enum StudentEnum {
     studentHabitationType("学生居住地类型"),
     /** 健康状况*/
 //    healthyStatus("健康状况"),
+    /** 健康状况*/
+    healthCondition("健康状况"),
     /** 学生来源*/
     studentSource("学生来源"),
     /** 招生对象*/
     recruit("招生对象"),
+    /** 毕业学校*/
+    school("毕业学校"),
     /** 是否建档立卡贫困户*/
     isDestituteFamily("是否建档立卡贫困户"),
     /** 招生方式*/
@@ -161,6 +163,8 @@ public enum StudentEnum {
     stageByStageEducationType("分段培养方式"),
     /** 英文姓名*/
     englishName("英文姓名"),
+    /** 电子信箱/其他联系方式 */
+    stuEmail("电子信箱/其他联系方式"),
     /** 备注*/
     remark("备注")
     ;

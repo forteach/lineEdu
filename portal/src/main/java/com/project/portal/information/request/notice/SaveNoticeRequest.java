@@ -21,10 +21,8 @@ public class SaveNoticeRequest implements Serializable {
 	/** 公告内容. */
 	private String content;
 
-	/**
-	 * 公告领域 P：全部 C：课程
-	 */
-	private String area;
+	private String centerId;
 
-
+	/** 1 全部领域 2 单个领域.*/
+    private int area;
 }

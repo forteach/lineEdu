@@ -11,7 +11,9 @@ public interface NoticeDao extends JpaRepository<Notice, String>, JpaSpecificati
 
   public Notice findByNoticeId(String noticeId);
 
-  public Page<Notice> findByIsValidatedOrderByCreateTimeDesc(String isVal, Pageable pageable);
+  public Page<Notice> findByAreaAndIsValidatedOrderByCreateTimeDesc(int area,String isVal, Pageable pageable);
+
+  public Page<Notice> findByCenterAreaIdOrAreaAndIsValidatedOrderByCreateTimeDesc(String centerId,int area,String isVal, Pageable pageable);
 
   @Modifying
   public int deleteByNoticeId(String Id);

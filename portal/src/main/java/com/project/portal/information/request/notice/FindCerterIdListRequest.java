@@ -1,4 +1,5 @@
-package com.project.portal.information.request.article;
+package com.project.portal.information.request.notice;
+
 
 import com.project.portal.request.SortVo;
 import io.swagger.annotations.ApiModel;
@@ -20,10 +21,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "资讯所有列表")
-public class FindAllRequest extends SortVo implements Serializable {
+@ApiModel(value = "中心公告的倒序列表")
+public class FindCerterIdListRequest extends SortVo implements Serializable {
 
-    @ApiModelProperty(value = "资讯分类", name = "articleType")
-    private String articleType;
-
+    @ApiModelProperty(value = "centerId", name = "centerId")
+    private String centerId;
 }

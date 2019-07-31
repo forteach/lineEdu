@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -26,6 +28,7 @@ public class FriendlyLink extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @GeneratedValue(generator = "system-uuid")
     @Column(name = "link_id", columnDefinition = "varchar(32) COMMENT '连接id'")
     private String linkId;

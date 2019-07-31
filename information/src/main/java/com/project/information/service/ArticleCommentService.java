@@ -5,7 +5,6 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.information.domain.ArticleComment;
 import com.project.information.repository.ArticleCommentDao;
 import org.springframework.beans.factory.annotation.Autowired;

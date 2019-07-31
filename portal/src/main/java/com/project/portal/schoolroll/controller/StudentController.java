@@ -1,31 +1,29 @@
 package com.project.portal.schoolroll.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.StudentDtoFindPageAllRequest;
 import com.project.portal.schoolroll.request.StudentExpandRequest;
 import com.project.portal.schoolroll.request.StudentExpandValueRequest;
 import com.project.portal.schoolroll.request.StudentSaveUpdateRequest;
 import com.project.schoolroll.domain.Student;
+import com.project.schoolroll.domain.StudentExpand;
 import com.project.schoolroll.domain.StudentPeople;
+import com.project.schoolroll.service.StudentExpandDictionaryService;
 import com.project.schoolroll.service.StudentExpandService;
 import com.project.schoolroll.service.StudentService;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
-import com.project.schoolroll.web.vo.StudentExpandVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,10 +44,14 @@ public class StudentController {
 
     private final StudentService studentService;
     private final StudentExpandService studentExpandService;
+    private final StudentExpandDictionaryService studentExpandDictionaryService;
 
-    public StudentController(StudentService studentService, StudentExpandService studentExpandService) {
+    public StudentController(StudentService studentService,
+                             StudentExpandService studentExpandService,
+                             StudentExpandDictionaryService studentExpandDictionaryService) {
         this.studentService = studentService;
         this.studentExpandService = studentExpandService;
+        this.studentExpandDictionaryService = studentExpandDictionaryService;
     }
 
     @ApiOperation(value = "保存修改学生信息")
@@ -89,9 +91,9 @@ public class StudentController {
     public WebResult saveUpdate(@RequestBody StudentSaveUpdateRequest request) {
         MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
         Student student = new Student();
-        UpdateUtil.copyNullProperties(request, student);
+        BeanUtil.copyProperties(request, student);
         StudentPeople studentPeople = new StudentPeople();
-        UpdateUtil.copyNullProperties(request, studentPeople);
+        BeanUtil.copyProperties(request, studentPeople);
         studentService.saveOrUpdate(student, studentPeople);
         return WebResult.okResult();
     }
@@ -118,10 +120,8 @@ public class StudentController {
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
     public WebResult findStudentsPageAll(@RequestBody StudentDtoFindPageAllRequest request) {
-        MyAssert.blank(String.valueOf(request.getPage()), DefineCode.ERR0010, "页码参数不为空");
-        MyAssert.blank(String.valueOf(request.getSize()), DefineCode.ERR0010, "每页条数不为空");
-        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
-        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        // todo
+//        valideSort(request.getPage(), request.getSize());
         FindStudentDtoPageAllVo vo = new FindStudentDtoPageAllVo();
         BeanUtil.copyProperties(request, vo);
         vo.setPageable(PageRequest.of(request.getPage(), request.getSize()));
@@ -171,15 +171,16 @@ public class StudentController {
     public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request) {
         MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
         MyAssert.isNull(request.getExpandValues(), DefineCode.ERR0010, "需要修改或修改的扩展字段不为空");
-        List<StudentExpandVo> voList = request.getExpandValues()
+        List<StudentExpand> voList = request.getExpandValues()
                 .stream().filter(Objects::nonNull)
                 .map(v -> {
-                    StudentExpandVo vo = new StudentExpandVo();
+                    StudentExpand vo = new StudentExpand();
                     BeanUtil.copyProperties(v, vo);
                     vo.setStuId(request.getStuId());
+                    vo.setExpandId(IdUtil.fastSimpleUUID());
                     return vo;
                 }).collect(toList());
-        studentExpandService.saveUpdateStudentExpand(voList);
+        studentExpandService.saveUpdateStudentExpand(voList, request.getStuId());
         return WebResult.okResult();
     }
 
@@ -189,5 +190,11 @@ public class StudentController {
     public WebResult findStudentPeopleByStuId(@RequestBody String stuId) {
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
         return WebResult.okResult(studentService.findStudentPeopleDtoByStuId(JSONObject.parseObject(stuId).getString("stuId")));
+    }
+
+    @ApiOperation(value = "查询扩展字段列表字典")
+    @GetMapping(path = "/findStudentExpandDic")
+    public WebResult findStudentExpandDic() {
+        return WebResult.okResult(studentExpandDictionaryService.findDto());
     }
 }

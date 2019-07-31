@@ -9,6 +9,7 @@ import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.project.base.util.excelImp.AbsExcelImp;
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentExpand;
 import com.project.schoolroll.domain.StudentPeople;
@@ -16,7 +17,7 @@ import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
-import com.project.schoolroll.service.ImportService;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,13 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @Auther: zhangyy
@@ -41,23 +41,23 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 @Slf4j
-public class ImportServiceImpl implements ImportService {
+public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     private final StudentRepository studentRepository;
     private final StudentExpandRepository studentExpandRepository;
     private final StudentPeopleRepository studentPeopleRepository;
     private final RedisTemplate redisTemplate;
 
     @Autowired
-    public ImportServiceImpl(StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository,
-                             StudentExpandRepository studentExpandRepository, RedisTemplate redisTemplate) {
+    public ExcelImpServiceImpl(StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository,
+                               StudentExpandRepository studentExpandRepository, RedisTemplate redisTemplate) {
         this.studentRepository = studentRepository;
         this.studentExpandRepository = studentExpandRepository;
         this.studentPeopleRepository = studentPeopleRepository;
         this.redisTemplate = redisTemplate;
     }
 
-    @Override
-    public void studentsExcel07Reader(InputStream inputStream) {
+
+    public void studentsExcel07Reader(InputStream inputStream,Class obj ) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
         List<StudentImport> list = reader.readAll(StudentImport.class);
@@ -67,11 +67,11 @@ public class ImportServiceImpl implements ImportService {
         redisTemplate.delete(IMPORT_STUDENTS);
     }
 
-    @Override
-    public void studentsExcel03Reader(InputStream inputStream) {
-        ExcelReader reader = ExcelUtil.getReader(inputStream);
-        setHeaderAlias(reader);
-        List<StudentImport> list = reader.readAll(StudentImport.class);
+
+    public void studentsExcel03Reader(InputStream inputStream,Class obj) {
+//        ExcelReader reader = ExcelUtil.getReader(inputStream);
+//        setHeaderAlias(reader);
+        List<StudentImport> list = ExcelReader(inputStream,obj);
 
         saveStudent(list);
 
@@ -89,20 +89,11 @@ public class ImportServiceImpl implements ImportService {
         List<Student> studentList = CollUtil.newArrayList();
         List<StudentExpand> studentExpandList = CollUtil.newArrayList();
         //查询全部学生信息
-//        List<Student> students = studentRepository.findAll();
-//        List<String> peopleIds = students
-//                .parallelStream()
-//                .map(Student::getPeopleId)
-//                .collect(toList());
-//        List<Map<String, Object>> mapList = new ArrayList<>();
-//        students.parallelStream()
-//                .filter(Objects::nonNull)
-//                .forEach(s -> redisTemplate.opsForHash()
-//                        .putAll(IMPORT_STUDENTS.concat(s.getStuId()), BeanUtil.beanToMap(s, false, true)));
 
-
-                list.parallelStream()
+        list.parallelStream()
                 .filter(Objects::nonNull)
+                //去除导入数据的空格
+                .map(BeanUtil::trimStrFields)
                 .forEach(studentImport -> {
 
                     Optional<Student> studentOptional = studentRepository.findById(studentImport.getStuId());
@@ -131,11 +122,11 @@ public class ImportServiceImpl implements ImportService {
                     }
 
                     if (StrUtil.isNotBlank(studentImport.getStuEmail())) {
-                        setStudentExpandValue(studentImport.getStuId(), stuEmail.getName(), studentImport.getFamilyAddress(), studentExpandList);
+                        setStudentExpandValue(studentImport.getStuId(), stuEmail.name(), studentImport.getFamilyAddress(), stuEmail.getName(), studentExpandList);
                     }
 
                     if (StrUtil.isNotBlank(studentImport.getFamilyAddress())) {
-                        setStudentExpandValue(studentImport.getStuId(), familyAddress.getName(), studentImport.getFamilyAddress(), studentExpandList);
+                        setStudentExpandValue(studentImport.getStuId(), familyAddress.name(), studentImport.getFamilyAddress(), familyAddress.getName(), studentExpandList);
                     }
                     log.info("thread id : [{}] , thread name : [{}]", Thread.currentThread().getId(), Thread.currentThread().getName());
                 });
@@ -154,7 +145,7 @@ public class ImportServiceImpl implements ImportService {
         log.debug("返回花费时间,并重置开始时间 : [{}]", timer.intervalRestart());
     }
 
-    private void setStudentExpandValue(String stuId, String studentExpandName, String studentExpandValue, List<StudentExpand> studentExpandList) {
+    private void setStudentExpandValue(String stuId, String studentExpandName, String studentExpandValue, String expandExplain, List<StudentExpand> studentExpandList) {
         List<StudentExpand> expandList = studentExpandRepository.findAllByStuIdAndExpandName(stuId, studentExpandName);
         StudentExpand studentExpand;
         if (!expandList.isEmpty()) {
@@ -164,6 +155,7 @@ public class ImportServiceImpl implements ImportService {
             studentExpand.setExpandId(IdUtil.fastSimpleUUID());
             studentExpand.setStuId(stuId);
             studentExpand.setExpandName(studentExpandName);
+            studentExpand.setExpandExplain(expandExplain);
         }
         studentExpand.setExpandValue(studentExpandValue);
         studentExpandList.add(studentExpand);
@@ -185,14 +177,15 @@ public class ImportServiceImpl implements ImportService {
 //        };
 //    }
 
-    private void setStuBirthDate(String stuIDCard, StudentPeople studentPeople){
+    private void setStuBirthDate(String stuIDCard, StudentPeople studentPeople) {
         if (IdcardUtil.isValidCard(StrUtil.trim(stuIDCard))) {
             //验证是合法身份证信息获取生日信息
             studentPeople.setStuBirthDate(IdcardUtil.getBirth(stuIDCard));
         }
     }
 
-    private void setHeaderAlias(ExcelReader reader) {
+    @Override
+    public void setHeaderAlias(@NonNull ExcelReader reader) {
 
         reader.addHeaderAlias(stuName.getName(), stuName.name());
         reader.addHeaderAlias(gender.getName(), gender.name());

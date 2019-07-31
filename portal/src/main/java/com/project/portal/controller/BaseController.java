@@ -1,6 +1,6 @@
 package com.project.portal.controller;
 
-import com.project.base.util.UpdateUtil;
+import cn.hutool.core.bean.BeanUtil;
 import com.project.portal.response.AbsPageResponse;
 import org.springframework.data.domain.Page;
 
@@ -29,7 +29,7 @@ public abstract class BaseController<T,T1> {
         if(result.getContent().size()>0){
             res.setResList(result.getContent().stream()
                     .map(item-> {
-                        UpdateUtil.copyNullProperties(item, dr);
+                        BeanUtil.copyProperties(item, dr);
                         return dr;
                     }).collect(toList()));
         }

@@ -24,8 +24,8 @@ public interface StudentPeopleRepository extends JpaRepository<StudentPeople, St
             " s.totalExaminationAchievement as totalExaminationAchievement, sp.namePinYin as namePinYin, sp.gender as gender, " +
             " sp.stuCardType as stuCardType, sp.stuIDCard as stuIDCard, sp.stuPhone as stuPhone, sp.stuBirthDate as stuBirthDate, " +
             " sp.nationality as nationality, sp.nation as nation, sp.politicalStatus as politicalStatus, sp.householdType as householdType, " +
-            " sp.isImmigrantChildren as isImmigrantChildren, sp.remark as remark, sp.examinationArea as examinationArea, " +
-            " sp.school as school " +
+            " sp.isImmigrantChildren as isImmigrantChildren, sp.remark as remark, sp.examinationArea as examinationArea " +
+//            " sp.school as school " +
             " from Student as s left join StudentPeople as sp on sp.peopleId = s.peopleId" +
             " left join LearnCenter as lc on lc.centerId = s.centerId " +
             " where s.isValidated = '0' and sp.isValidated = '0'" +

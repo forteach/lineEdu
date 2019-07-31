@@ -15,7 +15,7 @@ public interface ArticleDao extends JpaRepository<Article, String>, JpaSpecifica
 
 	public Article findByArticleId(String articleId);
 
-	public Page<IArticle> findAllByAndArticleTypeAndIsValidatedOrderByCreateTimeDesc(String articleType,String isValidated,Pageable pageable);
+	public Page<IArticle> findAllByArticleTypeAndIsValidatedOrderByCreateTimeDesc(String articleType,String isValidated,Pageable pageable);
 
 	@Modifying
 	@Query("update  Article  set isValidated='1' where articleId =?1")

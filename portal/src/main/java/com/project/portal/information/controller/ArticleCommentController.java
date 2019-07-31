@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import static java.util.stream.Collectors.toList;
 
-@RestController
-@RequestMapping(path = "/articleComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-@Api(value = "文章资讯资料", tags = {"文章资讯资料操作信息"})
+//@RestController
+//@RequestMapping(path = "/articleComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//@Api(value = "文章资讯资料", tags = {"文章资讯资料操作信息"})
 public class ArticleCommentController {
 //
 //	@Autowired
