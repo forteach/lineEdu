@@ -12,6 +12,7 @@ import com.project.portal.schoolroll.request.StudentExpandValueRequest;
 import com.project.portal.schoolroll.request.StudentSaveUpdateRequest;
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentPeople;
+import com.project.schoolroll.service.StudentExpandDictionaryService;
 import com.project.schoolroll.service.StudentExpandService;
 import com.project.schoolroll.service.StudentService;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
@@ -22,10 +23,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,10 +44,14 @@ public class StudentController {
 
     private final StudentService studentService;
     private final StudentExpandService studentExpandService;
+    private final StudentExpandDictionaryService studentExpandDictionaryService;
 
-    public StudentController(StudentService studentService, StudentExpandService studentExpandService) {
+    public StudentController(StudentService studentService,
+                             StudentExpandService studentExpandService,
+                             StudentExpandDictionaryService studentExpandDictionaryService) {
         this.studentService = studentService;
         this.studentExpandService = studentExpandService;
+        this.studentExpandDictionaryService = studentExpandDictionaryService;
     }
 
     @ApiOperation(value = "保存修改学生信息")
@@ -189,5 +191,11 @@ public class StudentController {
     public WebResult findStudentPeopleByStuId(@RequestBody String stuId) {
         MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
         return WebResult.okResult(studentService.findStudentPeopleDtoByStuId(JSONObject.parseObject(stuId).getString("stuId")));
+    }
+
+    @ApiOperation(value = "查询扩展字段列表字典", tags = {"查询扩展字段列表字典"})
+    @GetMapping(path = "/findStudentExpandDic")
+    public WebResult findStudentExpandDic() {
+        return WebResult.okResult(studentExpandDictionaryService.findDto());
     }
 }

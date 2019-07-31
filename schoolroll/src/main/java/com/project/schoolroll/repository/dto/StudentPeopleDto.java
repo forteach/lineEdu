@@ -35,7 +35,7 @@ public interface StudentPeopleDto extends StudentDto{
     /** 考试地区市县*/
     public String getExaminationArea();
     /** 毕业学校*/
-    public String getSchool();
+//    public String getSchool();
     /** 入学报道日期 */
     public String getArrivalDate();
     /** 招生批次 春季,秋季*/
