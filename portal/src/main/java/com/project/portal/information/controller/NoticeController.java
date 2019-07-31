@@ -1,13 +1,10 @@
 package com.project.portal.information.controller;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import com.project.information.service.NoticeService;
 import com.project.portal.information.request.notice.ByIdNoticeRequest;
 import com.project.portal.information.request.notice.FindCerterIdListRequest;
-import com.project.portal.information.request.notice.FindIsValListRequest;
 import com.project.portal.information.request.notice.SaveNoticeRequest;
-import com.project.portal.information.response.notice.ListNoticeResponse;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import io.swagger.annotations.Api;
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * 简单公告
@@ -64,7 +59,7 @@ public class NoticeController {
 
 	/**
 	 * 获得分页倒序列表记录
-	 * @param request
+	 * @param
 	 * @return
 	 */
 	@ApiOperation(value = "所有公告倒序分页获取", tags = {"所有公告倒序分页获取"})
@@ -73,17 +68,10 @@ public class NoticeController {
 			@ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
 			@ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
 	})
-	public WebResult findAll(@RequestBody FindIsValListRequest request) {
-		SortVo sortVo = request.getSortVo();
+	public WebResult findAll(@RequestBody SortVo sortVo) {
 		PageRequest page = PageRequest.of(sortVo.getPage(), sortVo.getSize());
-		return WebResult.okResult(noticeService.findByIsValidatedDesc("0",page)
-				.stream()
-				.map(item -> {
-					ListNoticeResponse ar = new ListNoticeResponse();
-					BeanUtil.copyProperties(item, ar);
-					return ar;
-				})
-				.collect(toList()));
+		return WebResult.okResult(noticeService.findByIsValidatedDesc(page));
+
 	}
 
 	/**
@@ -99,16 +87,8 @@ public class NoticeController {
 	})
 	@PostMapping("/findCenterId")
 	public WebResult findCenterId(@RequestBody FindCerterIdListRequest request) {
-		SortVo sortVo = request.getSortVo();
-		PageRequest page = PageRequest.of(sortVo.getPage(), sortVo.getSize());
-		return WebResult.okResult(noticeService.findByCerterIdDesc(request.getCenterId(),"0",page)
-				.stream()
-				.map(item -> {
-					ListNoticeResponse ar = new ListNoticeResponse();
-					BeanUtil.copyProperties(item, ar);
-					return ar;
-				})
-				.collect(toList()));
+		PageRequest page = PageRequest.of(request.getPage(), request.getSize());
+		return WebResult.okResult(noticeService.findByCerterIdDesc(request.getCenterId(),page));
 	}
 
 }

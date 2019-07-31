@@ -24,12 +24,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "中心公告的倒序列表")
-public class FindCerterIdListRequest implements Serializable {
+public class FindCerterIdListRequest extends SortVo implements Serializable {
 
     @ApiModelProperty(value = "centerId", name = "centerId")
     private String centerId;
 
-    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
-    private SortVo sortVo = new SortVo();
+//    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
+//    private SortVo sortVo = new SortVo();
 
 }
