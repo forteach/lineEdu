@@ -64,4 +64,18 @@ public interface TokenService {
      * @param userId
      */
     void removeToken(String userId);
+
+    /**
+     * 获取微信openId
+     * @param token
+     * @return
+     */
+    String getOpenId(String token);
+
+    /**
+     * 获取用户的 session-key
+     * @param key
+     * @return
+     */
+    String getSessionKey(String key);
 }

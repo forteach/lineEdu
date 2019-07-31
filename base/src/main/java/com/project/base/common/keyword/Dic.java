@@ -81,4 +81,15 @@ public class Dic {
      */
     public static final String STUDENT_ADO = "studentsData$";
 
+    /**
+     * 微信登录用户是否绑定信息标识 0 (绑定)　1(未绑定)
+     */
+    public final static String WX_INFO_BINDIND_0 = "0";
+    public final static String WX_INFO_BINDIND_1 = "1";
+
+    /**
+     * 微信　token 信息
+     */
+    public final static String USER_PREFIX = "userToken$";
+
 }

@@ -114,6 +114,16 @@ public class TokenServiceImpl implements TokenService {
         stringRedisTemplate.delete(this.getKey(userId));
     }
 
+    @Override
+    public String getOpenId(String token) {
+        return JWT.decode(token).getAudience().get(0);
+    }
+
+    @Override
+    public String getSessionKey(String key) {
+        return hashOperations.get(key, "sessionKey");
+    }
+
     private String getValue(String token, int index){
         return JWT.decode(token).getAudience().get(index);
     }

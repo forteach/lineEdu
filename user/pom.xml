@@ -11,7 +11,7 @@
 
     <artifactId>user</artifactId>
 
-<!--    <packaging>jar</packaging>-->
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>com.project</groupId>

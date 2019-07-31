@@ -35,6 +35,10 @@ hs_err_pid*
 *.iml
 *.sh
 *.tls
+*.cmd
+*.mvnw
+/wechat/mvnw
+/wechat/HELP.md
 /target/
 /.vscode/
 /portal/target/
@@ -48,6 +52,8 @@ hs_err_pid*
 /course/target/
 /coursedata/target/
 /user/target/
+/wechat/target/
+/wechat/.mvn/
 /.settings/
 /base/.settings/
 /classfee/.settings/

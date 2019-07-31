@@ -44,7 +44,7 @@
         <!--　依赖项 -->
         <dependency>
             <groupId>com.project</groupId>
-            <artifactId>user</artifactId>
+            <artifactId>wechat</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
