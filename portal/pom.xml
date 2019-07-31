@@ -64,6 +64,11 @@
         </dependency>
         <dependency>
             <groupId>com.project</groupId>
+            <artifactId>information</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
             <artifactId>course</artifactId>
             <version>${project.version}</version>
         </dependency>
