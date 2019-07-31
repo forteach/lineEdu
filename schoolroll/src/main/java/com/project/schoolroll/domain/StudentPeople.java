@@ -138,11 +138,11 @@ public class StudentPeople extends Entitys implements Serializable {
      */
     @Column(name = "examinationArea", columnDefinition = "VARCHAR(32) COMMENT '考试地区(市县)'")
     private String examinationArea;
-    /**
-     * 毕业学校
-     */
-    @Column(name = "school", columnDefinition = "VARCHAR(64) COMMENT '毕业学校'")
-    private String school;
+//    /**
+//     * 毕业学校
+//     */
+//    @Column(name = "school", columnDefinition = "VARCHAR(64) COMMENT '毕业学校'")
+//    private String school;
     /**
      * 入学报道日期
      */
@@ -159,7 +159,7 @@ public class StudentPeople extends Entitys implements Serializable {
 //    @Column(name = "stu_email", columnDefinition = "VARCHAR(128) COMMENT '学生邮箱'")
 //    private String stuEmail;
 
-    @Column(name = "health_condition", columnDefinition = "VARCHAR(32) COMMENT '健康状态'")
-    private String healthCondition;
+//    @Column(name = "health_condition", columnDefinition = "VARCHAR(32) COMMENT '健康状态'")
+//    private String healthCondition;
 
 }
