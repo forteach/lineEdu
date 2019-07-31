@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
-import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -121,7 +120,8 @@ public class StudentController {
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
     public WebResult findStudentsPageAll(@RequestBody StudentDtoFindPageAllRequest request) {
-        valideSort(request.getPage(), request.getSize());
+        // todo 
+//        valideSort(request.getPage(), request.getSize());
         FindStudentDtoPageAllVo vo = new FindStudentDtoPageAllVo();
         BeanUtil.copyProperties(request, vo);
         vo.setPageable(PageRequest.of(request.getPage(), request.getSize()));
@@ -192,7 +192,7 @@ public class StudentController {
         return WebResult.okResult(studentService.findStudentPeopleDtoByStuId(JSONObject.parseObject(stuId).getString("stuId")));
     }
 
-    @ApiOperation(value = "查询扩展字段列表字典", tags = {"查询扩展字段列表字典"})
+    @ApiOperation(value = "查询扩展字段列表字典")
     @GetMapping(path = "/findStudentExpandDic")
     public WebResult findStudentExpandDic() {
         return WebResult.okResult(studentExpandDictionaryService.findDto());

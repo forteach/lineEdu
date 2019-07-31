@@ -1,6 +1,8 @@
 package com.project.portal.information.controller;
 
 
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.information.service.NoticeService;
 import com.project.portal.information.request.notice.ByIdNoticeRequest;
 import com.project.portal.information.request.notice.FindCerterIdListRequest;
@@ -24,24 +26,28 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(path = "/notice", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-@Api(value = "简单公告")
+@Api(value = "简单公告", tags = {"简单公告"})
 public class NoticeController {
 	@Autowired
 	private NoticeService noticeService;
 
-	@ApiOperation(value = "保存修改公告", tags = {"noticeId 赋值，修改公告信息"})
+	@ApiOperation(value = "保存修改公告")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "centerId", value = "中心编号", dataType = "string"),
-			@ApiImplicitParam(name = "content", value = "公告内容", dataType = "string"),
-			@ApiImplicitParam(name = "area", value = "1 全部中心领域 2 单个中心领域.", dataType = "int")
+			@ApiImplicitParam(name = "noticeId", value = "公告ID", dataType = "string", paramType = "form", example = "空添加，否则修改"),
+			@ApiImplicitParam(name = "centerId", value = "中心编号", dataType = "string", paramType = "form"),
+			@ApiImplicitParam(name = "content", value = "公告内容", dataType = "string", paramType = "form"),
+			@ApiImplicitParam(name = "area", value = "1 全部中心领域 2 单个中心领域.", dataType = "int", paramType = "form")
 	})
 	@PostMapping("/save")
 	public WebResult save(@RequestBody SaveNoticeRequest request) {
 		return WebResult.okResult(noticeService.save(request.getNoticeId(),request.getContent(),request.getCenterId(),request.getArea()));
 	}
 
+	@ApiOperation(value = "公告ID 查询详情")
+	@ApiImplicitParam(name = "noticeId", value = "公告ID", dataType = "string", paramType = "query")
 	@PostMapping("/findById")
 	public WebResult findById(@RequestBody ByIdNoticeRequest request) {
+		MyAssert.isNull(request.getNoticeId(), DefineCode.ERR0010, "公告ID不为空");
  		return WebResult.okResult(noticeService.findById(request.getNoticeId()));
 	}
 
@@ -50,9 +56,11 @@ public class NoticeController {
 	 * @param request
 	 * @return
 	 */
+	@ApiOperation(value = "根据Id删除公告")
+	@ApiImplicitParam(name = "noticeId", value = "公告ID", dataType = "string", paramType = "form", example = "空添加，否则修改")
 	@PostMapping("/delNotice")
 	public WebResult deleteId(@RequestBody ByIdNoticeRequest request) {
-
+		MyAssert.isNull(request.getNoticeId(), DefineCode.ERR0010, "公告ID不为空");
 		return WebResult.okResult(noticeService.deleteByNoticeId(request.getNoticeId()));
 	}
 
@@ -62,7 +70,7 @@ public class NoticeController {
 	 * @param
 	 * @return
 	 */
-	@ApiOperation(value = "所有公告倒序分页获取", tags = {"所有公告倒序分页获取"})
+	@ApiOperation(value = "所有公告倒序分页获取")
 	@PostMapping("/findAllDesc")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
@@ -79,7 +87,7 @@ public class NoticeController {
 	 * @param request
 	 * @return
 	 */
-	@ApiOperation(value = "所有公告倒序分页获取", tags = {"所有公告倒序分页获取"})
+	@ApiOperation(value = "所有公告倒序分页获取")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "cennterId", value = "中心Id", dataType = "string", example = "0", paramType = "query"),
 			@ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),

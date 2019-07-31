@@ -36,9 +36,18 @@ public class ArticleController {
     /**
      * 保存资讯、资讯所属模块信息
      */
-    @ApiOperation(value = "保存资讯、资讯所属模块信息", tags = {"保存资讯、资讯所属模块信息"})
+    @ApiOperation(value = "保存资讯、资讯所属模块信息")
     @PostMapping("/saveOrUpdate")
-    @ApiImplicitParam(name = "request", dataTypeClass = SaveArticleRequest.class, paramType = "form")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "articleId", value = "文章编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "userId", value = "发布人编号", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "title", value = "文章题目", dataType = "string", required = true,  paramType = "form"),
+            @ApiImplicitParam(name = "imgUrl", value = "图片连接", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "linkUrl", value = "文章连接", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "description", value = "文章描述", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "articleConten", value = "文章内容", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "articleType", value = "资讯分类", dataType = "string", required = true, paramType = "form"),
+    })
     public WebResult save(@RequestBody SaveArticleRequest request) {
 
         // 验证资讯信息
@@ -63,7 +72,7 @@ public class ArticleController {
      * @param req
      * @return
      */
-    @ApiOperation(value = "获得资讯详情", tags = {"获得资讯详情"})
+    @ApiOperation(value = "获得资讯详情")
     @PostMapping("/findId")
     @ApiImplicitParam(name = "id", value = "主键编号", dataType = "string", paramType = "form")
     public WebResult findById(@RequestBody ByIdRequest req) {
@@ -81,7 +90,7 @@ public class ArticleController {
      * @param req
      * @return
      */
-    @ApiOperation(value = "逻辑删除资讯内容", tags = {"逻辑删除资讯内容"})
+    @ApiOperation(value = "逻辑删除资讯内容")
     @ApiImplicitParam(name = "id", value = "主键编号", dataType = "string", paramType = "form")
     @PostMapping("/delId")
     public WebResult deleteArticleById(@RequestBody ByIdRequest req) {
@@ -97,7 +106,7 @@ public class ArticleController {
      * @param request
      * @return
      */
-    @ApiOperation(value = "所有资讯倒序分页获取", tags = {"所有资讯倒序分页获取"})
+    @ApiOperation(value = "所有资讯倒序分页获取")
     @PostMapping("/findAllDesc")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "articleType", dataType = "string", paramType = "query", required = true),
