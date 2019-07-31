@@ -17,7 +17,7 @@ import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
-import com.project.base.util.excelImp.IExcelImpService;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
@@ -182,7 +184,8 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
         }
     }
 
-    public void setHeaderAlias(ExcelReader reader) {
+    @Override
+    public void setHeaderAlias(@NonNull ExcelReader reader) {
 
         reader.addHeaderAlias(stuName.getName(), stuName.name());
         reader.addHeaderAlias(gender.getName(), gender.name());

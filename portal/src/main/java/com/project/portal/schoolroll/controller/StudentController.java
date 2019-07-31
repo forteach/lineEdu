@@ -177,10 +177,9 @@ public class StudentController {
                 .map(v -> {
                     StudentExpandVo vo = new StudentExpandVo();
                     BeanUtil.copyProperties(v, vo);
-                    vo.setStuId(request.getStuId());
                     return vo;
                 }).collect(toList());
-        studentExpandService.saveUpdateStudentExpand(voList);
+        studentExpandService.saveUpdateStudentExpand(voList, request.getStuId());
         return WebResult.okResult();
     }
 

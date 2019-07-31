@@ -17,8 +17,9 @@ public class StudentExpandValueRequest implements Serializable {
     /**
      * 补充编号/扩展编号
      */
-    @ApiModelProperty(name = "expandId", value = "扩展编号", dataType = "string")
-    private String expandId;
+//    @ApiModelProperty(name = "expandId", value = "扩展编号", dataType = "string")
+//    private String expandId;
+
     /**
      * 补充字段名称
      */

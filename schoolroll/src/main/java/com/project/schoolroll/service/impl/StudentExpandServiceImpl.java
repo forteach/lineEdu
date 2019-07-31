@@ -50,19 +50,18 @@ public class StudentExpandServiceImpl implements StudentExpandService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveUpdateStudentExpand(List<StudentExpandVo> studentExpandVos) {
-        studentExpandVos.parallelStream().filter(Objects::nonNull).forEach(v -> {
-            if (StrUtil.isNotBlank(v.getExpandId())) {
-                studentExpandRepository.findById(v.getExpandId()).ifPresent(studentExpand -> {
+    public void saveUpdateStudentExpand(List<StudentExpandVo> studentExpandVos, String stuId) {
+        if (studentExpandVos.size() > 0){
+            studentExpandRepository.deleteAllByStuId(stuId);
+        }
+        studentExpandVos.parallelStream().filter(Objects::nonNull)
+                .forEach(v -> {
+                    // 删除学生对应的扩展字段
+                    StudentExpand studentExpand = new StudentExpand();
                     BeanUtil.copyProperties(v, studentExpand);
+                    studentExpand.setStuId(stuId);
+                    studentExpand.setExpandId(IdUtil.fastSimpleUUID());
                     studentExpandRepository.save(studentExpand);
                 });
-            } else {
-                StudentExpand studentExpand = new StudentExpand();
-                BeanUtil.copyProperties(v, studentExpand);
-                studentExpand.setExpandId(IdUtil.fastSimpleUUID());
-                studentExpandRepository.save(studentExpand);
-            }
-        });
     }
 }

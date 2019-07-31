@@ -60,7 +60,7 @@ public class StudentExpandDictionaryServiceImplTest {
                 StudentExpandDictionary.builder().dicName(householdAdministrativeCode.name()).dicExplain(householdAdministrativeCode.getName()).build(),
                 StudentExpandDictionary.builder().dicName(householdAddressDetails.name()).dicExplain(householdAddressDetails.getName()).build(),
                 StudentExpandDictionary.builder().dicName(localPoliceStation.name()).dicExplain(localPoliceStation.getName()).build(),
-                StudentExpandDictionary.builder().dicName(studentHabitationType.getName()).dicExplain(studentHabitationType.getName()).build(),
+                StudentExpandDictionary.builder().dicName(studentHabitationType.name()).dicExplain(studentHabitationType.getName()).build(),
                 StudentExpandDictionary.builder().dicName(healthCondition.name()).dicExplain(healthCondition.getName()).build(),
                 StudentExpandDictionary.builder().dicName(studentSource.name()).dicExplain(studentSource.getName()).build(),
                 StudentExpandDictionary.builder().dicName(recruit.name()).dicExplain(recruit.getName()).build(),

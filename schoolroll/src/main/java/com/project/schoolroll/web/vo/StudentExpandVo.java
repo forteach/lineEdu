@@ -16,12 +16,12 @@ public class StudentExpandVo implements Serializable {
     /**
      * 学生id
      */
-    private String stuId;
+//    private String stuId;
 
     /**
      * 补充编号/扩展编号
      */
-    private String expandId;
+//    private String expandId;
 
     /**
      * 补充字段名称
