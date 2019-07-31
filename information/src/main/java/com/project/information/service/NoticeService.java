@@ -22,7 +22,7 @@ public class NoticeService {
 	private NoticeDao noticeDao;
 
 	@Transactional
-	public Notice save(String noticeId, String content, String area) {
+	public Notice save(String noticeId, String content, String centerId,int area) {
 
 		Notice nc=null;
 		if(StrUtil.isNotBlank(noticeId)){
@@ -32,8 +32,9 @@ public class NoticeService {
 			nc.setNoticeId(IdUtil.fastSimpleUUID());
 		}
 
-		nc.setArea(area);
+		nc.setCenterAreaId(centerId);
 		nc.setContent(content);
+		nc.setArea(area);
 		return noticeDao.save(nc);
 	}
 
@@ -42,8 +43,24 @@ public class NoticeService {
 	}
 
 
+	/**
+	 * 所有公告 1 全部领域 2 单个领域
+	 * @param isVal
+	 * @param pageable
+	 * @return
+	 */
 	public List<Notice> findByIsValidatedDesc(String isVal, Pageable pageable){
-		return noticeDao.findByIsValidatedOrderByCreateTimeDesc(isVal,pageable).getContent();
+		return noticeDao.findByAreaAndIsValidatedOrderByCreateTimeDesc(1,isVal,pageable).getContent();
+	}
+
+	/**
+	 * 根据中心ID的所有公告
+	 * @param isVal
+	 * @param pageable
+	 * @return
+	 */
+	public List<Notice> findByCerterIdDesc(String isVal,String centerId, Pageable pageable){
+		return noticeDao.findByCenterAreaIdOrAreaAndIsValidatedOrderByCreateTimeDesc(centerId,1,isVal,pageable).getContent();
 	}
 
 	@Transactional

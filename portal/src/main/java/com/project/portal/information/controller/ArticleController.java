@@ -8,7 +8,6 @@ import com.project.information.service.ArticleService;
 import com.project.portal.information.request.article.ByIdRequest;
 import com.project.portal.information.request.article.FindAllRequest;
 import com.project.portal.information.request.article.SaveArticleRequest;
-import com.project.portal.information.response.article.ArticleListResponse;
 import com.project.portal.information.response.article.ArticleResponse;
 import com.project.portal.information.valid.ArticleValide;
 import com.project.portal.response.WebResult;
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(path = "/article", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
