@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
+import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -120,10 +121,7 @@ public class StudentController {
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
     public WebResult findStudentsPageAll(@RequestBody StudentDtoFindPageAllRequest request) {
-        MyAssert.blank(String.valueOf(request.getPage()), DefineCode.ERR0010, "页码参数不为空");
-        MyAssert.blank(String.valueOf(request.getSize()), DefineCode.ERR0010, "每页条数不为空");
-        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
-        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        valideSort(request.getPage(), request.getSize());
         FindStudentDtoPageAllVo vo = new FindStudentDtoPageAllVo();
         BeanUtil.copyProperties(request, vo);
         vo.setPageable(PageRequest.of(request.getPage(), request.getSize()));
