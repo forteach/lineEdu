@@ -9,6 +9,7 @@ import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.project.base.util.excelImp.AbsExcelImp;
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentExpand;
 import com.project.schoolroll.domain.StudentPeople;
@@ -16,7 +17,7 @@ import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
-import com.project.schoolroll.service.ImportService;
+import com.project.base.util.excelImp.IExcelImpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,12 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @Auther: zhangyy
@@ -41,23 +39,23 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 @Slf4j
-public class ImportServiceImpl implements ImportService {
+public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     private final StudentRepository studentRepository;
     private final StudentExpandRepository studentExpandRepository;
     private final StudentPeopleRepository studentPeopleRepository;
     private final RedisTemplate redisTemplate;
 
     @Autowired
-    public ImportServiceImpl(StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository,
-                             StudentExpandRepository studentExpandRepository, RedisTemplate redisTemplate) {
+    public ExcelImpServiceImpl(StudentRepository studentRepository, StudentPeopleRepository studentPeopleRepository,
+                               StudentExpandRepository studentExpandRepository, RedisTemplate redisTemplate) {
         this.studentRepository = studentRepository;
         this.studentExpandRepository = studentExpandRepository;
         this.studentPeopleRepository = studentPeopleRepository;
         this.redisTemplate = redisTemplate;
     }
 
-    @Override
-    public void studentsExcel07Reader(InputStream inputStream) {
+
+    public void studentsExcel07Reader(InputStream inputStream,Class obj ) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
         List<StudentImport> list = reader.readAll(StudentImport.class);
@@ -67,11 +65,11 @@ public class ImportServiceImpl implements ImportService {
         redisTemplate.delete(IMPORT_STUDENTS);
     }
 
-    @Override
-    public void studentsExcel03Reader(InputStream inputStream) {
-        ExcelReader reader = ExcelUtil.getReader(inputStream);
-        setHeaderAlias(reader);
-        List<StudentImport> list = reader.readAll(StudentImport.class);
+
+    public void studentsExcel03Reader(InputStream inputStream,Class obj) {
+//        ExcelReader reader = ExcelUtil.getReader(inputStream);
+//        setHeaderAlias(reader);
+        List<StudentImport> list = ExcelReader(inputStream,obj);
 
         saveStudent(list);
 
@@ -192,7 +190,7 @@ public class ImportServiceImpl implements ImportService {
         }
     }
 
-    private void setHeaderAlias(ExcelReader reader) {
+    public void setHeaderAlias(ExcelReader reader) {
 
         reader.addHeaderAlias(stuName.getName(), stuName.name());
         reader.addHeaderAlias(gender.getName(), gender.name());
