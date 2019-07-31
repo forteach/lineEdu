@@ -5,11 +5,12 @@ import cn.hutool.core.util.StrUtil;
 import com.project.information.domain.Notice;
 import com.project.information.repository.NoticeDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
  * 简单公告S
@@ -22,7 +23,7 @@ public class NoticeService {
 	private NoticeDao noticeDao;
 
 	@Transactional
-	public Notice save(String noticeId, String content, String area) {
+	public Notice save(String noticeId, String content, String centerId,int area) {
 
 		Notice nc=null;
 		if(StrUtil.isNotBlank(noticeId)){
@@ -32,8 +33,9 @@ public class NoticeService {
 			nc.setNoticeId(IdUtil.fastSimpleUUID());
 		}
 
-		nc.setArea(area);
+		nc.setCenterAreaId(centerId);
 		nc.setContent(content);
+		nc.setArea(area);
 		return noticeDao.save(nc);
 	}
 
@@ -42,8 +44,22 @@ public class NoticeService {
 	}
 
 
-	public List<Notice> findByIsValidatedDesc(String isVal, Pageable pageable){
-		return noticeDao.findByIsValidatedOrderByCreateTimeDesc(isVal,pageable).getContent();
+	/**
+	 * 所有公告 1 全部领域 2 单个领域
+	 * @param pageable
+	 * @return
+	 */
+	public Page<Notice> findByIsValidatedDesc(Pageable pageable){
+		return noticeDao.findByAreaAndIsValidatedOrderByCreateTimeDesc(1,TAKE_EFFECT_OPEN,pageable);
+	}
+
+	/**
+	 * 根据中心ID的所有公告
+	 * @param pageable
+	 * @return
+	 */
+	public Page<Notice> findByCerterIdDesc(String centerId, Pageable pageable){
+		return noticeDao.findByCenterAreaIdOrAreaAndIsValidatedOrderByCreateTimeDesc(centerId,1,TAKE_EFFECT_OPEN,pageable);
 	}
 
 	@Transactional
