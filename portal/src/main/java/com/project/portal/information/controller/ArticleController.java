@@ -3,6 +3,7 @@ package com.project.portal.information.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.base.util.UpdateUtil;
 import com.project.information.domain.Article;
 import com.project.information.service.ArticleService;
 import com.project.portal.information.request.article.ByIdRequest;
@@ -122,4 +123,17 @@ public class ArticleController {
         return WebResult.okResult(articleService.findAllDesc(request.getArticleType(), page));
     }
 
+
+    public static void main(String[] args) {
+        Article  articleSrc = new Article();
+        articleSrc.setImgUrl("wdwed");
+        articleSrc.setIsNice("y");
+        Article article = new Article();
+        article.setIsNice("n");
+        article.setArticleConten("cents");
+//        BeanUtil.copyProperties(articleSrc, article);
+        UpdateUtil.copyNullProperties(articleSrc, article);
+        System.out.println("src   "+articleSrc);
+        System.out.println("art    "+article);
+    }
 }
