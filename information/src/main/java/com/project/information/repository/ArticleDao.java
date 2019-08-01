@@ -10,11 +10,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface ArticleDao extends JpaRepository<Article, String>, JpaSpecificationExecutor<Article> {
 
 	public Article findByArticleId(String articleId);
 
+	@Transactional(readOnly = true)
+	public Page<IArticle> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated,Pageable pageable);
+
+	@Transactional(readOnly = true)
 	public Page<IArticle> findAllByArticleTypeAndIsValidatedOrderByCreateTimeDesc(String articleType,String isValidated,Pageable pageable);
 
 	@Modifying

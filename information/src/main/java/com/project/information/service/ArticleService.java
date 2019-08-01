@@ -8,6 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.RegexUtils;
+import com.project.base.util.UpdateUtil;
 import com.project.information.domain.Article;
 import com.project.information.dto.IArticle;
 import com.project.information.repository.ArticleDao;
@@ -47,32 +48,29 @@ public class ArticleService {
      * @param newArt
      * @return
      */
-    public Article setDoMain( Article newArt ) {
+    public Article setDoMain(Article newArt) {
         // 获得页面设置的资讯值
         String artId = newArt.getArticleId();
-
         // 是否获取已存在的用户信息
         if (StrUtil.isNotBlank(artId)) {
             Article art = findById(artId);
             MyAssert.isNull(art, DefineCode.ERR0010,"资料信息不存在");
-            String createTime=art.getCreateTime();
-            BeanUtil.copyProperties(art, newArt);
-            newArt.setCreateTime(createTime);
-            String newContent= replaceImgWidth(newArt.getArticleConten());
-            newArt.setArticleConten(newContent);
-
-        }else {
-            Article art=new Article();
+            if (StrUtil.isNotBlank(newArt.getArticleConten())) {
+                String newContent = replaceImgWidth(newArt.getArticleConten());
+                newArt.setArticleConten(newContent);
+            }
             BeanUtil.copyProperties(newArt, art);
-            art.setArticleId(IdUtil.fastSimpleUUID());
-            String newContent= replaceImgWidth(newArt.getArticleConten());
-            art.setArticleConten(newContent);
-            art.setCreateUser(newArt.getUserId());
-            art.setIsNice("false");
-
+            return art;
+        }else {
+            if (StrUtil.isNotBlank(newArt.getArticleConten())) {
+                String newContent = replaceImgWidth(newArt.getArticleConten());
+                newArt.setArticleConten(newContent);
+            }
+            newArt.setArticleId(IdUtil.fastSimpleUUID());
+            newArt.setCreateUser(newArt.getUserId());
+            newArt.setIsNice("false");
+            return newArt;
         }
-
-        return newArt;
     }
 
     /**
@@ -95,8 +93,11 @@ public class ArticleService {
      * @return
      */
     public Page<IArticle> findAllDesc(String articleType, Pageable pageable) {
-        Page<IArticle> page =  articleDao.findAllByArticleTypeAndIsValidatedOrderByCreateTimeDesc(articleType,TAKE_EFFECT_OPEN, pageable);
-        return page;
+        if (StrUtil.isNotBlank(articleType)) {
+            return articleDao.findAllByArticleTypeAndIsValidatedOrderByCreateTimeDesc(articleType, TAKE_EFFECT_OPEN, pageable);
+        }else {
+            return articleDao.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
+        }
     }
 
 

@@ -1,7 +1,7 @@
 package com.project.schoolroll.service;
 
+import com.project.schoolroll.domain.StudentExpand;
 import com.project.schoolroll.repository.dto.StudentExpandDto;
-import com.project.schoolroll.web.vo.StudentExpandVo;
 
 import java.util.List;
 
@@ -37,5 +37,5 @@ public interface StudentExpandService {
      * 保存修改学生的扩展信息
      * @param studentExpandVo
      */
-    public void saveUpdateStudentExpand(List<StudentExpandVo> studentExpandVo, String stuId);
+    public void saveUpdateStudentExpand(List<StudentExpand> studentExpandVo, String stuId);
 }

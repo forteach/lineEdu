@@ -34,11 +34,11 @@ public class SaveArticleRequest implements Serializable {
 	private String articleId;
 
 	/** 发布人编号.**/
-	@ApiModelProperty(name = "发布人编号", value = "发布人编号", dataType = "string")
+	@ApiModelProperty(name = "userId", value = "发布人编号", dataType = "string")
 	private String userId;
 
 	/** 文章题目.**/
-	@ApiModelProperty(name = "文章题目", value = "文章题目", dataType = "string")
+	@ApiModelProperty(name = "title", value = "文章题目", dataType = "string")
 	private String title;
 
 	// 图片连接.**/

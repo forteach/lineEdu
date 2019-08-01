@@ -26,8 +26,4 @@ public class FindAllRequest extends SortVo implements Serializable {
     @ApiModelProperty(value = "资讯分类", name = "articleType")
     private String articleType;
 
-
-//    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
-//    private SortVo sortVo = new SortVo();
-
 }
