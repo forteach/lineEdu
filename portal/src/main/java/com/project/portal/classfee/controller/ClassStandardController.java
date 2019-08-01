@@ -23,6 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
+import static com.project.portal.request.ValideSortVo.valideSort;
+
 
 /**
  * 课时费标准
@@ -104,11 +106,9 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
             @ApiImplicitParam(value = "所属年份", name = "createYear", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
-//            @ApiImplicitParam(name = "sortVo", value = "分页信息", dataTypeClass = SortVo.class, required = true, paramType = "query")
     })
     public WebResult findAllPage(@RequestBody ClassStandardListReq request){
-        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
-        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        valideSort(request.getPage(), request.getSize());
         PageRequest pageReq = PageRequest.of(request.getPage(), request.getSize());
         Page<ClassStandard> result= classStandardService.findAllPage(request.getCenterAreaId(),request.getCreateYear(),pageReq);
         //设置分页返回对象

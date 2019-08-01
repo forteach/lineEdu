@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
  * @author: zhangyy
@@ -90,10 +91,9 @@ public class LearnCenterController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody SortVo vo) {
-        MyAssert.gt(vo.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
-        MyAssert.gt(vo.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
-        return WebResult.okResult(learnCenterRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, PageRequest.of(vo.getPage(), vo.getSize())));
+    public WebResult findAllPage(@RequestBody SortVo sortVo) {
+        valideSort(sortVo.getPage(), sortVo.getSize());
+        return WebResult.okResult(learnCenterRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
 
     @ApiOperation(value = "移除学习中心信息")

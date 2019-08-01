@@ -9,11 +9,13 @@ import javax.persistence.Table;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
  * 我收藏和发布的文章
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "my_article")

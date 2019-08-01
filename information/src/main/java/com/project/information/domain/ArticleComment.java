@@ -8,12 +8,14 @@ import javax.persistence.Table;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /***
  * 
  * @author zjw 文章评论
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "article_comment")

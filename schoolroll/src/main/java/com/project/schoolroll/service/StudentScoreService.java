@@ -1,6 +1,9 @@
 package com.project.schoolroll.service;
 
 import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.web.vo.StudentScorePageAllVo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -32,4 +35,6 @@ public interface StudentScoreService {
      * @param scoreId
      */
     public void deleteStudentScoreById(String scoreId);
+
+    public Page<?> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of);
 }

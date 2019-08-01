@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.project.portal.request.ValideSortVo.valideSort;
+
 @RestController
 @RequestMapping(path = "/article", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Api(value = "文章资讯资料", tags = {"文章资讯资料操作信息"})
@@ -105,10 +107,7 @@ public class ArticleController {
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
     public WebResult findAllDesc(@RequestBody FindAllRequest request) {
-        MyAssert.blank(String.valueOf(request.getPage()), DefineCode.ERR0010, "页码参数不为空");
-        MyAssert.blank(String.valueOf(request.getSize()), DefineCode.ERR0010, "每页条数不为空");
-        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
-        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        valideSort(request.getPage(), request.getSize());
         PageRequest page = PageRequest.of(request.getPage(), request.getSize());
         return WebResult.okResult(articleService.findAllDesc(request.getArticleType(), page));
     }

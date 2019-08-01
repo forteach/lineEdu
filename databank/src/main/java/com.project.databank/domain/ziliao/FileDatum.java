@@ -1,0 +1,25 @@
+package com.project.databank.domain.ziliao;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+/**
+ * @Auther: zhangyy
+ * @Email: zhang10092009@hotmail.com
+ * @Date: 2018/11/17 13:28
+ * @Version: 1.0
+ * @Description: 文档资料库
+ */
+@Data
+@Entity
+@Table(name = "file_datum", indexes = {@Index(columnList = "chapter_id", name = "chapter_id_index")})
+@org.hibernate.annotations.Table(appliesTo = "file_datum", comment = "文档资料库")
+@EqualsAndHashCode(callSuper = true)
+public class FileDatum extends AbsDatum implements Serializable {
+
+}
