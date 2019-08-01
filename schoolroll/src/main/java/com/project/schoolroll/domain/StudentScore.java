@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.print.attribute.standard.MediaSize;
 import java.io.Serializable;
 
 /**
@@ -58,4 +59,14 @@ public class StudentScore extends Entitys implements Serializable {
      */
     @Column(name = "course_score", columnDefinition = "FLOAT(5,2) COMMENT '课程分数'")
     private float courseScore;
+    /**
+     * 学期
+     */
+    @Column(name = "term", columnDefinition = "VARCHAR(32) COMMENT '学期'")
+    private String term;
+    /**
+     * 学年
+     */
+    @Column(name = "school_year", columnDefinition = "VARCHAR(32) COMMENT '学年'")
+    private String schoolYear;
 }

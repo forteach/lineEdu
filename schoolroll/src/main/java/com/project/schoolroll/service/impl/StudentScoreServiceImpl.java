@@ -3,7 +3,10 @@ package com.project.schoolroll.service.impl;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.repository.StudentScoreRepository;
 import com.project.schoolroll.service.StudentScoreService;
+import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,5 +42,10 @@ public class StudentScoreServiceImpl implements StudentScoreService {
     @Override
     public void deleteStudentScoreById(String scoreId) {
         studentScoreRepository.deleteById(scoreId);
+    }
+
+    @Override
+    public Page<?> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of) {
+        return null;
     }
 }

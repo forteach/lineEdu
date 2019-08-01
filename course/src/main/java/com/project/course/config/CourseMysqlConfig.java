@@ -1,6 +1,6 @@
 package com.project.course.config;
 
-import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @version: 1.0
  * @description:
  */
-@Configurable
+@Configuration
 @EnableJpaRepositories(basePackages = "com.project.course.repository")
 public class CourseMysqlConfig {
 

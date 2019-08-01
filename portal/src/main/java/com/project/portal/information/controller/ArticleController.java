@@ -3,6 +3,7 @@ package com.project.portal.information.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.base.util.UpdateUtil;
 import com.project.information.domain.Article;
 import com.project.information.service.ArticleService;
 import com.project.portal.information.request.article.ByIdRequest;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.project.portal.request.ValideSortVo.valideSort;
 
 @RestController
 @RequestMapping(path = "/article", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -114,12 +117,22 @@ public class ArticleController {
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
     public WebResult findAllDesc(@RequestBody FindAllRequest request) {
-        MyAssert.blank(String.valueOf(request.getPage()), DefineCode.ERR0010, "页码参数不为空");
-        MyAssert.blank(String.valueOf(request.getSize()), DefineCode.ERR0010, "每页条数不为空");
-        MyAssert.gt(request.getPage(), 0, DefineCode.ERR0010, "页码参数不正确");
-        MyAssert.gt(request.getSize(), 0, DefineCode.ERR0010, "每页显示条数不正确");
+        valideSort(request.getPage(), request.getSize());
         PageRequest page = PageRequest.of(request.getPage(), request.getSize());
         return WebResult.okResult(articleService.findAllDesc(request.getArticleType(), page));
     }
 
+
+    public static void main(String[] args) {
+        Article  articleSrc = new Article();
+        articleSrc.setImgUrl("wdwed");
+        articleSrc.setIsNice("y");
+        Article article = new Article();
+        article.setIsNice("n");
+        article.setArticleConten("cents");
+//        BeanUtil.copyProperties(articleSrc, article);
+        UpdateUtil.copyNullProperties(articleSrc, article);
+        System.out.println("src   "+articleSrc);
+        System.out.println("art    "+article);
+    }
 }

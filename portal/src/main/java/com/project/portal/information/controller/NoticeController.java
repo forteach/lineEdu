@@ -1,6 +1,5 @@
 package com.project.portal.information.controller;
 
-
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.information.service.NoticeService;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
  * 简单公告
@@ -77,6 +78,7 @@ public class NoticeController {
 			@ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
 	})
 	public WebResult findAll(@RequestBody SortVo sortVo) {
+		valideSort(sortVo.getPage(), sortVo.getSize());
 		PageRequest page = PageRequest.of(sortVo.getPage(), sortVo.getSize());
 		return WebResult.okResult(noticeService.findByIsValidatedDesc(page));
 
@@ -95,8 +97,8 @@ public class NoticeController {
 	})
 	@PostMapping("/findCenterId")
 	public WebResult findCenterId(@RequestBody FindCerterIdListRequest request) {
+		valideSort(request.getPage(), request.getSize());
 		PageRequest page = PageRequest.of(request.getPage(), request.getSize());
 		return WebResult.okResult(noticeService.findByCerterIdDesc(request.getCenterId(),page));
 	}
-
 }
