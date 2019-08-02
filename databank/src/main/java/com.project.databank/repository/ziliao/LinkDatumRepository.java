@@ -25,20 +25,20 @@ public interface LinkDatumRepository extends IDatumRepoitory<LinkDatum, String> 
     /**
      * 修改教师分享
      *
-     * @param fileId
-     * @param teachShare
+//     * @param fileId
+//     * @param teachShare
      */
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE LinkDatum p SET p.teachShare = :teachShare where p.fileId = :fileId")
-    public void updateTeachShare(String fileId, String teachShare);
+//    @Modifying(clearAutomatically = true)
+//    @Query("UPDATE LinkDatum p SET p.teachShare = :teachShare where p.fileId = :fileId")
+//    public void updateTeachShare(String fileId, String teachShare);
 
     /**
      * 修改学生可见
      *
-     * @param fileId
-     * @param stuShare
+//     * @param fileId
+//     * @param stuShare
      */
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE LinkDatum p SET p.stuShare = :stuShare where p.fileId = :fileId")
-    public void updateStuShare(String fileId, String stuShare);
+//    @Modifying(clearAutomatically = true)
+//    @Query("UPDATE LinkDatum p SET p.stuShare = :stuShare where p.fileId = :fileId")
+//    public void updateStuShare(String fileId, String stuShare);
 }

@@ -1,12 +1,5 @@
 package com.project.course.web.resp;
 
-import com.project.course.domain.pk.CourseShareUsersPk;
-import lombok.Data;
-
-import javax.persistence.Column;
-import java.io.Serializable;
-
-
 /**
  * @Auther: zhangyy
  * @Email: zhang10092009@hotmail.com
@@ -14,16 +7,16 @@ import java.io.Serializable;
  * @Version: 1.0
  * @Description:
  */
-@Data
-public class CourseUsersResp implements Serializable {
+//@Data
+//public class CourseUsersResp implements Serializable {
 
-    private CourseShareUsersPk shareUsersPk;
+//    private CourseShareUsersPk shareUsersPk;
 
-    private String shareId;
+//    private String shareId;
 
-    private String userId;
+//    private String userId;
 
-    @Column(name = "user_name", columnDefinition = "VARCHAR(40) COMMENT '接受分享成员名称'")
-    private String userName;
+//    @Column(name = "user_name", columnDefinition = "VARCHAR(40) COMMENT '接受分享成员名称'")
+//    private String userName;
 
-}
+//}

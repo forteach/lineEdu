@@ -1,11 +1,5 @@
 package com.project.course.repository;
 
-import com.project.course.domain.CourseShare;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
 /**
  * @Auther: zhangyy
  * @Email: zhang10092009@hotmail.com
@@ -13,12 +7,12 @@ import java.util.List;
  * @Version: 1.0
  * @Description: 分享范围 1、 全部 2、 章节
  */
-public interface CourseShareRepository extends JpaRepository<CourseShare, String> {
+//public interface CourseShareRepository extends JpaRepository<CourseShare, String> {
 
-    @Transactional(readOnly = true)
-    public List<CourseShare> findByCourseId(String courseId);
+//    @Transactional(readOnly = true)
+//    public List<CourseShare> findByCourseId(String courseId);
 
-    @Transactional(readOnly = true)
-    public CourseShare findByCourseIdAndShareArea(String courseId, String shareArea);
+//    @Transactional(readOnly = true)
+//    public CourseShare findByCourseIdAndShareArea(String courseId, String shareArea);
 
-}
+//}

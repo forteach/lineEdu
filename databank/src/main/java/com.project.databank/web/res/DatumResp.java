@@ -51,10 +51,10 @@ public class DatumResp implements Serializable {
     /**
      * 教师共享
      */
-    private String teachShare;
+//    private String teachShare;
     /**
      * 教师共享
      */
-    private String stuShare;
+//    private String stuShare;
 
 }

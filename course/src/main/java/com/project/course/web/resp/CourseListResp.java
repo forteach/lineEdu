@@ -26,7 +26,7 @@ public class CourseListResp implements Serializable {
 
     private String courseNumber;
 
-    private String lessonPreparationType;
+//    private String lessonPreparationType;
 
     private String topPicSrc;
 
@@ -44,11 +44,11 @@ public class CourseListResp implements Serializable {
 
     private String teacherName;
 
-    public CourseListResp(String courseId, String courseName, String courseNumber, String lessonPreparationType, String topPicSrc, String alias) {
+    public CourseListResp(String courseId, String courseName, String courseNumber, String topPicSrc, String alias) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseNumber = courseNumber;
-        this.lessonPreparationType = lessonPreparationType;
+//        this.lessonPreparationType = lessonPreparationType;
         this.topPicSrc = topPicSrc;
         this.alias = alias;
     }

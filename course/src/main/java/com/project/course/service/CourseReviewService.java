@@ -28,7 +28,7 @@ public interface CourseReviewService {
      *
      * @param reviewId
      */
-    void deleteReview(String reviewId);
+//    void deleteReview(String reviewId);
 
     /**
      * 查询最近一条评论记录节评分

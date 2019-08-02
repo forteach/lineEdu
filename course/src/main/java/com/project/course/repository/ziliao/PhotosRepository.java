@@ -28,8 +28,8 @@ public interface PhotosRepository extends JpaRepository<Photos, String> {
     @Transactional(readOnly = true)
     public List<Photos> findByArlitsIdAndIsValidated(String arlitsId, String isValidated);
 
-    @Transactional(readOnly = true)
-    public List<Photos> findByArlitsId(String arlitsId);
+//    @Transactional(readOnly = true)
+//    public List<Photos> findByArlitsId(String arlitsId);
 
     /**
      * 分页获取图册信息
@@ -39,17 +39,17 @@ public interface PhotosRepository extends JpaRepository<Photos, String> {
      * @param pageable
      * @return
      */
-    @Transactional(readOnly = true)
-    public Page<Photos> findByArlitsIdAndIsValidated(String arlitsId, String isValidated, Pageable pageable);
+//    @Transactional(readOnly = true)
+//    public Page<Photos> findByArlitsIdAndIsValidated(String arlitsId, String isValidated, Pageable pageable);
 
     /**
      * 删除图集
      *
-     * @param arlitsId
+//     * @param arlitsId
      * @return
      */
-    @Modifying(clearAutomatically = true)
-    public int deleteByArlitsId(String arlitsId);
+//    @Modifying(clearAutomatically = true)
+//    public int deleteByArlitsId(String arlitsId);
 
     @Transactional(rollbackFor = Exception.class)
     public List<Photos> findByChapterId(String chapterId);

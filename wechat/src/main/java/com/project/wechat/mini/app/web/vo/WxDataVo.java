@@ -1,5 +1,6 @@
 package com.project.wechat.mini.app.web.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.wechat.mini.app.web.request.WeChatBaseRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,8 +15,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class WxDataVo extends WeChatBaseRequest {
+    @JsonIgnore
     private String signature;
+    @JsonIgnore
     private String rawData;
+    @JsonIgnore
     private String encryptedData;
+    @JsonIgnore
     private String iv;
 }

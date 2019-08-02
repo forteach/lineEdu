@@ -40,9 +40,9 @@ public class ChapteDataResp implements Serializable {
     @ApiModelProperty(name = "datumAreas", dataType = "string", value = "资料领域", example = "1", notes = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例")
     private String datumAreas;
 
-    @ApiModelProperty(name = "teachShare", value = "教师共享", dataType = "string", notes = "0不共享 1 共享")
-    private String teachShare;
+//    @ApiModelProperty(name = "teachShare", value = "教师共享", dataType = "string", notes = "0不共享 1 共享")
+//    private String teachShare;
 
-    @ApiModelProperty(name = "stuShare", value = "学生共享", dataType = "string", notes = "0不共享 1共享")
-    private String stuShare;
+//    @ApiModelProperty(name = "stuShare", value = "学生共享", dataType = "string", notes = "0不共享 1共享")
+//    private String stuShare;
 }

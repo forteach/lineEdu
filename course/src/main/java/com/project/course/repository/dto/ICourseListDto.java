@@ -42,7 +42,7 @@ public interface ICourseListDto {
      *
      * @return
      */
-    public String getLessonPreparationType();
+//    public String getLessonPreparationType();
 
     /**
      * 课程封面

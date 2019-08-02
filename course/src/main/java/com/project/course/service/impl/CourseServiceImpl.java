@@ -1,22 +1,18 @@
 package com.project.course.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.project.base.common.keyword.DefineCode;
-import com.project.base.exception.MyAssert;
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseEntity;
 import com.project.course.domain.CourseImages;
-import com.project.course.domain.CourseShare;
 import com.project.course.repository.CourseEntrityRepository;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.service.CourseService;
-import com.project.course.service.CourseShareService;
 import com.project.course.web.req.CourseImagesReq;
-import com.project.course.web.vo.RTeacher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -24,12 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static com.project.base.common.keyword.Dic.*;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
  * @Auther: zhangyy
@@ -57,8 +51,8 @@ public class CourseServiceImpl implements CourseService {
     /**
      * 集体备课课程共享资源
      */
-    @Resource
-    private CourseShareService courseShareService;
+//    @Resource
+//    private CourseShareService courseShareService;
 
     @Resource
     private CourseEntrityRepository courseEntrityRepository;
@@ -69,43 +63,48 @@ public class CourseServiceImpl implements CourseService {
     /**
      * 保存课程基本信息
      *
-     * @param course   课程基本信息
-     * @param teachers 集体备课教师信息
+     * @param course 课程基本信息
+     *               //     * @param teachers 集体备课教师信息
      * @return 课程编号和集体备课资源编号
      */
     @Override
     @Transactional(rollbackForClassName = "Exception")
-    public List<String> save(Course course, List<RTeacher> teachers) {
+    public String saveUpdate(Course course) {
         //1、保存课程基本信息
         if (StrUtil.isBlank(course.getCourseId())) {
             course.setCourseId(IdUtil.fastSimpleUUID());
+            course.setUpdateUser(course.getCreateUser());
+            return courseRepository.save(course).getCourseId();
+        }else {
+            courseRepository.findById(course.getCourseId()).ifPresent(c -> {
+                BeanUtil.copyProperties(course, c);
+                c.setUpdateUser(course.getCreateUser());
+                courseRepository.save(c);
+            });
         }
-        course = courseRepository.save(course);
+        return course.getCourseId();
+//        return courseRepository.save(course).getCourseId();
 
         //2、如果是集体备课，保存集体备课基本信息
-        String shareId = "";
-        if (LESSON_PREPARATION_TYPE_GROUP.equals(course.getLessonPreparationType())) {
-            MyAssert.isTrue(teachers.size() == 0, DefineCode.ERR0010, "集体备课，必须选择备课教师");
-            shareId = courseShareService.save(course, teachers);
-        }
+//        String shareId = courseShareService.save(course, teachers);
 
         //3、设置返回数据
-        List<String> result = new ArrayList<String>();
-        result.add(course.getCourseId());
-        result.add(shareId);
-        return result;
+//        List<String> result = new ArrayList<String>();
+//        result.add(course.getCourseId());
+//        result.add(shareId);
+//        return course.getCourseId();
     }
 
-    @Override
-    @Transactional(rollbackForClassName = "Exception")
-    public String edit(Course course, String oldShareId, List<RTeacher> teachers) {
+//    @Override
+//    @Transactional(rollbackForClassName = "Exception")
+//    public String edit(Course course) {
 
-        //修改课程信息
-        courseRepository.save(course);
+    //修改课程信息
+//        courseRepository.save(course);
 
-        //判断原有的备课类型是否是集体备课，并修改集体备课信息
-        return courseShareService.update(course.getLessonPreparationType(), oldShareId, course, teachers);
-    }
+    //判断原有的备课类型是否是集体备课，并修改集体备课信息
+//        return courseShareService.update(course.getLessonPreparationType(), oldShareId, course);
+//    }
 
     /**
      * 获得所有可用课程列表
@@ -183,23 +182,21 @@ public class CourseServiceImpl implements CourseService {
      * @param courseId
      * @return
      */
-    @Override
-    public Map<String, Object> getCourseById(String courseId) {
-        Map<String, Object> result = new HashMap<>(2);
-        courseRepository.findById(courseId).ifPresent(course -> {
-            String shareId = "";
-            //课程为集体备课
-            if (course.getLessonPreparationType().equals(LESSON_PREPARATION_TYPE_GROUP)) {
-                CourseShare cs = courseShareService.findByCourseIdAll(course.getCourseId());
-                shareId = cs.getShareId();
-            }
-            result.put("course", course);
-            result.put("shareId", shareId);
-        });
-        return result;
-    }
-
-
+//    @Override
+//    public Map<String, Object> getCourseById(String courseId) {
+//        Map<String, Object> result = new HashMap<>(2);
+//        courseRepository.findById(courseId).ifPresent(course -> {
+//            String shareId = "";
+//            //课程为集体备课
+//            if (course.getLessonPreparationType().equals(LESSON_PREPARATION_TYPE_GROUP)) {
+//                CourseShare cs = courseShareService.findByCourseIdAll(course.getCourseId());
+//                shareId = cs.getShareId();
+//            }
+//            result.put("course", course);
+//            result.put("shareId", shareId);
+//        });
+//        return result;
+//    }
     @Override
     @Transactional(rollbackForClassName = "Exception")
     public void deleteIsValidById(String courseId) {

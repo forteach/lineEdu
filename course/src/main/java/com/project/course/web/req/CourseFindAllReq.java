@@ -22,7 +22,4 @@ import java.io.Serializable;
 public class CourseFindAllReq implements Serializable {
 
     private String userId;
-
-//    private SortVo sortVo = new SortVo();
-
 }

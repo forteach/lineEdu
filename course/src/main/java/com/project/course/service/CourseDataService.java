@@ -36,11 +36,9 @@ public interface CourseDataService {
      * @param fileId
      * @param datumType
      * @param datumArea
-     * @param teachShare
-     * @param stuShare
      * @return
      */
-    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea, String teachShare, String stuShare);
+    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea);
 
     /**
      * 课程资料详细列表

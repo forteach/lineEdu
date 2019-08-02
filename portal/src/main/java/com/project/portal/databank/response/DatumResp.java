@@ -59,11 +59,11 @@ public class DatumResp implements Serializable {
     /**
      * 教师共享
      */
-    @ApiModelProperty(name = "teachShare", value = "教师共享", dataType = "string")
-    private String teachShare;
+//    @ApiModelProperty(name = "teachShare", value = "教师共享", dataType = "string")
+//    private String teachShare;
     /**
      * 教师共享
      */
-    @ApiModelProperty(name = "stuShare", value = "教师共享", dataType = "string")
-    private String stuShare;
+//    @ApiModelProperty(name = "stuShare", value = "教师共享", dataType = "string")
+//    private String stuShare;
 }

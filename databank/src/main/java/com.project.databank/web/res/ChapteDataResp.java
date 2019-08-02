@@ -33,8 +33,8 @@ public class ChapteDataResp implements Serializable {
 
     private String datumAreas;
 
-    private String teachShare;
+//    private String teachShare;
 
-    private String stuShare;
+//    private String stuShare;
 
 }

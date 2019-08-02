@@ -7,12 +7,9 @@ import com.project.course.domain.CourseImages;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.web.req.CourseImagesReq;
-import com.project.course.web.resp.CourseListResp;
-import com.project.course.web.vo.RTeacher;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Auther: zhangyy
@@ -23,9 +20,9 @@ import java.util.Map;
  */
 public interface CourseService {
 
-    public List<String> save(Course course, List<RTeacher> teachers);
+    public String saveUpdate(Course course);
 
-    public String edit(Course course, String oldShareId, List<RTeacher> teachers);
+//    public String edit(Course course);
 
     public void deleteIsValidById(String courseId);
 
@@ -37,7 +34,7 @@ public interface CourseService {
 
     public List<ICourseListDto> findAll(PageRequest page);
 
-    public Map<String, Object> getCourseById(String courseId);
+//    public Map<String, Object> getCourseById(String courseId);
 
     public List<CourseImages> findImagesByCourseId(String courseId);
 

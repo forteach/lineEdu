@@ -1,7 +1,6 @@
 package com.project.portal.course.request;
 
-import com.project.course.web.vo.RCourse;
-import com.project.course.web.vo.RTeacher;
+import com.project.portal.course.vo.RCourse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -28,12 +26,6 @@ public class CourseSaveReq implements Serializable {
 
     @ApiModelProperty(value = "保存课程信息", name = "course")
     private RCourse course;
-
-    @ApiModelProperty(value = "修改前集体备课共享ID", name = "oldShareId")
-    private String oldShareId;
-
-    @ApiModelProperty(value = "集体备课教师信息", name = "teachers", notes = "如果是协作字段对象是必传字段")
-    private List<RTeacher> teachers;
 
     @ApiModelProperty(name = "createUser", value = "创建人")
     private String createUser;

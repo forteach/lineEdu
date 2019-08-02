@@ -53,10 +53,10 @@ public abstract class AbsDatum extends Entitys {
     @Column(name = "datum_area", columnDefinition = "VARCHAR(32) COMMENT '资料领域：1教案 2课件1 3预习参考 4课堂参考 5授课案例、6复习参考'")
     private String datumArea;
 
-    @Column(name = "teach_share", columnDefinition = "CHAR(1) COMMENT '教师共享 0不共享 1共享'")
-    private String teachShare = "0";
+//    @Column(name = "teach_share", columnDefinition = "CHAR(1) COMMENT '教师共享 0不共享 1共享'")
+//    private String teachShare = "0";
 
-    @Column(name = "stu_share", columnDefinition = "CHAR(1) COMMENT '学生共享 0不共享 1共享'")
-    private String stuShare = "0";
+//    @Column(name = "stu_share", columnDefinition = "CHAR(1) COMMENT '学生共享 0不共享 1共享'")
+//    private String stuShare = "0";
 
 }

@@ -9,6 +9,7 @@ import com.project.course.service.KNodeService;
 import com.project.portal.course.request.KNodeAll;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Auther: zhangyy
@@ -32,6 +34,8 @@ public class KNodeController {
 
     @Resource
     private KNodeService kNodeService;
+    @Resource
+    private TokenService tokenService;
 
     @UserLoginToken
     @ApiOperation(value = "保存知识点")
@@ -42,12 +46,14 @@ public class KNodeController {
             @ApiImplicitParam(name = "courseId", value = "科目课程ID", example = "科目课程ID", dataType = "string", paramType = "from"),
             @ApiImplicitParam(name = "chapterId", value = "章节ID", dataType = "string", paramType = "from"),
     })
-    public WebResult save(@ApiParam(name = "kNode", value = "知识点对象") @RequestBody KNodeAll req) {
+    public WebResult save(@ApiParam(name = "kNode", value = "知识点对象") @RequestBody KNodeAll req, HttpServletRequest request) {
         MyAssert.blank(req.getNodeName(), DefineCode.ERR0010, "知识点名称不为空");
         MyAssert.blank(req.getCourseId(), DefineCode.ERR0010, "课程id不为空");
         KNode kn = new KNode();
         BeanUtil.copyProperties(req, kn);
-        kn.setCreateUser(req.getCreateUser());
+        String userId = tokenService.getUserId(request.getHeader("token"));
+        kn.setCreateUser(userId);
+        kn.setUpdateUser(userId);
         return WebResult.okResult(kNodeService.save(kn));
     }
 
