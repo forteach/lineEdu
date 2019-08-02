@@ -20,7 +20,7 @@ public interface WeChatUserService {
      * @param bindingUserReq
      * @return WebResult
      */
-    Object bindingUser(BindingUserRequest bindingUserReq);
+    String bindingUser(BindingUserRequest bindingUserReq);
 
     /**
      * 生成token并绑定用户上

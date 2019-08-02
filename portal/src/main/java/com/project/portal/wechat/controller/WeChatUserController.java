@@ -67,20 +67,20 @@ public class WeChatUserController {
         }
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "signature", value = "sha1( rawData + session_key )", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "rawData", value = "rawData", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "encryptedData", value = "加密数据", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "iv", value = "数据接口返回", dataType = "string", required = true, paramType = "query"),
-    })
-    @UserLoginToken
-    @PostMapping("/phone")
-    @ApiOperation(value = "获取用户绑定手机号信息")
-    public WebResult getBingPhone(@RequestBody WxDataVo wxDataVo, HttpServletRequest request){
-        // 绑定手机
-        wxDataVo.setOpenId(tokenService.getOpenId(request.getHeader("token")));
-        return WebResult.okResult(weChatUserService.getBindingPhone(wxDataVo));
-    }
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "signature", value = "sha1( rawData + session_key )", dataType = "string", required = true, paramType = "query"),
+//            @ApiImplicitParam(name = "rawData", value = "rawData", dataType = "string", required = true, paramType = "query"),
+//            @ApiImplicitParam(name = "encryptedData", value = "加密数据", dataType = "string", required = true, paramType = "query"),
+//            @ApiImplicitParam(name = "iv", value = "数据接口返回", dataType = "string", required = true, paramType = "query"),
+//    })
+//    @UserLoginToken
+//    @PostMapping("/phone")
+//    @ApiOperation(value = "获取用户绑定手机号信息")
+//    public WebResult getBingPhone(@RequestBody WxDataVo wxDataVo, HttpServletRequest request){
+//        // 绑定手机
+//        wxDataVo.setOpenId(tokenService.getOpenId(request.getHeader("token")));
+//        return WebResult.okResult(weChatUserService.getBindingPhone(wxDataVo));
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "绑定微信用户登录信息")
@@ -113,21 +113,21 @@ public class WeChatUserController {
         weChatUserService.restart(stuId);
         return WebResult.okResult();
     }
-
-    @UserLoginToken
-    @PostMapping("/saveWeUser")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "nickName", value = "微信昵称", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "avatarUrl", value = "用户头像图片的 URL", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "gender", value = "性别 0：未知、1：男、2：女", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "province", value = "用户所在省份", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "city", value = "用户所在城市", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "country", value = "用户所在国家", dataType = "string", paramType = "form")
-    })
-    public WebResult weChatUser(@RequestBody WeChatUserReq weChatUserReq, HttpServletRequest request){
-        WeChatUserRequest weChatUser = new WeChatUserRequest();
-        BeanUtil.copyProperties(weChatUserReq, weChatUser);
-        weChatUserReq.setOpenId(tokenService.getOpenId(request.getHeader("token")));
-        return WebResult.okResult(weChatUserService.saveWeChatUser(weChatUser));
-    }
+//
+//    @UserLoginToken
+//    @PostMapping("/saveWeUser")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "nickName", value = "微信昵称", dataType = "string", required = true, paramType = "form"),
+//            @ApiImplicitParam(name = "avatarUrl", value = "用户头像图片的 URL", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "gender", value = "性别 0：未知、1：男、2：女", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "province", value = "用户所在省份", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "city", value = "用户所在城市", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "country", value = "用户所在国家", dataType = "string", paramType = "form")
+//    })
+//    public WebResult weChatUser(@RequestBody WeChatUserReq weChatUserReq, HttpServletRequest request){
+//        WeChatUserRequest weChatUser = new WeChatUserRequest();
+//        BeanUtil.copyProperties(weChatUserReq, weChatUser);
+//        weChatUserReq.setOpenId(tokenService.getOpenId(request.getHeader("token")));
+//        return WebResult.okResult(weChatUserService.saveWeChatUser(weChatUser));
+//    }
 }

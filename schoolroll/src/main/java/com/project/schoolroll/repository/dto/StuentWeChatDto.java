@@ -1,21 +1,21 @@
-package com.project.wechat.mini.app.dto;
+package com.project.schoolroll.repository.dto;
 
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
- * @date: 19-5-17 15:59
+ * @date: 19-8-1 19:34
  * @version: 1.0
  * @description:
  */
-public interface IWeChatUser {
+public interface StuentWeChatDto {
 
     public String getStuId();
+
+    public String getStuName();
 
     public String getClassId();
 
     public String getClassName();
 
-    public String getStuName();
-
-    public String getPortrait();
+    public String getStuIDCard();
 }

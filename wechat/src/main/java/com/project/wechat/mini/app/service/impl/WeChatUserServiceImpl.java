@@ -8,12 +8,13 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.schoolroll.repository.StudentPeopleRepository;
+import com.project.schoolroll.repository.StudentRepository;
+import com.project.schoolroll.repository.dto.StuentWeChatDto;
 import com.project.token.service.TokenService;
 import com.project.wechat.mini.app.config.WeChatMiniAppConfig;
-import com.project.wechat.mini.app.domain.StudentEntitys;
 import com.project.wechat.mini.app.domain.WeChatUser;
 import com.project.wechat.mini.app.dto.IWeChatUser;
-import com.project.wechat.mini.app.repository.StudentEntitysRepository;
 import com.project.wechat.mini.app.repository.WeChatUserRepository;
 import com.project.wechat.mini.app.service.WeChatUserService;
 import com.project.wechat.mini.app.web.request.BindingUserRequest;
@@ -48,8 +49,9 @@ import static com.project.token.constant.TokenKey.TOKEN_VALIDITY_TIME;
 @Service
 public class WeChatUserServiceImpl implements WeChatUserService {
 
-    private final StudentEntitysRepository studentEntitysRepository;
-
+    //    private final StudentEntitysRepository studentEntitysRepository;
+    private final StudentRepository studentRepository;
+    private final StudentPeopleRepository studentPeopleRepository;
     private final WeChatUserRepository weChatUserRepository;
 
     private final StringRedisTemplate stringRedisTemplate;
@@ -58,24 +60,31 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
 
     @Autowired
-    public WeChatUserServiceImpl(StudentEntitysRepository studentEntitysRepository,
-                                 WeChatUserRepository weChatUserRepository,
-                                 StringRedisTemplate stringRedisTemplate,
-                                 TokenService tokenService) {
-        this.studentEntitysRepository = studentEntitysRepository;
+    public WeChatUserServiceImpl(
+//            StudentEntitysRepository studentEntitysRepository,
+            StudentRepository studentRepository,
+            StudentPeopleRepository studentPeopleRepository,
+            WeChatUserRepository weChatUserRepository,
+            StringRedisTemplate stringRedisTemplate,
+            TokenService tokenService) {
+//        this.studentEntitysRepository = studentEntitysRepository;
         this.weChatUserRepository = weChatUserRepository;
         this.stringRedisTemplate = stringRedisTemplate;
         this.tokenService = tokenService;
+        this.studentRepository = studentRepository;
+        this.studentPeopleRepository = studentPeopleRepository;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Object bindingUser(BindingUserRequest bindingUserReq) {
-        Optional<StudentEntitys> studentEntitys = studentEntitysRepository.findByIsValidatedEqualsAndStuIDCard(TAKE_EFFECT_OPEN, bindingUserReq.getStuIDCard())
-                .stream()
-                .filter(Objects::nonNull)
-                .findFirst();
-        if (studentEntitys.isPresent()) {
+    public String bindingUser(BindingUserRequest bindingUserReq) {
+//        Optional<StudentEntitys> studentEntitys = studentEntitysRepository.findByIsValidatedEqualsAndStuIDCard(TAKE_EFFECT_OPEN, bindingUserReq.getStuIDCard())
+//                .stream()
+//                .filter(Objects::nonNull)
+//                .findFirst();
+//        studentRepository.s
+        List<StuentWeChatDto> list = studentPeopleRepository.findWeChatUserByStuNameAndStuIDCard(bindingUserReq.getStuName(), bindingUserReq.getStuIDCard());
+        if (!list.isEmpty()) {
             Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(bindingUserReq.getOpenId())
                     .stream()
                     .filter(Objects::nonNull)
@@ -84,7 +93,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                 MyAssert.isNull(null, DefineCode.ERR0014, "该微信账号已经认证");
             }
             WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
-            if (checkStudent(bindingUserReq, studentEntitys.get())) {
+            StuentWeChatDto stuentWeChatDto = list.get(0);
+            if (checkStudent(bindingUserReq, stuentWeChatDto.getStuName(), stuentWeChatDto.getStuIDCard())) {
                 final WxMaService wxService = WeChatMiniAppConfig.getMaService();
                 String openId = bindingUserReq.getOpenId();
                 String key = USER_PREFIX.concat(openId);
@@ -100,8 +110,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                     BeanUtils.copyProperties(wxMaUserInfo, weChatUser);
                 }
                 weChatUser.setBinding(WX_INFO_BINDIND_0);
-                weChatUser.setStuId(studentEntitys.get().getStuId());
-                weChatUser.setClassId(studentEntitys.get().getClassId());
+                weChatUser.setStuId(stuentWeChatDto.getStuId());
+                weChatUser.setClassId(stuentWeChatDto.getClassId());
                 weChatUser.setOpenId(openId);
                 weChatUserRepository.save(weChatUser);
                 //保存redis 设置有效期7天
@@ -131,8 +141,9 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
         Map<String, Object> map = BeanUtil.beanToMap(weChatUserInfoOptional.orElse(new WeChatUser()));
         map.put("openId", openId);
-        map.put("sessionKey", openId);
+        map.put("sessionKey", session.getSessionKey());
         map.put("token", token);
+        map.put("unionid", session.getUnionid());
         map.put("binding", binding);
         String key = USER_PREFIX.concat(openId);
         stringRedisTemplate.opsForHash().putAll(key, map);
@@ -140,28 +151,28 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
 
         weChatUserInfoOptional.ifPresent(weChatUser -> {
-            studentEntitysRepository.findById(weChatUser.getStuId()).ifPresent(studentEntitys -> {
+            weChatUserRepository.findById(weChatUser.getStuId()).ifPresent(studentEntitys -> {
                 if (StrUtil.isNotBlank(portrait)) {
                     weChatUser.setAvatarUrl(portrait);
                     weChatUserRepository.save(weChatUser);
                 }
-                studentEntitys.setPortrait(portrait);
-                studentEntitysRepository.save(studentEntitys);
+//                studentEntitys.setPortrait(portrait);
+//                studentEntitysRepository.save(studentEntitys);
                 String studentKey = STUDENT_ADO.concat(weChatUser.getStuId());
                 stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
             });
         });
 
         //todo 获取登陆用户信息
-//        IWeChatUser iWeChatUser = weChatUserRepository.findByIsValidatedEqualsAndOpenId(openId);
+        IWeChatUser iWeChatUser = weChatUserRepository.findByIsValidatedEqualsAndOpenId(openId);
         LoginResponse loginResp = new LoginResponse();
-//        if (iWeChatUser != null) {
+        if (iWeChatUser != null) {
 //            loginResp.setClassId(iWeChatUser.getClassId());
 //            loginResp.setClassName(iWeChatUser.getClassName());
-//            loginResp.setPortrait(iWeChatUser.getPortrait());
-//            loginResp.setStuId(iWeChatUser.getStuId());
-//            loginResp.setStuName(iWeChatUser.getStuName());
-//        }
+            loginResp.setPortrait(iWeChatUser.getPortrait());
+            loginResp.setStuId(iWeChatUser.getStuId());
+            loginResp.setStuName(iWeChatUser.getStuName());
+        }
         loginResp.setBinding(binding);
         loginResp.setToken(token);
         return loginResp;
@@ -200,12 +211,12 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         if (optionalWeChatUserInfo.isPresent()) {
             WeChatUser weChatUser = optionalWeChatUserInfo.get();
             BeanUtil.copyProperties(weChatUserReq, weChatUser);
-            Optional<StudentEntitys> studentEntitysOptional = studentEntitysRepository.findById(weChatUser.getStuId());
-            if (studentEntitysOptional.isPresent()) {
-                StudentEntitys studentEntitys = studentEntitysOptional.get();
-                studentEntitys.setPortrait(weChatUserReq.getAvatarUrl());
-                studentEntitysRepository.save(studentEntitys);
-            }
+//            Optional<StudentEntitys> studentEntitysOptional = studentEntitysRepository.findById(weChatUser.getStuId());
+//            if (studentEntitysOptional.isPresent()) {
+//                StudentEntitys studentEntitys = studentEntitysOptional.get();
+//                studentEntitys.setPortrait(weChatUserReq.getAvatarUrl());
+//                studentEntitysRepository.save(studentEntitys);
+//            }
             weChatUserRepository.save(weChatUser);
             return "操作成功!";
         } else {
@@ -217,13 +228,12 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     /**
      * 校验身份证和姓名在数据库中是否存在
      *
-     * @param bindingUserInfoReq
-     * @param studentEntitys
+     * @param bindingUserReq
      * @return
      */
-    private boolean checkStudent(BindingUserRequest bindingUserInfoReq, StudentEntitys studentEntitys) {
-        return studentEntitys.getStuName().equals(bindingUserInfoReq.getStuName())
-                && studentEntitys.getStuIDCard().equals(bindingUserInfoReq.getStuIDCard());
+    private boolean checkStudent(BindingUserRequest bindingUserReq, String stuName, String stuIDCard) {
+        return stuName.equals(bindingUserReq.getStuName())
+                && stuIDCard.equals(bindingUserReq.getStuIDCard());
     }
 
     /**

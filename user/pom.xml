@@ -28,6 +28,11 @@
             <artifactId>token</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>schoolroll</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 

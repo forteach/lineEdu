@@ -2,9 +2,12 @@ package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.StudentPeople;
 import com.project.schoolroll.repository.dto.StudentPeopleDto;
+import com.project.schoolroll.repository.dto.StuentWeChatDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -32,4 +35,13 @@ public interface StudentPeopleRepository extends JpaRepository<StudentPeople, St
             " and lc.isValidated = '0' and s.stuId = ?1")
     @Transactional(readOnly = true)
     StudentPeopleDto findByStuId(String stuId);
+
+    @Query(value = "select " +
+            " s.stuId as stuId, s.stuName as stuName, s.classId as classId , s.className as className, " +
+            " sp.stuIDCard as stuIDCard " +
+            " from Student as s " +
+            " left join StudentPeople as sp on sp.peopleId = s.peopleId " +
+            " where s.isValidated = '0' and sp.isValidated = '0' " +
+            " and sp.stuName = ?1 and sp.stuIDCard = ?2")
+    List<StuentWeChatDto> findWeChatUserByStuNameAndStuIDCard(String stuName, String stuIDCard);
 }

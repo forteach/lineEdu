@@ -7,11 +7,11 @@ package com.project.wechat.mini.app.dto;
  * @Version: 1.0
  * @Description:
  */
-public interface StudentDto {
-
-    public String getStuId();
-
-    public String getStuName();
-
-    public String getStuIDCard();
-}
+//public interface StudentDto {
+//
+//    public String getStuId();
+//
+//    public String getStuName();
+//
+//    public String getStuIDCard();
+//}

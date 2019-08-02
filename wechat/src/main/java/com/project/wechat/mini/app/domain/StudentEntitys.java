@@ -19,28 +19,28 @@ import java.io.Serializable;
  * @Version: 1.0
  * @Description:
  */
-@Data
-@Entity
-@Table(name = "v_wx_student")
-@EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
-@NoArgsConstructor
-@org.hibernate.annotations.Table(appliesTo = "v_wx_student", comment = "学生信息视图")
-public class StudentEntitys extends Entitys implements Serializable {
-    @Id
-    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学号id'")
-    private String stuId;
+//@Data
+//@Entity
+//@Table(name = "v_wx_student")
+//@EqualsAndHashCode(callSuper = true)
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@org.hibernate.annotations.Table(appliesTo = "v_wx_student", comment = "学生信息视图")
+//public class StudentEntitys extends Entitys implements Serializable {
+//    @Id
+//    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学号id'")
+//    private String stuId;
+//
+//    @Column(name = "stu_name", columnDefinition = "VARCHAR(32) COMMENT '用户名'")
+//    private String stuName;
+//
+//    @Column(name = "stu_id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号码'")
+//    private String stuIDCard;
 
-    @Column(name = "stu_name", columnDefinition = "VARCHAR(32) COMMENT '用户名'")
-    private String stuName;
+//    @Column(name = "portrait", columnDefinition = "VARCHAR(255) COMMENT '学生头像url'")
+//    private String portrait;
 
-    @Column(name = "stu_id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号码'")
-    private String stuIDCard;
+//    @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '学生所属班级id'")
+//    private String classId;
 
-    @Column(name = "portrait", columnDefinition = "VARCHAR(255) COMMENT '学生头像url'")
-    private String portrait;
-
-    @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '学生所属班级id'")
-    private String classId;
-
-}
+//}
