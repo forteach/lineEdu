@@ -1,7 +1,8 @@
-package com.project.portal.schoolroll.controller;
+package com.project.portal.importexport.controller;
 
 import com.project.portal.response.WebResult;
 import com.project.portal.util.MyExcleUtil;
+import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.service.ExportService;
 import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -51,44 +54,8 @@ public class ExportController {
     @ApiOperation(value = "导出学生信息")
     @GetMapping(path = "/exportStudents")
     public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
-        String fileName = "students" + ".xlsx";
-        ServletOutputStream out;
-        res.setContentType("multipart/form-data");
-        res.setCharacterEncoding("UTF-8");
-        res.setContentType("text/html");
-        String filePath = getClass().getResource("/template/" + fileName).getPath();
-        String userAgent = req.getHeader("User-Agent");
-        if (userAgent.contains("MSIE") || userAgent.contains("Trident")) {
-            fileName = java.net.URLEncoder.encode(fileName, "UTF-8");
-        } else {
-// 非IE浏览器的处理：
-            fileName = new String((fileName).getBytes("UTF-8"), "ISO-8859-1");
-        }
-        filePath = URLDecoder.decode(filePath, "UTF-8");
-        res.setHeader("Content-Disposition", "attachment;fileName=" + fileName);
-        FileInputStream inputStream = new FileInputStream(filePath);
-        out = res.getOutputStream();
-        int b = 0;
-        byte[] buffer = new byte[1024];
-        while ((b = inputStream.read(buffer)) != -1) {
-// 4.写到输出流(out)中
-            out.write(buffer, 0, b);
-        }
-        inputStream.close();
-
-        if (out != null) {
-            out.flush();
-            out.close();
-        }
+        List<StudentImport> list = new ArrayList<>();
+        MyExcleUtil.getExcel(res, req, list,"导出学生数据.xlsx");
         return WebResult.okResult();
     }
-
-//    public static Map<String, Object> main(Object args) {
-//        return Arrays.stream(BeanUtils.getPropertyDescriptors(args.getClass()))
-//                .filter(pd -> !"class".equals(pd.getName()))
-//                .collect(HashMap::new,
-//                        (map, pd) -> map.put(pd.getName(), ReflectionUtils.invokeMethod(pd.getReadMethod(), args)),
-//                        HashMap::putAll);
-//    }
-
 }

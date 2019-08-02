@@ -1,4 +1,4 @@
-package com.project.portal.classfee.controller;
+package com.project.portal.importexport.controller;
 
 
 import com.project.base.common.keyword.DefineCode;
@@ -6,6 +6,9 @@ import com.project.base.exception.MyAssert;
 import com.project.classfee.domain.ClassFeeInfo;
 import com.project.classfee.service.ClassFeeInfoService;
 import com.project.portal.response.WebResult;
+import com.project.redis.service.ObjectRedisService;
+import com.project.schoolroll.domain.excel.StudentImport;
+import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static com.project.schoolroll.domain.excel.Dic.IMPORT_CLASS_FREE;
+import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 
 /**
  * @Auther: zhangyy
@@ -42,8 +47,8 @@ public class ImportClassFeeController {
         this.classFeeInfoService = classFeeInfoService;
     }
 
-//    @UserLoginToken
-    @ApiOperation(value = "导入学生信息")
+    //    @UserLoginToken
+    @ApiOperation(value = "导入课时费信息")
     @PostMapping(path = "/classFee")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
     public WebResult leadingInStudents(@RequestParam("file") MultipartFile file) {
