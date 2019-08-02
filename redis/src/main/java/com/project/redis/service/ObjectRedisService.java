@@ -1,5 +1,7 @@
 package com.project.redis.service;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @Description:
  * @version: V1.0
@@ -31,4 +33,20 @@ public interface ObjectRedisService {
      * @return
      */
     Object get(String key);
+
+    /**
+     * 设置键值及有效期
+     * @param key
+     * @param value
+     * @param timeout
+     * @param unit
+     */
+    void setKeyValueExpire(String key, String value, long timeout, TimeUnit unit);
+
+    /**
+     * 判断是否存在对应的健值
+     * @param key
+     * @return
+     */
+    boolean hasKey(String key);
 }

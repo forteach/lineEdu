@@ -12,4 +12,5 @@ public class Dic {
      * 导入学生信息 redis key
      */
     public final static String IMPORT_STUDENTS = "importStudents";
+    public final static String IMPORT_CLASS_FREE = "classFee";
 }
