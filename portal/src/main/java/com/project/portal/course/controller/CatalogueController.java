@@ -75,7 +75,7 @@ public class CatalogueController {
     public WebResult edit(@ApiParam(name = "courseChapter", value = "修改科目章节信息", required = true) @RequestBody CourseChapterEditReq courseChapterEditReq) {
         MyAssert.blank(courseChapterEditReq.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
         com.project.course.web.req.CourseChapterEditReq chapterEditReq = new com.project.course.web.req.CourseChapterEditReq();
-        BeanUtil.copyProperties(chapterEditReq, chapterEditReq);
+        BeanUtil.copyProperties(courseChapterEditReq, chapterEditReq);
         return WebResult.okResult(catalogueService.edit(chapterEditReq));
     }
 
@@ -133,5 +133,4 @@ public class CatalogueController {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目id不为空");
         return WebResult.okResult(catalogueService.findByCourseId(JSONObject.parseObject(courseId).getString("courseId")));
     }
-
 }

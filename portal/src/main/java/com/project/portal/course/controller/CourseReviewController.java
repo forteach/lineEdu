@@ -1,24 +1,5 @@
 package com.project.portal.course.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.project.base.common.keyword.DefineCode;
-import com.project.base.exception.MyAssert;
-import com.project.course.domain.CourseReviewDescribe;
-import com.project.course.service.CourseReviewService;
-import com.project.portal.course.request.CourseReviewReq;
-import com.project.portal.request.SortVo;
-import com.project.portal.response.WebResult;
-import com.project.token.annotation.UserLoginToken;
-import com.project.token.service.TokenService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
@@ -26,18 +7,18 @@ import javax.servlet.http.HttpServletRequest;
  * @version: 1.0
  * @description: 课程评论相关
  */
-@RestController
-@Api(value = "课程评论相关的接口", tags = {"课程评论相关接口"})
-@RequestMapping(path = "/courseReview", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class CourseReviewController {
-
-    private final TokenService tokenService;
-    private final CourseReviewService courseReviewService;
-    private CourseReviewController(TokenService tokenService, CourseReviewService courseReviewService){
-        this.tokenService = tokenService;
-        this.courseReviewService = courseReviewService;
-    }
-
+//@RestController
+//@Api(value = "课程评论相关的接口", tags = {"课程评论相关接口"})
+//@RequestMapping(path = "/courseReview", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//public class CourseReviewController {
+//
+//    private final TokenService tokenService;
+//    private final CourseReviewService courseReviewService;
+//    private CourseReviewController(TokenService tokenService, CourseReviewService courseReviewService){
+//        this.tokenService = tokenService;
+//        this.courseReviewService = courseReviewService;
+//    }
+//
 //    @UserLoginToken
 //    @ApiOperation(value = "提交评论和老师回复", notes = "学生评论课程和老师回复的接口")
 //    @PostMapping("/save")
@@ -56,15 +37,15 @@ public class CourseReviewController {
 //        return WebResult.okResult(courseReviewService.save(courseReviewDescribe));
 //    }
 
-    @UserLoginToken
-    @ApiOperation(value = "删除评论", notes = "逻辑删除课程评论信息")
-    @PostMapping("/delete")
-    @ApiImplicitParam(name = "reviewId", value = "评论id", dataType = "string", paramType = "from", required = true)
-    public WebResult delete(@RequestBody String reviewId){
-        MyAssert.isNull(reviewId, DefineCode.ERR0010, "评论id不为空");
-        courseReviewService.deleteReview(JSONObject.parseObject(reviewId).getString("reviewId"));
-        return WebResult.okResult();
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "删除评论", notes = "逻辑删除课程评论信息")
+//    @PostMapping("/delete")
+//    @ApiImplicitParam(name = "reviewId", value = "评论id", dataType = "string", paramType = "from", required = true)
+//    public WebResult delete(@RequestBody String reviewId){
+//        MyAssert.isNull(reviewId, DefineCode.ERR0010, "评论id不为空");
+//        courseReviewService.deleteReview(JSONObject.parseObject(reviewId).getString("reviewId"));
+//        return WebResult.okResult();
+//    }
 
 //    @UserLoginToken
 //    @GetMapping("/findReviewFirst")
@@ -87,4 +68,4 @@ public class CourseReviewController {
 //        MyAssert.blank(String.valueOf(reviewReq.getSortVo().getSize()), DefineCode.ERR0010, "每页数量不为空");
 //        return WebResult.okResult(courseReviewService.findReviewListPage(reviewReq));
 //    }
-}
+//}

@@ -64,26 +64,26 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String save(String courseId, String chapterId, String datumArea, String datumType, String teachShare, String stuShare, List<DataDatumVo> files) {
+    public String save(String courseId, String chapterId, String datumArea, String datumType, List<DataDatumVo> files) {
         //根据文件类型，对应保存信息
         //1文档　3视频　4音频　5链接
         String size = "";
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
-                size = saveT(courseId, chapterId, datumArea, datumType, teachShare, stuShare, files, fileDatumRepository, new FileDatum());
+                size = saveT(courseId, chapterId, datumArea, datumType, files, fileDatumRepository, new FileDatum());
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
-                size = saveT(courseId, chapterId, datumArea, datumType, teachShare, stuShare, files, viewDatumRepository, new ViewDatum());
+                size = saveT(courseId, chapterId, datumArea, datumType, files, viewDatumRepository, new ViewDatum());
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
-                size = saveT(courseId, chapterId, datumArea, datumType, teachShare, stuShare, files, audioDatumRepository, new AudioDatum());
+                size = saveT(courseId, chapterId, datumArea, datumType, files, audioDatumRepository, new AudioDatum());
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
-                size = saveT(courseId, chapterId, datumArea, datumType, teachShare, stuShare, files, linkDatumRepository, new LinkDatum());
+                size = saveT(courseId, chapterId, datumArea, datumType, files, linkDatumRepository, new LinkDatum());
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
@@ -95,15 +95,13 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     /**
      * 单个资料领域修改
      *
-     * @param fileId     资料类型
-     * @param datumType  资料类型
-     * @param datumArea  资料领域
-     * @param teachShare 教师分享
-     * @param stuShare   学生可见
+     * @param fileId    资料类型
+     * @param datumType 资料类型
+     * @param datumArea 资料领域
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea, String teachShare, String stuShare) {
+    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea) {
 
         //1、根据资料编号和领域编号，获得领域表信息
         DatumArea da = datumAreaRepository.findByFileIdAndDatumArea(fileId, datumArea);
@@ -127,26 +125,26 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
                 fileDatumRepository.updateDatumArea(fileId, datumArea);
-                fileDatumRepository.updateStuShare(fileId, stuShare);
-                fileDatumRepository.updateTeachShare(fileId, teachShare);
+//                fileDatumRepository.updateStuShare(fileId, stuShare);
+//                fileDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
                 viewDatumRepository.updateDatumArea(fileId, datumArea);
-                viewDatumRepository.updateStuShare(fileId, stuShare);
-                viewDatumRepository.updateTeachShare(fileId, teachShare);
+//                viewDatumRepository.updateStuShare(fileId, stuShare);
+//                viewDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
                 audioDatumRepository.updateDatumArea(fileId, datumArea);
-                audioDatumRepository.updateStuShare(fileId, stuShare);
-                audioDatumRepository.updateTeachShare(fileId, teachShare);
+//                audioDatumRepository.updateStuShare(fileId, stuShare);
+//                audioDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
                 linkDatumRepository.updateDatumArea(fileId, datumArea);
-                linkDatumRepository.updateStuShare(fileId, stuShare);
-                linkDatumRepository.updateTeachShare(fileId, teachShare);
+//                linkDatumRepository.updateStuShare(fileId, stuShare);
+//                linkDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
@@ -268,9 +266,17 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         List<AbsDatum> fileList = null;
         //2、判断是否按知识点查询资料领域列表
         if (StrUtil.isBlank(kNodeId)) {
-            list = datumAreaRepository.findByChapterIdAndDatumAreaIn(chapterId, datumAreas, pageable).getContent().stream().map(item -> item.getFileId()).collect(toList());
+            list = datumAreaRepository.findByChapterIdAndDatumAreaIn(chapterId, datumAreas, pageable)
+                    .getContent()
+                    .stream()
+                    .map(item -> item.getFileId())
+                    .collect(toList());
         } else {
-            list = datumAreaRepository.findByChapterIdAndKNodeIdAndDatumAreaIn(chapterId, kNodeId, datumAreas, pageable).getContent().stream().map(item -> item.getFileId()).collect(toList());
+            list = datumAreaRepository.findByChapterIdAndKNodeIdAndDatumAreaIn(chapterId, kNodeId, datumAreas, pageable)
+                    .getContent()
+                    .stream()
+                    .map(item -> item.getFileId())
+                    .collect(toList());
         }
 
         //3、根据不同资料类型，获得资料列表数据
@@ -299,7 +305,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
                 }).collect(toList());
     }
 
-    private String saveT(String courseId, String chapterId, String datumArea, String datumType, String teachShare, String stuShare, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd) {
+    private String saveT(String courseId, String chapterId, String datumArea, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd) {
 
         //1、添加资料文件列表明细
         List<AbsDatum> fileDatumList = new ArrayList<>();
@@ -311,8 +317,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             fd.setFileType(FileUtil.extName(dataDatumVo.getFileName()));
             fd.setFileUrl(dataDatumVo.getFileUrl());
             fd.setDatumType(datumType);
-            fd.setStuShare(stuShare);
-            fd.setTeachShare(teachShare);
+//            fd.setStuShare(stuShare);
+//            fd.setTeachShare(teachShare);
             fd.setCourseId(courseId);
             fd.setDatumArea(datumArea);
             fileDatumList.add(fd);

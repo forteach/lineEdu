@@ -97,12 +97,10 @@ public class CourseDataServiceImpl implements CourseDataService {
      * @param fileId     资料主表主键编号
      * @param datumType  资料类型
      * @param datumArea  资料领域
-     * @param teachShare 教师分享
-     * @param stuShare   学生可见
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea, String teachShare, String stuShare) {
+    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea) {
         //1、根据资料编号和领域编号，获得领域表信息
         CourseDatumArea da = courseDatumAreaRepository.findByFileIdAndDatumArea(fileId, datumArea);
 
@@ -122,8 +120,8 @@ public class CourseDataServiceImpl implements CourseDataService {
 
         //4、根据资料主表的资料ID，结合所选的单个资料领域，修改文件资料表的资料领域字段
         courseDataRepository.updateDatumArea(fileId, datumArea);
-        courseDataRepository.updateStuShare(fileId, stuShare);
-        courseDataRepository.updateTeachShare(fileId, teachShare);
+//        courseDataRepository.updateStuShare(fileId, stuShare);
+//        courseDataRepository.updateTeachShare(fileId, teachShare);
 
         return "ok";
     }
@@ -152,8 +150,8 @@ public class CourseDataServiceImpl implements CourseDataService {
                     dr.setFileId(item.getDataId());
                     dr.setFileUrl(item.getDatumUrl());
                     dr.setDatumArea(item.getDatumArea());
-                    dr.setStuShare(item.getStuShare());
-                    dr.setTeachShare(item.getTeachShare());
+//                    dr.setStuShare(item.getStuShare());
+//                    dr.setTeachShare(item.getTeachShare());
                     return dr;
                 }).collect(toList());
     }
@@ -254,6 +252,4 @@ public class CourseDataServiceImpl implements CourseDataService {
         courseDataRepository.deleteByChapterIdAndDataIdIn(courseDataDeleteReq.getChapterId(), courseDataDeleteReq.getFileIds());
         courseDatumAreaRepository.deleteByChapterIdAndFileIdIn(courseDataDeleteReq.getChapterId(), courseDataDeleteReq.getFileIds());
     }
-
-
 }

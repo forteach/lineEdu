@@ -21,10 +21,10 @@ public interface CourseArlitsRepository extends JpaRepository<CourseAtlits, Stri
     @Transactional(readOnly = true)
     public List<CourseAtlits> findByChapterIdAndIsValidated(String chapterId, String isValidated);
 
-    @Transactional(readOnly = true)
-    public Page<CourseAtlits> findByChapterIdAndIsValidated(String chapterId, String isValidated, Pageable pageable);
+//    @Transactional(readOnly = true)
+//    public Page<CourseAtlits> findByChapterIdAndIsValidated(String chapterId, String isValidated, Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
-    @Transactional(rollbackFor = Exception.class)
-    public int deleteByChapterId(String chapterId);
+//    @Modifying(clearAutomatically = true)
+//    @Transactional(rollbackFor = Exception.class)
+//    public int deleteByChapterId(String chapterId);
 }

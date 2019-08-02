@@ -20,32 +20,36 @@ public class CourseResp implements Serializable {
 
     private String courseNumber;
 
-    private String lessonPreparationType;
+//    private String lessonPreparationType;
 
     private String topPicSrc;
 
-    private String shareType;
+//    private String shareType;
 
     private String courseDescribe;
 
-    private String shareId;
+//    private String shareId;
 
     private String alias;
 
-    private String teachingType;
+//    private String teachingType;
 
     public CourseResp(String courseId, String courseName, String courseNumber,
-                      String lessonPreparationType, String teachingType, String topPicSrc,
-                      String shareType, String courseDescribe, String shareId, String alias) {
+//                      String lessonPreparationType, String teachingType,
+                      String topPicSrc,
+//                      String shareType,
+                      String courseDescribe,
+//                      String shareId,
+                      String alias) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseNumber = courseNumber;
-        this.lessonPreparationType = lessonPreparationType;
-        this.teachingType = teachingType;
+//        this.lessonPreparationType = lessonPreparationType;
+//        this.teachingType = teachingType;
         this.topPicSrc = topPicSrc;
-        this.shareType = shareType;
+//        this.shareType = shareType;
         this.courseDescribe = courseDescribe;
-        this.shareId = shareId;
+//        this.shareId = shareId;
         this.alias = alias;
     }
 }

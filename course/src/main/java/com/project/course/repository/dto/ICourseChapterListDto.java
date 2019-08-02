@@ -82,6 +82,4 @@ public interface ICourseChapterListDto {
      */
     public String getTeacherId();
 
-
-
 }

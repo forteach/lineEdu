@@ -28,22 +28,22 @@ public interface CourseDataRepository extends IFileRepoitory<CourseData, String>
     /**
      * 修改教师分享
      *
-     * @param dataId
-     * @param teachShare
+//     * @param dataId
+//     * @param teachShare
      */
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE CourseData p SET p.teachShare = :teachShare where p.dataId = :dataId")
-    public void updateTeachShare(String dataId, String teachShare);
+//    @Modifying(clearAutomatically = true)
+//    @Query("UPDATE CourseData p SET p.teachShare = :teachShare where p.dataId = :dataId")
+//    public void updateTeachShare(String dataId, String teachShare);
 
     /**
      * 修改学生可见
      *
-     * @param dataId
-     * @param stuShare
+//     * @param dataId
+//     * @param stuShare
      */
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE CourseData p SET p.stuShare = :stuShare where p.dataId = :dataId")
-    public void updateStuShare(String dataId, String stuShare);
+//    @Modifying(clearAutomatically = true)
+//    @Query("UPDATE CourseData p SET p.stuShare = :stuShare where p.dataId = :dataId")
+//    public void updateStuShare(String dataId, String stuShare);
 
     @Transactional
     @Modifying(clearAutomatically = true)

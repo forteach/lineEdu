@@ -12,7 +12,6 @@ import com.project.portal.course.request.CourseDataDatumReq;
 import com.project.portal.course.request.CourseDataDeleteReq;
 import com.project.portal.databank.request.ChapteDataListReq;
 import com.project.portal.databank.request.ChapteDataReq;
-import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -58,12 +57,13 @@ public class CourseDataController {
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "files", value = "多个文件列表", dataTypeClass = List.class)
     })
-    public WebResult save(@ApiParam(name = "courseReq", value = "科目课程对象") @RequestBody CourseDataDatumReq req) {
+    public WebResult save(@ApiParam(name = "courseReq", value = "科目课程对象") @RequestBody CourseDataDatumReq req, HttpServletRequest request) {
         MyAssert.blank(req.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
         MyAssert.elt(0, req.getFiles().size(), DefineCode.ERR0010, "章节编号不为空");
+        String userId = tokenService.getUserId(request.getHeader("token"));
+        req.setCreateUser(userId);
         int resp = courseDataService.save(req.getChapterId(), req.getFiles());
         return WebResult.okResult(String.valueOf(resp));
-
     }
 
     @UserLoginToken
@@ -76,9 +76,9 @@ public class CourseDataController {
             @ApiImplicitParam(name = "datumArea", value = "资料领域", dataType = "string", required = true, paramType = "from", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例"),
             @ApiImplicitParam(name = "datumName", value = "资料名称", dataType = "string", paramType = "from", required = true),
             @ApiImplicitParam(name = "kNodeId", value = "知识点id", dataType = "string", paramType = "from", example = "知识点 ‘,’ 进行分割"),
-            @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "from", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
-            @ApiImplicitParam(name = "teachShare", value = "教师共享", dataType = "string", required = true, paramType = "from", example = "0不共享 1共享"),
-            @ApiImplicitParam(name = "stuShare", value = "学生共享", dataType = "string", required = true, paramType = "from", example = "0不共享 1共享"),
+            @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "from", example = "资料类型 1文档　2图册　3视频　4音频　5链接")
+//            @ApiImplicitParam(name = "teachShare", value = "教师共享", dataType = "string", required = true, paramType = "from", example = "0不共享 1共享"),
+//            @ApiImplicitParam(name = "stuShare", value = "学生共享", dataType = "string", required = true, paramType = "from", example = "0不共享 1共享"),
     })
     public WebResult updateAreaAndShare(@ApiParam(value = "保存资料信息", name = "chapteData") @RequestBody ChapteDataReq chapteDataReq) {
         courseDataVer.updateAreaAndShare(chapteDataReq);
@@ -89,10 +89,10 @@ public class CourseDataController {
         String fileId = chapteDataReq.getFileId();
         String datumArea = chapteDataReq.getDatumArea();
         String datumType = chapteDataReq.getDatumType();
-        String teachShare = chapteDataReq.getTeachShare();
-        String stuShare = chapteDataReq.getStuShare();
+//        String teachShare = chapteDataReq.getTeachShare();
+//        String stuShare = chapteDataReq.getStuShare();
         // 2、设置返回结果
-        return WebResult.okResult(courseDataService.updateAreaAndShare(courseId, chapterId, kNodeId, fileId, datumType, datumArea, teachShare, stuShare));
+        return WebResult.okResult(courseDataService.updateAreaAndShare(courseId, chapterId, kNodeId, fileId, datumType, datumArea));
     }
 
     @UserLoginToken
@@ -128,7 +128,7 @@ public class CourseDataController {
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "files", value = "多个文件列表", dataTypeClass = List.class, example = "传入需要删除的文件id,不传全部删除")
     })
-    public WebResult removeCourseData(@RequestBody CourseDataDeleteReq courseDataDeleteReq, HttpServletRequest request){
+    public WebResult removeCourseData(@RequestBody CourseDataDeleteReq courseDataDeleteReq, HttpServletRequest request) {
         courseDataDeleteReq.setUpdateUser(tokenService.getUserId(request.getHeader("token")));
         com.project.course.web.req.CourseDataDeleteReq dataDeleteReq = new com.project.course.web.req.CourseDataDeleteReq();
         courseDataService.removeCourseData(dataDeleteReq);
@@ -142,7 +142,7 @@ public class CourseDataController {
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "files", value = "多个文件列表", dataTypeClass = List.class, example = "传入需要删除的文件id,不传全部删除")
     })
-    public WebResult deleteCourseData(@RequestBody CourseDataDeleteReq courseDataDeleteReq, HttpServletRequest request){
+    public WebResult deleteCourseData(@RequestBody CourseDataDeleteReq courseDataDeleteReq, HttpServletRequest request) {
         courseDataDeleteReq.setUpdateUser(tokenService.getUserId(request.getHeader("token")));
         com.project.course.web.req.CourseDataDeleteReq dataDeleteReq = new com.project.course.web.req.CourseDataDeleteReq();
         BeanUtil.copyProperties(courseDataDeleteReq, dataDeleteReq);

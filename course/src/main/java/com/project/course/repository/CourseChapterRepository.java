@@ -56,8 +56,8 @@ public interface CourseChapterRepository extends JpaRepository<CourseChapter, St
      * @param chapterId
      * @return
      */
-    @Transactional(readOnly = true)
-    List<CourseChapter> findByIsValidatedEqualsAndCourseIdAndChapterId(String isValidated, String courseId, String chapterId);
+//    @Transactional(readOnly = true)
+//    List<CourseChapter> findByIsValidatedEqualsAndCourseIdAndChapterId(String isValidated, String courseId, String chapterId);
 
     /**
      * 根据章节ID和是否有效查询章节目录信息

@@ -7,10 +7,7 @@ import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
 import com.project.course.service.CourseService;
-import com.project.course.service.CourseShareService;
-import com.project.course.web.resp.CourseResp;
 import com.project.course.web.resp.CourseSaveResp;
-import com.project.course.web.vo.RCourse;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
 import com.project.portal.course.request.CourseFindAllReq;
@@ -18,7 +15,7 @@ import com.project.portal.course.request.CourseImagesReq;
 import com.project.portal.course.request.CourseSaveReq;
 import com.project.portal.course.request.CourseStudyReq;
 import com.project.portal.course.response.CourseListResp;
-import com.project.portal.course.response.CourseUsersResp;
+import com.project.portal.course.vo.RCourse;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -30,8 +27,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
@@ -55,91 +50,55 @@ public class CourseController {
     @Resource
     private TokenService tokenService;
 
-    @Resource
-    private CourseShareService courseShareService;
-
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
     @PostMapping("/save")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "course", value = "科目课程对象", dataTypeClass = Course.class, required = true),
-            @ApiImplicitParam(name = "oldShareId", value = "编辑修改前条记录的分享编号", dataTypeClass = String.class),
-//            @ApiImplicitParam(name = "teachers", value = "教师信息列表", dataTypeClass = Teacher.class)
+            @ApiImplicitParam(name = "course", value = "科目课程对象", dataTypeClass = Course.class, required = true)
     })
     public WebResult save(@ApiParam(name = "courseReq", value = "科目课程对象") @RequestBody CourseSaveReq req, HttpServletRequest request) {
-        if ("2".equals(req.getCourse().getLessonPreparationType())) {
-            MyAssert.elt(0, req.getTeachers().size(), DefineCode.ERR0010, "教师信息列表不为空");
-        }
+
         //验证请求信息
         CourseVer.saveValide(req);
         //设置service数据
         RCourse rcourse = req.getCourse();
         Course course = new Course();
         UpdateUtil.copyNullProperties(rcourse, course);
-        //教辅设置授课类型是线下课堂
-        course.setTeachingType("3");
-        course.setCreateUser(tokenService.getUserId(request.getHeader("token")));
-        List<String> list = courseService.save(course, req.getTeachers());
+        String userId = tokenService.getUserId(request.getHeader("token"));
+        course.setCreateUser(userId);
+        String courseId = courseService.saveUpdate(course);
         //创建输出课程对象
         CourseSaveResp courseSaveResp = CourseSaveResp.builder()
-                .courseId(list.get(0))
-                .shareId(list.get(1))
-                .build();
-        return WebResult.okResult(courseSaveResp);
-    }
-
-    @UserLoginToken
-    @ApiOperation(value = "修改科目课程信息", notes = "修改科目信息")
-    @PostMapping("/edit")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "course", value = "科目课程对象", dataTypeClass = Course.class, required = true),
-            @ApiImplicitParam(name = "oldShareId", value = "修改前课程的备课共享编号", dataTypeClass = String.class),
-//            @ApiImplicitParam(name = "teachers", value = "教师信息列表", dataTypeClass = Teacher.class)
-    })
-    public WebResult edit(@ApiParam(name = "courseReq", value = "科目课程对象", required = true) @RequestBody CourseSaveReq courseReq) {
-        if ("2".equals(courseReq.getCourse().getLessonPreparationType())) {
-            MyAssert.elt(0, courseReq.getTeachers().size(), DefineCode.ERR0010, "教师信息列表不为空");
-        }
-        RCourse rcourse = courseReq.getCourse();
-        Course course = new Course();
-        BeanUtil.copyProperties(rcourse, course);
-        String courseId = course.getCourseId();
-        Course source = courseService.getById(courseId);
-        BeanUtil.copyProperties(source, course);
-        course.setCreateTime(source.getCreateTime());
-        //创建输出课程对象
-        CourseSaveResp courseSaveResp = CourseSaveResp.builder()
-                .courseId(course.getCourseId())
-                .shareId(courseService.edit(course, courseReq.getOldShareId(), courseReq.getTeachers()))
+                .courseId(courseId)
                 .build();
         return WebResult.okResult(courseSaveResp);
     }
 
 
-    @UserLoginToken
-    @PostMapping("/getCourse")
-    @ApiOperation(value = "获取科目课程信息", notes = "根据科目课程ID查询科目信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
-    })
-    public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
-                                         @RequestBody String courseId) {
-        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
-        Map<String, Object> result = courseService.getCourseById(String.valueOf(JSONObject.parseObject(courseId).get("courseId")));
-        Course course = (Course) result.get("course");
-        String shareId = result.get("shareId").toString();
-        CourseResp reps = new CourseResp(course.getCourseId(),
-                course.getCourseName(),
-                course.getCourseNumber(),
-                course.getLessonPreparationType(),
-                course.getTeachingType(),
-                course.getTopPicSrc(),
-                course.getShareType(),
-                course.getCourseDescribe(),
-                shareId,
-                course.getAlias());
-        return WebResult.okResult(reps);
-    }
+//    @UserLoginToken
+//    @PostMapping("/getCourse")
+//    @ApiOperation(value = "获取科目课程信息", notes = "根据科目课程ID查询科目信息")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
+//    })
+//    public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
+//                                         @RequestBody String courseId) {
+//        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
+//        Map<String, Object> result = courseService.getCourseById(String.valueOf(JSONObject.parseObject(courseId).get("courseId")));
+//        Course course = (Course) result.get("course");
+//        String shareId = result.get("shareId").toString();
+//        CourseResp reps = new CourseResp(course.getCourseId(),
+//                course.getCourseName(),
+//                course.getCourseNumber(),
+//                course.getLessonPreparationType(),
+//                course.getTeachingType(),
+//                course.getTopPicSrc(),
+//                course.getShareType(),
+//                course.getCourseDescribe(),
+//                shareId,
+//                course.getAlias());
+//        return WebResult.okResult(reps);
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "分页查询", notes = "分页查询分页科目信息")
@@ -153,7 +112,7 @@ public class CourseController {
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findAll(page).stream()
                 .map((item) -> {
-                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getCourseNumber(), item.getLessonPreparationType(), item.getTopPicSrc(), item.getAlias());
+                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getCourseNumber(), item.getTopPicSrc(), item.getAlias());
                 })
                 .collect(toList()));
     }
@@ -172,28 +131,28 @@ public class CourseController {
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findMyCourse(userId, page).stream()
                 .map((item) -> {
-                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getCourseNumber(), item.getLessonPreparationType(), item.getTopPicSrc(), item.getAlias());
+                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getCourseNumber(), item.getTopPicSrc(), item.getAlias());
                 })
                 .collect(toList()));
     }
 
-    @UserLoginToken
-    @PostMapping("/selectTeachersByShareId")
-    @ApiOperation(value = "根据课程备课分享ID查询对应的协作老师信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "shareId", value = "科目备课分享ID", dataType = "string", required = true)
-    })
-    public WebResult selectTeachersByCourseId(@ApiParam(name = "shareId", value = "查询对应的协作老师信息", type = "string", required = true) @RequestBody String shareId) {
-        MyAssert.blank(shareId, DefineCode.ERR0010, "科目备课分享ID不为空");
-        List<CourseUsersResp> list = courseShareService.findByShareIdUsers(String.valueOf(JSONObject.parseObject(shareId).getString("shareId")))
-                .stream().map(item -> {
-                    CourseUsersResp resp = new CourseUsersResp();
-                    BeanUtil.copyProperties(item, resp);
-                    return resp;
-                }).collect(toList());
-
-        return WebResult.okResult(list);
-    }
+//    @UserLoginToken
+//    @PostMapping("/selectTeachersByShareId")
+//    @ApiOperation(value = "根据课程备课分享ID查询对应的协作老师信息")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "shareId", value = "科目备课分享ID", dataType = "string", required = true)
+//    })
+//    public WebResult selectTeachersByCourseId(@ApiParam(name = "shareId", value = "查询对应的协作老师信息", type = "string", required = true) @RequestBody String shareId) {
+//        MyAssert.blank(shareId, DefineCode.ERR0010, "科目备课分享ID不为空");
+//        List<CourseUsersResp> list = courseShareService.findByShareIdUsers(String.valueOf(JSONObject.parseObject(shareId).getString("shareId")))
+//                .stream().map(item -> {
+//                    CourseUsersResp resp = new CourseUsersResp();
+//                    BeanUtil.copyProperties(item, resp);
+//                    return resp;
+//                }).collect(toList());
+//
+//        return WebResult.okResult(list);
+//    }
 
 //    @UserLoginToken
 //    @ApiOperation(value = "学生查询我的课程信息", notes = "学生端查询我的课程信息")

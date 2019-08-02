@@ -1,59 +1,41 @@
 package com.project.course.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.NumberUtil;
-import cn.hutool.core.util.StrUtil;
-import com.project.course.domain.CourseReviewDescribe;
-import com.project.course.repository.CourseRepository;
-import com.project.course.repository.CourseReviewDescribeRepository;
-import com.project.course.repository.dto.ICourseReviewDto;
-import com.project.course.service.CourseReviewService;
-import com.project.course.web.req.CourseReviewReq;
-import com.project.course.web.resp.CourseReviewDescResp;
-import com.project.course.web.resp.CourseReviewResp;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
-import java.util.Optional;
-
-import static com.project.base.common.keyword.Dic.STUDENT_ADO;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
  * @date: 19-5-9 10:14
  * @version: 1.0
  * @description: 课程评论
+ * <p>
+ * 学生评论及老师回复
+ * @param courseReviewDescribe
+ * <p>
+ * 逻辑删除评论内容
+ * @param reviewId
  */
-@Service
-public class CourseReviewServiceImpl implements CourseReviewService {
+//@Service
+//public class CourseReviewServiceImpl implements CourseReviewService {
+//
+//
+//    private final CourseRepository courseRepository;
+//
+//    private final CourseReviewDescribeRepository courseReviewDescribeRepository;
+//
+//    private final HashOperations<String, String, String> hashOperations;
+//
+//    @Autowired
+//    public CourseReviewServiceImpl(CourseRepository courseRepository, CourseReviewDescribeRepository courseReviewDescribeRepository, HashOperations<String, String, String> hashOperations) {
+//        this.courseRepository = courseRepository;
+//        this.courseReviewDescribeRepository = courseReviewDescribeRepository;
+//        this.hashOperations = hashOperations;
+//    }
 
 
-    private final CourseRepository courseRepository;
-
-    private final CourseReviewDescribeRepository courseReviewDescribeRepository;
-
-    private final HashOperations<String, String, String> hashOperations;
-
-    @Autowired
-    public CourseReviewServiceImpl(CourseRepository courseRepository, CourseReviewDescribeRepository courseReviewDescribeRepository, HashOperations<String, String, String> hashOperations) {
-        this.courseRepository = courseRepository;
-        this.courseReviewDescribeRepository = courseReviewDescribeRepository;
-        this.hashOperations = hashOperations;
-    }
-
-
-    /**
-     * 学生评论及老师回复
-     *
-     * @param courseReviewDescribe
-     */
+/**
+ * 学生评论及老师回复
+ *
+ * @param courseReviewDescribe
+ */
 //    @Override
 //    @Transactional(rollbackFor = Exception.class)
 //    public CourseReviewDescribe save(CourseReviewDescribe courseReviewDescribe) {
@@ -80,19 +62,19 @@ public class CourseReviewServiceImpl implements CourseReviewService {
 //        return describe;
 //    }
 
-    /**
-     * 逻辑删除评论内容
-     *
-     * @param reviewId
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteReview(String reviewId) {
-        courseReviewDescribeRepository.findById(reviewId).ifPresent(c -> {
-            c.setIsValidated(TAKE_EFFECT_CLOSE);
-            courseReviewDescribeRepository.save(c);
-        });
-    }
+/**
+ * 逻辑删除评论内容
+ *
+ * @param reviewId
+ */
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void deleteReview(String reviewId) {
+//        courseReviewDescribeRepository.findById(reviewId).ifPresent(c -> {
+//            c.setIsValidated(TAKE_EFFECT_CLOSE);
+//            courseReviewDescribeRepository.save(c);
+//        });
+//    }
 
 //    @Override
 //    public CourseReviewResp findFirstReview(String courseId) {
@@ -118,23 +100,23 @@ public class CourseReviewServiceImpl implements CourseReviewService {
 //    }
 
 
-    private CourseReviewDescResp builderCourseRevieDescResp(ICourseReviewDto iCourseReviewDto){
-        return CourseReviewDescResp.builder()
-                .studentId(iCourseReviewDto.getStudentId())
-                .studentName(iCourseReviewDto.getStudentName())
-                .portrait(StrUtil.isNotBlank(iCourseReviewDto.getPortrait()) ? iCourseReviewDto.getPortrait() :
-                        hashOperations.get(STUDENT_ADO.concat(iCourseReviewDto.getStudentId()), "portrait"))
-                .reviewId(iCourseReviewDto.getReviewId())
-                .reviewDescribe(iCourseReviewDto.getReviewDescribe())
-                .classId(iCourseReviewDto.getClassId())
-                .className(iCourseReviewDto.getClassName())
-                .createTime(iCourseReviewDto.getCreateTime())
-                .score(iCourseReviewDto.getScore())
-                .teacherId(iCourseReviewDto.getTeacherId())
-                .teacherName(iCourseReviewDto.getTeacherName())
-                .reply(iCourseReviewDto.getReply())
-                .replyTime(iCourseReviewDto.getReplyTime())
-                .build();
-    }
+//    private CourseReviewDescResp builderCourseRevieDescResp(ICourseReviewDto iCourseReviewDto){
+//        return CourseReviewDescResp.builder()
+//                .studentId(iCourseReviewDto.getStudentId())
+//                .studentName(iCourseReviewDto.getStudentName())
+//                .portrait(StrUtil.isNotBlank(iCourseReviewDto.getPortrait()) ? iCourseReviewDto.getPortrait() :
+//                        hashOperations.get(STUDENT_ADO.concat(iCourseReviewDto.getStudentId()), "portrait"))
+//                .reviewId(iCourseReviewDto.getReviewId())
+//                .reviewDescribe(iCourseReviewDto.getReviewDescribe())
+//                .classId(iCourseReviewDto.getClassId())
+//                .className(iCourseReviewDto.getClassName())
+//                .createTime(iCourseReviewDto.getCreateTime())
+//                .score(iCourseReviewDto.getScore())
+//                .teacherId(iCourseReviewDto.getTeacherId())
+//                .teacherName(iCourseReviewDto.getTeacherName())
+//                .reply(iCourseReviewDto.getReply())
+//                .replyTime(iCourseReviewDto.getReplyTime())
+//                .build();
+//    }
 
-}
+//}
