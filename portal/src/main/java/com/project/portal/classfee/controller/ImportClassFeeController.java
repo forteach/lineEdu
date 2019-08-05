@@ -42,25 +42,25 @@ public class ImportClassFeeController {
         this.classFeeInfoService = classFeeInfoService;
     }
 
-//    @UserLoginToken
+    //    @UserLoginToken
     @ApiOperation(value = "导入学生信息")
     @PostMapping(path = "/classFee")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
     public WebResult leadingInStudents(@RequestParam("file") MultipartFile file) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         //TODO 需要从公共的REDIS信息里面取值
-        String centerId="01";
+        String centerId = "01";
         try {
-            List<ClassFeeInfo> list= classFeeInfoService.excelReader(file.getInputStream(), ClassFeeInfo.class);
+            List<ClassFeeInfo> list = classFeeInfoService.excelReader(file.getInputStream(), ClassFeeInfo.class);
 
             //没有可导入的数据，删除键值，返回异常信息
-            if(list.size()==0){
+            if (list.size() == 0) {
                 classFeeInfoService.delExcelKey();
                 MyAssert.isTrue(true, DefineCode.ERR0010, "没有可导入的数据");
             }
             //文件信息的数据库添加操作。
-            classFeeInfoService.impFile(list,list.get(0).getCreateYear(),list.get(0).getCreateMonth(),centerId) ;
-        return WebResult.okResult();
+            classFeeInfoService.impFile(list, list.get(0).getCreateYear(), list.get(0).getCreateMonth(), centerId);
+            return WebResult.okResult();
         } catch (IOException e) {
             //导入错误，删除REDIS键值
             classFeeInfoService.delExcelKey();
