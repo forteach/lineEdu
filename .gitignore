@@ -51,6 +51,8 @@ hs_err_pid*
 /teachplan/target/
 /course/target/
 /coursedata/target/
+/databank/target/
+/information/target/
 /user/target/
 /wechat/target/
 /wechat/.mvn/
