@@ -24,8 +24,8 @@ public class FamilySaveUpdateRequest implements Serializable {
     /**
      * 学生id
      */
-    @ApiModelProperty(name = "stuId", value = "学生id")
-    private String stuId;
+    @ApiModelProperty(name = "studentId", value = "学生id")
+    private String studentId;
     /**
      * 家庭姓名
      */

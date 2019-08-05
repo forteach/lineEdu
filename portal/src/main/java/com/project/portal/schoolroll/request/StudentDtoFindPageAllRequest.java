@@ -20,10 +20,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "查询学生信息条件")
 public class StudentDtoFindPageAllRequest extends SortVo implements Serializable {
-    @ApiModelProperty(name = "stuId", value = "学生id", dataType = "string")
-    private String stuId;
-    @ApiModelProperty(name = "stuName", value = "学生名字", dataType = "string")
-    private String stuName;
+    @ApiModelProperty(name = "studentId", value = "学生id", dataType = "string")
+    private String studentId;
+    @ApiModelProperty(name = "studentName", value = "学生名字", dataType = "string")
+    private String studentName;
     @ApiModelProperty(name = "centerIds", value = "学习中心id集合", dataType = "string")
     private List<String> centerIds;
     @ApiModelProperty(name = "studentCategory", value = "学习类别", dataType = "string")

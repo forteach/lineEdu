@@ -31,7 +31,7 @@ public class SchoolRollChange extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 移动
+     * 移动id
      */
     @Id
     @Column(name = "change_id", columnDefinition = "VARCHAR(32) COMMENT '异动ID'")

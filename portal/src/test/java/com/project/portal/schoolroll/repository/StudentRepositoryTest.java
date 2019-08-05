@@ -36,14 +36,14 @@ public class StudentRepositoryTest {
 
     @Test
     public void trimTest(){
-        List<Student> listStudent = studentRepository.findAll()
-                .parallelStream()
-                .filter(Objects::nonNull)
-                .map(s -> {
-                    s.setStuId(StrUtil.trim(s.getStuId()));
-                    return s;
-                }).collect(Collectors.toList());
-        studentRepository.saveAll(listStudent);
+//        List<Student> listStudent = studentRepository.findAll()
+//                .parallelStream()
+//                .filter(Objects::nonNull)
+//                .map(s -> {
+//                    s.setStudentId(StrUtil.trim(s.getStudentId()));
+//                    return s;
+//                }).collect(Collectors.toList());
+//        studentRepository.saveAll(listStudent);
 
         List<StudentPeople> listPeople = studentPeopleRepository.findAll()
                 .parallelStream()
@@ -54,13 +54,13 @@ public class StudentRepositoryTest {
                 }).collect(Collectors.toList());
         studentPeopleRepository.saveAll(listPeople);
 
-        List<StudentExpand> listExpand = studentExpandRepository.findAll()
-                .parallelStream()
-                .filter(Objects::nonNull)
-                .map(s -> {
-                    s.setStuId(StrUtil.trim(s.getStuId()));
-                    return s;
-                }).collect(Collectors.toList());
-        studentExpandRepository.saveAll(listExpand);
+//        List<StudentExpand> listExpand = studentExpandRepository.findAll()
+//                .parallelStream()
+//                .filter(Objects::nonNull)
+//                .map(s -> {
+//                    s.setStudentId(StrUtil.trim(s.getStudentId()));
+//                    return s;
+//                }).collect(Collectors.toList());
+//        studentExpandRepository.saveAll(listExpand);
     }
 }

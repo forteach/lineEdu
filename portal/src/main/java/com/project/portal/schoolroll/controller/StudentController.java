@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
+import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -57,8 +58,8 @@ public class StudentController {
     @ApiOperation(value = "保存修改学生信息")
     @PostMapping(path = "/saveUpdate")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", paramType = "form", example = "有值为修改，否则为新增"),
-            @ApiImplicitParam(name = "stuName", value = "学生名字", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form", example = "有值为修改，否则为新增"),
+            @ApiImplicitParam(name = "studentName", value = "学生名字", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "gender", value = "性别", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "namePinYin", value = "姓名拼音", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuCardType", value = "身份证类型", dataType = "string", paramType = "form"),
@@ -89,7 +90,7 @@ public class StudentController {
             @ApiImplicitParam(name = "remark", value = "备注", dataType = "string", paramType = "form"),
     })
     public WebResult saveUpdate(@RequestBody StudentSaveUpdateRequest request) {
-        MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
+        MyAssert.isNull(request.getStudentId(), DefineCode.ERR0010, "学生id不为空");
         Student student = new Student();
         BeanUtil.copyProperties(request, student);
         StudentPeople studentPeople = new StudentPeople();
@@ -101,8 +102,8 @@ public class StudentController {
     @ApiOperation(value = "查询学生信息列表")
     @PostMapping(path = "/findStudentsPageAll")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "stuName", value = "学生名字", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "studentName", value = "学生名字", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "centerIds", value = "学习中心id", dataTypeClass = List.class, paramType = "query"),
             @ApiImplicitParam(name = "studentCategory", value = "学习类别", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
@@ -120,8 +121,7 @@ public class StudentController {
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
     public WebResult findStudentsPageAll(@RequestBody StudentDtoFindPageAllRequest request) {
-        // todo
-//        valideSort(request.getPage(), request.getSize());
+        valideSort(request.getPage(), request.getSize());
         FindStudentDtoPageAllVo vo = new FindStudentDtoPageAllVo();
         BeanUtil.copyProperties(request, vo);
         vo.setPageable(PageRequest.of(request.getPage(), request.getSize()));
@@ -130,27 +130,27 @@ public class StudentController {
 
     @ApiOperation(value = "删除学生信息")
     @PostMapping(path = "/deleteStudentByStuId")
-    @ApiImplicitParam(name = "stuId", value = "学生id", required = true, dataType = "string", paramType = "form")
-    public WebResult deleteStudentByStuId(@RequestBody String stuId) {
-        MyAssert.isNull(stuId, DefineCode.ERR0010, "删除学生信息");
-        studentService.deleteById(JSONObject.parseObject(stuId).getString("stuId"));
+    @ApiImplicitParam(name = "studentId", value = "学生id", required = true, dataType = "string", paramType = "form")
+    public WebResult deleteStudentByStudentId(@RequestBody String studentId) {
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "删除学生信息");
+        studentService.deleteById(JSONObject.parseObject(studentId).getString("studentId"));
         return WebResult.okResult();
     }
 
     @ApiOperation(value = "查询扩展学生信息")
     @PostMapping(path = "/findStudentExpandInfo")
-    @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "form")
-    public WebResult findStudentExpandInfo(@RequestBody String stuId) {
-        MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
-        return WebResult.okResult(studentExpandService.findStudentExpandInfo(JSONObject.parseObject(stuId).getString("stuId")));
+    @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
+    public WebResult findStudentExpandInfo(@RequestBody String studentId) {
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生Id不能为空");
+        return WebResult.okResult(studentExpandService.findStudentExpandInfo(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
     @ApiOperation(value = "删除学生对应的扩展信息")
-    @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "form")
+    @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/deleteAllStudentExpandByStuId")
-    public WebResult deleteAllStudentExpandByStuId(@RequestBody String stuId) {
-        MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
-        return WebResult.okResult(studentExpandService.deleteAllStudentExpandByStuId(JSONObject.parseObject(stuId).getString("stuId")));
+    public WebResult deleteAllStudentExpandByStuId(@RequestBody String studentId) {
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生Id不能为空");
+        return WebResult.okResult(studentExpandService.deleteAllStudentExpandByStudentId(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
     @ApiOperation(value = "删除扩展字段")
@@ -164,32 +164,32 @@ public class StudentController {
 
     @ApiOperation(value = "保存修改学生扩展字段")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "expandValues", value = "需要修改保存的值", dataTypeClass = StudentExpandValueRequest.class, dataType = "list", paramType = "form"),
     })
     @PostMapping("/saveUpdateStudentExpand")
     public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request) {
-        MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
+        MyAssert.isNull(request.getStudentId(), DefineCode.ERR0010, "学生id不为空");
         MyAssert.isNull(request.getExpandValues(), DefineCode.ERR0010, "需要修改或修改的扩展字段不为空");
         List<StudentExpand> voList = request.getExpandValues()
                 .stream().filter(Objects::nonNull)
                 .map(v -> {
                     StudentExpand vo = new StudentExpand();
                     BeanUtil.copyProperties(v, vo);
-                    vo.setStuId(request.getStuId());
+                    vo.setStudentId(request.getStudentId());
                     vo.setExpandId(IdUtil.fastSimpleUUID());
                     return vo;
                 }).collect(toList());
-        studentExpandService.saveUpdateStudentExpand(voList, request.getStuId());
+        studentExpandService.saveUpdateStudentExpand(voList, request.getStudentId());
         return WebResult.okResult();
     }
 
     @ApiOperation(value = "查询学生详细信息")
     @PostMapping(path = "/findStudentPeopleByStuId")
-    @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "query")
-    public WebResult findStudentPeopleByStuId(@RequestBody String stuId) {
-        MyAssert.isNull(stuId, DefineCode.ERR0010, "学生Id不能为空");
-        return WebResult.okResult(studentService.findStudentPeopleDtoByStuId(JSONObject.parseObject(stuId).getString("stuId")));
+    @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "query")
+    public WebResult findStudentPeopleByStuId(@RequestBody String studentId) {
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生Id不能为空");
+        return WebResult.okResult(studentService.findStudentPeopleDtoByStudentId(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
     @ApiOperation(value = "查询扩展字段列表字典")

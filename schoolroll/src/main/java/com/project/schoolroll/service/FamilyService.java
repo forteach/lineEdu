@@ -16,17 +16,17 @@ public interface FamilyService {
     /**　
      * by 学生id
      * 查询精简字段家庭成员信息
-     * @param stuId
+     * @param studentId
      * @return
      */
-    public List<FamilyDto> findFamilyDtoList(String stuId);
+    public List<FamilyDto> findFamilyDtoList(String studentId);
 
     /**
      * 查询全部字段家庭成员信息
-     * @param stuId
+     * @param studentId
      * @return
      */
-    public List<Family> findFamilies(String stuId);
+    public List<Family> findFamilies(String studentId);
 
     /**
      * 将学生的家庭成员信息设置无效状态

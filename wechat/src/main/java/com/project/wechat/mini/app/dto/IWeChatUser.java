@@ -9,13 +9,13 @@ package com.project.wechat.mini.app.dto;
  */
 public interface IWeChatUser {
 
-    public String getStuId();
+    public String getStudentId();
 
     public String getClassId();
 
     public String getClassName();
 
-    public String getStuName();
+    public String getStudentName();
 
     public String getPortrait();
 }

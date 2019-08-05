@@ -20,13 +20,13 @@ public class StudentSaveUpdateRequest implements Serializable {
     /**
      * 学生Id/学号
      */
-    @ApiModelProperty(name = "stuId", value = "学生id(学号)", dataType = "string")
-    private String stuId;
+    @ApiModelProperty(name = "studentId", value = "学生id(学号)", dataType = "string")
+    private String studentId;
     /**
      * 学生姓名
      */
-    @ApiModelProperty(name = "stuName", value = "学生名字", dataType = "string")
-    private String stuName;
+    @ApiModelProperty(name = "studentName", value = "学生名字", dataType = "string")
+    private String studentName;
     /**
      * 性别
      */
