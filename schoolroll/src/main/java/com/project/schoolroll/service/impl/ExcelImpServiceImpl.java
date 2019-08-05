@@ -9,6 +9,8 @@ import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.base.util.excelImp.AbsExcelImp;
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentExpand;
@@ -28,6 +30,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
@@ -64,13 +67,24 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
         saveStudent(list);
 
         //导入成功删除对应键值
+        deleteKey();
+    }
+
+    public void deleteKey(){
         redisTemplate.delete(IMPORT_STUDENTS);
+    }
+    public void checkoutKey(){
+        MyAssert.isTrue(redisTemplate.hasKey(IMPORT_STUDENTS), DefineCode.ERR0013, "有人操作，请稍后再试!");
+    }
+    public void setStudentKey(){
+        redisTemplate.opsForValue().set(IMPORT_STUDENTS, DateUtil.now(), 30L, TimeUnit.MINUTES);
     }
 
 
     public void studentsExcel03Reader(InputStream inputStream,Class obj) {
         List<StudentImport> list = ExcelReader(inputStream,obj);
         saveStudent(list);
+        deleteKey();
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -1,11 +1,16 @@
 package com.project.portal.classfee.controller;
 
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.classfee.domain.ClassFeeInfo;
 import com.project.classfee.service.ClassFeeInfoService;
 import com.project.portal.response.WebResult;
+import com.project.schoolroll.domain.excel.StudentImport;
+import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -35,15 +41,17 @@ import java.util.List;
 @RequestMapping(path = "/import", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ImportClassFeeController {
     private final ClassFeeInfoService classFeeInfoService;
+    private final ExcelImpServiceImpl excelImpService;
 
 
     @Autowired
-    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService) {
+    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService, ExcelImpServiceImpl excelImpService) {
         this.classFeeInfoService = classFeeInfoService;
+        this.excelImpService = excelImpService;
     }
 
     //    @UserLoginToken
-    @ApiOperation(value = "导入学生信息")
+    @ApiOperation(value = "导入课时费信息")
     @PostMapping(path = "/classFee")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
     public WebResult leadingInStudents(@RequestParam("file") MultipartFile file) {
@@ -68,5 +76,35 @@ public class ImportClassFeeController {
             e.printStackTrace();
         }
         return WebResult.failException("导入的Excel文件数据错误");
+    }
+
+    //    @UserLoginToken
+    @ApiOperation(value = "导入学生信息数据")
+    @PostMapping(path = "/students")
+    @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
+    public WebResult inportStudents(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            MyAssert.isNull(null, DefineCode.ERR0010, "导入的文件不存在,请重新选择");
+        }
+        try {
+
+            excelImpService.checkoutKey();
+            //设置导入修改时间 防止失败没有过期时间
+            String type = FileUtil.extName(file.getOriginalFilename());
+            if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
+                excelImpService.setStudentKey();
+                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class);
+                return WebResult.okResult();
+            } else if (StrUtil.isNotBlank(type) && "xls".equals(type)) {
+                excelImpService.setStudentKey();
+                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class);
+                return WebResult.okResult();
+            }
+        } catch (IOException e) {
+            excelImpService.deleteKey();
+            log.error("students in IOException, file : [{}],  message : [{}]", file, e.getMessage());
+            e.printStackTrace();
+        }
+        return WebResult.failException("导入的文件格式不是Excel文件");
     }
 }
