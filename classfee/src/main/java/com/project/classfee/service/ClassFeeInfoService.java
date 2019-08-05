@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ClassFeeInfoService extends BaseMySqlService {
+public class ClassFeeInfoService extends BaseMySqlService{
 
     //课时详情信息
     @Resource
@@ -39,6 +40,18 @@ public class ClassFeeInfoService extends BaseMySqlService {
     //课时费管理
     @Resource
     private ClassFeeRepository classFeeRepository;
+
+    //课时费EXCEL导入处理
+    @Resource
+    private FeeImpServiceImpl feeImpServiceImpl;
+
+    public  List<ClassFeeInfo> excelReader(InputStream inputStream, Class<ClassFeeInfo> obj){
+      return  feeImpServiceImpl.excelReader(inputStream,obj);
+    }
+
+    public void delExcelKey(){
+        feeImpServiceImpl.delRedisKey();
+    }
 
 
     /**

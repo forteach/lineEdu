@@ -69,17 +69,8 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
 
 
     public void studentsExcel03Reader(InputStream inputStream,Class obj) {
-//        ExcelReader reader = ExcelUtil.getReader(inputStream);
-//        setHeaderAlias(reader);
         List<StudentImport> list = ExcelReader(inputStream,obj);
-
         saveStudent(list);
-
-        //导入成功删除对应键值
-        redisTemplate.delete(IMPORT_STUDENTS);
-
-//        Excel03SaxReader reader = new Excel03SaxReader(createRowHandler());
-//        reader.read(inputStream, 0);
     }
 
     @Transactional(rollbackFor = Exception.class)

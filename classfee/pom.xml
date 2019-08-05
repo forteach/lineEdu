@@ -23,6 +23,10 @@
             <artifactId>mysql</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>redis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
