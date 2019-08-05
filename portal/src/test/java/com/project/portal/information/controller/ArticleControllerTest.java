@@ -26,13 +26,13 @@ public class ArticleControllerTest {
     public void save() {
         SaveArticleRequest request = new SaveArticleRequest();
         request.setArticleId("bef32ab92e294edcbe52048e082574b4");
-        request.setTitle("rgfe");
+        request.setTitle("标题是");
         request.setUserId("re");
         request.setArticleType("tge");
         request.setImgUrl("http://pic41.nipic.com/20140508/18609517_112216473140_2.jpg");
         request.setLinkUrl("https://pic.sogou.com/");
         JSON json = JSONUtil.parse(request);
-        HttpRequest httpRequest = HttpUtil.createPost("http://127.0.0.1:7080/article/saveOrUpdate")
+        HttpRequest httpRequest = HttpUtil.createPost("http://127.0.0.1:8080/article/saveOrUpdate")
                 .body(json);
         String body = httpRequest.execute().body();
         Console.log(JSONUtil.formatJsonStr(body));
@@ -45,7 +45,7 @@ public class ArticleControllerTest {
         map.put("page", 0);
         map.put("size", 10);
         JSON json = JSONUtil.parse(map);
-        HttpRequest httpRequest = HttpUtil.createPost("http://127.0.0.1:7080/article/findAllDesc")
+        HttpRequest httpRequest = HttpUtil.createPost("http://127.0.0.1:8080/article/findAllDesc")
                 .body(json);
         HttpResponse httpResponse = httpRequest.execute();
         System.out.println("----------------------");

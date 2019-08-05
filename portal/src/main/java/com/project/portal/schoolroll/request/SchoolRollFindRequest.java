@@ -20,8 +20,8 @@ public class SchoolRollFindRequest implements Serializable {
     @ApiModelProperty(name = "changId", value = "异动编号", dataType = "string")
     private String changId;
 
-    @ApiModelProperty(name = "stuId", value = "学生编号", dataType = "string")
-    private String stuId;
+    @ApiModelProperty(name = "studentId", value = "学生编号", dataType = "string")
+    private String studentId;
 
     @ApiModelProperty(name = "typeName", value = "异动类型", dataType = "string")
     private String typeName;

@@ -19,13 +19,13 @@ import java.util.List;
 public interface FamilyRepository extends JpaRepository<Family, String> {
 
     @Transactional(readOnly = true)
-    public List<Family> findAllByIsValidatedEqualsAndStuId(String isValidated, String stuId);
+    public List<Family> findAllByIsValidatedEqualsAndStudentId(String isValidated, String studentId);
 
     @Transactional(readOnly = true)
-    @Query(value = "SELECT familyId AS familyId, stuId AS stuId, familyName AS familyName, familyPhone AS familyPhone, familyRelationship AS familyRelationship, isGuardian as isGuardian FROM Family WHERE isValidated = '0' AND stuId = ?1")
-    public List<FamilyDto> findAllByStuIdDto(String stuId);
+    @Query(value = "SELECT familyId AS familyId, studentId AS studentId, familyName AS familyName, familyPhone AS familyPhone, familyRelationship AS familyRelationship, isGuardian as isGuardian FROM Family WHERE isValidated = '0' AND studentId = ?1")
+    public List<FamilyDto> findAllByStudentIdDto(String studentId);
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying(clearAutomatically = true)
-    public int deleteAllByStuId(String stuId);
+    public int deleteAllByStudentId(String studentId);
 }

@@ -10,7 +10,7 @@ package com.project.schoolroll.domain.excel;
 public enum StudentEnum {
 
     /** 姓名*/
-    stuName("姓名"),
+    studentName("姓名"),
     /** 性别*/
     gender("性别"),
     /** 出生日期*/
@@ -24,7 +24,7 @@ public enum StudentEnum {
     /** 班级名称*/
     className("班级名称"),
     /** 学号*/
-    stuId("学号"),
+    studentId("学号"),
     /** 学生类别*/
     studentCategory("学生类别"),
     /** 学习形式*/

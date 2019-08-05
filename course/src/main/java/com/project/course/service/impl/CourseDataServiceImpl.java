@@ -100,7 +100,7 @@ public class CourseDataServiceImpl implements CourseDataService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea) {
+    public String updateAreaAndShare(String courseId, String chapterId, String fileId, String datumType, String datumArea) {
         //1、根据资料编号和领域编号，获得领域表信息
         CourseDatumArea da = courseDatumAreaRepository.findByFileIdAndDatumArea(fileId, datumArea);
 
@@ -112,7 +112,6 @@ public class CourseDataServiceImpl implements CourseDataService {
             da.setFileId(IdUtil.fastSimpleUUID());
             da.setDatumArea(datumArea);
             da.setDatumType(datumType);
-            da.setKNodeId(kNodeId);
             da.setChapterId(chapterId);
             da.setCourseId(courseId);
             courseDatumAreaRepository.save(da);
@@ -120,40 +119,8 @@ public class CourseDataServiceImpl implements CourseDataService {
 
         //4、根据资料主表的资料ID，结合所选的单个资料领域，修改文件资料表的资料领域字段
         courseDataRepository.updateDatumArea(fileId, datumArea);
-//        courseDataRepository.updateStuShare(fileId, stuShare);
-//        courseDataRepository.updateTeachShare(fileId, teachShare);
 
         return "ok";
-    }
-
-    /**
-     * 获得按资料领域、课程章节、知识点、资料列表
-     *
-     * @param chapterId
-     * @param kNodeId
-     * @param datumType
-     * @param pageable
-     * @return
-     */
-    @Override
-    public List<DatumResp> findDatumList(String chapterId, String kNodeId, String datumType, Pageable pageable) {
-
-        //转换LIST对象
-        return courseDataRepository.findByChapterIdAndDatumTypeAndKNodeIdAndIsValidatedOrderByCreateTimeAsc(chapterId, datumType, kNodeId, TAKE_EFFECT_OPEN, pageable).getContent()
-                .stream()
-                .map((item) -> {
-                    DatumResp dr = new DatumResp();
-                    dr.setChapterId(item.getChapterId());
-                    dr.setFileName(item.getDatumName());
-                    dr.setFileName(item.getDatumArea());
-                    dr.setFileType(item.getDatumExt());
-                    dr.setFileId(item.getDataId());
-                    dr.setFileUrl(item.getDatumUrl());
-                    dr.setDatumArea(item.getDatumArea());
-//                    dr.setStuShare(item.getStuShare());
-//                    dr.setTeachShare(item.getTeachShare());
-                    return dr;
-                }).collect(toList());
     }
 
     /**

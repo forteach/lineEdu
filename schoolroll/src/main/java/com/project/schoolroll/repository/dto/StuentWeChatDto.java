@@ -9,9 +9,9 @@ package com.project.schoolroll.repository.dto;
  */
 public interface StuentWeChatDto {
 
-    public String getStuId();
+    public String getStudentId();
 
-    public String getStuName();
+    public String getStudentName();
 
     public String getClassId();
 

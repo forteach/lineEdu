@@ -27,14 +27,14 @@ public class StudentExpandServiceImpl implements StudentExpandService {
     }
 
     @Override
-    public List<StudentExpandDto> findStudentExpandInfo(String stuId) {
-        return studentExpandRepository.findByIsValidatedEqualsAndStuId(stuId);
+    public List<StudentExpandDto> findStudentExpandInfo(String studentId) {
+        return studentExpandRepository.findByIsValidatedEqualsAndStudentId(studentId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteAllStudentExpandByStuId(String stuId) {
-        return studentExpandRepository.deleteAllByStuId(stuId);
+    public int deleteAllStudentExpandByStudentId(String studentId) {
+        return studentExpandRepository.deleteAllByStudentId(studentId);
     }
 
     @Override
@@ -45,8 +45,8 @@ public class StudentExpandServiceImpl implements StudentExpandService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveUpdateStudentExpand(List<StudentExpand> studentExpandVos, String stuId) {
-        studentExpandRepository.deleteAllByStuId(stuId);
+    public void saveUpdateStudentExpand(List<StudentExpand> studentExpandVos, String studentId) {
+        studentExpandRepository.deleteAllByStudentId(studentId);
         studentExpandRepository.saveAll(studentExpandVos);
     }
 }

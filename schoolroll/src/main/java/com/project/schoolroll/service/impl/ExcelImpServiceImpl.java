@@ -57,7 +57,7 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     }
 
 
-    public void studentsExcel07Reader(InputStream inputStream,Class obj ) {
+    public void studentsExcel07Reader(InputStream inputStream, Class obj ) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
         List<StudentImport> list = reader.readAll(StudentImport.class);
@@ -87,7 +87,7 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
                 .map(BeanUtil::trimStrFields)
                 .forEach(studentImport -> {
 
-                    Optional<Student> studentOptional = studentRepository.findById(studentImport.getStuId());
+                    Optional<Student> studentOptional = studentRepository.findById(studentImport.getStudentId());
                     if (studentOptional.isPresent()) {
                         //存在需要覆盖
                         Student student = studentOptional.get();
@@ -113,11 +113,11 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
                     }
 
                     if (StrUtil.isNotBlank(studentImport.getStuEmail())) {
-                        setStudentExpandValue(studentImport.getStuId(), stuEmail.name(), studentImport.getFamilyAddress(), stuEmail.getName(), studentExpandList);
+                        setStudentExpandValue(studentImport.getStudentId(), stuEmail.name(), studentImport.getFamilyAddress(), stuEmail.getName(), studentExpandList);
                     }
 
                     if (StrUtil.isNotBlank(studentImport.getFamilyAddress())) {
-                        setStudentExpandValue(studentImport.getStuId(), familyAddress.name(), studentImport.getFamilyAddress(), familyAddress.getName(), studentExpandList);
+                        setStudentExpandValue(studentImport.getStudentId(), familyAddress.name(), studentImport.getFamilyAddress(), familyAddress.getName(), studentExpandList);
                     }
                     log.info("thread id : [{}] , thread name : [{}]", Thread.currentThread().getId(), Thread.currentThread().getName());
                 });
@@ -136,15 +136,15 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
         log.debug("返回花费时间,并重置开始时间 : [{}]", timer.intervalRestart());
     }
 
-    private void setStudentExpandValue(String stuId, String studentExpandName, String studentExpandValue, String expandExplain, List<StudentExpand> studentExpandList) {
-        List<StudentExpand> expandList = studentExpandRepository.findAllByStuIdAndExpandName(stuId, studentExpandName);
+    private void setStudentExpandValue(String studentId, String studentExpandName, String studentExpandValue, String expandExplain, List<StudentExpand> studentExpandList) {
+        List<StudentExpand> expandList = studentExpandRepository.findAllByStudentIdAndExpandName(studentId, studentExpandName);
         StudentExpand studentExpand;
         if (!expandList.isEmpty()) {
             studentExpand = expandList.get(0);
         } else {
             studentExpand = new StudentExpand();
             studentExpand.setExpandId(IdUtil.fastSimpleUUID());
-            studentExpand.setStuId(stuId);
+            studentExpand.setStudentId(studentId);
             studentExpand.setExpandName(studentExpandName);
             studentExpand.setExpandExplain(expandExplain);
         }
@@ -178,14 +178,14 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     @Override
     public void setHeaderAlias(@NonNull ExcelReader reader) {
 
-        reader.addHeaderAlias(stuName.getName(), stuName.name());
+        reader.addHeaderAlias(studentName.getName(), studentName.name());
         reader.addHeaderAlias(gender.getName(), gender.name());
         reader.addHeaderAlias(stuBirthDate.getName(), stuBirthDate.name());
         reader.addHeaderAlias(stuCardType.getName(), stuCardType.name());
         reader.addHeaderAlias(stuIDCard.getName(), stuIDCard.name());
         reader.addHeaderAlias(namePinYin.getName(), namePinYin.name());
         reader.addHeaderAlias(className.getName(), className.name());
-        reader.addHeaderAlias(stuId.getName(), stuId.name());
+        reader.addHeaderAlias(studentId.getName(), studentId.name());
         reader.addHeaderAlias(studentCategory.getName(), studentCategory.name());
         reader.addHeaderAlias(learningModality.getName(), learningModality.name());
         reader.addHeaderAlias(waysEnrollment.getName(), waysEnrollment.name());

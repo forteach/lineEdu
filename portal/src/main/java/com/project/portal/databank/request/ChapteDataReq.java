@@ -42,17 +42,8 @@ public class ChapteDataReq {
     @ApiModelProperty(name = "datumType", dataType = "string", value = "资料类型", example = "1", notes = "资料类型 1文档　　3视频　4音频　5链接", required = true)
     private String datumType;
 
-    @ApiModelProperty(name = "kNodeId", value = "知识点标签", dataType = "string", notes = "知识点 ‘,’ 进行分割")
-    private String kNodeId;
-
     @ApiModelProperty(name = "datumName", value = "资料名称", dataType = "string", notes = "资料名称")
     private String datumName;
-
-//    @ApiModelProperty(name = "teachShare", value = "教师共享", dataType = "string", notes = "0不共享 1 共享")
-//    private String teachShare = "0";
-
-//    @ApiModelProperty(name = "stuShare", value = "学生共享", dataType = "string", notes = "0不共享 1共享")
-//    private String stuShare = "0";
 
     @ApiModelProperty(value = "files", name = "文件列表信息", dataType = "list", required = true)
     private List<DataDatumVo> files;

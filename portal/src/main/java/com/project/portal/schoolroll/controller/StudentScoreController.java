@@ -39,18 +39,18 @@ public class StudentScoreController {
     @ApiOperation(value = "查询学生对应成绩信息")
     @PostMapping(path = "/findStudentScore")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "stuId", value = "学生Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "studentId", value = "学生Id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "term", value = "学期", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "courseType", value = "课程类别", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "schoolYear", value = "学年", dataType = "string", paramType = "query"),
     })
     public WebResult findStudentScore(@RequestBody StudentScoreRequest request){
-        MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
+        MyAssert.isNull(request.getStudentId(), DefineCode.ERR0010, "学生id不为空");
         if (StrUtil.isBlank(request.getCourseId())){
-            return WebResult.okResult(studentScoreService.findByStudentId(request.getStuId()));
+            return WebResult.okResult(studentScoreService.findByStudentId(request.getStudentId()));
         }else {
-            return WebResult.okResult(studentScoreService.findByStudentIdAndCourseId(request.getStuId(), request.getCourseId()));
+            return WebResult.okResult(studentScoreService.findByStudentIdAndCourseId(request.getStudentId(), request.getCourseId()));
         }
     }
 
@@ -66,7 +66,7 @@ public class StudentScoreController {
     @ApiOperation(value = "分页查询学生对应成绩信息", tags = {"多条件分页查询学生成绩信息"})
     @PostMapping(path = "/findStudentScorePageAll")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "stuId", value = "学生Id", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "studentId", value = "学生Id", required = true, paramType = "query"),
             @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "term", value = "学期", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "courseType", value = "课程类别", dataType = "string", paramType = "query"),

@@ -86,7 +86,7 @@ public class WeChatUserController {
     @ApiOperation(value = "绑定微信用户登录信息")
     @PostMapping("/binding")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "stuName", value = "学生身份证姓名", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "studentName", value = "学生身份证姓名", required = true, paramType = "form"),
             @ApiImplicitParam(name = "stuIDCard", value = "学生身份证号码", required = true, paramType = "form"),
             @ApiImplicitParam(name = "signature", value = "sha1( rawData + session_key )", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "rawData", value = "rawData", dataType = "string", paramType = "form"),
@@ -95,7 +95,7 @@ public class WeChatUserController {
     })
     public WebResult binding(@RequestBody BindingUserReq bindingUserReq, HttpServletRequest request){
         MyAssert.blank(bindingUserReq.getStuIDCard(), DefineCode.ERR0010, "身份证号码不为空");
-        MyAssert.blank(bindingUserReq.getStuName(), DefineCode.ERR0010, "用户名不为空");
+        MyAssert.blank(bindingUserReq.getStudentName(), DefineCode.ERR0010, "用户名不为空");
         BindingUserRequest bindingUser = new BindingUserRequest();
         BeanUtil.copyProperties(bindingUserReq, bindingUser);
         bindingUser.setOpenId(tokenService.getOpenId(request.getHeader("token")));
@@ -104,13 +104,14 @@ public class WeChatUserController {
 
     /**
      * todo delete
-     * @param stuId
+     * @param studentId
      * @return
      */
     @ApiOperation(value = "重置用户登陆绑定信息")
-    @GetMapping("/restart/{stuId}")
-    public WebResult restart(@PathVariable("stuId") String stuId){
-        weChatUserService.restart(stuId);
+    @GetMapping("/restart/{studentId}")
+    public WebResult restart(@PathVariable("studentId") String studentId){
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生id不为空");
+        weChatUserService.restart(studentId);
         return WebResult.okResult();
     }
 //

@@ -20,8 +20,8 @@ import java.io.Serializable;
 @ApiModel(value = "绑定学生用户登录微信信息")
 public class BindingUserReq extends WxDataVo implements Serializable {
 
-    @ApiModelProperty(value = "用户名", name = "stuName")
-    private String stuName;
+    @ApiModelProperty(value = "用户名", name = "studentName")
+    private String studentName;
 
     @ApiModelProperty(value = "身份证号码", name = "stuIDCard")
     private String stuIDCard;

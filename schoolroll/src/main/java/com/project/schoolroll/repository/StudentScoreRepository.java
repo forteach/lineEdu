@@ -16,8 +16,8 @@ import java.util.List;
 public interface StudentScoreRepository extends JpaRepository<StudentScore, String> {
 
     @Transactional(readOnly = true)
-    public StudentScore findAllByIsValidatedEqualsAndStuIdAndCourseId(String isValidated, String stuId, String courseId);
+    public StudentScore findAllByIsValidatedEqualsAndStudentIdAndCourseId(String isValidated, String studentId, String courseId);
 
     @Transactional(readOnly = true)
-    public List<StudentScore> findAllByIsValidatedEqualsAndStuIdOrderByUpdateTime(String isValidated, String stuId);
+    public List<StudentScore> findAllByIsValidatedEqualsAndStudentIdOrderByUpdateTime(String isValidated, String studentId);
 }

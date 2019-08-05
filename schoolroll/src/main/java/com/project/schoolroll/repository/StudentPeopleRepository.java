@@ -19,7 +19,7 @@ import java.util.List;
 public interface StudentPeopleRepository extends JpaRepository<StudentPeople, String> {
 
     @Query(value = "select " +
-            " s.stuId as stuId, s.stuName as stuName, s.specialtyName as specialtyName, s.centerId as centerId, " +
+            " s.studentId as studentId, s.studentName as studentName, s.specialtyName as specialtyName, s.centerId as centerId, " +
             " lc.centerName as centerName, s.studentCategory as studentCategory, " +
             " s.classId as classId, s.className as className, s.educationalSystem as educationalSystem, s.waysStudy as waysStudy, " +
             " s.learningModality as learningModality, s.waysEnrollment as waysEnrollment, s.enrollmentDate as enrollmentDate, " +
@@ -32,16 +32,16 @@ public interface StudentPeopleRepository extends JpaRepository<StudentPeople, St
             " from Student as s left join StudentPeople as sp on sp.peopleId = s.peopleId" +
             " left join LearnCenter as lc on lc.centerId = s.centerId " +
             " where s.isValidated = '0' and sp.isValidated = '0'" +
-            " and lc.isValidated = '0' and s.stuId = ?1")
+            " and lc.isValidated = '0' and s.studentId = ?1")
     @Transactional(readOnly = true)
-    StudentPeopleDto findByStuId(String stuId);
+    StudentPeopleDto findByStudentId(String studentId);
 
     @Query(value = "select " +
-            " s.stuId as stuId, s.stuName as stuName, s.classId as classId , s.className as className, " +
+            " s.studentId as studentId, s.studentName as studentName, s.classId as classId , s.className as className, " +
             " sp.stuIDCard as stuIDCard " +
             " from Student as s " +
             " left join StudentPeople as sp on sp.peopleId = s.peopleId " +
             " where s.isValidated = '0' and sp.isValidated = '0' " +
-            " and sp.stuName = ?1 and sp.stuIDCard = ?2")
-    List<StuentWeChatDto> findWeChatUserByStuNameAndStuIDCard(String stuName, String stuIDCard);
+            " and sp.studentName = ?1 and sp.stuIDCard = ?2")
+    List<StuentWeChatDto> findWeChatUserByStudentNameAndStuIDCard(String studentName, String stuIDCard);
 }

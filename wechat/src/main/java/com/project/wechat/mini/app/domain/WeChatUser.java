@@ -23,7 +23,7 @@ import javax.persistence.*;
 @Table(name = "wx_user", indexes = {
         @Index(columnList = "wx_id", name = "wx_id_index"),
         @Index(columnList = "open_id", name = "open_id_index", unique = true),
-        @Index(columnList = "stu_id", name = "stu_id_index")
+        @Index(columnList = "student_id", name = "student_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
 @org.hibernate.annotations.Table(appliesTo = "wx_user", comment = "微信用户信息")
@@ -59,8 +59,8 @@ public class WeChatUser extends Entitys {
     @Column(name = "avatar_url", columnDefinition = "VARCHAR(256) COMMENT '用户的头像URL'")
     private String avatarUrl;
 
-    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
-    private String stuId;
+    @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
+    private String studentId;
 
     @Column(name = "binding", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '绑定标识 0 绑定 1　未绑定'")
     private String binding;
@@ -71,7 +71,7 @@ public class WeChatUser extends Entitys {
     public WeChatUser() {
     }
 
-    public WeChatUser(String openId, String nickName, String gender, String language, String city, String province, String country, String avatarUrl, String stuId, String binding) {
+    public WeChatUser(String openId, String nickName, String gender, String language, String city, String province, String country, String avatarUrl, String studentId, String binding) {
         this.openId = openId;
         this.nickName = nickName;
         this.gender = gender;
@@ -80,7 +80,7 @@ public class WeChatUser extends Entitys {
         this.province = province;
         this.country = country;
         this.avatarUrl = avatarUrl;
-        this.stuId = stuId;
+        this.studentId = studentId;
         this.binding = binding;
     }
 }

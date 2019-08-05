@@ -31,12 +31,12 @@ public class StudentScoreServiceImpl implements StudentScoreService {
 
     @Override
     public StudentScore findByStudentIdAndCourseId(String studentId, String courseId) {
-        return studentScoreRepository.findAllByIsValidatedEqualsAndStuIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId);
+        return studentScoreRepository.findAllByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId);
     }
 
     @Override
     public List<StudentScore> findByStudentId(String studentId) {
-        return studentScoreRepository.findAllByIsValidatedEqualsAndStuIdOrderByUpdateTime(TAKE_EFFECT_OPEN, studentId);
+        return studentScoreRepository.findAllByIsValidatedEqualsAndStudentIdOrderByUpdateTime(TAKE_EFFECT_OPEN, studentId);
     }
 
     @Override

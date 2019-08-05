@@ -17,7 +17,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class BindingUserRequest extends WxDataVo implements Serializable {
 
-    private String stuName;
+    private String studentName;
 
     private String stuIDCard;
 }

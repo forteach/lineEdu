@@ -21,17 +21,8 @@ import java.util.Optional;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, String>, JpaSpecificationExecutor<Student> {
 
-//    @Transactional(readOnly = true)
-//    Optional<Student> findByStuId(String stuId);
-
-//    @Transactional(readOnly = true)
-//    Student findByStuId(String stuId);
 
     @Transactional(readOnly = true)
     List<Student> findAllByIsValidatedEquals(String isValidated);
 
-//    @Query(value = "")
-
-//    @Transactional(readOnly = true)
-//    List<StudentPeopleDto> findAllByIsValidatedEquals(String isValidated);
 }

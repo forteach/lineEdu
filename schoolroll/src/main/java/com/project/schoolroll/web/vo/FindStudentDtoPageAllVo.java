@@ -18,11 +18,11 @@ public class FindStudentDtoPageAllVo implements Serializable {
     /**
      * 学生id、学生代码
      */
-    private String stuId;
+    private String studentId;
     /**
      * 学生名称
      */
-    private String stuName;
+    private String studentName;
     /**
      * 学习中心id
      */

@@ -78,12 +78,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String bindingUser(BindingUserRequest bindingUserReq) {
-//        Optional<StudentEntitys> studentEntitys = studentEntitysRepository.findByIsValidatedEqualsAndStuIDCard(TAKE_EFFECT_OPEN, bindingUserReq.getStuIDCard())
-//                .stream()
-//                .filter(Objects::nonNull)
-//                .findFirst();
-//        studentRepository.s
-        List<StuentWeChatDto> list = studentPeopleRepository.findWeChatUserByStuNameAndStuIDCard(bindingUserReq.getStuName(), bindingUserReq.getStuIDCard());
+        List<StuentWeChatDto> list = studentPeopleRepository.findWeChatUserByStudentNameAndStuIDCard(bindingUserReq.getStudentName(), bindingUserReq.getStuIDCard());
         if (!list.isEmpty()) {
             Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(bindingUserReq.getOpenId())
                     .stream()
@@ -94,7 +89,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
             }
             WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
             StuentWeChatDto stuentWeChatDto = list.get(0);
-            if (checkStudent(bindingUserReq, stuentWeChatDto.getStuName(), stuentWeChatDto.getStuIDCard())) {
+            if (checkStudent(bindingUserReq, stuentWeChatDto.getStudentName(), stuentWeChatDto.getStuIDCard())) {
                 final WxMaService wxService = WeChatMiniAppConfig.getMaService();
                 String openId = bindingUserReq.getOpenId();
                 String key = USER_PREFIX.concat(openId);
@@ -110,7 +105,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                     BeanUtils.copyProperties(wxMaUserInfo, weChatUser);
                 }
                 weChatUser.setBinding(WX_INFO_BINDIND_0);
-                weChatUser.setStuId(stuentWeChatDto.getStuId());
+                weChatUser.setStudentId(stuentWeChatDto.getStudentId());
                 weChatUser.setClassId(stuentWeChatDto.getClassId());
                 weChatUser.setOpenId(openId);
                 weChatUserRepository.save(weChatUser);
@@ -151,14 +146,14 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
 
         weChatUserInfoOptional.ifPresent(weChatUser -> {
-            weChatUserRepository.findById(weChatUser.getStuId()).ifPresent(studentEntitys -> {
+            weChatUserRepository.findById(weChatUser.getStudentId()).ifPresent(studentEntitys -> {
                 if (StrUtil.isNotBlank(portrait)) {
                     weChatUser.setAvatarUrl(portrait);
                     weChatUserRepository.save(weChatUser);
                 }
 //                studentEntitys.setPortrait(portrait);
 //                studentEntitysRepository.save(studentEntitys);
-                String studentKey = STUDENT_ADO.concat(weChatUser.getStuId());
+                String studentKey = STUDENT_ADO.concat(weChatUser.getStudentId());
                 stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
             });
         });
@@ -170,8 +165,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 //            loginResp.setClassId(iWeChatUser.getClassId());
 //            loginResp.setClassName(iWeChatUser.getClassName());
             loginResp.setPortrait(iWeChatUser.getPortrait());
-            loginResp.setStuId(iWeChatUser.getStuId());
-            loginResp.setStuName(iWeChatUser.getStuName());
+            loginResp.setStudentId(iWeChatUser.getStudentId());
+            loginResp.setStudentName(iWeChatUser.getStudentName());
         }
         loginResp.setBinding(binding);
         loginResp.setToken(token);
@@ -193,7 +188,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void restart(String string) {
-        List<WeChatUser> list = weChatUserRepository.findByStuId(string);
+        List<WeChatUser> list = weChatUserRepository.findByStudentId(string);
         if (list.size() > 0) {
             list.stream().filter(Objects::nonNull)
                     .forEach(weChatUser -> {
@@ -211,12 +206,6 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         if (optionalWeChatUserInfo.isPresent()) {
             WeChatUser weChatUser = optionalWeChatUserInfo.get();
             BeanUtil.copyProperties(weChatUserReq, weChatUser);
-//            Optional<StudentEntitys> studentEntitysOptional = studentEntitysRepository.findById(weChatUser.getStuId());
-//            if (studentEntitysOptional.isPresent()) {
-//                StudentEntitys studentEntitys = studentEntitysOptional.get();
-//                studentEntitys.setPortrait(weChatUserReq.getAvatarUrl());
-//                studentEntitysRepository.save(studentEntitys);
-//            }
             weChatUserRepository.save(weChatUser);
             return "操作成功!";
         } else {
@@ -231,8 +220,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
      * @param bindingUserReq
      * @return
      */
-    private boolean checkStudent(BindingUserRequest bindingUserReq, String stuName, String stuIDCard) {
-        return stuName.equals(bindingUserReq.getStuName())
+    private boolean checkStudent(BindingUserRequest bindingUserReq, String studentName, String stuIDCard) {
+        return studentName.equals(bindingUserReq.getStudentName())
                 && stuIDCard.equals(bindingUserReq.getStuIDCard());
     }
 

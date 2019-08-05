@@ -20,11 +20,11 @@ public class StudentImport implements Serializable {
     /**
      * 学生学号id
      */
-    private String stuId;
+    private String studentId;
     /**
      * 学生姓名
      */
-    private String stuName;
+    private String studentName;
     /**
      * 性别
      */
