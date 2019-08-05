@@ -13,13 +13,13 @@ public interface StudentDto {
      * 学生id
      * @return
      */
-    public String getStuId();
+    public String getStudentId();
 
     /**
      * 学生名称
      * @return
      */
-    public String getStuName();
+    public String getStudentName();
 
     /**
      * 专业id

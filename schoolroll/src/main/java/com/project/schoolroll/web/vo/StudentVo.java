@@ -24,12 +24,12 @@ public class StudentVo implements Serializable {
      */
     @Id
     @Column(length = 32)
-    public String stuId;
+    public String studentId;
     /**
      * 学生名字
      */
     @Column(length = 32)
-    public String stuName;
+    public String studentName;
     /**
      * 专业id
      */

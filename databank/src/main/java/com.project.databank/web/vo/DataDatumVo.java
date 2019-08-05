@@ -28,5 +28,7 @@ public class DataDatumVo implements Serializable {
 
     private String mount;
 
-    private Integer indexNum;
+    private int indexNum;
+
+    private long videoDuration;
 }

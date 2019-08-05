@@ -31,8 +31,8 @@ public class Student extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学生Id(学号代码)'")
-    private String stuId;
+    @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生Id(学号代码)'")
+    private String studentId;
     /**
      * 专业id
      */
@@ -46,8 +46,8 @@ public class Student extends Entitys implements Serializable {
     /**
      * 姓名
      */
-    @Column(name = "stu_name", columnDefinition = "VARCHAR(32) COMMENT '学生姓名'")
-    private String stuName;
+    @Column(name = "student_name", columnDefinition = "VARCHAR(32) COMMENT '学生姓名'")
+    private String studentName;
     /**
      * 学习中心编号
      */
@@ -134,10 +134,4 @@ public class Student extends Entitys implements Serializable {
 //    @Column(name = "birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生日期'")
 //    private String birthDate;
 
-
-//    public Student(String studentId, String studentCode, String centerId) {
-//        this.studentId = studentId;
-//        this.studentCode = studentCode;
-//        super.centerAreaId=centerId;
-//    }
 }

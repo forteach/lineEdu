@@ -20,8 +20,8 @@ public class StudentExpandRequest implements Serializable {
     /**
      * 修改的扩展学生id
      */
-    @ApiModelProperty(name = "stuId", value = "学生id", dataType = "string")
-    private String stuId;
+    @ApiModelProperty(name = "studentId", value = "学生id", dataType = "string")
+    private String studentId;
 
     @ApiModelProperty(name = "expandValues", value = "扩展字段需要修改添加的值", required = true)
     private List<StudentExpandValueRequest> expandValues;

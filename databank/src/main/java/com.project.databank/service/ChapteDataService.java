@@ -22,26 +22,24 @@ public interface ChapteDataService {
      *
      * @param courseId
      * @param chapterId
-     * @param kNodeId
      * @param fileId
      * @param datumType
      * @param datumArea
      * @return
      */
-    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea);
+    public String updateAreaAndShare(String courseId, String chapterId, String fileId, String datumType, String datumArea);
 
     /**
      * 课程资料详细列表
      *
      * @param chapterId
-     * @param kNodeId
      * @param datumType
      * @param pageable
      * @return
      */
-    public List<DatumResp> findDatumList(String chapterId, String kNodeId, String datumType, Pageable pageable);
+    public List<DatumResp> findDatumList(String chapterId, String datumType, Pageable pageable);
 
-    public List<DatumResp> findDatumList(String chapterId, String kNodeId, String datumArea, String datumType, Pageable pageable);
+    public List<DatumResp> findDatumList(String chapterId, String datumArea, String datumType, Pageable pageable);
 
     void removeChapteDataList(String courseId, String chapterId, String datumType);
 

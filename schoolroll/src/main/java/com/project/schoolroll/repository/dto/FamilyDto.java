@@ -18,7 +18,7 @@ public interface FamilyDto {
      * 学生id
      * @return
      */
-    public String getStuId();
+    public String getStudentId();
 
     /**
      * 姓名

@@ -75,24 +75,18 @@ public class CourseDataController {
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "from"),
             @ApiImplicitParam(name = "datumArea", value = "资料领域", dataType = "string", required = true, paramType = "from", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例"),
             @ApiImplicitParam(name = "datumName", value = "资料名称", dataType = "string", paramType = "from", required = true),
-            @ApiImplicitParam(name = "kNodeId", value = "知识点id", dataType = "string", paramType = "from", example = "知识点 ‘,’ 进行分割"),
             @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "from", example = "资料类型 1文档　2图册　3视频　4音频　5链接")
-//            @ApiImplicitParam(name = "teachShare", value = "教师共享", dataType = "string", required = true, paramType = "from", example = "0不共享 1共享"),
-//            @ApiImplicitParam(name = "stuShare", value = "学生共享", dataType = "string", required = true, paramType = "from", example = "0不共享 1共享"),
     })
     public WebResult updateAreaAndShare(@ApiParam(value = "保存资料信息", name = "chapteData") @RequestBody ChapteDataReq chapteDataReq) {
         courseDataVer.updateAreaAndShare(chapteDataReq);
         //1、初始化参数
         String courseId = chapteDataReq.getCourseId();
         String chapterId = chapteDataReq.getChapterId();
-        String kNodeId = chapteDataReq.getKNodeId();
         String fileId = chapteDataReq.getFileId();
         String datumArea = chapteDataReq.getDatumArea();
         String datumType = chapteDataReq.getDatumType();
-//        String teachShare = chapteDataReq.getTeachShare();
-//        String stuShare = chapteDataReq.getStuShare();
         // 2、设置返回结果
-        return WebResult.okResult(courseDataService.updateAreaAndShare(courseId, chapterId, kNodeId, fileId, datumType, datumArea));
+        return WebResult.okResult(courseDataService.updateAreaAndShare(courseId, chapterId, fileId, datumType, datumArea));
     }
 
     @UserLoginToken

@@ -4,6 +4,7 @@ package com.project.databank.domain.ziliao;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
@@ -24,5 +25,6 @@ import java.io.Serializable;
 @org.hibernate.annotations.Table(appliesTo = "view_datum", comment = "视频资料库")
 public class ViewDatum extends AbsDatum implements Serializable {
 
-
+    @Column(name = "video_duration", columnDefinition = "INT(32) COMMENT '视频时长(单位秒)'")
+    private long videoDuration;
 }

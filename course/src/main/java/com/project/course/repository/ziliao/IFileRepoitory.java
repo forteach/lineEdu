@@ -81,19 +81,6 @@ public interface IFileRepoitory<T, ID> extends JpaRepository<T, ID> {
     public Page<T> findByChapterIdAndDatumTypeAndIsValidatedOrderByCreateTimeAsc(String chapterId, String datumType, String isValidated, Pageable pageable);
 
     /**
-     * 根据章节、文件类型、知识点 按时间倒序排列
-     *
-     * @param chapterId
-     * @param datumType
-     * @param isValidated
-     * @param pageable
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public Page<T> findByChapterIdAndDatumTypeAndKNodeIdAndIsValidatedOrderByCreateTimeAsc(String chapterId, String datumType, String kNodeId, String isValidated, Pageable pageable);
-
-
-    /**
      * 多条件查询课程科目文件挂载
      *
      * @param specification

@@ -41,7 +41,7 @@ public class FamilyController {
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "familyId", value = "家庭成员id", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", paramType = "form", example = "添加不能为空"),
+            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form", example = "添加不能为空"),
             @ApiImplicitParam(name = "familyName", value = "姓名", dataType = "string", paramType = "form", example = "添加不能为空"),
             @ApiImplicitParam(name = "familyRelationship", value = "家庭关系", dataType = "string", paramType = "form", example = "添加不能为空"),
             @ApiImplicitParam(name = "familyPhone", value = "电话", dataType = "string", paramType = "form", example = "添加不能为空"),
@@ -62,7 +62,7 @@ public class FamilyController {
             });
         }else {
             //添加
-            MyAssert.isNull(request.getStuId(), DefineCode.ERR0010, "学生id不为空");
+            MyAssert.isNull(request.getStudentId(), DefineCode.ERR0010, "学生id不为空");
             MyAssert.isNull(request.getFamilyRelationship(), DefineCode.ERR0010, "家庭成员关系不为空");
             MyAssert.isNull(request.getFamilyName(), DefineCode.ERR0010, "家庭成员名称不为空");
             MyAssert.isNull(request.getFamilyPhone(), DefineCode.ERR0010, "电话号码不为空");
@@ -75,19 +75,19 @@ public class FamilyController {
     }
 
     @ApiOperation(value = "查询基本家庭成员信息")
-    @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "query")
+    @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "query")
     @PostMapping("/findFamilyDtoList")
-    public WebResult findFamilyDtoList(@RequestBody String stuId){
-        MyAssert.isNull(stuId, DefineCode.ERR0010, "学生id不为空");
-        return WebResult.okResult(familyService.findFamilyDtoList(JSONObject.parseObject(stuId).getString("stuId")));
+    public WebResult findFamilyDtoList(@RequestBody String studentId){
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生id不为空");
+        return WebResult.okResult(familyService.findFamilyDtoList(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
     @ApiOperation(value = "查询全部有效家庭成员信息")
-    @ApiImplicitParam(name = "stuId", value = "学生id", dataType = "string", required = true, paramType = "query")
+    @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "query")
     @PostMapping("/findFamilies")
-    public WebResult findFamilies(@RequestBody String stuId){
-        MyAssert.isNull(stuId, DefineCode.ERR0010, "学生id不为空");
-        return WebResult.okResult(familyService.findFamilies(JSONObject.parseObject(stuId).getString("stuId")));
+    public WebResult findFamilies(@RequestBody String studentId){
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生id不为空");
+        return WebResult.okResult(familyService.findFamilies(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
     @ApiOperation(value = "移除家庭成员信息")

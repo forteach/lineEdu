@@ -63,7 +63,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
 
     @Override
     public Page<StudentVo> findStudentsPageAll(FindStudentDtoPageAllVo vo) {
-        StringBuilder dataSql = new StringBuilder(" SELECT s.stu_id,s.stu_name,s.specialty_id,s.specialty_name,s.people_id,s.center_id,lc.center_name,s.student_category, " +
+        StringBuilder dataSql = new StringBuilder(" SELECT s.student_id,s.student_name,s.specialty_id,s.specialty_name,s.people_id,s.center_id,lc.center_name,s.student_category, " +
                 " s.class_id,s.class_name,s.educational_system,s.ways_study,s.learning_modality,s.ways_enrollment,s.enrollment_date, " +
                 " s.grade,s.entrance_certificate_number,s.candidate_number,s.total_examination_achievement,sp.gender,sp.stu_phone,sp.stu_id_card " +
                 " FROM student as s " +
@@ -72,11 +72,11 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         StringBuilder whereSql = new StringBuilder(" WHERE s.is_validated = '0' AND lc.is_validated = '0' AND sp.is_validated = '0' ");
         StringBuilder countSql = new StringBuilder(" SELECT COUNT(1) FROM student AS s LEFT JOIN learn_center AS lc ON lc.center_id = s.center_id LEFT JOIN student_people as sp on s.people_id = sp.people_id ");
         // 拼接whereSql
-        if (StrUtil.isNotBlank(vo.getStuId())) {
-            whereSql.append(" AND s.stu_id = :stuId");
+        if (StrUtil.isNotBlank(vo.getStudentId())) {
+            whereSql.append(" AND s.student_id = :studentId");
         }
-        if (StrUtil.isNotBlank(vo.getStuName())) {
-            whereSql.append(" AND s.stu_name like '").append(vo.getStuName()).append("%'");
+        if (StrUtil.isNotBlank(vo.getStudentName())) {
+            whereSql.append(" AND s.student_name like '").append(vo.getStudentName()).append("%'");
         }
         if (CollUtil.isNotEmpty(vo.getCenterIds())) {
             whereSql.append(" AND s.center_id in (");
@@ -131,9 +131,9 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
         Query dataQuery = entityManager.createNativeQuery(dataSql.toString(), StudentVo.class);
         Query countQuery = entityManager.createNativeQuery(countSql.toString());
         //设置参数
-        if (StrUtil.isNotBlank(vo.getStuId())) {
-            dataQuery.setParameter("stuId", vo.getStuId());
-            countQuery.setParameter("stuId", vo.getStuId());
+        if (StrUtil.isNotBlank(vo.getStudentId())) {
+            dataQuery.setParameter("studentId", vo.getStudentId());
+            countQuery.setParameter("studentId", vo.getStudentId());
         }
         if (StrUtil.isNotBlank(vo.getClassId())) {
             dataQuery.setParameter("classId", vo.getClassId());
@@ -180,7 +180,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(Student student, StudentPeople studentPeople) {
-        Optional<Student> studentOptional = studentRepository.findById(student.getStuId());
+        Optional<Student> studentOptional = studentRepository.findById(student.getStudentId());
         if (studentOptional.isPresent()) {
             Student s = studentOptional.get();
             String peopleId = s.getPeopleId();
@@ -194,7 +194,7 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
             String peopleId = IdUtil.fastSimpleUUID();
             studentPeople.setPeopleId(peopleId);
             studentPeopleRepository.save(studentPeople);
-            student.setStuId(IdUtil.fastSimpleUUID());
+            student.setStudentId(IdUtil.fastSimpleUUID());
             student.setPeopleId(peopleId);
             studentRepository.save(student);
         }
@@ -202,17 +202,17 @@ public class StudentServiceImpl extends BaseMySqlService implements StudentServi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(String stuId) {
-        studentRepository.findById(stuId).ifPresent(student -> {
+    public void deleteById(String studentId) {
+        studentRepository.findById(studentId).ifPresent(student -> {
             studentPeopleRepository.deleteById(student.getPeopleId());
-            studentExpandRepository.deleteAllByStuId(stuId);
-            familyRepository.deleteAllByStuId(stuId);
-            studentRepository.deleteById(stuId);
+            studentExpandRepository.deleteAllByStudentId(studentId);
+            familyRepository.deleteAllByStudentId(studentId);
+            studentRepository.deleteById(studentId);
         });
     }
 
     @Override
-    public StudentPeopleDto findStudentPeopleDtoByStuId(String stuId) {
-        return studentPeopleRepository.findByStuId(stuId);
+    public StudentPeopleDto findStudentPeopleDtoByStudentId(String studentId) {
+        return studentPeopleRepository.findByStudentId(studentId);
     }
 }

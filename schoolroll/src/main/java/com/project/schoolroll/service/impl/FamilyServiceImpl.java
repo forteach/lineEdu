@@ -29,13 +29,13 @@ public class FamilyServiceImpl implements FamilyService {
     }
 
     @Override
-    public List<FamilyDto> findFamilyDtoList(String stuId) {
-        return familyRepository.findAllByStuIdDto(stuId);
+    public List<FamilyDto> findFamilyDtoList(String studentId) {
+        return familyRepository.findAllByStudentIdDto(studentId);
     }
 
     @Override
-    public List<Family> findFamilies(String stuId) {
-        return familyRepository.findAllByIsValidatedEqualsAndStuId(TAKE_EFFECT_OPEN, stuId);
+    public List<Family> findFamilies(String studentId) {
+        return familyRepository.findAllByIsValidatedEqualsAndStudentId(TAKE_EFFECT_OPEN, studentId);
     }
 
     @Override

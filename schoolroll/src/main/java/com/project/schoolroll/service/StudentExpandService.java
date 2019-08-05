@@ -15,17 +15,17 @@ import java.util.List;
 public interface StudentExpandService {
     /**
      * 查询学生的扩展信息
-     * @param stuId
+     * @param studentId
      * @return
      */
-    public List<StudentExpandDto> findStudentExpandInfo(String stuId);
+    public List<StudentExpandDto> findStudentExpandInfo(String studentId);
 
     /**
      * 删除学生的全部扩展信息
-     * @param stuId
+     * @param studentId
      * @return
      */
-    public int deleteAllStudentExpandByStuId(String stuId);
+    public int deleteAllStudentExpandByStudentId(String studentId);
 
     /**
      * 删除对应的学生其中一个扩展信息
@@ -37,5 +37,5 @@ public interface StudentExpandService {
      * 保存修改学生的扩展信息
      * @param studentExpandVo
      */
-    public void saveUpdateStudentExpand(List<StudentExpand> studentExpandVo, String stuId);
+    public void saveUpdateStudentExpand(List<StudentExpand> studentExpandVo, String studentId);
 }

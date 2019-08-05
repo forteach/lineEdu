@@ -42,8 +42,8 @@ public class Family extends Entitys implements Serializable {
     /**
      * 学生id
      */
-    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
-    private String stuId;
+    @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
+    private String studentId;
     /**
      * 姓名
      */

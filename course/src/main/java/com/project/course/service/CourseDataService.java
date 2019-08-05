@@ -32,13 +32,12 @@ public interface CourseDataService {
      *
      * @param courseId
      * @param chapterId
-     * @param kNodeId
      * @param fileId
      * @param datumType
      * @param datumArea
      * @return
      */
-    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea);
+    public String updateAreaAndShare(String courseId, String chapterId, String fileId, String datumType, String datumArea);
 
     /**
      * 课程资料详细列表
@@ -58,17 +57,6 @@ public interface CourseDataService {
      * @return
      */
     public List<DatumResp> findDatumList(String chapterId, Pageable pageable);
-
-    /**
-     * 获得按资料领域、课程章节、知识点、资料列表
-     *
-     * @param chapterId
-     * @param kNodeId
-     * @param datumType
-     * @param pageable
-     * @return
-     */
-    public List<DatumResp> findDatumList(String chapterId, String kNodeId, String datumType, Pageable pageable);
 
     public void delete(CourseData chapteData);
 

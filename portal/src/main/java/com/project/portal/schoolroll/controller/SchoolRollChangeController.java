@@ -35,7 +35,7 @@ public class SchoolRollChangeController {
     @PostMapping(path = "/findSchoolRollChange")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "changId", value = "异动编号", dataType = "string"),
-            @ApiImplicitParam(name = "stuId", value = "学生编号", dataType = "string"),
+            @ApiImplicitParam(name = "", value = "学生编号", dataType = "string"),
             @ApiImplicitParam(name = "typeName", value = "异动类型", dataType = "string")
     })
     // todo 需要审批流程向后推

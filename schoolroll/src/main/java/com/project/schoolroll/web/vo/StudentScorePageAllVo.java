@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 @Data
 public class StudentScorePageAllVo {
     private String
-            stuId,
+            studentId,
             courseId,
             term,
             courseType,

@@ -20,7 +20,7 @@ public interface StudentService {
 
     public void saveOrUpdate(Student student, StudentPeople studentPeople);
 
-    public void deleteById(String stuId);
+    public void deleteById(String studentId);
 
-    public StudentPeopleDto findStudentPeopleDtoByStuId(String stuId);
+    public StudentPeopleDto findStudentPeopleDtoByStudentId(String studentId);
 }

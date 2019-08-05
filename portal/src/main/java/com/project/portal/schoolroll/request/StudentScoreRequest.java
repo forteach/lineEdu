@@ -20,8 +20,8 @@ import java.io.Serializable;
 @ApiModel(value = "学生成绩信息")
 public class StudentScoreRequest extends SortVo implements Serializable {
 
-    @ApiModelProperty(name = "stuId", value = "学生Id", dataType = "string", required = true)
-    private String stuId;
+    @ApiModelProperty(name = "studentId", value = "学生Id", dataType = "string", required = true)
+    private String studentId;
 
     @ApiModelProperty(name = "courseId", value = "课程Id", dataType = "string")
     private String courseId;

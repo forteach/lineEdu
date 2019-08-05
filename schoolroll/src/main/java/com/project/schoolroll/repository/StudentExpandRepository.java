@@ -21,35 +21,35 @@ public interface StudentExpandRepository extends JpaRepository<StudentExpand, St
     /**
      * 查询扩展信息
      * @param isValidated
-     * @param stuId
+     * @param studentId
      * @return
      */
     @Transactional(readOnly = true)
-    StudentExpand findAllByIsValidatedEqualsAndStuId(String isValidated, String stuId);
+    StudentExpand findAllByIsValidatedEqualsAndStudentId(String isValidated, String studentId);
 
     /**
      * 查询有效的学生扩展信息
-     * @param stuId
+     * @param studentId
      * @return
      */
     @Transactional(readOnly = true)
-    @Query(value = "SELECT expandId AS expandId, expandName AS expandName, expandValue AS expandValue, expandExplain AS expandExplain FROM StudentExpand WHERE isValidated = '0' AND stuId = ?1")
-    List<StudentExpandDto> findByIsValidatedEqualsAndStuId(String stuId);
+    @Query(value = "SELECT expandId AS expandId, expandName AS expandName, expandValue AS expandValue, expandExplain AS expandExplain FROM StudentExpand WHERE isValidated = '0' AND studentId = ?1")
+    List<StudentExpandDto> findByIsValidatedEqualsAndStudentId(String studentId);
 
     /**
      * 删除扩展信息根据学生id
-     * @param stuId
+     * @param studentId
      * @return
      */
     @Modifying(clearAutomatically = true)
-    int deleteAllByStuId(String stuId);
+    int deleteAllByStudentId(String studentId);
 
     /**
      * 根据学生id查询对应的扩展信息
-     * @param stuId
+     * @param studentId
      * @param expandName
      * @return
      */
     @Transactional(readOnly = true)
-    List<StudentExpand> findAllByStuIdAndExpandName(String stuId, String expandName);
+    List<StudentExpand> findAllByStudentIdAndExpandName(String studentId, String expandName);
 }

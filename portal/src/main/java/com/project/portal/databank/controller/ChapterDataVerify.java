@@ -30,8 +30,6 @@ public class ChapterDataVerify {
         MyAssert.blank(chapteDataReq.getCourseId(), DefineCode.ERR0010, "科目编号不为空");
         MyAssert.blank(chapteDataReq.getDatumArea(), DefineCode.ERR0010, "资料领域不为空");
         MyAssert.blank(chapteDataReq.getDatumType(), DefineCode.ERR0010, "资料类型不为空");
-//        MyAssert.blank(chapteDataReq.getTeachShare(), DefineCode.ERR0010, "教师共享不为空");
-//        MyAssert.blank(chapteDataReq.getStuShare(), DefineCode.ERR0010, "学生共享不为空");
     }
 
 }

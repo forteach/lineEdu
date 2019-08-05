@@ -101,7 +101,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String updateAreaAndShare(String courseId, String chapterId, String kNodeId, String fileId, String datumType, String datumArea) {
+    public String updateAreaAndShare(String courseId, String chapterId,String fileId, String datumType, String datumArea) {
 
         //1、根据资料编号和领域编号，获得领域表信息
         DatumArea da = datumAreaRepository.findByFileIdAndDatumArea(fileId, datumArea);
@@ -114,7 +114,6 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             da.setFileId(IdUtil.fastSimpleUUID());
             da.setDatumArea(datumArea);
             da.setDatumType(datumType);
-            da.setKNodeId(kNodeId);
             da.setChapterId(chapterId);
             da.setCourseId(courseId);
             datumAreaRepository.save(da);
@@ -125,26 +124,18 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
                 fileDatumRepository.updateDatumArea(fileId, datumArea);
-//                fileDatumRepository.updateStuShare(fileId, stuShare);
-//                fileDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
                 viewDatumRepository.updateDatumArea(fileId, datumArea);
-//                viewDatumRepository.updateStuShare(fileId, stuShare);
-//                viewDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
                 audioDatumRepository.updateDatumArea(fileId, datumArea);
-//                audioDatumRepository.updateStuShare(fileId, stuShare);
-//                audioDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
                 linkDatumRepository.updateDatumArea(fileId, datumArea);
-//                linkDatumRepository.updateStuShare(fileId, stuShare);
-//                linkDatumRepository.updateTeachShare(fileId, teachShare);
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
@@ -156,30 +147,29 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      * 根据资料领域、课程、章节、资料列表
      *
      * @param chapterId 章节编号
-     * @param kNodeId   知识点编号
      * @param datumType 文件类型
      * @param pageable  分页对象
      * @return 资料文件列表
      */
     @Override
-    public List<DatumResp> findDatumList(String chapterId, String kNodeId, String datumType, Pageable pageable) {
+    public List<DatumResp> findDatumList(String chapterId, String datumType, Pageable pageable) {
         //1、根据分拣类型，获得资料列表
         Page<? extends AbsDatum> plist = null;
         //文件
         if (datumType.equals(Dic.COURSE_ZILIAO_FILE)) {
-            plist = findFileDatumPage(chapterId, kNodeId, datumType, pageable);
+            plist = findFileDatumPage(chapterId, datumType, pageable);
         }
         //音频
         if (datumType.equals(Dic.COURSE_ZILIAO_AUDIO)) {
-            plist = findAudioDatumPage(chapterId, kNodeId, datumType, pageable);
+            plist = findAudioDatumPage(chapterId, datumType, pageable);
         }
         //视频
         if (datumType.equals(Dic.COURSE_ZILIAO_VIEW)) {
-            plist = findViewDatumPage(chapterId, kNodeId, datumType, pageable);
+            plist = findViewDatumPage(chapterId, datumType, pageable);
         }
         //链接
         if (datumType.equals(Dic.COURSE_ZILIAO_LINK)) {
-            plist = findLinkDatumPage(chapterId, kNodeId, datumType, pageable);
+            plist = findLinkDatumPage(chapterId, datumType, pageable);
         }
 
         //2、转换LIST对象
@@ -193,27 +183,27 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     }
 
 
-    public Page<FileDatum> findFileDatumPage(String chapterId, String kNodeId, String datumType, Pageable pageable) {
+    public Page<FileDatum> findFileDatumPage(String chapterId, String datumType, Pageable pageable) {
         return fileDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, kNodeId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
         }, pageable);
     }
 
-    public Page<ViewDatum> findViewDatumPage(String chapterId, String kNodeId, String datumType, Pageable pageable) {
+    public Page<ViewDatum> findViewDatumPage(String chapterId, String datumType, Pageable pageable) {
         return viewDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, kNodeId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
         }, pageable);
     }
 
-    public Page<AudioDatum> findAudioDatumPage(String chapterId, String kNodeId, String datumType, Pageable pageable) {
+    public Page<AudioDatum> findAudioDatumPage(String chapterId, String datumType, Pageable pageable) {
         return audioDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, kNodeId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
         }, pageable);
     }
 
-    public Page<LinkDatum> findLinkDatumPage(String chapterId, String kNodeId, String datumType, Pageable pageable) {
+    public Page<LinkDatum> findLinkDatumPage(String chapterId, String datumType, Pageable pageable) {
         return linkDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, kNodeId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
         }, pageable);
     }
 
@@ -224,11 +214,10 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      * @param criteriaQuery
      * @param criteriaBuilder
      * @param chapterId
-     * @param kNodeId
      * @param datumType
      * @return
      */
-    private Predicate setSpecification(Root<?> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder, String chapterId, String kNodeId, String datumType) {
+    private Predicate setSpecification(Root<?> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder, String chapterId, String datumType) {
         List<Predicate> predicatesList = new ArrayList<Predicate>();
 
         predicatesList.add(criteriaBuilder.equal(root.get("isValidated"), TAKE_EFFECT_OPEN));
@@ -237,10 +226,10 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             predicatesList.add(
                     criteriaBuilder.equal(root.get("chapterId"), chapterId));
         }
-        if (StrUtil.isNotBlank(kNodeId)) {
-            predicatesList.add(
-                    criteriaBuilder.equal(root.get("kNodeId"), kNodeId));
-        }
+//        if (StrUtil.isNotBlank(kNodeId)) {
+//            predicatesList.add(
+//                    criteriaBuilder.equal(root.get("kNodeId"), kNodeId));
+//        }
 
         //资料类型 1文档　　3视频　4音频　5链接
         if (StrUtil.isNotBlank(datumType)) {
@@ -252,33 +241,22 @@ public class ChapteDataServiceImpl implements ChapteDataService {
 
     /**
      * @param chapterId
-     * @param kNodeId
      * @param datumArea 资料领域
      * @param datumType
      * @param pageable
      * @return
      */
     @Override
-    public List<DatumResp> findDatumList(String chapterId, String kNodeId, String datumArea, String datumType, Pageable pageable) {
+    public List<DatumResp> findDatumList(String chapterId, String datumArea, String datumType, Pageable pageable) {
         //1、获得资料领域列表
         List<String> datumAreas = Arrays.asList(datumArea.split(","));
-        List list = null;
         List<AbsDatum> fileList = null;
         //2、判断是否按知识点查询资料领域列表
-        if (StrUtil.isBlank(kNodeId)) {
-            list = datumAreaRepository.findByChapterIdAndDatumAreaIn(chapterId, datumAreas, pageable)
-                    .getContent()
-                    .stream()
-                    .map(item -> item.getFileId())
-                    .collect(toList());
-        } else {
-            list = datumAreaRepository.findByChapterIdAndKNodeIdAndDatumAreaIn(chapterId, kNodeId, datumAreas, pageable)
-                    .getContent()
-                    .stream()
-                    .map(item -> item.getFileId())
-                    .collect(toList());
-        }
-
+        List list = datumAreaRepository.findByChapterIdAndDatumAreaIn(chapterId, datumAreas, pageable)
+                .getContent()
+                .stream()
+                .map(item -> item.getFileId())
+                .collect(toList());
         //3、根据不同资料类型，获得资料列表数据
         if (datumType.equals(Dic.COURSE_ZILIAO_FILE)) {
             fileList = fileDatumRepository.findAllById(list);
@@ -317,8 +295,9 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             fd.setFileType(FileUtil.extName(dataDatumVo.getFileName()));
             fd.setFileUrl(dataDatumVo.getFileUrl());
             fd.setDatumType(datumType);
-//            fd.setStuShare(stuShare);
-//            fd.setTeachShare(teachShare);
+            if (fd instanceof ViewDatum){
+                ((ViewDatum) fd).setVideoDuration(dataDatumVo.getVideoDuration());
+            }
             fd.setCourseId(courseId);
             fd.setDatumArea(datumArea);
             fileDatumList.add(fd);
@@ -327,26 +306,26 @@ public class ChapteDataServiceImpl implements ChapteDataService {
 
 
         //2、添加文件所属领域信息--不经常频繁的添加资料
-        fileDatumList.stream().forEach((absDatum) ->
-        {
-            final String id = absDatum.getFileId();
-            final String type = absDatum.getDatumType();
-            final String courseId1 = absDatum.getCourseId();
-            final String chapterId1 = absDatum.getChapterId();
-            final String knodeId = absDatum.getKNodeId();
-            List<DatumArea> list = new ArrayList<DatumArea>();
-            Arrays.stream(datumArea.split(",")).forEach((area) -> {
-                DatumArea da = new DatumArea();
-                da.setFileId(id);
-                da.setDatumArea(area);
-                da.setDatumType(type);
-                da.setCourseId(courseId1);
-                da.setChapterId(chapterId1);
-                da.setKNodeId(knodeId);
-                list.add(da);
-            });
-            datumAreaRepository.saveAll(list);
-        });
+//        fileDatumList.stream().forEach((absDatum) ->
+//        {
+//            final String id = absDatum.getFileId();
+//            final String type = absDatum.getDatumType();
+//            final String courseId1 = absDatum.getCourseId();
+//            final String chapterId1 = absDatum.getChapterId();
+//            final String knodeId = absDatum.getKNodeId();
+//            List<DatumArea> list = new ArrayList<DatumArea>();
+//            Arrays.stream(datumArea.split(",")).forEach((area) -> {
+//                DatumArea da = new DatumArea();
+//                da.setFileId(id);
+//                da.setDatumArea(area);
+//                da.setDatumType(type);
+//                da.setCourseId(courseId1);
+//                da.setChapterId(chapterId1);
+//                da.setKNodeId(knodeId);
+//                list.add(da);
+//            });
+//            datumAreaRepository.saveAll(list);
+//        });
         //返回资料文件数量
         return String.valueOf(fileDatumList.size());
     }
