@@ -63,6 +63,7 @@ public enum StudentEnum {
     politicalStatus("政治面貌"),
 //    /** 健康状况*/
 //    healthCondition("健康状况"),
+    /** 联系电话 */
     stuPhone("联系电话"),
     /** 准考证号 */
     entranceCertificateNumber("准考证号"),

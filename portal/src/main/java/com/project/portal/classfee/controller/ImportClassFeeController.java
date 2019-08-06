@@ -77,4 +77,34 @@ public class ImportClassFeeController {
         }
         return WebResult.failException("导入的Excel文件数据错误");
     }
+
+    //    @UserLoginToken
+    @ApiOperation(value = "导入学生信息数据")
+    @PostMapping(path = "/students")
+    @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
+    public WebResult inportStudents(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            MyAssert.isNull(null, DefineCode.ERR0010, "导入的文件不存在,请重新选择");
+        }
+        try {
+
+            excelImpService.checkoutKey();
+            //设置导入修改时间 防止失败没有过期时间
+            String type = FileUtil.extName(file.getOriginalFilename());
+            if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
+                excelImpService.setStudentKey();
+                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class);
+                return WebResult.okResult();
+            } else if (StrUtil.isNotBlank(type) && "xls".equals(type)) {
+                excelImpService.setStudentKey();
+                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class);
+                return WebResult.okResult();
+            }
+        } catch (IOException e) {
+            excelImpService.deleteKey();
+            log.error("students in IOException, file : [{}],  message : [{}]", file, e.getMessage());
+            e.printStackTrace();
+        }
+        return WebResult.failException("导入的文件格式不是Excel文件");
+    }
 }
