@@ -2,6 +2,7 @@ package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.StudentExpand;
 import com.project.schoolroll.repository.dto.StudentExpandDto;
+import com.project.schoolroll.repository.dto.StudentExpandExportDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,4 +53,10 @@ public interface StudentExpandRepository extends JpaRepository<StudentExpand, St
      */
     @Transactional(readOnly = true)
     List<StudentExpand> findAllByStudentIdAndExpandName(String studentId, String expandName);
+
+//    @Transactional(readOnly = true)
+//    List<StudentExpand> findByIsValidatedEquals(String isValidated);
+
+    @Transactional(readOnly = true)
+    List<StudentExpandExportDto> findByIsValidatedEquals(String isValidated);
 }

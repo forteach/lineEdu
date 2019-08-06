@@ -44,4 +44,7 @@ public interface StudentPeopleRepository extends JpaRepository<StudentPeople, St
             " where s.isValidated = '0' and sp.isValidated = '0' " +
             " and sp.studentName = ?1 and sp.stuIDCard = ?2")
     List<StuentWeChatDto> findWeChatUserByStudentNameAndStuIDCard(String studentName, String stuIDCard);
+
+    @Transactional(readOnly = true)
+    List<StudentPeople> findByIsValidatedEquals(String isValidated);
 }

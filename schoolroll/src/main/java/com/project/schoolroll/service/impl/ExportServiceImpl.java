@@ -1,23 +1,23 @@
 package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.poi.excel.BigExcelWriter;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
+import com.project.schoolroll.domain.Student;
+import com.project.schoolroll.domain.StudentPeople;
+import com.project.schoolroll.repository.FamilyRepository;
 import com.project.schoolroll.repository.StudentExpandRepository;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
+import com.project.schoolroll.repository.dto.FamilyExportDto;
+import com.project.schoolroll.repository.dto.StudentExpandExportDto;
 import com.project.schoolroll.service.ExportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
  * @Auther: zhangyy
@@ -33,19 +33,47 @@ public class ExportServiceImpl implements ExportService {
     private final StudentExpandRepository studentExpandRepository;
     private final StudentRepository studentRepository;
     private final StudentPeopleRepository studentPeopleRepository;
+    private final FamilyRepository familyRepository;
 
     @Autowired
     public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository,
-                             StudentPeopleRepository studentPeopleRepository) {
+                             StudentPeopleRepository studentPeopleRepository, FamilyRepository familyRepository) {
         this.studentExpandRepository = studentExpandRepository;
         this.studentRepository = studentRepository;
         this.studentPeopleRepository = studentPeopleRepository;
+        this.familyRepository = familyRepository;
     }
 
+    /**
+     * 导出数据模版
+     *
+     * @return
+     */
     @Override
     public List<List<String>> exportStudentTemplate() {
         List<List<String>> list = new ArrayList<>();
-        list.add(CollUtil.newArrayList(
+        list.add(setExportTemplate());
+        return list;
+    }
+
+    @Override
+    public List<List<?>> exportStudents() {
+        List<Student> studentList = studentRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
+        List<StudentExpandExportDto> studentExpands = studentExpandRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
+        List<StudentPeople> studentPeopleList = studentPeopleRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
+        List<FamilyExportDto> familyExportDtos = familyRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN);
+        return null;
+    }
+
+    @Override
+    public List<List<?>> exportStudents(List list) {
+        //获取需要查询的字段
+        List studentList = studentRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
+        return null;
+    }
+
+    private List<String> setExportTemplate() {
+        return CollUtil.newArrayList(
                 "姓名",
                 "性别",
                 "出生日期",
@@ -119,14 +147,6 @@ public class ExportServiceImpl implements ExportService {
                 "成员2健康状况",
                 "成员2工作或学习单位",
                 "成员2职务"
-        ));
-        return list;
+        );
     }
-
-    @Override
-    public List<List<?>>  exportStudents() {
-
-        return null;
-    }
-
 }
