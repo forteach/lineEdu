@@ -1,5 +1,6 @@
 package com.project.portal.importexport.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.project.portal.response.WebResult;
 import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.service.ExportService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,6 +55,24 @@ public class ExportController {
         List list = exportService.exportStudents();
 //        List<String> pa = Arrays.asList("studentName","gender","stuCardType","stuIDCard","studentId","trainSpace","familyAddress","familyPhone","stuEmail");
 //        exportService.exportStudents(pa);
+        MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "导出学生信息")
+    @GetMapping(path = "/exportStudentsParameter")
+    public WebResult exportStudent(HttpServletResponse res, HttpServletRequest req) throws IOException {
+//        String importName = req.getHeader("importName");
+
+        String importName = req.getParameter("importName");
+        System.out.println("importName" + importName);
+        List<String> list = Arrays.asList(StrUtil.split(importName, ","));
+
+//        List<StudentImport> list = new ArrayList<>();
+//        List list = exportService.exportStudents();
+//        List<String> pa = Arrays.asList("studentName","gender","stuCardType","stuIDCard","studentId","trainSpace","familyAddress","familyPhone","stuEmail");
+
+//        exportService.exportStudents(list);
         MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
         return WebResult.okResult();
     }
