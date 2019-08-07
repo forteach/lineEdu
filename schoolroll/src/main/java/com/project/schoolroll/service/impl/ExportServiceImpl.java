@@ -3,12 +3,11 @@ package com.project.schoolroll.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.project.schoolroll.domain.Student;
 import com.project.schoolroll.domain.StudentPeople;
-import com.project.schoolroll.repository.FamilyRepository;
-import com.project.schoolroll.repository.StudentExpandRepository;
-import com.project.schoolroll.repository.StudentPeopleRepository;
-import com.project.schoolroll.repository.StudentRepository;
+import com.project.schoolroll.domain.excel.ViewStudentExport;
+import com.project.schoolroll.repository.*;
 import com.project.schoolroll.repository.dto.FamilyExportDto;
 import com.project.schoolroll.repository.dto.StudentExpandExportDto;
+import com.project.schoolroll.repository.dto.StudentExportDto;
 import com.project.schoolroll.service.ExportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +33,16 @@ public class ExportServiceImpl implements ExportService {
     private final StudentRepository studentRepository;
     private final StudentPeopleRepository studentPeopleRepository;
     private final FamilyRepository familyRepository;
+    private final ViewStudentExportRepository viewStudentExportRepository;
 
     @Autowired
-    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository,
+    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository,ViewStudentExportRepository viewStudentExportRepository,
                              StudentPeopleRepository studentPeopleRepository, FamilyRepository familyRepository) {
         this.studentExpandRepository = studentExpandRepository;
         this.studentRepository = studentRepository;
         this.studentPeopleRepository = studentPeopleRepository;
         this.familyRepository = familyRepository;
+        this.viewStudentExportRepository = viewStudentExportRepository;
     }
 
     /**
@@ -58,10 +59,21 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public List<List<?>> exportStudents() {
-        List<Student> studentList = studentRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
-        List<StudentExpandExportDto> studentExpands = studentExpandRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
-        List<StudentPeople> studentPeopleList = studentPeopleRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
-        List<FamilyExportDto> familyExportDtos = familyRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN);
+//        List<Student> studentList = studentRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
+//        List<StudentExpandExportDto> studentExpands = studentExpandRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
+//        List<StudentPeople> studentPeopleList = studentPeopleRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
+//        List<FamilyExportDto> familyExportDtos = familyRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN);
+        List<StudentExportDto> list = studentRepository.findByIsValidatedEqualsDto();
+        System.out.println("list.size "+list.size());
+//        list.forEach(System.out::println);
+        list.forEach(d -> {
+            if ("17030421 ".equals(d.getStudentId())) {
+                System.out.println("studentName");
+                System.out.println(d.getStudentName());
+                System.out.println("studentId");
+                System.out.println(d.getStudentId());
+            }
+        });
         return null;
     }
 
