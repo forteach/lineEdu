@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 
 /**
@@ -30,36 +29,21 @@ public class ImpCoursewareAll implements Serializable {
     /**
      * 资料领域：1教案 2课件
      */
-    private String importantType;
+//    private String importantType;
+
 
     /**
-     * 文件数量
+     * 文件名称
      */
-    private int fileCount;
-
+    public String fileName;
     /**
-     * 1文件 3、视频
+     * 图集的话，可以没有URL
      */
-    private String datumType;
-
+    public String fileUrl;
     /**
-     * 图集名称
+     * 时长
      */
-    private String photoDatumName;
-
-    /**
-     * 课件或教案文件列表
-     */
-    private List<CoursewareAll> files;
+    private String videoTime;
 
     private String createUser;
-
-    public ImpCoursewareAll(String chapterId, String importantType, int fileCount, String datumType, String photoDatumName, List<CoursewareAll> files) {
-        this.chapterId = chapterId;
-        this.importantType = importantType;
-        this.fileCount = fileCount;
-        this.datumType = datumType;
-        this.photoDatumName = photoDatumName;
-        this.files = files;
-    }
 }

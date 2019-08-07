@@ -14,10 +14,12 @@ public interface CoursewareService {
      * @param obj
      * @return
      */
-    public ImpCoursewareAll saveFile(ImpCoursewareAll obj);
+    public void saveFile(ImpCoursewareAll obj);
 
-    public List<CoursewareAll> saveCourseAtlit(ImpCoursewareAll obj);
+    public void deleteCourseChapterId(String chapterId);
 
+//    public List<CoursewareAll> saveCourseAtlit(ImpCoursewareAll obj);
+//
     /**
      * 获得对应类型的重要课件信息数量和列表
      *
@@ -26,7 +28,7 @@ public interface CoursewareService {
      * @param datumType
      * @return
      */
-    public ImpCoursewareAll getImpCourseware(String chapterId, String importantType, String datumType);
+//    public ImpCoursewareAll getImpCourseware(String chapterId, String importantType, String datumType);
 
     /**
      * 获得图集列表
@@ -34,7 +36,9 @@ public interface CoursewareService {
      * @param chapterId
      * @return
      */
-    public List<CoursewareAll> getCourseArlitsList(String chapterId);
+//    public List<CoursewareAll> getCourseArlitsList(String chapterId);
+
+    List<CoursewareAll> findByChapterId(String chapterId);
 
     /**
      * 获取图册列表
@@ -42,13 +46,13 @@ public interface CoursewareService {
      * @param arlitId
      * @return
      */
-    public List<CoursewareAll> getPhotoList(String arlitId);
+//    public List<CoursewareAll> getPhotoList(String arlitId);
 
-    public void removePhotoList(String arlitId);
+//    public void removePhotoList(String arlitId);
 
-    public void removeCourseArlitsList(String chapterId);
+//    public void removeCourseArlitsList(String chapterId);
 
-    public void removeCourseware(String chapterId, String importantType, String datumType);
+//    public void removeCourseware(String chapterId, String importantType, String datumType);
 
-    public void removeCourseAtlit(String chapterId);
+//    public void removeCourseAtlit(String chapterId);
 }
