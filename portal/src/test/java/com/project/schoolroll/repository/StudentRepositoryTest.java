@@ -1,10 +1,13 @@
 package com.project.schoolroll.repository;
 
+import com.project.schoolroll.domain.excel.ViewStudentExport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
  * @author: zhangyy
@@ -18,11 +21,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class StudentRepositoryTest {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private ViewStudentExportRepository viewStudentExportRepository;
 
     @Test
     public void findByIsValidatedEqualsDto() {
-        studentRepository.findByIsValidatedEqualsDto()
+        viewStudentExportRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN)
                 .parallelStream()
                 .forEach(d -> {
                     System.out.println(d.getStuIDCard());

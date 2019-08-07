@@ -49,16 +49,16 @@ public class ExportController {
         return WebResult.okResult();
     }
 
-//    @ApiOperation(value = "导出学生信息")
-//    @GetMapping(path = "/exportStudents")
-//    public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
+    @ApiOperation(value = "导出学生信息")
+    @GetMapping(path = "/exportStudents")
+    public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
 //        List<StudentImport> list = new ArrayList<>();
-//        List list = exportService.exportStudents();
-//        List<String> pa = Arrays.asList("studentName","gender","stuCardType","stuIDCard","studentId","trainSpace","familyAddress","familyPhone","stuEmail");
+        List list = exportService.exportStudents();
+        List<String> pa = Arrays.asList("studentName", "gender", "stuCardType", "stuIDCard", "studentId", "trainSpace", "familyAddress", "familyPhone", "stuEmail");
 //        exportService.exportStudents(pa);
-//        MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
-//        return WebResult.okResult();
-//    }
+        MyExcleUtil.getExcel(res, req, Arrays.asList(pa), "导出学生数据.xlsx");
+        return WebResult.okResult();
+    }
 
     @ApiOperation(value = "导出学生信息", notes = "到处参数拼接后面逗号分隔")
     @GetMapping(path = "/exportStudentsParameter")

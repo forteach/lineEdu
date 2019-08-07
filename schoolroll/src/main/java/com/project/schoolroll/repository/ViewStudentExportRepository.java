@@ -1,28 +1,19 @@
 package com.project.schoolroll.repository;
 
-import com.project.schoolroll.domain.Student;
-import com.project.schoolroll.repository.dto.StudentExportDto;
+import com.project.schoolroll.domain.excel.ViewStudentExport;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
- * @date: 19-6-28 17:06
+ * @date: 19-8-7 15:12
  * @version: 1.0
  * @description:
  */
-@Repository
-public interface StudentRepository extends JpaRepository<Student, String>, JpaSpecificationExecutor<Student> {
-
-
-    @Transactional(readOnly = true)
-    List<Student> findAllByIsValidatedEquals(String isValidated);
+public interface ViewStudentExportRepository extends JpaRepository<ViewStudentExport, String> {
 
     @Query(value = "select " +
             " s.studentId AS studentId, " +
@@ -59,8 +50,7 @@ public interface StudentRepository extends JpaRepository<Student, String>, JpaSp
             " sp.arrivalDate AS arrivalDate, " +
             " sp.recruitBatch AS recruitBatch " +
             " from Student as s left join StudentPeople as sp on sp.peopleId = s.peopleId " +
-            " where s.isValidated = '0' and sp.isValidated = '0'")
-    @Transactional(readOnly = true)
-    public List<StudentExportDto> findByIsValidatedEqualsDto();
-
+//            " where s.isValidated = '0' and sp.isValidated = '0'")
+            " where s.isValidated = ?1 and sp.isValidated = ?1")
+    public List<ViewStudentExport> findByIsValidatedEqualsDto(String isValidated);
 }
