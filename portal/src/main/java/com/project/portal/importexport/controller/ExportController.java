@@ -6,6 +6,7 @@ import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.service.ExportService;
 import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,32 +49,36 @@ public class ExportController {
         return WebResult.okResult();
     }
 
-    @ApiOperation(value = "导出学生信息")
-    @GetMapping(path = "/exportStudents")
-    public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
+//    @ApiOperation(value = "导出学生信息")
+//    @GetMapping(path = "/exportStudents")
+//    public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
 //        List<StudentImport> list = new ArrayList<>();
-        List list = exportService.exportStudents();
+//        List list = exportService.exportStudents();
 //        List<String> pa = Arrays.asList("studentName","gender","stuCardType","stuIDCard","studentId","trainSpace","familyAddress","familyPhone","stuEmail");
 //        exportService.exportStudents(pa);
-        MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
-        return WebResult.okResult();
-    }
+//        MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
+//        return WebResult.okResult();
+//    }
 
-    @ApiOperation(value = "导出学生信息")
+    @ApiOperation(value = "导出学生信息", notes = "到处参数拼接后面逗号分隔")
     @GetMapping(path = "/exportStudentsParameter")
+    @ApiImplicitParam(name = "exportParameter", value = "导出学生数据参数", dataTypeClass = List.class, paramType = "query")
     public WebResult exportStudent(HttpServletResponse res, HttpServletRequest req) throws IOException {
 //        String importName = req.getHeader("importName");
+        String importName = req.getParameter("exportParameter");
 
-        String importName = req.getParameter("importName");
-        System.out.println("importName" + importName);
+//        List<String> list =  Arrays.asList(req.getParameterValues("exportParameter"));
+        System.out.println("exportParameter" + importName);
+//        System.out.println("");
         List<String> list = Arrays.asList(StrUtil.split(importName, ","));
+        list.stream().forEach(System.out::println);
 
 //        List<StudentImport> list = new ArrayList<>();
 //        List list = exportService.exportStudents();
 //        List<String> pa = Arrays.asList("studentName","gender","stuCardType","stuIDCard","studentId","trainSpace","familyAddress","familyPhone","stuEmail");
 
 //        exportService.exportStudents(list);
-        MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
+        MyExcleUtil.getExcel(res, req, Arrays.asList(list), "导出学生数据.xlsx");
         return WebResult.okResult();
     }
 }

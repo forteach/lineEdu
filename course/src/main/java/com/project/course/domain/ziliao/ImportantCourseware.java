@@ -23,4 +23,7 @@ public class ImportantCourseware extends AbsFile {
     @Column(name = "important_type", columnDefinition = "VARCHAR(1) COMMENT '重要资料类型 1教案　2课件　'")
     private String importantType;
 
+    @Column(name = "video_time", columnDefinition = "VARCHAR(32) COMMENT '视频时间长度(单位秒)'")
+    private String videoTime;
+
 }
