@@ -91,13 +91,14 @@ public class AuthController {
 //        return userService.addSysTeacher(JSONObject.parseObject(teacherCode).getString("teacherCode"));
 //    }
 
+    @UserLoginToken
     @ApiOperation("修改密码")
     @PostMapping("/updatePassWord")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "旧密码", name = "oldPassWord", required = true, dataType = "string", paramType = "from"),
             @ApiImplicitParam(value = "新密码", name = "newPassWord", required = true, dataType = "string", paramType = "from")
     })
-    @UserLoginToken
+    @ApiResponse(code = 0, message = "OK")
     public WebResult updatePassWord(@RequestBody UpdatePassWordRequest passWordRequest, HttpServletRequest request){
         MyAssert.blank(passWordRequest.getOldPassWord(), DefineCode.ERR0010, "旧密码不能为空");
         MyAssert.blank(passWordRequest.getNewPassWord(), DefineCode.ERR0010, "新密码不能为空");
@@ -112,6 +113,7 @@ public class AuthController {
     @ApiOperation("修改教师用户状态")
     @PutMapping("/updateState")
     @ApiImplicitParam(name = "teacherCode", value = "教师代码", required = true, dataType = "string", paramType = "from")
+    @ApiResponse(code = 0, message = "OK")
     public WebResult updateState(@RequestBody String teacherCode){
         MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
         String teacherCodeStr = JSONObject.parseObject(teacherCode).getString("teacherCode");

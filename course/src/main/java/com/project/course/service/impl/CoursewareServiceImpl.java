@@ -31,14 +31,14 @@ public class CoursewareServiceImpl implements CoursewareService {
     /**
      * 图集信息
      */
-    @Resource
-    private CourseArlitsRepository courseArlitsRepository;
+//    @Resource
+//    private CourseArlitsRepository courseArlitsRepository;
 
     /**
      * 图集图片操作
      */
-    @Resource
-    private PhotosRepository photoDatumRepository;
+//    @Resource
+//    private PhotosRepository photoDatumRepository;
 
 
     /**
