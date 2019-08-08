@@ -42,7 +42,7 @@ public class SysRole extends Entitys implements Serializable {
     @Column(name = "remark", columnDefinition = "VARCHAR(255) COMMENT '备注 角色说明'")
     private String remark;
 
-    @Column(name = "role_activity", columnDefinition = "VARCHAR(32) COMMENT '角色对应权限'")
+    @Column(name = "role_activity", columnDefinition = "VARCHAR(1024) COMMENT '角色对应权限'")
     private String roleActivity;
 
 }
