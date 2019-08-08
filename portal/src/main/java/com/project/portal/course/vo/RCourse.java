@@ -26,8 +26,8 @@ public class RCourse implements Serializable {
     @ApiModelProperty(name = "courseName", value = "科目名称", dataType = "string", example = "商务英语", required = true)
     private String courseName;
 
-    @ApiModelProperty(name = "courseNumber", value = "科目编号", dataType = "string", example = "S123456", required = true)
-    private String courseNumber;
+//    @ApiModelProperty(name = "courseNumber", value = "科目编号", dataType = "string", example = "S123456", required = true)
+//    private String courseNumber;
 
     @ApiModelProperty(value = "封面图片路径", name = "topPicSrc", notes = "保存的是封面图片路径", example = "http://wx2.sinaimg.cn/large/006nLajtly1fk65lrevkqj30dw0dwadz.jpg")
     private String topPicSrc;
@@ -44,7 +44,7 @@ public class RCourse implements Serializable {
     @ApiModelProperty(name = "isRequired", value = "是否必修课 Y/N", dataType = "string")
     private String isRequired;
 
-    @ApiModelProperty(name = "scoringMethod", value = "需要学习的总时长(小时)", dataType = "评分方式 笔试,口试,网上考试")
+    @ApiModelProperty(name = "scoringMethod", value = "评分方式 笔试,口试,网上考试", dataType = "string")
     private String scoringMethod;
 
     @ApiModelProperty(name = "learningTime", value = "需要学习的总时长(小时)", dataType = "string")
@@ -58,4 +58,7 @@ public class RCourse implements Serializable {
 
     @ApiModelProperty(name = "jobsPercentage", value = "平时作业占百分比", dataType = "string")
     private String jobsPercentage;
+
+    @ApiModelProperty(name = "createUser", value = "创建人", hidden = true)
+    private String createUser;
 }

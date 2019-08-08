@@ -30,4 +30,5 @@ public class CourseChapterSaveResp implements Serializable {
 
     private String publish;
 
+    private Integer randomQuestionsNumber;
 }

@@ -51,4 +51,7 @@ public interface ICourseChapterDto {
      * @return
      */
     public Integer getChapterLevel();
+
+    /** 章节随机题目数量*/
+    public Integer getRandomQuestionsNumber();
 }

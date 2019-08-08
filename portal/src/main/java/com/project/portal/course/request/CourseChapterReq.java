@@ -51,4 +51,6 @@ public class CourseChapterReq implements Serializable {
     @ApiModelProperty(name = "createUser", value = "创建人")
     private String createUser;
 
+    @ApiModelProperty(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "string")
+    private Integer randomQuestionsNumber;
 }

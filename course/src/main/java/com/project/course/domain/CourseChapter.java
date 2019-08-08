@@ -50,4 +50,7 @@ public class CourseChapter extends Entitys {
     @Column(name = "publish", columnDefinition = "CHAR(1) COMMENT '是否发布 Y/N'")
     public String publish;
 
+    @Column(name = "random_questions_number", columnDefinition = "INT(3) COMMENT '随机题目数量'")
+    private Integer randomQuestionsNumber;
+
 }

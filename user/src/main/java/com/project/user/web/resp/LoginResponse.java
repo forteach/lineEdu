@@ -1,5 +1,6 @@
 package com.project.user.web.resp;
 
+import com.project.user.domain.SysRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,4 +30,8 @@ public class LoginResponse implements Serializable {
     private String token;
 
     private String roleId;
+
+    private String roleName;
+
+    private String roleActivity;
 }

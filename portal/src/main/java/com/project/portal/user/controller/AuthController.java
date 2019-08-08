@@ -31,7 +31,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
-@Api(value = "用户认证", description = "教师端用户登录,注册，重置密码，等接口", tags = {"用户操作"})
+@Api(value = "用户认证", tags = {"用户操作"})
 @RequestMapping(path = "/auth", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class AuthController {
 
@@ -48,10 +48,10 @@ public class AuthController {
     }
 
     @ApiOperation("用户登录")
-    @PostMapping("/login")
+    @PostMapping(path = "/login")
     @ApiImplicitParams({
 //            @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "string", paramType = "from"),
-            @ApiImplicitParam(name = "teacherCode", value = "教师代码", required = true, dataType = "string", paramType = "from"),
+            @ApiImplicitParam(name = "teacherCode", value = "用户代码", required = true, dataType = "string", paramType = "from"),
             @ApiImplicitParam(name = "passWord", value = "密码", required = true, dataType = "string", paramType = "from")
     })
     public WebResult login(@RequestBody UserLoginRequest req){

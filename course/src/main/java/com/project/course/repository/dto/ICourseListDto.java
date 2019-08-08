@@ -35,7 +35,7 @@ public interface ICourseListDto {
      *
      * @return
      */
-    public String getCourseNumber();
+//    public String getCourseNumber();
 
     /**
      * 备课类型

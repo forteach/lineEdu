@@ -30,8 +30,8 @@ public class CourseListResp implements Serializable {
     @ApiModelProperty(name = "courseName", value = "课程名称", dataType = "string")
     private String courseName;
 
-    @ApiModelProperty(value = "课程编号", name = "courseNumber", dataType = "string")
-    private String courseNumber;
+//    @ApiModelProperty(value = "课程编号", name = "courseNumber", dataType = "string")
+//    private String courseNumber;
 
 //    @ApiModelProperty(name = "lessonPreparationType", value = "备课类型　1、单人备课 2、集体备课", dataType = "string")
 //    private String lessonPreparationType;
@@ -60,10 +60,12 @@ public class CourseListResp implements Serializable {
 //    @ApiModelProperty(name = "teacherName", value = "教师名字", dataType = "string")
 //    private String teacherName;
 
-    public CourseListResp(String courseId, String courseName, String courseNumber, String topPicSrc, String alias) {
+    public CourseListResp(String courseId, String courseName,
+//                          String courseNumber,
+                          String topPicSrc, String alias) {
         this.courseId = courseId;
         this.courseName = courseName;
-        this.courseNumber = courseNumber;
+//        this.courseNumber = courseNumber;
 //        this.lessonPreparationType = lessonPreparationType;
         this.topPicSrc = topPicSrc;
         this.alias = alias;

@@ -54,16 +54,26 @@ public class CourseController {
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
     @PostMapping("/save")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "course", value = "科目课程对象", dataTypeClass = Course.class, required = true)
+            @ApiImplicitParam(name = "courseId", value = "科目编号ID", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "courseName", value = "科目名称", dataType = "string", required = true, paramType = "form"),
+//            @ApiImplicitParam(name = "courseNumber", value = "科目编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "topPicSrc", value = "封面图片路径", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "courseDescribe", value = "课程描述富文本", example = "<p>富文本</p>", paramType = "form"),
+            @ApiImplicitParam(name = "alias", value = "别名", dataType = "string", example = "第一学期", paramType = "form"),
+            @ApiImplicitParam(name = "courseType", value = "课程类别 公共基础课,实训课,专业", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "isRequired", value = "是否必修课 Y/N", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "scoringMethod", dataType = "string", value = "评分方式 笔试,口试,网上考试", paramType = "form"),
+            @ApiImplicitParam(name = "learningTime", value = "需要学习的总时长(小时)", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "credit", value = "学分", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "videoPercentage", value = "观看视频占百分比", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "jobsPercentage", value = "平时作业占百分比", dataType = "string", paramType = "form"),
     })
-    public WebResult save(@ApiParam(name = "courseReq", value = "科目课程对象") @RequestBody CourseSaveReq req, HttpServletRequest request) {
-
+    public WebResult save(@ApiParam(name = "courseReq", value = "科目课程对象") @RequestBody RCourse req, HttpServletRequest request) {
         //验证请求信息
         CourseVer.saveValide(req);
         //设置service数据
-        RCourse rcourse = req.getCourse();
         Course course = new Course();
-        UpdateUtil.copyNullProperties(rcourse, course);
+        UpdateUtil.copyNullProperties(req, course);
         String userId = tokenService.getUserId(request.getHeader("token"));
         course.setCreateUser(userId);
         String courseId = courseService.saveUpdate(course);
@@ -112,7 +122,7 @@ public class CourseController {
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findAll(page).stream()
                 .map((item) -> {
-                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getCourseNumber(), item.getTopPicSrc(), item.getAlias());
+                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias());
                 })
                 .collect(toList()));
     }
@@ -131,7 +141,7 @@ public class CourseController {
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findMyCourse(userId, page).stream()
                 .map((item) -> {
-                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getCourseNumber(), item.getTopPicSrc(), item.getAlias());
+                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias());
                 })
                 .collect(toList()));
     }
@@ -246,7 +256,7 @@ public class CourseController {
     @PostMapping("/findImagesByCourseId")
     @ApiOperation(value = "查询课程轮播图", notes = "根据课程科目ID查询对应的轮播图")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, example = "ff808181677d238701677d26fdae0002")
+            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, paramType = "query", example = "ff808181677d238701677d26fdae0002")
     })
     public WebResult findImagesByCourseId(@ApiParam(name = "courseId", value = "查询对应的", type = "string", required = true) @RequestBody String courseId) {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");

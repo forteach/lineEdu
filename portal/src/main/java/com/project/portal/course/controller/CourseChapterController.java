@@ -44,12 +44,13 @@ public class CourseChapterController {
     @PostMapping("/save")
     @ApiOperation(value = "保存科目章节", notes = "保存科目章节信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目编号", dataType = "string", required = true, paramType = "from"),
-            @ApiImplicitParam(name = "chapterName", value = "章节名称", required = true, dataType = "string", paramType = "from"),
-            @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "from", dataType = "string"),
-            @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", required = true, paramType = "from", dataType = "int"),
-            @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", required = true, paramType = "from"),
-            @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "from")
+            @ApiImplicitParam(name = "courseId", value = "科目编号", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "chapterName", value = "章节名称", required = true, dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "form", dataType = "string"),
+            @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", required = true, paramType = "form", dataType = "int"),
+            @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int", paramType = "form")
     })
     public WebResult save(@ApiParam(name = "courseChapter", value = "科目章节对象", required = true) @RequestBody CourseChapterReq req, HttpServletRequest request) {
         req.setCreateUser(tokenService.getUserId(request.getHeader("token")));
@@ -63,13 +64,14 @@ public class CourseChapterController {
     @ApiOperation(value = "修改科目章节", notes = "修改科目章节信息")
     @PostMapping("/edit")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目编号", required = true, dataType = "string", paramType = "from"),
-            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "from"),
-            @ApiImplicitParam(name = "chapterName", value = "章节名称", dataType = "string", paramType = "from"),
-            @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "from", dataType = "string"),
-            @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", paramType = "from", dataType = "int"),
-            @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", paramType = "from"),
-            @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "from")
+            @ApiImplicitParam(name = "courseId", value = "科目编号", required = true, dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "chapterName", value = "章节名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "form", dataType = "string"),
+            @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", paramType = "form", dataType = "int"),
+            @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", paramType = "form"),
+            @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int", paramType = "form")
     })
     public WebResult edit(@ApiParam(name = "courseChapter", value = "修改科目章节信息", required = true) @RequestBody CourseChapterEditReq courseChapterEditReq) {
         MyAssert.blank(courseChapterEditReq.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
@@ -82,7 +84,7 @@ public class CourseChapterController {
     @ApiOperation(value = "查询科目章节信息", notes = "根据章节ID 查询对应的信息")
     @PostMapping("/getCourseChapterById")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "chapterId", value = "科目id", required = true, dataType = "string")
+            @ApiImplicitParam(name = "chapterId", value = "科目id", required = true, dataType = "string", paramType = "query")
     })
     public WebResult getCourseChapterById(@ApiParam(value = "根据科目ID 查询对应上层科目信息", name = "chapterId", required = true) @RequestBody String chapterId) {
         MyAssert.blank(chapterId, DefineCode.ERR0010, "科目id不为空");
@@ -96,7 +98,7 @@ public class CourseChapterController {
     @PostMapping("/deleteById")
     @ApiOperation(notes = "根据ID删除对应的科目章节信息(物理删除)", value = "删除科目章节信息(物理删除)")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "chapterId", value = "科目id", required = true, dataType = "string")
+            @ApiImplicitParam(name = "chapterId", value = "科目id", required = true, dataType = "string", paramType = "query")
     })
     public WebResult deleteById(@ApiParam(name = "chapterId", value = "根据章节ID删除对应的信息(物理删除)", required = true) @RequestBody String chapterId) {
         MyAssert.blank(chapterId, DefineCode.ERR0010, "科目id不为空");
@@ -108,7 +110,7 @@ public class CourseChapterController {
     @PostMapping("/deleteIsValidById")
     @ApiOperation(notes = "根据ID删除对应的科目章节信息(逻辑删除)", value = "删除科目章节信息(逻辑删除)")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "chapterId", value = "科目id", required = true, dataType = "string")
+            @ApiImplicitParam(name = "chapterId", value = "科目id", required = true, dataType = "string", paramType = "query")
     })
     public WebResult deleteIsValidById(@ApiParam(name = "chapterId", value = "根据章节ID删除对应的信息(逻辑删除)", required = true) @RequestBody String chapterId) {
         MyAssert.blank(chapterId, DefineCode.ERR0010, "章节ID不为空");
@@ -126,7 +128,7 @@ public class CourseChapterController {
     @PostMapping("/findByCourseId")
     @ApiOperation(value = "查找章节信息", notes = "客户端根据科目ID查询章节目录树")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "章节id", required = true, dataType = "string")
+            @ApiImplicitParam(name = "courseId", value = "章节id", required = true, dataType = "string", paramType = "query")
     })
     public WebResult findByCourseId(@ApiParam(name = "courseId", value = "根据章节ID 查询对应上层科目信息", required = true) @RequestBody String courseId) {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目id不为空");

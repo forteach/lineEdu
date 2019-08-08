@@ -1,6 +1,7 @@
 package com.project.user.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.Md5Util;
@@ -11,6 +12,7 @@ import com.project.user.domain.UserRole;
 import com.project.user.repository.SysRoleRepository;
 import com.project.user.repository.UserRepository;
 import com.project.user.repository.UserRoleRepository;
+import com.project.user.repository.dto.SysRoleDto;
 import com.project.user.service.UserService;
 import com.project.user.web.req.UpdatePassWordReq;
 import com.project.user.web.req.UserLoginReq;
@@ -22,10 +24,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.token.constant.TokenKey.USER_TOKEN_PREFIX;
 
 /**
  * @Auther: zhangyy
@@ -78,15 +83,27 @@ public class UserServiceImpl implements UserService<T> {
         }
         String token = tokenService.createToken(user.getId());
         //保存token到redis
-//        tokenService.saveRedis(token, user);
-//        UserRole userRole = userRoleRepository.findByUserIdIs(user.getId());
-        return LoginResponse.builder()
+        Map<String, Object> map = BeanUtil.beanToMap(user);
+        map.put("token", token);
+        List<SysRoleDto> sysRoles = userRoleRepository.findByIsValidatedEqualsAndUserId(user.getId());
+        LoginResponse loginResponse = LoginResponse.builder()
                 .userId(user.getId())
                 .token(token)
                 .userName(user.getUserName())
                 .teacherId(user.getTeacherId())
-//                .roleId(userRole != null ? userRole.getRoleId() : null)
                 .build();
+        if (!sysRoles.isEmpty()) {
+            sysRoles.stream().findFirst().ifPresent(sysRole -> {
+                loginResponse.setRoleActivity(sysRole.getRoleActivity());
+                loginResponse.setRoleId(sysRole.getRoleId());
+                loginResponse.setRoleName(sysRole.getRoleName());
+                map.put("roleId", sysRole.getRoleId());
+                map.put("roleActivity", sysRole.getRoleActivity());
+                map.put("roleName", sysRole.getRoleName());
+            });
+        }
+        tokenService.saveRedis(USER_TOKEN_PREFIX.concat(user.getId()), map);
+        return loginResponse;
     }
 
 //    @Override

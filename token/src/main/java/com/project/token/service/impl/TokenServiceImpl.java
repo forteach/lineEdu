@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.project.token.constant.TokenKey.*;
 
@@ -96,18 +98,12 @@ public class TokenServiceImpl implements TokenService {
         return null;
     }
 
-//    @Override
-//    public void saveRedis(String token, SysUsers users) {
-//        String key = this.getKey(users.getId());
-//        Map<String, String> map = new HashMap<>(4);
-//        map.put("token", token);
-//        map.put("userId", users.getId());
-//        map.put("userName", users.getUserName());
-//        map.put("role", users.getRole());
-//        stringRedisTemplate.opsForHash().putAll(key, map);
-//        //设置有效期7天
-//        stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
-//    }
+    @Override
+    public void saveRedis(String key, Map<String, Object> map) {
+        stringRedisTemplate.opsForHash().putAll(key, map);
+        //设置有效期7天
+        stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
+    }
 
     @Override
     public void removeToken(String userId) {

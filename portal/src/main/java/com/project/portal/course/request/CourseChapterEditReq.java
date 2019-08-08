@@ -31,4 +31,7 @@ public class CourseChapterEditReq implements Serializable {
 
     @ApiModelProperty(value = "是否发布", name = "publish", dataType = "string", notes = "是否发布　Y(是) N(否)", example = "Y")
     private String publish;
+
+    @ApiModelProperty(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int")
+    private Integer randomQuestionsNumber;
 }

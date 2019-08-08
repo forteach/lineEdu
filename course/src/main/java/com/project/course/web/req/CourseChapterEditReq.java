@@ -25,4 +25,6 @@ public class CourseChapterEditReq implements Serializable {
     private String chapterName;
 
     private String publish;
+
+    private Integer randomQuestionsNumber;
 }

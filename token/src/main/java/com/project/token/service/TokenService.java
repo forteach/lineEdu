@@ -2,6 +2,8 @@ package com.project.token.service;
 
 import com.auth0.jwt.JWTVerifier;
 
+import java.util.Map;
+
 /**
  * @Auther: zhangyy
  * @Email: zhang10092009@hotmail.com
@@ -54,11 +56,10 @@ public interface TokenService {
 
     /**
      * 保存token 到redis
-     * @param token
-     * @param users
+     * @param key
+     * @param map
      */
-//    void saveRedis(String token, SysUsers users);
-
+    void saveRedis(String key, Map<String, Object> map);
     /**
      * 移除 redis 保存的 token 数据信息
      * @param userId

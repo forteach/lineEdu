@@ -1,9 +1,12 @@
 package com.project.user.repository;
 
+import com.project.user.domain.SysRole;
 import com.project.user.domain.UserRole;
 import com.project.user.domain.UserRoleFundPrimarykey;
+import com.project.user.repository.dto.SysRoleDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -42,4 +45,9 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleFund
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     UserRole findByUserIdIs(String userId);
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Query(value = "select roleId as roleId, roleName as roleName, remark as remark, roleActivity as roleActivity " +
+            " from SysRole where isValidated = '0' and roleId in " +
+            " (select roleId from UserRole where isValidated = '0' and userId = ?1)")
+    List<SysRoleDto> findByIsValidatedEqualsAndUserId(String userId);
 }

@@ -36,9 +36,9 @@ public class Course extends Entitys {
     @Column(name = "alias", columnDefinition = "VARCHAR(32) COMMENT '别名'")
     private String alias;
 
-    @Column(name = "course_number", columnDefinition = "VARCHAR(32) COMMENT '课程编号'")
-    private String courseNumber;
-
+//    @Column(name = "course_number", columnDefinition = "VARCHAR(32) COMMENT '课程编号'")
+//    private String courseNumber;
+//
 //    @Column(name = "share_type", columnDefinition = "INT DEFAULT 1 COMMENT '分享类型：１.私有 2.协作 ３.公开'")
 //    private String shareType;
 
