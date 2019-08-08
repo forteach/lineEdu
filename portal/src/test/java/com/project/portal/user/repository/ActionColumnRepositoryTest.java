@@ -29,7 +29,7 @@ public class ActionColumnRepositoryTest {
     private ActionColumnRepository actionColumnRepository;
 
     @Test
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public void save(){
         List<ActionColumn> list = new ArrayList<>();
             ActionColumn actionColumn1 = new ActionColumn();

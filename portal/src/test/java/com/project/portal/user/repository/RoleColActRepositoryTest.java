@@ -42,7 +42,7 @@ public class RoleColActRepositoryTest {
     @Resource
     private SysRoleRepository sysRoleRepository;
     @Test
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public void save(){
         List<SysRole> sysRoles = sysRoleRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
         List<ActionColumn> actionColumnList = actionColumnRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);

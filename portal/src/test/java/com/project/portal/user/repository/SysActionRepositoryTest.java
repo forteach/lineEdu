@@ -27,7 +27,7 @@ public class SysActionRepositoryTest {
     @Resource
     private SysActionRepository sysActionRepository;
     @Test
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public void save(){
         List<SysAction> list = new ArrayList<>();
         SysAction sysActionAdd = new SysAction();

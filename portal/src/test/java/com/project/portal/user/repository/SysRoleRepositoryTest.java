@@ -34,7 +34,7 @@ public class SysRoleRepositoryTest {
     }
 
     @Test
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public void save(){
         ArrayList<SysRole> sysRoleArrayList = new ArrayList<>();
         SysRole sysRoleAdmin = new SysRole();

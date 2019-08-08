@@ -70,6 +70,7 @@ public class RoleController extends BaseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleId", value = "角色编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "roleName", value = "角色名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "roleActivity", value = "角色对应的权限", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "remark", value = "备注 角色说明", dataType = "string", paramType = "form")
     })
     public WebResult editRole(@Valid @RequestBody @ApiParam(value = "角色数据", required = true) SysRole sys) {
