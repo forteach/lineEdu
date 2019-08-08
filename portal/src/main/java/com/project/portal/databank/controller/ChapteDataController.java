@@ -54,11 +54,9 @@ public class ChapteDataController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目编号", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "datumArea", value = "资料领域", dataType = "string", required = true, paramType = "form", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例"),
+            @ApiImplicitParam(name = "datumArea", value = "资料领域", dataType = "string", required = true, paramType = "form", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例"),
             @ApiImplicitParam(name = "datumName", value = "资料名称", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
-//            @ApiImplicitParam(name = "teachShare", value = "教师共享", dataType = "string", required = true, paramType = "form", example = "0不共享 1共享"),
-//            @ApiImplicitParam(name = "stuShare", value = "学生共享", dataType = "string", required = true, paramType = "form", example = "0不共享 1共享"),
             @ApiImplicitParam(name = "files", value = "文件对象", dataTypeClass = DataDatumVo.class, paramType = "form", required = true)
     })
     public WebResult save(@ApiParam(value = "保存资料信息", name = "chapteData") @RequestBody ChapteDataReq chapteDataReq) {
@@ -103,7 +101,6 @@ public class ChapteDataController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "datumArea", value = "资料领域", dataType = "string", required = true, paramType = "form", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例"),
-//            @ApiImplicitParam(name = "kNodeId", value = "知识点标签", dataType = "string", paramType = "form", example = "知识点 ‘,’ 进行分割"),
             @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
     })
     public WebResult findDatumList(@ApiParam(value = "资料信息列表", name = "chapteData") @RequestBody ChapteDataListReq req) {
@@ -123,6 +120,7 @@ public class ChapteDataController {
             @ApiImplicitParam(name = "datumArea", dataType = "string", value = "资料领域", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例 6 复习参考, 不传值是全部需要移除"),
             @ApiImplicitParam(name = "fileId", value = "资料id", dataType = "string", paramType = "form")
     })
+    @ApiResponse(code = 0, message = "OK")
     @PostMapping(path = "/removeOne")
     public WebResult removeOne(@RequestBody ChapterDataRemoveReq chapterDataRemoveReq) {
         MyAssert.isNull(chapterDataRemoveReq.getFileId(), DefineCode.ERR0010, "资料id不为空");
@@ -139,6 +137,7 @@ public class ChapteDataController {
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接, (多个用‘,’分割), 不传值是全部需要删除挂载")
     })
+    @ApiResponse(code = 0, message = "OK")
     public WebResult removeChapteDataList(@RequestBody ChapterDataRemoveReq chapterDataRemoveReq) {
         MyAssert.isNull(chapterDataRemoveReq.getCourseId(), DefineCode.ERR0010, "科目编号不为空");
         MyAssert.isNull(chapterDataRemoveReq.getChapterId(), DefineCode.ERR0010, "科目编号不为空");

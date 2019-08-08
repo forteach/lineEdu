@@ -88,6 +88,7 @@ public class RoleController extends BaseController {
     @PostMapping(value = "/remove")
     @ApiOperation(value = "删除角色", notes = "通过角色id删除角色(物理删除)")
     @ApiImplicitParam(name = "roleId", value = "角色id", dataType = "string", required = true, paramType = "from")
+    @ApiResponse(code = 0, message = "OK")
     public WebResult removeRole(@RequestBody @ApiParam(value = "通过角色id删除角色", required = true) AuthorityVo authorityVo) {
         MyAssert.blank(authorityVo.getRoleId(), DefineCode.ERR0010, "角色id不为空");
         roleService.deleteRole(authorityVo.getRoleId());
@@ -217,6 +218,7 @@ public class RoleController extends BaseController {
     @UserLoginToken
     @PostMapping(value = "/saveRoleColAct")
     @ApiOperation(value = "保存对应角色栏目的动作", notes = "传入角色与权限list json 进行操作")
+    @ApiResponse(code = 0, message = "OK")
     public WebResult saveRoleColAct(@RequestBody @ApiParam(value = " json 串", required = true) String params) {
         MyAssert.blank(params, DefineCode.ERR0010, "参数不为空");
         authorityMgrService.saveRoleColAct(params);

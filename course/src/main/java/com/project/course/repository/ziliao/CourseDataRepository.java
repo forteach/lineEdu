@@ -21,9 +21,9 @@ public interface CourseDataRepository extends IFileRepoitory<CourseData, String>
      * @param dataId
      * @param datumArea
      */
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE CourseData p SET p.datumArea = :datumArea where p.dataId = :dataId")
-    public void updateDatumArea(String dataId, String datumArea);
+//    @Modifying(clearAutomatically = true)
+//    @Query("UPDATE CourseData p SET p.datumArea = :datumArea where p.dataId = :dataId")
+//    public void updateDatumArea(String dataId, String datumArea);
 
     /**
      * 修改教师分享
@@ -45,9 +45,9 @@ public interface CourseDataRepository extends IFileRepoitory<CourseData, String>
 //    @Query("UPDATE CourseData p SET p.stuShare = :stuShare where p.dataId = :dataId")
 //    public void updateStuShare(String dataId, String stuShare);
 
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    public int deleteByChapterId(String chapterId);
+//    @Transactional
+//    @Modifying(clearAutomatically = true)
+//    public int deleteByChapterId(String chapterId);
 
     /**
      * 删除无效挂载文件
@@ -56,7 +56,7 @@ public interface CourseDataRepository extends IFileRepoitory<CourseData, String>
      * @param dataIds
      * @return
      */
-    public int deleteByChapterIdAndDataIdIn(String chapterId, List<String> dataIds);
+//    public int deleteByChapterIdAndDataIdIn(String chapterId, List<String> dataIds);
 
     /**
      * 查询章节资料
@@ -64,7 +64,7 @@ public interface CourseDataRepository extends IFileRepoitory<CourseData, String>
      * @param chapterId
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
-    public List<CourseData> findByChapterId(String chapterId);
+//    @Transactional(rollbackFor = Exception.class)
+//    public List<CourseData> findByChapterId(String chapterId);
 
 }

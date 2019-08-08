@@ -46,6 +46,6 @@ public class DataDatumVo implements Serializable {
     @ApiModelProperty(value = "图片顺序下标", name = "indexNum", dataType = "int", hidden = true)
     private Integer indexNum;
 
-    @ApiModelProperty(name = "videoDuration", value = "视频时长(单位秒)", dataType = "string")
-    private String videoDuration;
+    @ApiModelProperty(name = "videoDuration", value = "视频时长(单位秒)", dataType = "int")
+    private Integer videoDuration;
 }
