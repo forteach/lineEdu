@@ -1,14 +1,13 @@
-package com.project.portal.importexport.controller;
+package com.project.portal.classfee.controller;
 
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.classfee.domain.ClassFeeInfo;
 import com.project.classfee.service.ClassFeeInfoService;
 import com.project.portal.response.WebResult;
-import com.project.redis.service.ObjectRedisService;
-import com.project.schoolroll.domain.excel.StudentImport;
-import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
 import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
 import io.swagger.annotations.Api;
@@ -22,13 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static com.project.schoolroll.domain.excel.Dic.IMPORT_CLASS_FREE;
-import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 
 /**
  * @Auther: zhangyy
@@ -43,11 +39,13 @@ import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 @RequestMapping(path = "/import", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ImportClassFeeController {
     private final ClassFeeInfoService classFeeInfoService;
+    private final ExcelImpServiceImpl excelImpService;
 
 
     @Autowired
-    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService) {
+    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService, ExcelImpServiceImpl excelImpService) {
         this.classFeeInfoService = classFeeInfoService;
+        this.excelImpService = excelImpService;
     }
 
     //    @UserLoginToken
