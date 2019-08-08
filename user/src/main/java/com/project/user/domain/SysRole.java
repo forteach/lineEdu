@@ -44,5 +44,4 @@ public class SysRole extends Entitys implements Serializable {
 
     @Column(name = "role_activity", columnDefinition = "VARCHAR(32) COMMENT '角色对应权限'")
     private String roleActivity;
-
 }

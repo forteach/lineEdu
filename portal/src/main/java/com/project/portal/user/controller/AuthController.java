@@ -90,7 +90,6 @@ public class AuthController {
 //        MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
 //        return userService.addSysTeacher(JSONObject.parseObject(teacherCode).getString("teacherCode"));
 //    }
-
     @UserLoginToken
     @ApiOperation("修改密码")
     @PostMapping("/updatePassWord")

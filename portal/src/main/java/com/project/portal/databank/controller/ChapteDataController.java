@@ -54,7 +54,7 @@ public class ChapteDataController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目编号", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "datumArea", value = "资料领域", dataType = "string", required = true, paramType = "form", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例"),
+//            @ApiImplicitParam(name = "datumArea", value = "资料领域", dataType = "string", required = true, paramType = "form", example = "资料领域：1教案 2课件 3预习参考 4教学参考 5授课案例"),
             @ApiImplicitParam(name = "datumName", value = "资料名称", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
             @ApiImplicitParam(name = "files", value = "文件对象", dataTypeClass = DataDatumVo.class, paramType = "form", required = true)

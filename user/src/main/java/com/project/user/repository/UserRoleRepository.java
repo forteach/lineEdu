@@ -1,12 +1,12 @@
 package com.project.user.repository;
 
-import com.project.user.domain.SysRole;
 import com.project.user.domain.UserRole;
 import com.project.user.domain.UserRoleFundPrimarykey;
 import com.project.user.repository.dto.SysRoleDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
 
 import javax.transaction.Transactional;
 import java.util.List;

@@ -48,6 +48,15 @@ public class Course extends Entitys {
 //    @Column(name = "teaching_type", columnDefinition = "VARCHAR(32) COMMENT '1、录播课程 2、直播课程 3、线下课堂'")
 //    private String teachingType;
 
+//    @Column(name = "share_type", columnDefinition = "INT DEFAULT 1 COMMENT '分享类型：１.私有 2.协作 ３.公开'")
+//    private String shareType;
+
+//    /**
+//     *
+//     */
+//    @Column(name = "teaching_type", columnDefinition = "VARCHAR(32) COMMENT '1、录播课程 2、直播课程 3、线下课堂'")
+//    private String teachingType;
+
 //    @Column(name = "lesson_preparation_type", columnDefinition = "INT COMMENT '备课类型　1、单人备课 2、集体备课'")
 //    private String lessonPreparationType;
 

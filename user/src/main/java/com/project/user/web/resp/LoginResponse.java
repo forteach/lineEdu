@@ -1,6 +1,5 @@
 package com.project.user.web.resp;
 
-import com.project.user.domain.SysRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
