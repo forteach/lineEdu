@@ -23,6 +23,7 @@
         <module>portal</module>
         <module>information</module>
         <module>wechat</module>
+        <module>flow</module>
     </modules>
 
     <parent>
