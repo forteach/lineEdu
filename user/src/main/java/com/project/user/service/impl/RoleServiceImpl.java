@@ -1,6 +1,7 @@
 package com.project.user.service.impl;
 
-import com.project.base.exception.RoleException;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.user.domain.SysRole;
 import com.project.user.domain.SysUsers;
 import com.project.user.repository.SysRoleRepository;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.util.List;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -106,7 +106,7 @@ public class RoleServiceImpl implements RoleService {
 
     private void editCheck(SysRole role) {
         if (existsName(role.getRoleName())) {
-            throw new RoleException("已有相同角色名");
+            MyAssert.isNull(null, DefineCode.ERR0011, "已有相同角色名");
         }
     }
 
