@@ -28,12 +28,14 @@ public class CourseChapterReq implements Serializable {
 
     private String chapterParentId;
 
+    @Builder.Default
     private String sort = "1";
 
     private String chapterType;
 
     private String chapterLevel;
 
+    @Builder.Default
     private String publish = "Y";
 
     private String createUser;

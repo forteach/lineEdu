@@ -39,7 +39,7 @@ import static java.util.stream.Collectors.toList;
  * @Version: 1.0
  * @Description: 课程资料操作
  */
-@Service
+@Service(value = "ChapteDataService")
 @Slf4j
 public class ChapteDataServiceImpl implements ChapteDataService {
 

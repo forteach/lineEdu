@@ -73,7 +73,7 @@ public class CatalogueServiceImpl implements CatalogueService {
         catalogueRepository.findById(courseChapterEditReq.getChapterId())
                 .ifPresent(source -> {
                     Catalogue courseChapter = Catalogue.builder().build();
-                    BeanUtils.copyProperties(courseChapterEditReq, courseChapter);
+                    BeanUtil.copyProperties(courseChapterEditReq, courseChapter);
                     BeanUtil.copyProperties(source, courseChapter);
                     //2、设置创建时间
                     courseChapter.setCreateTime(source.getCreateTime());
