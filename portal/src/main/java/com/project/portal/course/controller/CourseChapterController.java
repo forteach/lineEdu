@@ -44,41 +44,45 @@ public class CourseChapterController {
     @PostMapping("/save")
     @ApiOperation(value = "保存科目章节", notes = "保存科目章节信息")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseId", value = "科目编号", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "chapterName", value = "章节名称", required = true, dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "form", dataType = "string"),
             @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", required = true, paramType = "form", dataType = "int"),
             @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", required = true, paramType = "form"),
             @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int", paramType = "form")
+            @ApiImplicitParam(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int", paramType = "form"),
+            @ApiImplicitParam(name = "videoTime", value = "需要观看视频长度(秒)", dataType = "int", paramType = "form")
     })
     public WebResult save(@ApiParam(name = "courseChapter", value = "科目章节对象", required = true) @RequestBody CourseChapterReq req, HttpServletRequest request) {
         req.setCreateUser(tokenService.getUserId(request.getHeader("token")));
         CourseChapter cs = new CourseChapter();
         BeanUtil.copyProperties(req, cs);
         cs.setCreateUser(req.getCreateUser());
+        cs.setCreateUser(req.getCreateUser());
         return WebResult.okResult(courseChapterService.save(cs));
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "修改科目章节", notes = "修改科目章节信息")
-    @PostMapping("/edit")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目编号", required = true, dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "chapterName", value = "章节名称", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "form", dataType = "string"),
-            @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", paramType = "form", dataType = "int"),
-            @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", paramType = "form"),
-            @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int", paramType = "form")
-    })
-    public WebResult edit(@ApiParam(name = "courseChapter", value = "修改科目章节信息", required = true) @RequestBody CourseChapterEditReq courseChapterEditReq) {
-        MyAssert.blank(courseChapterEditReq.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
-        com.project.course.web.req.CourseChapterEditReq chapterEditReq  = new com.project.course.web.req.CourseChapterEditReq();
-        BeanUtil.copyProperties(courseChapterEditReq, chapterEditReq);
-        return WebResult.okResult(courseChapterService.edit(chapterEditReq));
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "修改科目章节", notes = "修改科目章节信息")
+//    @PostMapping("/edit")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "courseId", value = "科目编号", required = true, dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "chapterName", value = "章节名称", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "form", dataType = "string"),
+//            @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", paramType = "form", dataType = "int"),
+//            @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", paramType = "form"),
+//            @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int", paramType = "form"),
+//            @ApiImplicitParam(name = "videoTime", value = "需要观看视频长度(秒)", dataType = "int", paramType = "form")
+//    })
+//    public WebResult edit(@ApiParam(name = "courseChapter", value = "修改科目章节信息", required = true) @RequestBody CourseChapterEditReq courseChapterEditReq) {
+//        MyAssert.blank(courseChapterEditReq.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
+//        com.project.course.web.req.CourseChapterEditReq chapterEditReq  = new com.project.course.web.req.CourseChapterEditReq();
+//        BeanUtil.copyProperties(courseChapterEditReq, chapterEditReq);
+//        return WebResult.okResult(courseChapterService.edit(chapterEditReq));
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "查询科目章节信息", notes = "根据章节ID 查询对应的信息")

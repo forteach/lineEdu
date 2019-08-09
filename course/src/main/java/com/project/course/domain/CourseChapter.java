@@ -53,4 +53,7 @@ public class CourseChapter extends Entitys {
     @Column(name = "random_questions_number", columnDefinition = "INT(3) COMMENT '随机题目数量'")
     private Integer randomQuestionsNumber;
 
+    @Column(name = "video_time", columnDefinition = "INT(6) COMMENT '需要观看视频长度(秒)'")
+    private Integer videoTime;
+
 }

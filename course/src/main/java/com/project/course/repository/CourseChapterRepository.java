@@ -33,8 +33,9 @@ public interface CourseChapterRepository extends JpaRepository<CourseChapter, St
      */
     @Transactional(readOnly = true)
     @Query("select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId, " +
-            " publish as publish, sort as sort, chapterLevel as chapterLevel, randomQuestionsNumber as randomQuestionsNumber " +
-            "from CourseChapter where  courseId = ?1 order by chapterLevel asc, sort asc")
+            " publish as publish, sort as sort, chapterLevel as chapterLevel, randomQuestionsNumber as randomQuestionsNumber, " +
+            " videoTime as videoTime " +
+            " from CourseChapter where  courseId = ?1 order by chapterLevel asc, sort asc")
     List<ICourseChapterDto> findByCourseId(String courseId);
 
     /**
@@ -45,8 +46,9 @@ public interface CourseChapterRepository extends JpaRepository<CourseChapter, St
      * @return 所属的章节信息按照从顺序排列
      */
     @Transactional(readOnly = true)
-    @Query("select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId," +
-            " publish as publish, sort as sort, chapterLevel as chapterLevel, randomQuestionsNumber as randomQuestionsNumber " +
+    @Query(" select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId," +
+            " publish as publish, sort as sort, chapterLevel as chapterLevel, randomQuestionsNumber as randomQuestionsNumber," +
+            " videoTime as videoTime " +
             " from CourseChapter" +
             " where isValidated = :isValidated and chapterParentId = :chapterParentId order by sort asc")
     List<ICourseChapterDto> findByChapterParentId(@Param("isValidated") String isValidated, @Param("chapterParentId") String chapterParentId);
@@ -71,8 +73,9 @@ public interface CourseChapterRepository extends JpaRepository<CourseChapter, St
      */
     @Transactional(readOnly = true)
     @Query("select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId, " +
-            " publish as publish, sort as sort, chapterLevel as chapterLevel, randomQuestionsNumber as randomQuestionsNumber " +
-            "from CourseChapter where isValidated = :isValidated and  courseId = :courseId  ORDER BY  sort asc")
+            " publish as publish, sort as sort, chapterLevel as chapterLevel, randomQuestionsNumber as randomQuestionsNumber, " +
+            " videoTime as videoTime " +
+            " from CourseChapter where isValidated = :isValidated and  courseId = :courseId  ORDER BY  sort asc")
     List<ICourseChapterDto> findCourseId(@Param("isValidated") String isValidated, @Param("courseId") String courseId);
 
     /**

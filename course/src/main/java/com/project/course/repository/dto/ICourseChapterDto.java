@@ -54,4 +54,6 @@ public interface ICourseChapterDto {
 
     /** 章节随机题目数量*/
     public Integer getRandomQuestionsNumber();
+    /** 视频观看长度 videoTime*/
+    public Integer getVideoTime();
 }

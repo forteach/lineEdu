@@ -27,6 +27,10 @@ public class CourseTreeResp implements Serializable {
 
     private State state;
 
+    private Integer randomQuestionsNumber;
+
+    private Integer videoTime;
+
     public State getState() {
         return state;
     }
@@ -78,20 +82,30 @@ public class CourseTreeResp implements Serializable {
     public CourseTreeResp() {
     }
 
-    public CourseTreeResp(String id, String text, String icon, Integer level, State state) {
-        this.id = id;
-        this.text = text;
-        this.icon = icon;
-        this.level = level;
-        this.state = state;
+    public Integer getRandomQuestionsNumber() {
+        return randomQuestionsNumber;
     }
 
-    public CourseTreeResp(String id, String parent, String text, String icon, Integer level, State state) {
+    public void setRandomQuestionsNumber(Integer randomQuestionsNumber) {
+        this.randomQuestionsNumber = randomQuestionsNumber;
+    }
+
+    public Integer getVideoTime() {
+        return videoTime;
+    }
+
+    public void setVideoTime(Integer videoTime) {
+        this.videoTime = videoTime;
+    }
+
+    public CourseTreeResp(String id, String parent, String text, String icon, Integer level, State state, Integer randomQuestionsNumber, Integer videoTime) {
         this.id = id;
         this.parent = parent;
         this.text = text;
         this.icon = icon;
         this.level = level;
         this.state = state;
+        this.randomQuestionsNumber = randomQuestionsNumber;
+        this.videoTime = videoTime;
     }
 }

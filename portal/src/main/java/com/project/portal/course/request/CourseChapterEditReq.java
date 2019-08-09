@@ -34,4 +34,7 @@ public class CourseChapterEditReq implements Serializable {
 
     @ApiModelProperty(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int")
     private Integer randomQuestionsNumber;
+
+    @ApiModelProperty(name = "videoTime", value = "需要观看视频长度(秒)", dataType = "int")
+    private Integer videoTime;
 }

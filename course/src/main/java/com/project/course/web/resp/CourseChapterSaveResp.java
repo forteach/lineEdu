@@ -31,4 +31,6 @@ public class CourseChapterSaveResp implements Serializable {
     private String publish;
 
     private Integer randomQuestionsNumber;
+
+    private Integer videoTime;
 }

@@ -2,6 +2,8 @@ package com.project.course.service.impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
+import com.project.base.util.UpdateUtil;
 import com.project.course.domain.CourseChapter;
 import com.project.course.repository.CourseChapterRepository;
 import com.project.course.repository.dto.ICourseChapterDto;
@@ -42,28 +44,34 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     @Override
     @Transactional(rollbackForClassName = "Exception")
     public CourseChapterSaveResp save(CourseChapter courseChapter) {
-        //1、判断是顶层章节，设置目录层级为1
-        if (COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId())) {
-            courseChapter.setChapterLevel("1");
+        if (StrUtil.isBlank(courseChapter.getChapterId())) {
+            //1、判断是顶层章节，设置目录层级为1
+            if (COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId())) {
+                courseChapter.setChapterLevel("1");
 
-        } else {
-            //获得当前层级+1
-            courseChapterRepository.findById(courseChapter.getChapterParentId())
-                    .ifPresent(c -> {
-                        courseChapter.setChapterLevel(String.valueOf(Integer.parseInt(1 + c.getChapterLevel())));
-                    });
+            } else {
+                //获得当前层级+1
+                courseChapterRepository.findById(courseChapter.getChapterParentId())
+                        .ifPresent(c -> {
+                            courseChapter.setChapterLevel(String.valueOf(Integer.parseInt(1 + c.getChapterLevel())));
+                        });
+            }
+            //2、查询当前科目章节有多少条数据
+            int count = courseChapterRepository.countByIsValidatedEqualsAndCourseIdAndChapterParentId(TAKE_EFFECT_OPEN, courseChapter.getCourseId(), courseChapter.getChapterParentId());
+
+            //3、设置当前章节下的最大序号
+            courseChapter.setSort(String.valueOf(count + 1));
+            courseChapterRepository.save(courseChapter);
+
+            //4、创建输出对象
+            CourseChapterSaveResp resp = new CourseChapterSaveResp();
+            BeanUtil.copyProperties(courseChapter, resp);
+            return resp;
+        }else {
+            CourseChapterEditReq chapterEditReq = new CourseChapterEditReq();
+            BeanUtil.copyProperties(courseChapter, chapterEditReq);
+            return edit(chapterEditReq);
         }
-        //2、查询当前科目章节有多少条数据
-        int count = courseChapterRepository.countByIsValidatedEqualsAndCourseIdAndChapterParentId(TAKE_EFFECT_OPEN, courseChapter.getCourseId(), courseChapter.getChapterParentId());
-
-        //3、设置当前章节下的最大序号
-        courseChapter.setSort(String.valueOf(count + 1));
-        courseChapterRepository.save(courseChapter);
-
-        //4、创建输出对象
-        CourseChapterSaveResp resp = new CourseChapterSaveResp();
-        BeanUtil.copyProperties(courseChapter, resp);
-        return resp;
     }
 
     @Override
@@ -73,15 +81,15 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         CourseChapterSaveResp resp = new CourseChapterSaveResp();
         courseChapterRepository.findById(courseChapterEditReq.getChapterId())
                 .ifPresent(source -> {
-                    CourseChapter courseChapter = CourseChapter.builder().build();
-                    BeanUtils.copyProperties(courseChapterEditReq, courseChapter);
-                    BeanUtil.copyProperties(source, courseChapter);
+//                    CourseChapter courseChapter = CourseChapter.builder().build();
+//                    BeanUtils.copyProperties(courseChapterEditReq, courseChapter);
+                    UpdateUtil.copyProperties(courseChapterEditReq, source);
                     //2、设置创建时间
-                    courseChapter.setCreateTime(source.getCreateTime());
-                    courseChapterRepository.save(courseChapter);
+//                    courseChapter.setCreateTime(source.getCreateTime());
+                    courseChapterRepository.save(source);
 
                     //3、创建输出对象
-                    BeanUtil.copyProperties(courseChapter, resp);
+                    BeanUtil.copyProperties(source, resp);
                 });
         return resp;
     }
@@ -165,6 +173,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             courseTreeResp.setId(courseChapterDto.getChapterId());
             courseTreeResp.setText(courseChapterDto.getChapterName());
             courseTreeResp.setParent(courseChapterDto.getChapterParentId());
+            courseTreeResp.setRandomQuestionsNumber(courseChapterDto.getRandomQuestionsNumber());
+            courseTreeResp.setVideoTime(courseChapterDto.getVideoTime());
             if (PUBLISH_YES.equals(courseChapterDto.getPublish())) {
                 courseTreeResp.setIcon("fa fa-briefcase icon-state-success");
             } else if (PUBLISH_NO.equals(courseChapterDto.getPublish())) {
