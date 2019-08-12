@@ -89,7 +89,7 @@ public class StudentImport implements Serializable {
     /**
      * 家庭电话
      */
-//    private String familyPhone;
+    private String familyPhone;
     /**
      * 工作单位
      */

@@ -89,13 +89,15 @@ public class ImportClassFeeController {
             excelImpService.checkoutKey();
             //设置导入修改时间 防止失败没有过期时间
             String type = FileUtil.extName(file.getOriginalFilename());
+            //todo 需要获取上传的学生中心id数据
+            String centerAreaId = "1f184d63f76644e3bb0889d7e43d9309";
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
                 excelImpService.setStudentKey();
-                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class);
+                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class, centerAreaId);
                 return WebResult.okResult();
             } else if (StrUtil.isNotBlank(type) && "xls".equals(type)) {
                 excelImpService.setStudentKey();
-                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class);
+                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class, centerAreaId);
                 return WebResult.okResult();
             }
         } catch (IOException e) {

@@ -47,4 +47,7 @@ public interface FamilyRepository extends JpaRepository<Family, String> {
             " from Family where isValidated = '0'")
     @Transactional(readOnly = true)
     List<FamilyExportDto> findByIsValidatedEqualsDto(String isValidated);
+
+    @Transactional(readOnly = true)
+    List<Family> findByStudentIdAndFamilyName(String studentId, String familyName);
 }
