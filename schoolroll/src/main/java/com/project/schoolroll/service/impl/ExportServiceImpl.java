@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static java.util.stream.Collectors.toList;
@@ -62,18 +61,16 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public List<List<?>> exportStudents() {
-        List<List<?>> exportAll = CollUtil.newArrayList();
-        exportAll.add(setExportTemplate());
-        List<List<?>> list = studentRepository.findByIsValidatedEqualsDto()
+    public List<List<String>> exportStudents() {
+        List<List<String>> list = studentRepository.findByIsValidatedEqualsDto()
                 .parallelStream().filter(Objects::nonNull)
                 .map(this::setStudentExport)
                 .collect(toList());
-        exportAll.addAll(list);
-        return exportAll;
+        list.add(0, setExportTemplate());
+        return list;
     }
 
-    private List<?> setStudentExport(StudentExportDto dto) {
+    private List<String> setStudentExport(StudentExportDto dto) {
         StudentExport studentExport = new StudentExport();
         //家庭成员
         setFamily(studentExport, dto.getStudentId());
@@ -81,11 +78,20 @@ public class ExportServiceImpl implements ExportService {
         setStudentExpand(studentExport, dto.getStudentId());
         //学生信息
         setStudentPeopleData(dto, studentExport);
-        return Stream.of(BeanUtil.beanToMap(studentExport))
-                .map(Map::values)
-                .collect(toList());
+        //转换消息
+        return setListData(studentExport);
     }
 
+    private List<String> setListData(StudentExport studentExport){
+        Map<String, Object> map = BeanUtil.beanToMap(studentExport);
+        return map.values().stream().map(o -> {
+            if (o == null){
+                return "";
+            }else {
+                return String.valueOf(o);
+            }
+        }).collect(toList());
+    }
     private void setStudentPeopleData(StudentExportDto dto, StudentExport studentExport) {
         studentExport.setStudentName(dto.getStudentName());
         studentExport.setGender(dto.getGender());
