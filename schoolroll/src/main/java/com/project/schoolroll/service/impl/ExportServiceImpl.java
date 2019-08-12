@@ -1,12 +1,12 @@
 package com.project.schoolroll.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import com.project.schoolroll.domain.Student;
-import com.project.schoolroll.domain.StudentPeople;
-import com.project.schoolroll.domain.excel.ViewStudentExport;
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.StrUtil;
+import com.project.schoolroll.domain.Family;
+import com.project.schoolroll.domain.excel.StudentExport;
 import com.project.schoolroll.repository.*;
-import com.project.schoolroll.repository.dto.FamilyExportDto;
-import com.project.schoolroll.repository.dto.StudentExpandExportDto;
 import com.project.schoolroll.repository.dto.StudentExportDto;
 import com.project.schoolroll.service.ExportService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +15,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @Auther: zhangyy
@@ -36,7 +40,7 @@ public class ExportServiceImpl implements ExportService {
     private final ViewStudentExportRepository viewStudentExportRepository;
 
     @Autowired
-    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository,ViewStudentExportRepository viewStudentExportRepository,
+    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository, ViewStudentExportRepository viewStudentExportRepository,
                              StudentPeopleRepository studentPeopleRepository, FamilyRepository familyRepository) {
         this.studentExpandRepository = studentExpandRepository;
         this.studentRepository = studentRepository;
@@ -59,22 +63,148 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public List<List<?>> exportStudents() {
-//        List<Student> studentList = studentRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
-//        List<StudentExpandExportDto> studentExpands = studentExpandRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
-//        List<StudentPeople> studentPeopleList = studentPeopleRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN);
-//        List<FamilyExportDto> familyExportDtos = familyRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN);
-        List<StudentExportDto> list = studentRepository.findByIsValidatedEqualsDto();
-        System.out.println("list.size "+list.size());
-//        list.forEach(System.out::println);
-        list.forEach(d -> {
-            if ("17030421 ".equals(d.getStudentId())) {
-                System.out.println("studentName");
-                System.out.println(d.getStudentName());
-                System.out.println("studentId");
-                System.out.println(d.getStudentId());
+        List<List<?>> exportAll = CollUtil.newArrayList();
+        exportAll.add(setExportTemplate());
+        List<List<?>> list = studentRepository.findByIsValidatedEqualsDto()
+                .parallelStream().filter(Objects::nonNull)
+                .map(this::setStudentExport)
+                .collect(toList());
+        exportAll.addAll(list);
+        return exportAll;
+    }
+
+    private List<?> setStudentExport(StudentExportDto dto) {
+        StudentExport studentExport = new StudentExport();
+        //家庭成员
+        setFamily(studentExport, dto.getStudentId());
+        //扩展信息
+        setStudentExpand(studentExport, dto.getStudentId());
+        //学生信息
+        setStudentPeopleData(dto, studentExport);
+        return Stream.of(BeanUtil.beanToMap(studentExport))
+                .map(Map::values)
+                .collect(toList());
+    }
+
+    private void setStudentPeopleData(StudentExportDto dto, StudentExport studentExport) {
+        studentExport.setStudentName(dto.getStudentName());
+        studentExport.setGender(dto.getGender());
+        studentExport.setStuBirthDate(dto.getStuBirthDate());
+        studentExport.setStuCardType(dto.getStuCardType());
+        studentExport.setStuIDCard(dto.getStuIDCard());
+        studentExport.setNamePinYin(dto.getNamePinYin());
+        studentExport.setClassName(dto.getClassName());
+        studentExport.setStudentId(dto.getStudentId());
+        studentExport.setStudentCategory(dto.getStudentCategory());
+        studentExport.setLearningModality(dto.getLearningModality());
+        studentExport.setWaysEnrollment(dto.getWaysEnrollment());
+        studentExport.setWaysStudy(dto.getWaysStudy());
+        studentExport.setNationality(dto.getNationality());
+        studentExport.setNationalityType(dto.getNationalityType());
+        studentExport.setMarriage(dto.getMarriage());
+        studentExport.setIsImmigrantChildren(dto.getIsImmigrantChildren());
+        studentExport.setHouseholdType(dto.getHouseholdType());
+        studentExport.setSpecialtyName(dto.getSpecialtyName());
+        studentExport.setEducationalSystem(dto.getEducationalSystem());
+        studentExport.setNation(dto.getNation());
+        studentExport.setPoliticalStatus(dto.getPoliticalStatus());
+        studentExport.setStuPhone(dto.getStuPhone());
+        studentExport.setEntranceCertificateNumber(dto.getEntranceCertificateNumber());
+        studentExport.setTotalExaminationAchievement(dto.getTotalExaminationAchievement());
+        studentExport.setEnrollmentDate(dto.getEnrollmentDate());
+    }
+
+    private void setStudentExpand(StudentExport studentExpand, String studentId) {
+        Map<String, String> map = MapUtil.newHashMap();
+        studentExpandRepository.findByIsValidatedEqualsAndStudentId(studentId)
+                .parallelStream()
+                .forEach(dto -> {
+                    map.put(dto.getExpandName(), dto.getExpandValue());
+                });
+        BeanUtil.copyProperties(map, studentExpand);
+    }
+
+    private void setFamily(StudentExport studentExpand, String studentId) {
+        List<Family> familyList = familyRepository.findAllByIsValidatedEqualsAndStudentId(TAKE_EFFECT_OPEN, studentId);
+        if (!familyList.isEmpty()) {
+            Family family = familyList.get(0);
+            setStudentFamily1Data(studentExpand, family);
+            if (familyList.size() > 1) {
+                setStudentFamily2Data(studentExpand, familyList.get(1));
             }
-        });
-        return null;
+        }
+    }
+
+    private void setStudentFamily2Data(StudentExport studentExpand, Family family) {
+        if (StrUtil.isNotBlank(family.getFamilyName())) {
+            studentExpand.setFamily2Name(family.getFamilyName());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyRelationship())) {
+            studentExpand.setFamily2Relationship(family.getFamilyRelationship());
+        }
+        if (StrUtil.isNotBlank(family.getIsGuardian())) {
+            studentExpand.setFamily2IsGuardian(family.getIsGuardian());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyPhone())) {
+            studentExpand.setFamily2Phone(family.getFamilyPhone());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyBirthDate())) {
+            studentExpand.setFamily2BirthDate(family.getFamilyBirthDate());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyCardType())) {
+            studentExpand.setFamily2CardType(family.getFamilyCardType());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyIDCard())) {
+            studentExpand.setFamily2IDCard(family.getFamilyIDCard());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyNation())) {
+            studentExpand.setFamily2Nation(family.getFamilyNation());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyPoliticalStatus())) {
+            studentExpand.setFamily2HealthCondition(family.getFamilyHealthCondition());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyCompanyOrganization())) {
+            studentExpand.setFamily2CompanyOrganization(family.getFamilyCompanyOrganization());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyPosition())) {
+            studentExpand.setFamily2Position(family.getFamilyPosition());
+        }
+    }
+
+    private void setStudentFamily1Data(StudentExport studentExpand, Family family) {
+        if (StrUtil.isNotBlank(family.getFamilyName())) {
+            studentExpand.setFamily1Name(family.getFamilyName());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyRelationship())) {
+            studentExpand.setFamily1Relationship(family.getFamilyRelationship());
+        }
+        if (StrUtil.isNotBlank(family.getIsGuardian())) {
+            studentExpand.setFamily1IsGuardian(family.getIsGuardian());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyPhone())) {
+            studentExpand.setFamily1Phone(family.getFamilyPhone());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyBirthDate())) {
+            studentExpand.setFamily1BirthDate(family.getFamilyBirthDate());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyCardType())) {
+            studentExpand.setFamily1CardType(family.getFamilyCardType());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyIDCard())) {
+            studentExpand.setFamily1IDCard(family.getFamilyIDCard());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyNation())) {
+            studentExpand.setFamily1Nation(family.getFamilyNation());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyPoliticalStatus())) {
+            studentExpand.setFamily1HealthCondition(family.getFamilyHealthCondition());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyCompanyOrganization())) {
+            studentExpand.setFamily1CompanyOrganization(family.getFamilyCompanyOrganization());
+        }
+        if (StrUtil.isNotBlank(family.getFamilyPosition())) {
+            studentExpand.setFamily1Position(family.getFamilyPosition());
+        }
     }
 
     @Override

@@ -52,11 +52,8 @@ public class ExportController {
     @ApiOperation(value = "导出学生信息")
     @GetMapping(path = "/exportStudents")
     public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
-//        List<StudentImport> list = new ArrayList<>();
-        List list = exportService.exportStudents();
-        List<String> pa = Arrays.asList("studentName", "gender", "stuCardType", "stuIDCard", "studentId", "trainSpace", "familyAddress", "familyPhone", "stuEmail");
-//        exportService.exportStudents(pa);
-        MyExcleUtil.getExcel(res, req, Arrays.asList(pa), "导出学生数据.xlsx");
+        List<List<?>> list = exportService.exportStudents();
+        MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
         return WebResult.okResult();
     }
 
@@ -64,20 +61,9 @@ public class ExportController {
     @GetMapping(path = "/exportStudentsParameter")
     @ApiImplicitParam(name = "exportParameter", value = "导出学生数据参数", dataTypeClass = List.class, paramType = "query")
     public WebResult exportStudent(HttpServletResponse res, HttpServletRequest req) throws IOException {
-//        String importName = req.getHeader("importName");
         String importName = req.getParameter("exportParameter");
-
-//        List<String> list =  Arrays.asList(req.getParameterValues("exportParameter"));
-        System.out.println("exportParameter" + importName);
-//        System.out.println("");
         List<String> list = Arrays.asList(StrUtil.split(importName, ","));
         list.stream().forEach(System.out::println);
-
-//        List<StudentImport> list = new ArrayList<>();
-//        List list = exportService.exportStudents();
-//        List<String> pa = Arrays.asList("studentName","gender","stuCardType","stuIDCard","studentId","trainSpace","familyAddress","familyPhone","stuEmail");
-
-//        exportService.exportStudents(list);
         MyExcleUtil.getExcel(res, req, Arrays.asList(list), "导出学生数据.xlsx");
         return WebResult.okResult();
     }
