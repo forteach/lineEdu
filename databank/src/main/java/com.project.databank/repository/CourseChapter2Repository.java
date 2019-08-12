@@ -10,5 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @version: 1.0
  * @description:
  */
-public interface CourseChapterRepository extends JpaRepository<CourseChapter, String> {
+public interface CourseChapter2Repository extends JpaRepository<CourseChapter, String> {
+
 }

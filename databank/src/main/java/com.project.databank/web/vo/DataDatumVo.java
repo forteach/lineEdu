@@ -30,5 +30,5 @@ public class DataDatumVo implements Serializable {
 
     private int indexNum;
 
-    private long videoDuration;
+    private Integer videoDuration;
 }

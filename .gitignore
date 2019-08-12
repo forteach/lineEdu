@@ -69,3 +69,5 @@ hs_err_pid*
 /user/.settings/
 /coursedata/.settings/
 /course/.settings/
+/flow/target/
+/flow/.settings/

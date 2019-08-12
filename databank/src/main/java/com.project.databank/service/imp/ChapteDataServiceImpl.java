@@ -8,7 +8,9 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.common.keyword.Dic;
 import com.project.base.exception.AssertErrorException;
 import com.project.base.exception.MyAssert;
+import com.project.databank.domain.CourseChapter;
 import com.project.databank.domain.ziliao.*;
+import com.project.databank.repository.CourseChapter2Repository;
 import com.project.databank.repository.ziliao.*;
 import com.project.databank.service.ChapteDataService;
 import com.project.databank.web.res.DatumResp;
@@ -53,6 +55,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     private ViewDatumRepository viewDatumRepository;
     @Resource
     private DatumAreaRepository datumAreaRepository;
+    @Resource
+    private CourseChapter2Repository courseChapter2Repository;
 
 
     /**
@@ -287,6 +291,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
 
         //1、添加资料文件列表明细
         List<AbsDatum> fileDatumList = new ArrayList<>();
+        Integer videoTime = null;
         for (DataDatumVo dataDatumVo : files) {
             String uuid = IdUtil.fastSimpleUUID();
             fd.setChapterId(chapterId);
@@ -297,14 +302,22 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             fd.setDatumType(datumType);
             if (fd instanceof ViewDatum){
                 ((ViewDatum) fd).setVideoDuration(dataDatumVo.getVideoDuration());
+                videoTime = dataDatumVo.getVideoDuration();
             }
             fd.setCourseId(courseId);
             fd.setDatumArea(datumArea);
             fileDatumList.add(fd);
         }
         rep.saveAll(fileDatumList);
-
-
+        //判断是否设置长度值
+        if (videoTime != null && videoTime > 0){
+            Optional<CourseChapter> optional = courseChapter2Repository.findById(chapterId);
+            if (optional.isPresent()){
+                CourseChapter courseChapter = optional.get();
+                courseChapter.setVideoTime(videoTime);
+                courseChapter2Repository.save(courseChapter);
+            }
+        }
         //2、添加文件所属领域信息--不经常频繁的添加资料
 //        fileDatumList.stream().forEach((absDatum) ->
 //        {

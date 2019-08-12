@@ -1,4 +1,4 @@
-package com.project.course.domain;
+package com.project.databank.domain;
 
 import com.project.mysql.domain.Entitys;
 import lombok.*;
