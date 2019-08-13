@@ -24,7 +24,7 @@ public class StudentExpandRepositoryTest {
     private StudentExpandRepository studentExpandRepository;
     @Test
     public void findByIsValidatedEquals() {
-        studentExpandRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN).parallelStream()
+        studentExpandRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN).parallelStream()
 //                .forEach(System.out::println);
                 .forEach(d -> {
                     System.out.println(d.getExpandName()+"\r\n");

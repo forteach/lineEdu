@@ -76,6 +76,21 @@ public enum StudentEnum {
     /** 招生批次 招生批次 春季,秋季*/
     recruitBatch("招生批次"),
 
+    /** 家庭成员字段*/
+    familyName("成员姓名"),
+    familyRelationship("成员关系"),
+    familyIsGuardian("成员是否监护人"),
+//    familyPhone("成员联系电话"),
+    telephone("联系电话"),
+    familyBirthDate("成员出生年月"),
+    familyCardType("成员身份证件类型"),
+    familyIDCard("成员身份证件号"),
+    familyNation("成员民族"),
+    familyPoliticalStatus("成员政治面貌"),
+    familyHealthCondition("成员健康状况"),
+    familyCompanyOrganization("成员工作或学习单位"),
+    familyPosition("成员职务"),
+
     /** 家庭成员1信息 */
 
     family1Name("成员1姓名"),

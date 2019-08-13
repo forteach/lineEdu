@@ -90,7 +90,7 @@ public class ImportClassFeeController {
             //设置导入修改时间 防止失败没有过期时间
             String type = FileUtil.extName(file.getOriginalFilename());
             //todo 需要获取上传的学生中心id数据
-            String centerAreaId = "1f184d63f76644e3bb0889d7e43d9309";
+            String centerAreaId = "1001";
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
                 excelImpService.setStudentKey();
                 excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class, centerAreaId);

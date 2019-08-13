@@ -5,7 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
@@ -25,15 +28,17 @@ public class StudentRepositoryTest {
 
     @Test
     public void findByIsValidatedEqualsDto() {
-        viewStudentExportRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN)
-                .parallelStream()
-                .forEach(d -> {
-                    System.out.println(d.getStuIDCard());
-                    System.out.println(d.getStudentId());
-                    System.out.println(d.getStudentName());
-                    System.out.println(d.getCandidateNumber());
-                    System.out.println(d.getEducationalSystem());
-                    System.out.println(d.getWaysStudy());
-                });
+//        List<ViewStudentExport> viewStudentExport = viewStudentExportRepository.findAllByIsValidatedEqualsDto(TAKE_EFFECT_OPEN);
+//        System.out.println(viewStudentExport.size());
+
+//                .parallelStream()
+//                .forEach(d -> {
+//                    System.out.println(d.getStuIDCard());
+//                    System.out.println(d.getStudentId());
+//                    System.out.println(d.getStudentName());
+//                    System.out.println(d.getCandidateNumber());
+//                    System.out.println(d.getEducationalSystem());
+//                    System.out.println(d.getWaysStudy());
+//                });
     }
 }

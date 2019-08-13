@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Auther: zhangyy
@@ -52,8 +53,7 @@ public class ExportController {
     @ApiOperation(value = "导出学生信息")
     @GetMapping(path = "/exportStudents")
     public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
-        List<List<?>> list = exportService.exportStudents();
-        MyExcleUtil.getExcel(res, req, list, "导出学生数据.xlsx");
+        MyExcleUtil.getExcel(res, req, exportService.exportStudents(), "导出学生数据.xlsx");
         return WebResult.okResult();
     }
 
@@ -62,9 +62,7 @@ public class ExportController {
     @ApiImplicitParam(name = "exportParameter", value = "导出学生数据参数", dataTypeClass = List.class, paramType = "query")
     public WebResult exportStudent(HttpServletResponse res, HttpServletRequest req) throws IOException {
         String importName = req.getParameter("exportParameter");
-        List<String> list = Arrays.asList(StrUtil.split(importName, ","));
-        list.stream().forEach(System.out::println);
-        MyExcleUtil.getExcel(res, req, Arrays.asList(list), "导出学生数据.xlsx");
+        MyExcleUtil.getExcel(res, req, exportService.exportParameterStudents(importName), "导出学生数据.xlsx");
         return WebResult.okResult();
     }
 }

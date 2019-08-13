@@ -32,18 +32,18 @@ public interface FamilyRepository extends JpaRepository<Family, String> {
 
     @Query(value = "select " +
             " studentId as studentId," +
-            "familyName AS familyName, " +
-            "familyRelationship as familyRelationship, " +
-            "isGuardian AS familyIsGuardian, " +
-            "familyPhone AS familyPhone, " +
-            "familyBirthDate AS familyBirthDate, " +
-            "familyCardType AS familyCardType, " +
-            "familyIDCard AS familyIDCard, " +
-            "familyNation AS familyNation, " +
-            "familyPoliticalStatus AS familyPoliticalStatus, " +
-            "familyHealthCondition AS familyHealthCondition, " +
-            "familyCompanyOrganization AS familyCompanyOrganization, " +
-            "familyPosition AS familyPosition " +
+            " familyName AS familyName, " +
+            " familyRelationship as familyRelationship, " +
+            " isGuardian AS familyIsGuardian, " +
+            " familyPhone AS familyPhone, " +
+            " familyBirthDate AS familyBirthDate, " +
+            " familyCardType AS familyCardType, " +
+            " familyIDCard AS familyIDCard, " +
+            " familyNation AS familyNation, " +
+            " familyPoliticalStatus AS familyPoliticalStatus, " +
+            " familyHealthCondition AS familyHealthCondition, " +
+            " familyCompanyOrganization AS familyCompanyOrganization, " +
+            " familyPosition AS familyPosition " +
             " from Family where isValidated = '0'")
     @Transactional(readOnly = true)
     List<FamilyExportDto> findByIsValidatedEqualsDto(String isValidated);

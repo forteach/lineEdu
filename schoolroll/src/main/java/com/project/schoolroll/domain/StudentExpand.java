@@ -44,7 +44,7 @@ public class StudentExpand extends Entitys implements Serializable {
     /**
      * 补充字段名称
      */
-    @Column(name = "expand_name", columnDefinition = "VARCHAR(32) COMMENT '补充字段名称'")
+    @Column(name = "expand_name", columnDefinition = "VARCHAR(128) COMMENT '补充字段名称'")
     private String expandName;
     /**
      * 补充字段值

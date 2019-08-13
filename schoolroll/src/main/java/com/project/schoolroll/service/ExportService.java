@@ -10,10 +10,10 @@ import java.util.List;
  * @Version: 1.0
  * @Description:
  */
-public interface ExportService<T> {
-    public List<List<String>> exportStudentTemplate();
+public interface ExportService {
+    List<List<String>> exportStudentTemplate();
 
-    List<List<T>>  exportStudents();
+    List<List<String>>  exportStudents();
 
-    List<List<T>> exportStudents(List<String> strings);
+    List<List<String>> exportParameterStudents(String importName);
 }

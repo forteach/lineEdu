@@ -2,23 +2,33 @@ package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.schoolroll.domain.Family;
 import com.project.schoolroll.domain.excel.StudentExport;
 import com.project.schoolroll.repository.*;
+import com.project.schoolroll.repository.dto.FamilyExportDto;
 import com.project.schoolroll.repository.dto.StudentExportDto;
 import com.project.schoolroll.service.ExportService;
+import com.project.schoolroll.service.vo.FamilyExportBaseVo;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.schoolroll.domain.excel.Dic.EXPORT_EXCEL_PREFIX;
+import static com.project.schoolroll.domain.excel.Dic.getValueByKeys;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -37,15 +47,20 @@ public class ExportServiceImpl implements ExportService {
     private final StudentPeopleRepository studentPeopleRepository;
     private final FamilyRepository familyRepository;
     private final ViewStudentExportRepository viewStudentExportRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository, ViewStudentExportRepository viewStudentExportRepository,
-                             StudentPeopleRepository studentPeopleRepository, FamilyRepository familyRepository) {
+    public ExportServiceImpl(StudentExpandRepository studentExpandRepository, StudentRepository studentRepository,
+                             ViewStudentExportRepository viewStudentExportRepository,
+                             StudentPeopleRepository studentPeopleRepository,
+                             RedisTemplate<String, String> redisTemplate,
+                             FamilyRepository familyRepository) {
         this.studentExpandRepository = studentExpandRepository;
         this.studentRepository = studentRepository;
         this.studentPeopleRepository = studentPeopleRepository;
         this.familyRepository = familyRepository;
         this.viewStudentExportRepository = viewStudentExportRepository;
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -62,11 +77,18 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public List<List<String>> exportStudents() {
+        TimeInterval timer = DateUtil.timer();
         List<List<String>> list = studentRepository.findByIsValidatedEqualsDto()
                 .parallelStream().filter(Objects::nonNull)
                 .map(this::setStudentExport)
                 .collect(toList());
         list.add(0, setExportTemplate());
+        //花费毫秒数
+        log.debug("花费毫秒数 : [{}]", timer.interval());
+        //花费分钟数
+        log.debug("花费分钟数 : [{}]", timer.intervalMinute());
+        //返回花费时间，并重置开始时间
+        log.debug("返回花费时间,并重置开始时间 : [{}]", timer.intervalRestart());
         return list;
     }
 
@@ -82,16 +104,17 @@ public class ExportServiceImpl implements ExportService {
         return setListData(studentExport);
     }
 
-    private List<String> setListData(StudentExport studentExport){
+    private List<String> setListData(StudentExport studentExport) {
         Map<String, Object> map = BeanUtil.beanToMap(studentExport);
         return map.values().stream().map(o -> {
-            if (o == null){
+            if (o == null) {
                 return "";
-            }else {
+            } else {
                 return String.valueOf(o);
             }
         }).collect(toList());
     }
+
     private void setStudentPeopleData(StudentExportDto dto, StudentExport studentExport) {
         studentExport.setStudentName(dto.getStudentName());
         studentExport.setGender(dto.getGender());
@@ -214,10 +237,69 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public List<List<?>> exportStudents(List list) {
+    public List<List<String>> exportParameterStudents(String importName) {
+        TimeInterval timer = DateUtil.timer();
         //获取需要查询的字段
-        List studentList = studentRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
-        return null;
+        List<String> list = CollUtil.newArrayList();
+        //学生信息
+        viewStudentExportRepository.findAllByIsValidatedEqualsDto(TAKE_EFFECT_OPEN)
+                .parallelStream()
+                .filter(Objects::nonNull)
+                .forEach(dto -> {
+                    redisTemplate.opsForHash().putAll(dto.get("studentId").concat(EXPORT_EXCEL_PREFIX), dto);
+                    redisTemplate.expire(dto.get("studentId").concat(EXPORT_EXCEL_PREFIX), 2, TimeUnit.HOURS);
+                    list.add(dto.get("studentId"));
+                });
+        //扩展信息
+        studentExpandRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN).parallelStream()
+                .filter(Objects::nonNull)
+                .filter(dto -> StrUtil.isNotBlank(dto.getStudentId()))
+                .filter(dto -> StrUtil.isNotBlank(dto.getExpandName()) && StrUtil.isNotBlank(dto.getExpandValue()))
+                .forEach(dto -> {
+                    redisTemplate.opsForHash().putIfAbsent(dto.getStudentId()
+                                    .concat(EXPORT_EXCEL_PREFIX), dto.getExpandName(), dto.getExpandValue());
+                });
+        //家庭成员信息
+        familyRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN)
+                .parallelStream()
+                .filter(Objects::nonNull)
+                .forEach(dto -> {
+                    setFamilyRedis(dto);
+                });
+        //设置需要导出的字段
+        ArrayList list1 = new ArrayList<>(Arrays.asList(StrUtil.split(importName, ",")));
+        List<List<String>> listList = CollUtil.newArrayList();
+        listList.add(getValueByKeys(list1));
+        list.forEach(s -> {
+            List<String> list2 = redisTemplate.opsForHash().multiGet(s.concat(EXPORT_EXCEL_PREFIX), list1);
+            listList.add(list2);
+        });
+        //花费毫秒数
+        log.debug("花费毫秒数 : [{}]", timer.interval());
+        //花费分钟数
+        log.debug("花费分钟数 : [{}]", timer.intervalMinute());
+        //返回花费时间，并重置开始时间
+        log.debug("返回花费时间,并重置开始时间 : [{}]", timer.intervalRestart());
+        return listList;
+    }
+
+    private void setFamilyRedis(@NonNull FamilyExportDto dto) {
+        if (StrUtil.isNotBlank(dto.getStudentId())) {
+            FamilyExportBaseVo vo = new FamilyExportBaseVo();
+            vo.setFamily1Name(dto.getFamilyName());
+            vo.setFamily1Relationship(dto.getFamilyRelationship());
+            vo.setFamily1IsGuardian(dto.getFamilyIsGuardian());
+            vo.setFamily1Phone(dto.getFamilyPhone());
+            vo.setFamily1BirthDate(dto.getFamilyBirthDate());
+            vo.setFamily1CardType(dto.getFamilyCardType());
+            vo.setFamily1IDCard(dto.getFamilyIDCard());
+            vo.setFamily1Nation(dto.getFamilyNation());
+            vo.setFamily1PoliticalStatus(dto.getFamilyPoliticalStatus());
+            vo.setFamily1HealthCondition(dto.getFamilyHealthCondition());
+            vo.setFamily1CompanyOrganization(dto.getFamilyCompanyOrganization());
+            vo.setFamily1Position(dto.getFamilyPosition());
+            redisTemplate.opsForHash().putAll(dto.getStudentId().concat(EXPORT_EXCEL_PREFIX), BeanUtil.beanToMap(vo));
+        }
     }
 
     private List<String> setExportTemplate() {

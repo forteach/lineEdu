@@ -8,6 +8,7 @@ package com.project.schoolroll.repository.dto;
  * @description:
  */
 public interface StudentExpandExportDto {
+    public String getStudentId();
     /** 扩展字段名称*/
     public String getExpandName();
     /*× 扩展字段值*/

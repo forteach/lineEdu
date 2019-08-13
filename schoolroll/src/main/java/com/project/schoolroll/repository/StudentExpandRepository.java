@@ -58,5 +58,5 @@ public interface StudentExpandRepository extends JpaRepository<StudentExpand, St
 //    List<StudentExpand> findByIsValidatedEquals(String isValidated);
 
     @Transactional(readOnly = true)
-    List<StudentExpandExportDto> findByIsValidatedEquals(String isValidated);
+    List<StudentExpandExportDto> findAllByIsValidatedEquals(String isValidated);
 }
