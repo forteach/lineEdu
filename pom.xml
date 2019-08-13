@@ -24,6 +24,7 @@
         <module>information</module>
         <module>wechat</module>
         <module>flow</module>
+        <module>train</module>
     </modules>
 
     <parent>
