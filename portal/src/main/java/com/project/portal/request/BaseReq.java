@@ -23,8 +23,8 @@ public abstract class BaseReq implements Serializable {
     private String isValidated = "0";
 
 
-    @ApiModelProperty(value = "修改时间", name = "uTime", dataType = "date", notes = "修改的时间", hidden = true, example = "2018-12-05 04:56:45")
-    private String uTime;
+//    @ApiModelProperty(value = "修改时间", name = "uTime", dataType = "date", notes = "修改的时间", hidden = true, example = "2018-12-05 04:56:45")
+//    private String uTime;
 
     @ApiModelProperty(value = "创建时间", name = "cTime", dataType = "date", notes = "创建时间", hidden = true, example = "2018-12-05 04:56:45")
     private String cTime;
@@ -33,9 +33,12 @@ public abstract class BaseReq implements Serializable {
     @ApiModelProperty(value = "创建人", name = "cUser", dataType = "string", notes = "创建人ID", hidden = true, example = "df4sf4dsf4s34")
     private String cUser;
 
+    @ApiModelProperty(value = "机构中心ID", name = "cUser", dataType = "string", notes = "机构中心ID", hidden = true, example = "df4sf4dsf4s34")
+    private String centerId;
 
-    @ApiModelProperty(value = "修改人", name = "uUser", dataType = "string", notes = "修改人ID", hidden = true, example = "df4sf4dsf4s34")
-    private String uUser;
+
+//    @ApiModelProperty(value = "修改人", name = "uUser", dataType = "string", notes = "修改人ID", hidden = true, example = "df4sf4dsf4s34")
+//    private String uUser;
 
     @Override
     public String toString() {

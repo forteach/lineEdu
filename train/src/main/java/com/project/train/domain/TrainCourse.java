@@ -8,37 +8,39 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * 培训项目列表管理
+ * 培训项目课程字典管理
  */
 @Data
 @Entity
 @DynamicUpdate
 @DynamicInsert
-@org.hibernate.annotations.Table(appliesTo = "train_project", comment = "培训项目管理")
-@Table(name = "train_project")
+@org.hibernate.annotations.Table(appliesTo = "train_course", comment = "培训项目课程字典管理")
+@Table(name = "train_course")
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrainProject extends Entitys implements Serializable {
+public class TrainCourse extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @Column(name = "train_project_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目编号'")
-    private String trainProjectId;
+    @Column(name = "course_id", columnDefinition = "VARCHAR(40) COMMENT '培训课程编号'")
+    private String courseId;
 
-    @Column(name = "train_project_name", columnDefinition = "VARCHAR(60) COMMENT '培训项目名称'")
-    private String trainProjectName;
+    @Column(name = "course_name", columnDefinition = "VARCHAR(40) COMMENT '培训课程名称'")
+    private String courseName;
 
     @Column(name = "train_area_id", columnDefinition = "VARCHAR(60) COMMENT '培训项目领域'")
     private String trainAreaId;
 
-    public TrainProject(String trainProjectId, String trainProjectName, String trainAreaId,String centerId) {
-        this.trainProjectId = trainProjectId;
-        this.trainProjectName = trainProjectName;
+    public TrainCourse(String courseId, String courseName, String trainAreaId,String centerId) {
+        this.courseId = courseId;
+        this.courseName = courseName;
         this.trainAreaId = trainAreaId;
         super.centerAreaId=centerId;
     }

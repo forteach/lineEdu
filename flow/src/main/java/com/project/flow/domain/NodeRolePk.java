@@ -1,6 +1,8 @@
 package com.project.flow.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -12,6 +14,8 @@ import java.io.Serializable;
  * @version: V1.0
  * @date: 2018/11/7 10:18
  */
+
+
 @Data
 @Embeddable
 public class NodeRolePk implements Serializable {
