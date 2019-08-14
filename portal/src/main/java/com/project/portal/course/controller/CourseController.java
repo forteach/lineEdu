@@ -136,8 +136,8 @@ public class CourseController {
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
     public WebResult findMyCourse(@ApiParam(name = "CourseFindAllReq", value = "课程列表请求对象", required = true) @RequestBody CourseFindAllReq req, HttpServletRequest request) {
-        String userId = tokenService.getUserId(request.getHeader("token"));
         valideSort(req.getPage(), req.getSize());
+        String userId = tokenService.getUserId(request.getHeader("token"));
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findMyCourse(userId, page).stream()
                 .map((item) -> {

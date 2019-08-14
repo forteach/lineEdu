@@ -3,6 +3,7 @@ package com.project.course.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseEntity;
 import com.project.course.domain.CourseImages;
@@ -77,7 +78,7 @@ public class CourseServiceImpl implements CourseService {
             return courseRepository.save(course).getCourseId();
         }else {
             courseRepository.findById(course.getCourseId()).ifPresent(c -> {
-                BeanUtil.copyProperties(course, c);
+                UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
                 courseRepository.save(c);
             });

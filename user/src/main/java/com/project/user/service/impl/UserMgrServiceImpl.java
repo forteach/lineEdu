@@ -3,6 +3,7 @@ package com.project.user.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.base.util.UpdateUtil;
 import com.project.user.domain.SysUsers;
 import com.project.user.domain.UserRole;
 import com.project.user.repository.UserRepository;
@@ -58,7 +59,7 @@ public class UserMgrServiceImpl implements UserMgrService {
         Optional<SysUsers> usersOptional = userRepository.findById(user.getId());
         if (usersOptional.isPresent()) {
             SysUsers users = usersOptional.get();
-            BeanUtil.copyProperties(user, users);
+            UpdateUtil.copyProperties(user, users);
             return userRepository.save(users);
         }
         MyAssert.isNull(null, DefineCode.ERR0010, "要修改的用户不存在");
