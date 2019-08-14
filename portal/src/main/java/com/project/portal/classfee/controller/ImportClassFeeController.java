@@ -10,6 +10,7 @@ import com.project.classfee.service.ClassFeeInfoService;
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -48,7 +49,7 @@ public class ImportClassFeeController {
         this.excelImpService = excelImpService;
     }
 
-    //    @UserLoginToken
+    @UserLoginToken
     @ApiOperation(value = "导入课时费信息")
     @PostMapping(path = "/classFee")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
@@ -76,7 +77,7 @@ public class ImportClassFeeController {
         return WebResult.failException("导入的Excel文件数据错误");
     }
 
-    //    @UserLoginToken
+    @UserLoginToken
     @ApiOperation(value = "导入学生信息数据")
     @PostMapping(path = "/students")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)

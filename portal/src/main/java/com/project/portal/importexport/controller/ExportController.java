@@ -1,6 +1,5 @@
 package com.project.portal.importexport.controller;
 
-import cn.hutool.core.util.StrUtil;
 import com.project.portal.response.WebResult;
 import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.service.ExportService;
@@ -18,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @Auther: zhangyy
@@ -50,6 +47,7 @@ public class ExportController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "导出学生信息")
     @GetMapping(path = "/exportStudents")
     public WebResult exportStudents(HttpServletResponse res, HttpServletRequest req) throws IOException {
@@ -57,6 +55,7 @@ public class ExportController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "导出学生信息", notes = "到处参数拼接后面逗号分隔")
     @GetMapping(path = "/exportStudentsParameter")
     @ApiImplicitParam(name = "exportParameter", value = "导出学生数据参数", dataTypeClass = List.class, paramType = "query")

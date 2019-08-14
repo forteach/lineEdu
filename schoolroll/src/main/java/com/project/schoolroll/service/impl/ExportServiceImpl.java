@@ -16,15 +16,11 @@ import com.project.schoolroll.service.vo.FamilyExportBaseVo;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.schoolroll.domain.excel.Dic.EXPORT_EXCEL_PREFIX;
@@ -257,7 +253,7 @@ public class ExportServiceImpl implements ExportService {
                 .filter(dto -> StrUtil.isNotBlank(dto.getExpandName()) && StrUtil.isNotBlank(dto.getExpandValue()))
                 .forEach(dto -> {
                     redisTemplate.opsForHash().putIfAbsent(dto.getStudentId()
-                                    .concat(EXPORT_EXCEL_PREFIX), dto.getExpandName(), dto.getExpandValue());
+                            .concat(EXPORT_EXCEL_PREFIX), dto.getExpandName(), dto.getExpandValue());
                 });
         //家庭成员信息
         familyRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN)
