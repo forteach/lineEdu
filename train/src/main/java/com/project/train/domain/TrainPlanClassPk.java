@@ -14,9 +14,9 @@ import java.io.Serializable;
 @Embeddable
 public class TrainPlanClassPk implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Column(name = "tran_class_id", columnDefinition = "VARCHAR(40) COMMENT '培训班级编号'")
+    @Column(name = "tran_class_id", columnDefinition = "VARCHAR(40) COMMENT '培训班级编号'", insertable = false, updatable = false)
     private String tranClassId;
 
-    @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目计划编号'")
+    @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目计划编号'", insertable = false, updatable = false)
     private String pjPlanId;
 }
