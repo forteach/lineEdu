@@ -63,10 +63,10 @@ public class TrainClassStuService extends BaseMySqlService {
      * @param pageable
      * @return
      */
-    public Page<TrainClassStu> findPlanPage(String planId, Pageable pageable) {
+//    public Page<TrainClassStu> findPlanPage(String planId, Pageable pageable) {
 
-        return trainClassStuRepository.findByPjPlanIdOrderByCreateTime(planId,pageable);
-    }
+//        return trainClassStuRepository.findByPjPlanIdOrderByCreateTimeDesc(planId,pageable);
+//    }
 
 
     /**

@@ -66,7 +66,7 @@ public class ClassFileService extends BaseMySqlService {
      */
     public Page<ClassFile> findPlanPage(String centerAreaId,String classId, Pageable pageable) {
 
-        return classFileRepository.findAllByCenterAreaIdAndClassIdOrderByTrainStratDesc(centerAreaId,classId,pageable);
+        return classFileRepository.findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(centerAreaId,classId,pageable);
     }
 
 
@@ -78,7 +78,7 @@ public class ClassFileService extends BaseMySqlService {
      */
     public Page<ClassFile> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return classFileRepository.findAllByCenterAreaIdOrderByTrainStratDesc(centerAreaId,pageable);
+        return classFileRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId,pageable);
     }
 
 

@@ -4,6 +4,9 @@ import com.project.portal.request.BaseReq;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import javax.persistence.Column;
 
 
 /**
@@ -13,37 +16,43 @@ import lombok.Data;
  * @version: 1.0
  * @description:
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel(value = "培训项目计划添加修改")
 public class TrainProjectPlanSaveRequest extends BaseReq {
     /**
      * 项目id
      */
-    @ApiModelProperty(name = "trainProjectId", value = "项目计划id")
+    @ApiModelProperty(name = "pjPlanId", value = "项目计划id", dataType = "string")
     private String pjPlanId;
 
     /**
      * 项目领域
      */
-    @ApiModelProperty(name = "trainAreaId", value = "项目领域")
+    @ApiModelProperty(name = "trainAreaId", value = "项目领域", dataType = "string")
     private String trainAreaId;
 
     /**
      * 项目名称
      */
-    @ApiModelProperty(name = "trainProjectName", value = "报名开始时间")
+    @ApiModelProperty(name = "applyStart", value = "报名开始时间", dataType = "string")
     private String applyStart;
 
-    @ApiModelProperty(name = "trainProjectName", value = "报名结束时间")
+    @ApiModelProperty(name = "applyEnd", value = "报名结束时间", dataType = "string")
     private String applyEnd;
 
-    @ApiModelProperty(name = "trainProjectName", value = "计划开始执行时间")
-    private String trainStrat;
+    @ApiModelProperty(name = "trainStart", value = "计划开始执行时间", dataType = "string")
+    private String trainStart;
 
-    @ApiModelProperty(name = "trainProjectName", value = "计划执行结束时间")
+    @ApiModelProperty(name = "trainEnd", value = "计划执行结束时间", dataType = "string")
     private String trainEnd;
 
-    @ApiModelProperty(name = "trainProjectName", value = "计划负责人")
+    @ApiModelProperty(name = "trainAdmin", value = "计划负责人", dataType = "string")
     private String trainAdmin;
 
+    @ApiModelProperty(name = "trainProjectId", value = "培训项目编号", dataType = "string")
+    private String trainProjectId;
+
+    @ApiModelProperty(name = "trainProjectName", value = "培训项目名称", dataType = "string")
+    private String trainProjectName;
 }

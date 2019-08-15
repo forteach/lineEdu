@@ -68,7 +68,7 @@ public class FinanceDetailFileService extends BaseMySqlService {
      */
     public Page<FinanceDetailFile> findPlanPage(String centerAreaId,String planId, Pageable pageable) {
 
-        return financeDetailFileRepository.findAllByCenterAreaIdAndPlanIdOrderByTrainStratDesc(centerAreaId,planId,pageable);
+        return financeDetailFileRepository.findAllByCenterAreaIdAndPlanIdOrderByCreateTimeDesc(centerAreaId,planId,pageable);
     }
 
 
@@ -80,7 +80,7 @@ public class FinanceDetailFileService extends BaseMySqlService {
      */
     public Page<FinanceDetailFile> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return financeDetailFileRepository.findAllByCenterAreaIdOrderByTrainStratDesc(centerAreaId,pageable);
+        return financeDetailFileRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId,pageable);
     }
 
 

@@ -69,7 +69,7 @@ public class TrainPlanService extends BaseMySqlService {
         String fromDay=DateUtil.formatDate(DateUtil.offsetDay(new Date(),agoDay));
         //当前日期
         String toDay=DateUtil.formatDate(DateUtil.date());
-       return trainProjectPlanRepository.findAllByCenterAreaIdAndTrainStratBetweenOrderByTrainStratDesc(centerAreaId,fromDay,toDay,pageable);
+       return trainProjectPlanRepository.findAllByCenterAreaIdAndTrainStartBetweenOrderByTrainStartDesc(centerAreaId,fromDay,toDay,pageable);
     }
 
     /**
@@ -80,7 +80,7 @@ public class TrainPlanService extends BaseMySqlService {
      */
     public Page<TrainProjectPlan> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return trainProjectPlanRepository.findAllByCenterAreaIdOrderByTrainStratDesc(centerAreaId,pageable);
+        return trainProjectPlanRepository.findAllByCenterAreaIdOrderByTrainStartDesc(centerAreaId,pageable);
     }
 
     /**

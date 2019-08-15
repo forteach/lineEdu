@@ -16,8 +16,8 @@ import org.springframework.stereotype.Repository;
 public interface FinanceDetailFileRepository extends JpaRepository<FinanceDetailFile, String>, JpaSpecificationExecutor<FinanceDetailFile> {
 
     //项目计划的文件列表
-    public Page<FinanceDetailFile> findAllByCenterAreaIdAndPlanIdOrderByTrainStratDesc(String centerId,String planId, Pageable pageable);
+    public Page<FinanceDetailFile> findAllByCenterAreaIdAndPlanIdOrderByCreateTimeDesc(String centerId,String planId, Pageable pageable);
 
     //所有的文件列表
-    public Page<FinanceDetailFile> findAllByCenterAreaIdOrderByTrainStratDesc(String centerId, Pageable pageable);
+    public Page<FinanceDetailFile> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId, Pageable pageable);
 }

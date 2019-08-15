@@ -18,8 +18,8 @@ import java.util.List;
 public interface FinanceDetailRepository extends JpaRepository<FinanceDetail, String>, JpaSpecificationExecutor<FinanceDetail> {
 
     //按中心编号和计划执行开始日期查询
-    public Page<FinanceDetail> findAllByCenterAreaIdAndTrainStratBetweenOrderByTrainStratDesc(String centerId, String form, String to, Pageable pageable);
+    public Page<FinanceDetail> findAllByCenterAreaIdAndCreateTimeBetweenOrderByCreateTimeDesc(String centerId, String form, String to, Pageable pageable);
 
     //所有的项目计划列表
-    public Page<FinanceDetail>  findAllByCenterAreaIdOrderByTrainStratDesc(String centerId,Pageable pageable);
+    public Page<FinanceDetail>  findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId,Pageable pageable);
 }

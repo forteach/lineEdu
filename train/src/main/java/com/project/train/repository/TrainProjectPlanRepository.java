@@ -16,11 +16,11 @@ import java.util.List;
 public interface TrainProjectPlanRepository extends JpaRepository<TrainProjectPlan, String>, JpaSpecificationExecutor<TrainProjectPlan> {
 
     //按中心编号和计划执行开始日期查询
-    public Page<TrainProjectPlan> findAllByCenterAreaIdAndTrainStratBetweenOrderByTrainStratDesc(String centerId, String form, String to, Pageable pageable);
+    public Page<TrainProjectPlan> findAllByCenterAreaIdAndTrainStartBetweenOrderByTrainStartDesc(String centerId, String form, String to, Pageable pageable);
 
     //所有的项目计划列表
     public List<TrainProjectPlan>  findAllByCenterAreaId(String centerId);
 
     //所有的项目计划列表
-    public Page<TrainProjectPlan>  findAllByCenterAreaIdOrderByTrainStratDesc(String centerId,Pageable pageable);
+    public Page<TrainProjectPlan>  findAllByCenterAreaIdOrderByTrainStartDesc(String centerId,Pageable pageable);
 }

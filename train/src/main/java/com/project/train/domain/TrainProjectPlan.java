@@ -48,7 +48,7 @@ public class TrainProjectPlan extends Entitys implements Serializable {
     private String applyEnd;
 
     @Column(name = "train_start", columnDefinition = "VARCHAR(60) COMMENT '计划开始执行时间'")
-    private String trainStrat;
+    private String trainStart;
 
     @Column(name = "train_end", columnDefinition = "VARCHAR(60) COMMENT '计划执行结束时间'")
     private String trainEnd;
@@ -56,14 +56,14 @@ public class TrainProjectPlan extends Entitys implements Serializable {
     @Column(name = "train_admin", columnDefinition = "VARCHAR(60) COMMENT '计划负责人'")
     private String trainAdmin;
 
-    public TrainProjectPlan(String pjPlanId, String trainProjectId, String trainProjectName, String trainAreaId, String applyStart, String applyEnd, String trainStrat, String trainEnd, String trainAdmin,String centerId) {
+    public TrainProjectPlan(String pjPlanId, String trainProjectId, String trainProjectName, String trainAreaId, String applyStart, String applyEnd, String trainStart, String trainEnd, String trainAdmin,String centerId) {
         this.pjPlanId = pjPlanId;
         this.trainProjectId = trainProjectId;
         this.trainProjectName = trainProjectName;
         this.trainAreaId = trainAreaId;
         this.applyStart = applyStart;
         this.applyEnd = applyEnd;
-        this.trainStrat = trainStrat;
+        this.trainStart = trainStart;
         this.trainEnd = trainEnd;
         this.trainAdmin = trainAdmin;
         super.centerAreaId=centerId;

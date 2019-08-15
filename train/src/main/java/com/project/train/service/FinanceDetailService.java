@@ -69,7 +69,7 @@ public class FinanceDetailService extends BaseMySqlService {
         String fromDay= DateUtil.formatDate(DateUtil.offsetDay(new Date(),agoDay));
         //当前日期
         String toDay=DateUtil.formatDate(DateUtil.date());
-        return financeDetailRepository.findAllByCenterAreaIdAndTrainStratBetweenOrderByTrainStratDesc(centerAreaId,fromDay,toDay,pageable);
+        return financeDetailRepository.findAllByCenterAreaIdAndCreateTimeBetweenOrderByCreateTimeDesc(centerAreaId,fromDay,toDay,pageable);
     }
 
     /**
@@ -80,7 +80,7 @@ public class FinanceDetailService extends BaseMySqlService {
      */
     public Page<FinanceDetail> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return financeDetailRepository.findAllByCenterAreaIdOrderByTrainStratDesc(centerAreaId,pageable);
+        return financeDetailRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId,pageable);
     }
 
 

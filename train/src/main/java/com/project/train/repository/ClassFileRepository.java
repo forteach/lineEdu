@@ -16,9 +16,9 @@ import org.springframework.stereotype.Repository;
 public interface ClassFileRepository extends JpaRepository<ClassFile, String>, JpaSpecificationExecutor<ClassFile> {
 
     //所有的文件列表
-    public Page<ClassFile> findAllByCenterAreaIdOrderByTrainStratDesc(String centerId, Pageable pageable);
+    public Page<ClassFile> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId, Pageable pageable);
 
     //班级所有的文件列表
-    public Page<ClassFile> findAllByCenterAreaIdAndClassIdOrderByTrainStratDesc(String centerId,String classId, Pageable pageable);
+    public Page<ClassFile> findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(String centerId,String classId, Pageable pageable);
 
 }
