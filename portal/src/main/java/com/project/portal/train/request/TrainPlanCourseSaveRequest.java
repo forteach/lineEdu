@@ -4,6 +4,7 @@ import com.project.portal.request.BaseReq;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -13,6 +14,7 @@ import lombok.Data;
  * @version: 1.0
  * @description: 培训计划课程
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel(value = "培训计划课程添加修改")
 public class TrainPlanCourseSaveRequest extends BaseReq {
@@ -37,9 +39,4 @@ public class TrainPlanCourseSaveRequest extends BaseReq {
      */
     @ApiModelProperty(name = "trainAreaId", value = "项目领域")
     private String trainAreaId;
-
-
-
-
-
 }

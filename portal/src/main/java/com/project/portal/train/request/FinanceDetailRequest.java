@@ -4,6 +4,7 @@ import com.project.portal.request.BaseReq;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 
@@ -15,6 +16,7 @@ import javax.persistence.Column;
  * @version: 1.0
  * @description: 财务明细
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel(value = "财务明细添加修改")
 public class FinanceDetailRequest extends BaseReq {

@@ -4,6 +4,7 @@ import com.project.portal.request.BaseReq;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -13,6 +14,7 @@ import lombok.Data;
  * @version: 1.0
  * @description: 财务类型
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel(value = "财务类型添加修改")
 public class FinanceTypeSaveRequest extends BaseReq {

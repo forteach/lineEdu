@@ -64,7 +64,7 @@ public class ClassFileService extends BaseMySqlService {
      * @param pageable
      * @return
      */
-    public Page<ClassFile> findPlanPage(String centerAreaId,String classId, Pageable pageable) {
+    public Page<ClassFile> findAllPage(String centerAreaId,String classId, Pageable pageable) {
 
         return classFileRepository.findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(centerAreaId,classId,pageable);
     }

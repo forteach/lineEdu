@@ -1,12 +1,27 @@
 package com.project.portal.train.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
+import com.project.portal.response.WebResult;
+import com.project.portal.train.request.TrainPlanCourseSaveUpateRequest;
+import com.project.train.domain.TrainPlanCourse;
 import com.project.train.service.TrainPlanCourseService;
-import com.project.train.service.TrainPlanService;
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -24,5 +39,34 @@ public class TrainPlanCourseController {
 
     public TrainPlanCourseController(TrainPlanCourseService trainPlanCourseService) {
         this.trainPlanCourseService = trainPlanCourseService;
+    }
+
+    @ApiOperation(value = "保存培训项目修改")
+    @PostMapping("/saveOrUpdate")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "list", value = "培训计划集合", dataTypeClass = List.class, paramType = "form"),
+            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", paramType = "form")
+    })
+    public WebResult saveOrUpdate(@RequestBody TrainPlanCourseSaveUpateRequest request) {
+        List<TrainPlanCourse> list = request.getList()
+                .stream()
+                .map(vo -> {
+                    TrainPlanCourse trainPlanCourse = new TrainPlanCourse();
+                    BeanUtil.copyProperties(vo, trainPlanCourse);
+                    return trainPlanCourse;
+                }).collect(toList());
+        if (StrUtil.isNotBlank(request.getPlanId())) {
+            return WebResult.okResult(trainPlanCourseService.saveAll(list));
+        } else {
+            return WebResult.okResult(trainPlanCourseService.update(request.getPlanId(), list));
+        }
+    }
+
+    @ApiOperation(value = "项目计划课程列表")
+    @PostMapping(path = "/findById")
+    @ApiImplicitParam(name = "planId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
+    public WebResult findById(@RequestBody String planId) {
+        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
+        return WebResult.okResult(trainPlanCourseService.findAll(JSONObject.parseObject(planId).getString("planId")));
     }
 }

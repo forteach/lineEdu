@@ -67,7 +67,6 @@ public class FinanceDetailFileService extends BaseMySqlService {
      * @return
      */
     public Page<FinanceDetailFile> findPlanPage(String centerAreaId,String planId, Pageable pageable) {
-
         return financeDetailFileRepository.findAllByCenterAreaIdAndPlanIdOrderByCreateTimeDesc(centerAreaId,planId,pageable);
     }
 

@@ -82,6 +82,4 @@ public class FinanceDetailService extends BaseMySqlService {
 
         return financeDetailRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId,pageable);
     }
-
-
 }
