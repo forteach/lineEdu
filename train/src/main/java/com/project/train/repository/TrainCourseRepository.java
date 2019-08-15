@@ -1,10 +1,11 @@
 package com.project.train.repository;
 
-
 import com.project.train.domain.TrainCourse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 培训项目课程管理
@@ -12,5 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository("trainCourseRepository")
 public interface TrainCourseRepository extends JpaRepository<TrainCourse, String>, JpaSpecificationExecutor<TrainCourse> {
 
-
+    //所有的项目计划列表
+    public List<TrainCourse> findAllByCenterAreaId(String centerId);
 }
