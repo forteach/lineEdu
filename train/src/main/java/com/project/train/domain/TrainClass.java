@@ -35,6 +35,9 @@ public class TrainClass extends Entitys implements Serializable {
     @Column(name = "train_class_name", columnDefinition = "VARCHAR(60) COMMENT '培训班级名称'")
     private String trainClassName;
 
+    @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目计划编号'", insertable = false, updatable = false)
+    private String pjPlanId;
+
     @Column(name = "class_admin", columnDefinition = "VARCHAR(60) COMMENT '培训班级管理员'")
     private String classAdmin;
 
@@ -44,12 +47,13 @@ public class TrainClass extends Entitys implements Serializable {
     @Column(name = "line_noline", columnDefinition = "VARCHAR(60) COMMENT '线上线下'")
     private String lineNoline;
 
-    public TrainClass(String trainClassId, String trainClassName, String classAdmin, String classAdminTel, String lineNoline, String centerId) {
+    public TrainClass(String trainClassId, String trainClassName,String pjPlanId, String classAdmin, String classAdminTel, String lineNoline, String centerId) {
         this.trainClassId = trainClassId;
         this.trainClassName = trainClassName;
         this.classAdmin = classAdmin;
         this.classAdminTel = classAdminTel;
         this.lineNoline = lineNoline;
+        this.pjPlanId=pjPlanId;
         super.centerAreaId=centerId;
     }
 

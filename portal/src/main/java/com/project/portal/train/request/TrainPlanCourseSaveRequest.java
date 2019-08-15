@@ -11,25 +11,35 @@ import lombok.Data;
  * @email: zhang10092009@hotmail.com
  * @date: 19-7-8 09:58
  * @version: 1.0
- * @description:
+ * @description: 培训计划课程
  */
 @Data
-@ApiModel(value = "培训项目添加修改")
-public class TrainProjectSaveRequest extends BaseReq {
+@ApiModel(value = "培训计划课程添加修改")
+public class TrainPlanCourseSaveRequest extends BaseReq {
     /**
      * 项目id
      */
-    @ApiModelProperty(name = "trainProjectId", value = "项目id")
-    private String trainProjectId;
+    @ApiModelProperty(name = "trainProjectId", value = "项目计划id")
+    private String pjPlanId;
+
+    @ApiModelProperty(name = "courseId", value = "课程编号")
+    private String courseId;
+
     /**
      * 项目名称
      */
-    @ApiModelProperty(name = "trainProjectName", value = "项目名称")
-    private String trainProjectName;
+    @ApiModelProperty(name = "courseName", value = "课程名称")
+    private String courseName;
+
+
     /**
      * 项目领域
      */
     @ApiModelProperty(name = "trainAreaId", value = "项目领域")
     private String trainAreaId;
+
+
+
+
 
 }
