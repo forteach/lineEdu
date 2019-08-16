@@ -53,4 +53,7 @@ public class TrainProjectPlanSaveRequest extends BaseReq {
 
     @ApiModelProperty(name = "trainProjectName", value = "培训项目名称", dataType = "string")
     private String trainProjectName;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

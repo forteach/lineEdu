@@ -52,6 +52,7 @@ public class TrainClassStuController {
             @ApiImplicitParam(name = "jobTitle", value = "单位职务", dataType = "string"),
             @ApiImplicitParam(name = "stuIdCard", value = "身份证号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuPhone", value = "联系方式", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainClassStuSaveUpdateRequest request) {
         TrainClassStu trainClassStu = new TrainClassStu();

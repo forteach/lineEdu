@@ -24,4 +24,7 @@ public class TrainPlanCourseSaveUpateRequest implements Serializable {
 
     @ApiModelProperty(name = "planId", value = "培训项目计划编号", dataType = "string")
     private String planId;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

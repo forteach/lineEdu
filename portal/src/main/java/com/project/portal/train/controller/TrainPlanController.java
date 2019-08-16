@@ -49,7 +49,8 @@ public class TrainPlanController {
             @ApiImplicitParam(name = "trainEnd", value = "计划执行结束时间", dataType = "string"),
             @ApiImplicitParam(name = "trainAdmin", value = "计划负责人", dataType = "string"),
             @ApiImplicitParam(name = "trainProjectId", value = "培训项目编号", dataType = "string"),
-            @ApiImplicitParam(name = "trainProjectName", value = "项目名称", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "trainProjectName", value = "项目名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainProjectPlanSaveRequest request) {
         TrainProjectPlan trainProjectPlan = new TrainProjectPlan();
@@ -81,7 +82,7 @@ public class TrainPlanController {
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "int"),
+            @ApiImplicitParam(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "string"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
     })
@@ -92,7 +93,7 @@ public class TrainPlanController {
         if (StrUtil.isBlank(String.valueOf(request.getAgoDay()))) {
             return WebResult.okResult(trainPlanService.findAllPage(request.getCenterAreaId(), pageRequest));
         } else {
-            return WebResult.okResult(trainPlanService.findAllPage(request.getCenterAreaId(), request.getAgoDay(), pageRequest));
+            return WebResult.okResult(trainPlanService.findAllPage(request.getCenterAreaId(), Integer.parseInt(request.getAgoDay()), pageRequest));
         }
     }
 }

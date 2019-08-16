@@ -52,7 +52,8 @@ public class TrainPlanCourseController {
             @ApiImplicitParam(name = "teacherName", value = "培训课程教师名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "credit", value = "培训课程学分", dataType = "string", paramType = "form"),
 //            @ApiImplicitParam(name = "list", value = "培训计划集合", dataTypeClass = List.class, paramType = "form"),
-            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainPlanCourseSaveUpateRequest request) {
         List<TrainPlanCourse> list = request.getList()

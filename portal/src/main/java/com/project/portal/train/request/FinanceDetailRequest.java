@@ -21,7 +21,6 @@ import javax.persistence.Column;
 @ApiModel(value = "财务明细添加修改")
 public class FinanceDetailRequest extends BaseReq {
 
-
     @ApiModelProperty(name = "detailId", value = "培训财务流水编号")
     private String detailId;
 

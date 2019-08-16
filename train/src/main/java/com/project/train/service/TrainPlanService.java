@@ -66,10 +66,9 @@ public class TrainPlanService extends BaseMySqlService {
      */
     public Page<TrainProjectPlan> findAllPage(String centerAreaId,int agoDay, Pageable pageable) {
         //提前天数的日期
-        String fromDay=DateUtil.formatDate(DateUtil.offsetDay(new Date(),agoDay));
+        String fromDay=DateUtil.formatDate(DateUtil.offsetDay(new Date(),-agoDay));
         //当前日期
-        String toDay=DateUtil.formatDate(DateUtil.date());
-       return trainProjectPlanRepository.findAllByCenterAreaIdAndTrainStartBetweenOrderByTrainStartDesc(centerAreaId,fromDay,toDay,pageable);
+       return trainProjectPlanRepository.findAllByCenterAreaIdAndTrainStartAfterOrderByTrainStartDesc(centerAreaId,fromDay,pageable);
     }
 
     /**

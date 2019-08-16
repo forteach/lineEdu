@@ -29,4 +29,7 @@ public class FinanceDetailFileSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "planId", value = "财务凭证计划编号")
     private String planId;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

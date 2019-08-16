@@ -49,7 +49,8 @@ public class FinanceDetailFileController {
             @ApiImplicitParam(name = "fileId", value = "财务凭证资料编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "财务凭证资料名称", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "财务凭证资料URL", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "planId", value = "财务凭证计划编号", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "planId", value = "财务凭证计划编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody FinanceDetailFileSaveUpdateRequest request) {
         FinanceDetailFile financeDetailFile = new FinanceDetailFile();

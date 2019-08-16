@@ -34,7 +34,7 @@ import static com.project.portal.request.ValideSortVo.valideSort;
  * @description:
  */
 @RestController
-@Api(value = "培训项目班级管理", tags = {"培训项目班级管理"})
+@Api(value = " 培训财务类型字典管理", tags = {" 培训财务类型字典管理"})
 @RequestMapping(path = "/financeType", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class FinanceTypeController {
     private final FinanceTypeService financeTypeService;
@@ -42,11 +42,12 @@ public class FinanceTypeController {
     public FinanceTypeController(FinanceTypeService financeTypeService) {
         this.financeTypeService = financeTypeService;
     }
-    @ApiOperation(value = "培训项目班级保存修改")
+    @ApiOperation(value = " 培训财务类型字典保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "financeTypeId", value = "培训财务类型编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "financeTypeName", value = "培训财务类型名称", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "financeTypeName", value = "培训财务类型名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody FinanceTypeSaveUpdateRequest request) {
         FinanceType financeType = new FinanceType();
@@ -58,7 +59,7 @@ public class FinanceTypeController {
         }
     }
 
-    @ApiOperation(value = "培训项目班级列表")
+    @ApiOperation(value = "财务类型字典列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query")
@@ -68,7 +69,7 @@ public class FinanceTypeController {
         return WebResult.okResult(financeTypeService.findAll(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
     }
 
-    @ApiOperation(value = "培训项目班级管理")
+    @ApiOperation(value = "财务类型字典管理")
     @PostMapping(path = "/findById")
     @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
     public WebResult findById(@RequestBody String planId) {

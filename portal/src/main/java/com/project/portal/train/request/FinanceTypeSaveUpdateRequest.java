@@ -22,4 +22,7 @@ public class FinanceTypeSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "financeTypeName", value = "培训财务类型名称", dataType = "string")
     private String financeTypeName;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

@@ -50,7 +50,8 @@ public class ClassFileController {
             @ApiImplicitParam(name = "fileId", value = "培训资料编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "培训资料名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "培训资料URL", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "classId", value = "培训班级编号", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "classId", value = "培训班级编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody ClassFileSaveUpdateRequest request) {
         ClassFile classFile = new ClassFile();

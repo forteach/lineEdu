@@ -47,7 +47,8 @@ public class TrainCourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "培训课程编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseName", value = "培训课程名称", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "trainAreaId", value = "培训项目领域", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "trainAreaId", value = "培训项目领域", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainCourseSaveUpdateRequest request) {
         TrainCourse trainCourse = new TrainCourse();

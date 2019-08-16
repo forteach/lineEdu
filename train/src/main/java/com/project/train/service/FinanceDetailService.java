@@ -66,10 +66,9 @@ public class FinanceDetailService extends BaseMySqlService {
      */
     public Page<FinanceDetail> findAllPage(String centerAreaId, int agoDay, Pageable pageable) {
         //提前天数的日期
-        String fromDay= DateUtil.formatDate(DateUtil.offsetDay(new Date(),agoDay));
+        String fromDay= DateUtil.formatDate(DateUtil.offsetDay(new Date(),-agoDay));
         //当前日期
-        String toDay=DateUtil.formatDate(DateUtil.date());
-        return financeDetailRepository.findAllByCenterAreaIdAndCreateTimeBetweenOrderByCreateTimeDesc(centerAreaId,fromDay,toDay,pageable);
+        return financeDetailRepository.findAllByCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(centerAreaId,fromDay,pageable);
     }
 
     /**

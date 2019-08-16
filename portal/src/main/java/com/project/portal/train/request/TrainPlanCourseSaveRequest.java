@@ -39,4 +39,7 @@ public class TrainPlanCourseSaveRequest extends BaseReq {
      */
     @ApiModelProperty(name = "trainAreaId", value = "项目领域")
     private String trainAreaId;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

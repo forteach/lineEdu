@@ -18,7 +18,7 @@ public interface TrainProjectPlanRepository extends JpaRepository<TrainProjectPl
     /**
      * 按中心编号和计划执行开始日期查询
      */
-    public Page<TrainProjectPlan> findAllByCenterAreaIdAndTrainStartBetweenOrderByTrainStartDesc(String centerId, String form, String to, Pageable pageable);
+    public Page<TrainProjectPlan> findAllByCenterAreaIdAndTrainStartAfterOrderByTrainStartDesc(String centerId, String form, Pageable pageable);
 
     /**
      * 所有的项目计划列表

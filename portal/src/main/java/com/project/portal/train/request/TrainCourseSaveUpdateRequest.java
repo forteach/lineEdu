@@ -25,4 +25,7 @@ public class TrainCourseSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "trainAreaId", value = "培训项目领域", dataType = "string")
     private String trainAreaId;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

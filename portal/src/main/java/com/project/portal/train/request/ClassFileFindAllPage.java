@@ -25,5 +25,4 @@ public class ClassFileFindAllPage extends SortVo implements Serializable {
 
     @ApiModelProperty(name = "classId", value = "班级id", dataType = "string")
     private String classId;
-
 }

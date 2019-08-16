@@ -43,4 +43,6 @@ public class FinanceTypeSaveRequest extends BaseReq {
     @ApiModelProperty(name = "lineOnLine", value = "线上线下")
     private String lineOnLine;
 
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

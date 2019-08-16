@@ -29,4 +29,7 @@ public class ClassFileSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "classId", value = "培训班级编号", dataType = "string")
     private String classId;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

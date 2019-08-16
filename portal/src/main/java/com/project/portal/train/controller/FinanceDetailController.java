@@ -58,7 +58,8 @@ public class FinanceDetailController {
             @ApiImplicitParam(name = "money", value = "金额", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "batches", value = "账目批次", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "createYear", value = "创建年份", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "createMonth", value = "培训财务类型Id", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "createMonth", value = "培训财务类型Id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody FinanceDetailSaveUpdateRequest request) {
         FinanceDetail financeDetail = new FinanceDetail();
@@ -73,7 +74,7 @@ public class FinanceDetailController {
     @ApiOperation(value = "培训财务明细列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "int"),
+            @ApiImplicitParam(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "string"),
             @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
@@ -83,8 +84,7 @@ public class FinanceDetailController {
         MyAssert.isNull(request.getCenterAreaId(), DefineCode.ERR0010, "归属的学习中心编号不为空");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (StrUtil.isNotBlank(String.valueOf(request.getAgoDay()))) {
-            return WebResult.okResult(financeDetailService
-                    .findAllPage(request.getCenterAreaId(), request.getAgoDay(), pageRequest));
+            return WebResult.okResult(financeDetailService.findAllPage(request.getCenterAreaId(), Integer.valueOf(request.getAgoDay()), pageRequest));
         }else {
             return WebResult.okResult(financeDetailService.findAllPage(request.getCenterAreaId(), pageRequest));
         }
