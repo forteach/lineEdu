@@ -24,12 +24,12 @@ public class TrainPlanCourseVo implements Serializable {
     @ApiModelProperty(name = "pjPlanId", value = "培训项目计划编号", dataType = "string")
     private String pjPlanId;
 
-    @ApiModelProperty(name = "courseName", value = "培训课程名称")
+    @ApiModelProperty(name = "courseName", value = "培训课程名称", dataType = "string")
     private String courseName;
 
-    @ApiModelProperty(name = "teacherName", value = "培训课程教师名称")
+    @ApiModelProperty(name = "teacherName", value = "培训课程教师名称", dataType = "string")
     private String teacherName;
 
-    @ApiModelProperty(name = "credit", value = "培训课程学分")
+    @ApiModelProperty(name = "credit", value = "培训课程学分", dataType = "string")
     private String credit;
 }

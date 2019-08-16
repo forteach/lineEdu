@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainPlanCourseSaveUpateRequest;
+import com.project.portal.train.vo.TrainPlanCourseVo;
 import com.project.train.domain.TrainPlanCourse;
 import com.project.train.service.TrainPlanCourseService;
 import io.swagger.annotations.Api;
@@ -44,7 +45,13 @@ public class TrainPlanCourseController {
     @ApiOperation(value = "保存培训项目修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "list", value = "培训计划集合", dataTypeClass = List.class, paramType = "form"),
+            @ApiImplicitParam(name = "list", value = "培训计划集合", dataTypeClass = TrainPlanCourseVo.class, paramType = "form"),
+            @ApiImplicitParam(name = "courseId", value = "培训课程编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "courseName", value = "培训课程名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "teacherName", value = "培训课程教师名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "credit", value = "培训课程学分", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "list", value = "培训计划集合", dataTypeClass = List.class, paramType = "form"),
             @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainPlanCourseSaveUpateRequest request) {
