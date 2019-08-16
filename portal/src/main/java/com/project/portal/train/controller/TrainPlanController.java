@@ -54,7 +54,7 @@ public class TrainPlanController {
     public WebResult saveOrUpdate(@RequestBody TrainProjectPlanSaveRequest request) {
         TrainProjectPlan trainProjectPlan = new TrainProjectPlan();
         BeanUtil.copyProperties(request, trainProjectPlan);
-        if (StrUtil.isNotBlank(request.getPjPlanId())) {
+        if (StrUtil.isBlank(request.getPjPlanId())) {
             return WebResult.okResult(trainPlanService.save(trainProjectPlan));
         } else {
             return WebResult.okResult(trainPlanService.update(trainProjectPlan));
@@ -89,7 +89,7 @@ public class TrainPlanController {
         valideSort(request.getPage(), request.getPage());
         MyAssert.isNull(request.getCenterAreaId(), DefineCode.ERR0010, "学习中心编号id不为空");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        if (StrUtil.isNotBlank(String.valueOf(request.getAgoDay()))) {
+        if (StrUtil.isBlank(String.valueOf(request.getAgoDay()))) {
             return WebResult.okResult(trainPlanService.findAllPage(request.getCenterAreaId(), pageRequest));
         } else {
             return WebResult.okResult(trainPlanService.findAllPage(request.getCenterAreaId(), request.getAgoDay(), pageRequest));

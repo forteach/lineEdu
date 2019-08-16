@@ -19,34 +19,33 @@ import lombok.EqualsAndHashCode;
 @ApiModel(value = "培训班级学员添加修改")
 public class TrainClassStuSaveRequest extends BaseReq {
 
-    @ApiModelProperty(name = "trainProjectId", value = "培训班级学生编号")
+    @ApiModelProperty(name = "trainStuId", value = "培训班级学生编号")
     private String trainStuId;
 
-    @ApiModelProperty(name = "trainProjectId", value = "培训项目班级编号")
+    @ApiModelProperty(name = "trainClassId", value = "培训项目班级编号")
     private String trainClassId;
 
-    @ApiModelProperty(name = "trainProjectId", value = "培训班级名称")
+    @ApiModelProperty(name = "trainClassName", value = "培训班级名称")
     private String trainClassName;
 
 //    @ApiModelProperty(name = "trainProjectId", value = "系统用户编号")
 //    private String userId;
 
-    @ApiModelProperty(name = "trainProjectId", value = "性别")
+    @ApiModelProperty(name = "gender", value = "性别")
     private String gender;
 
-    @ApiModelProperty(name = "trainProjectId", value = "姓名")
+    @ApiModelProperty(name = "stuName", value = "姓名")
     private String stuName;
 
-    @ApiModelProperty(name = "trainProjectId", value = "民族")
+    @ApiModelProperty(name = "marriage", value = "民族")
     private String marriage;
 
-    @ApiModelProperty(name = "trainProjectId", value = "单位职务")
+    @ApiModelProperty(name = "jobTitle", value = "单位职务")
     private String jobTitle;
 
-    @ApiModelProperty(name = "trainProjectId", value = "身份证号")
+    @ApiModelProperty(name = "stuIdCard", value = "身份证号")
     private String stuIdCard;
 
-    @ApiModelProperty(name = "trainProjectId", value = "联系方式")
+    @ApiModelProperty(name = "stuPhone", value = "联系方式")
     private String stuPhone;
-
 }

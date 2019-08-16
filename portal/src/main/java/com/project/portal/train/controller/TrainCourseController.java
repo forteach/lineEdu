@@ -52,7 +52,7 @@ public class TrainCourseController {
     public WebResult saveOrUpdate(@RequestBody TrainCourseSaveUpdateRequest request) {
         TrainCourse trainCourse = new TrainCourse();
         BeanUtil.copyProperties(request, trainCourse);
-        if (StrUtil.isNotBlank(request.getCourseId())) {
+        if (StrUtil.isBlank(request.getCourseId())) {
             return WebResult.okResult(trainCourseService.save(trainCourse));
         } else {
             return WebResult.okResult(trainCourseService.update(trainCourse));

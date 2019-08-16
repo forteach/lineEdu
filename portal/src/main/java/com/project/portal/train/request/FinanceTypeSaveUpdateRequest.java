@@ -1,5 +1,6 @@
 package com.project.portal.train.request;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @Description:
  */
 @Data
+@ApiModel(value = "培训中心分页查询财务")
 public class FinanceTypeSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "financeTypeId", value = "培训财务类型编号", dataType = "string")

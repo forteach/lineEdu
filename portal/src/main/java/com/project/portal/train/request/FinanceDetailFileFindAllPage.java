@@ -1,6 +1,7 @@
 package com.project.portal.train.request;
 
 import com.project.portal.request.SortVo;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "培训分页查询财务文件信息")
 public class FinanceDetailFileFindAllPage extends SortVo implements Serializable {
 
     @ApiModelProperty(name = "planId", value = "培训项目计划编号", dataType = "string", required = true)

@@ -1,7 +1,7 @@
 package com.project.portal.train.request;
 
 import com.project.portal.train.vo.TrainPlanCourseVo;
-import com.project.train.domain.TrainPlanCourse;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,6 +16,7 @@ import java.util.List;
  * @Description:
  */
 @Data
+@ApiModel(value = "培训计划课程修改保存对象")
 public class TrainPlanCourseSaveUpateRequest implements Serializable {
 
     @ApiModelProperty(name = "list", value = "培训计划集合")

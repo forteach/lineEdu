@@ -56,7 +56,7 @@ public class TrainClassStuController {
     public WebResult saveOrUpdate(@RequestBody TrainClassStuSaveUpdateRequest request) {
         TrainClassStu trainClassStu = new TrainClassStu();
         BeanUtil.copyProperties(request, trainClassStu);
-        if (StrUtil.isNotBlank(request.getTrainStuId())) {
+        if (StrUtil.isBlank(request.getTrainStuId())) {
             return WebResult.okResult(trainClassStuService.save(trainClassStu));
         } else {
             return WebResult.okResult(trainClassStuService.update(trainClassStu));

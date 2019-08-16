@@ -55,7 +55,7 @@ public class ClassFileController {
     public WebResult saveOrUpdate(@RequestBody ClassFileSaveUpdateRequest request) {
         ClassFile classFile = new ClassFile();
         BeanUtil.copyProperties(request, classFile);
-        if (StrUtil.isNotBlank(request.getFileId())) {
+        if (StrUtil.isBlank(request.getFileId())) {
             return WebResult.okResult(classFileService.save(classFile));
         } else {
             return WebResult.okResult(classFileService.update(classFile));

@@ -48,12 +48,12 @@ public class TrainClassController {
             @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classAdmin", value = "培训班级管理员", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classAdminTel", value = "培训班级管理员电话", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "lineNoline", value = "线上线下", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "lineOnLine", value = "线上线下", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainClassSaveUpdateRequest request) {
         TrainClass trainClass = new TrainClass();
         BeanUtil.copyProperties(request, trainClass);
-        if (StrUtil.isNotBlank(request.getTrainClassId())) {
+        if (StrUtil.isBlank(request.getTrainClassId())) {
             return WebResult.okResult(trainClassService.save(trainClass));
         } else {
             return WebResult.okResult(trainClassService.update(trainClass));

@@ -62,7 +62,7 @@ public class TrainPlanCourseController {
                     BeanUtil.copyProperties(vo, trainPlanCourse);
                     return trainPlanCourse;
                 }).collect(toList());
-        if (StrUtil.isNotBlank(request.getPlanId())) {
+        if (StrUtil.isBlank(request.getPlanId())) {
             return WebResult.okResult(trainPlanCourseService.saveAll(list));
         } else {
             return WebResult.okResult(trainPlanCourseService.update(request.getPlanId(), list));

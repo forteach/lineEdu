@@ -63,7 +63,7 @@ public class FinanceDetailController {
     public WebResult saveOrUpdate(@RequestBody FinanceDetailSaveUpdateRequest request) {
         FinanceDetail financeDetail = new FinanceDetail();
         BeanUtil.copyProperties(request, financeDetail);
-        if (StrUtil.isNotBlank(request.getDetailId())) {
+        if (StrUtil.isBlank(request.getDetailId())) {
             return WebResult.okResult(financeDetailService.save(financeDetail));
         } else {
             return WebResult.okResult(financeDetailService.update(financeDetail));

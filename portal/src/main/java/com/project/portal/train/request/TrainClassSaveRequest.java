@@ -28,19 +28,19 @@ public class TrainClassSaveRequest extends BaseReq {
     private String trainClassId;
 
 
-    @ApiModelProperty(name = "trainProjectId", value = "培训班级名称")
+    @ApiModelProperty(name = "trainClassName", value = "培训班级名称")
     private String trainClassName;
 
 
-    @ApiModelProperty(name = "trainProjectId", value = "培训班级管理员")
+    @ApiModelProperty(name = "classAdmin", value = "培训班级管理员")
     private String classAdmin;
 
 
-    @ApiModelProperty(name = "trainProjectId", value = "培训班级管理员电话")
+    @ApiModelProperty(name = "classAdminTel", value = "培训班级管理员电话")
     private String classAdminTel;
 
 
-    @ApiModelProperty(name = "trainProjectId", value = "线上线下")
-    private String lineNoline;
+    @ApiModelProperty(name = "lineOnLine", value = "线上线下")
+    private String lineOnLine;
 
 }

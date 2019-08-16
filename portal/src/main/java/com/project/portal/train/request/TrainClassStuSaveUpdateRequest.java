@@ -1,9 +1,9 @@
 package com.project.portal.train.request;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -14,6 +14,7 @@ import java.io.Serializable;
  * @Description:
  */
 @Data
+@ApiModel(value = "培训班级课程保存修改对象")
 public class TrainClassStuSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "trainStuId", value = "培训班级学生编号", dataType = "string")

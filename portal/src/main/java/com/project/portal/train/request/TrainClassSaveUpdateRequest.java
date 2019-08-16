@@ -1,5 +1,6 @@
 package com.project.portal.train.request;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ import java.io.Serializable;
  * @Description:
  */
 @Data
+@ApiModel(value = "培训班级保存修改")
 public class TrainClassSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "trainClassId", value = "培训项目班级编号", dataType = "string")
@@ -31,6 +33,6 @@ public class TrainClassSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "classAdminTel", value = "培训班级管理员电话", dataType = "string")
     private String classAdminTel;
 
-    @ApiModelProperty(name = "lineNoline", value = "线上线下", dataType = "string")
-    private String lineNoline;
+    @ApiModelProperty(name = "lineOnLine", value = "线上线下", dataType = "string")
+    private String lineOnLine;
 }

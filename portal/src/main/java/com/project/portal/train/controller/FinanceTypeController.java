@@ -51,7 +51,7 @@ public class FinanceTypeController {
     public WebResult saveOrUpdate(@RequestBody FinanceTypeSaveUpdateRequest request) {
         FinanceType financeType = new FinanceType();
         BeanUtil.copyProperties(request, financeType);
-        if (StrUtil.isNotBlank(request.getFinanceTypeId())) {
+        if (StrUtil.isBlank(request.getFinanceTypeId())) {
             return WebResult.okResult(financeTypeService.save(financeType));
         } else {
             return WebResult.okResult(financeTypeService.update(financeType));
