@@ -2,13 +2,16 @@ package com.project.train.service;
 
 import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.TrainPlanCourse;
+import com.project.train.domain.TrainProjectPlan;
 import com.project.train.repository.TrainPlanCourseRepository;
+import com.project.train.repository.TrainProjectPlanRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -22,6 +25,8 @@ public class TrainPlanCourseService extends BaseMySqlService {
     @Resource
     private TrainPlanCourseRepository trainPlanCourseRepository;
 
+    @Resource
+    private TrainProjectPlanRepository trainProjectPlanRepository;
 
     /**
      * 项目计划添加
@@ -37,8 +42,19 @@ public class TrainPlanCourseService extends BaseMySqlService {
      */
     @Transactional
     public List<TrainPlanCourse> saveOrUpdate(String planId, List<TrainPlanCourse> list){
-        trainPlanCourseRepository.deleteByPjPlanId(planId);
-        return saveAll(list);
+        if (list.size()>0){
+            String course=list.stream().map(item->item.getCourseName().concat(",")).collect(Collectors.joining());
+            TrainProjectPlan plan=trainProjectPlanRepository.getOne(planId);
+            plan.setTrainCourse(course.substring(0,course.length()-1));
+            trainPlanCourseRepository.deleteByPjPlanId(planId);
+            return saveAll(list);
+        }else{
+            TrainProjectPlan plan=trainProjectPlanRepository.getOne(planId);
+            plan.setTrainCourse("");
+            trainPlanCourseRepository.deleteByPjPlanId(planId);
+            return null;
+        }
+
     }
 
     /**
