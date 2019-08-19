@@ -38,6 +38,9 @@ public class TrainClassStu extends Entitys implements Serializable {
     @Column(name = "train_class_name", columnDefinition = "VARCHAR(60) COMMENT '培训班级名称'")
     private String trainClassName;
 
+    @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目计划编号'")
+    private String pjPlanId;
+
     @Column(name = "user_id", columnDefinition = "VARCHAR(60) COMMENT '系统用户编号'")
     private String userId;
 
@@ -59,17 +62,5 @@ public class TrainClassStu extends Entitys implements Serializable {
     @Column(name = "stu_phone", columnDefinition = "VARCHAR(60) COMMENT '联系方式'")
     private String stuPhone;
 
-    public TrainClassStu(String trainStuId, String trainClassId, String trainClassName, String userId, String gender, String stuName, String marriage, String jobTitle, String stuIdCard, String stuPhone,String centerId) {
-        this.trainStuId = trainStuId;
-        this.trainClassId = trainClassId;
-        this.trainClassName = trainClassName;
-        this.userId = userId;
-        this.gender = gender;
-        this.stuName = stuName;
-        this.marriage = marriage;
-        this.jobTitle = jobTitle;
-        this.stuIdCard = stuIdCard;
-        this.stuPhone = stuPhone;
-        super.centerAreaId=centerId;
-    }
+
 }

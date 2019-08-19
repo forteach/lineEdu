@@ -33,7 +33,6 @@ public class TrainPlanCourseSaveRequest extends BaseReq {
     @ApiModelProperty(name = "courseName", value = "课程名称")
     private String courseName;
 
-
     /**
      * 项目领域
      */
