@@ -22,4 +22,7 @@ public class TrainClassFindAllPage extends SortVo implements Serializable {
 
     @ApiModelProperty(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true)
     private String pjPlanId;
+
+    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+    private String centerAreaId;
 }

@@ -1,6 +1,7 @@
 package com.project.train.repository;
 
 
+import com.project.train.domain.ClassFile;
 import com.project.train.domain.TrainClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,4 +17,7 @@ public interface TrainClassRepository extends JpaRepository<TrainClass, String>,
 
     //获得计划下的班级信息
     public Page<TrainClass> findByPjPlanIdOrderByCreateTime(String planId, Pageable pageable);
+
+    //所有的文件列表
+    public Page<TrainClass> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId, Pageable pageable);
 }

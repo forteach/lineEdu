@@ -67,5 +67,14 @@ public class TrainClassService extends BaseMySqlService {
         return trainClassRepository.findByPjPlanIdOrderByCreateTime(planId,pageable);
     }
 
+    /**
+     *
+     * @param centerId  获取计划项目的班级列表
+     * @param pageable
+     * @return
+     */
+    public Page<TrainClass> findAllPage(String centerId, Pageable pageable) {
 
+        return trainClassRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerId,pageable);
+    }
 }
