@@ -22,4 +22,7 @@ public interface FinanceDetailRepository extends JpaRepository<FinanceDetail, St
 
     //所有的项目计划列表
     public Page<FinanceDetail>  findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId,Pageable pageable);
+
+    public Page<FinanceDetail> findAllByPjPlanIdAndCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(String pjPlanId,String centerId, String form, Pageable pageable);
+
 }

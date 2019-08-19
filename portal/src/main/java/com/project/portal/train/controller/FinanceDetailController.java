@@ -56,9 +56,7 @@ public class FinanceDetailController {
             @ApiImplicitParam(name = "pjPlanName", value = "培训项目计划名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "inOut", value = "收入支出", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "money", value = "金额", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "batches", value = "账目批次", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "createYear", value = "创建年份", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "createMonth", value = "培训财务类型Id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "happenTime", value = "账目发生时间", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody FinanceDetailSaveUpdateRequest request) {

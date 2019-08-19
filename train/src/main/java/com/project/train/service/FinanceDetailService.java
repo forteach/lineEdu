@@ -3,6 +3,7 @@ package com.project.train.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
@@ -33,6 +34,11 @@ public class FinanceDetailService extends BaseMySqlService {
      */
     public FinanceDetail save(FinanceDetail financeDetail){
         financeDetail.setDetailId(IdUtil.fastSimpleUUID());
+        String[] happenTime= StrUtil.split(financeDetail.getHappenTime(),"-");
+        //发生年年
+        financeDetail.setCreateYear(happenTime[0]);
+        //发生月
+        financeDetail.setCreateMonth(happenTime[1]);
         return financeDetailRepository.save(financeDetail);
     }
 
@@ -73,7 +79,7 @@ public class FinanceDetailService extends BaseMySqlService {
 
     /**
      *
-     * @param centerAreaId  获取所有项目计划列表
+     * @param centerAreaId  获取所有项目计划财务明细列表
      * @param pageable
      * @return
      */
@@ -81,4 +87,18 @@ public class FinanceDetailService extends BaseMySqlService {
 
         return financeDetailRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId,pageable);
     }
+
+    /**
+     *
+     * @param centerAreaId  获取所有项目计划财务明细列表
+     * @param pageable
+     * @return
+     */
+    public Page<FinanceDetail> findAllPage(String pjPlanId,String centerAreaId,int agoDay, Pageable pageable) {
+        //提前天数的日期
+        String fromDay= DateUtil.formatDate(DateUtil.offsetDay(new Date(),-agoDay));
+        return financeDetailRepository.findAllByPjPlanIdAndCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(pjPlanId,centerAreaId,fromDay,pageable);
+    }
+
+
 }

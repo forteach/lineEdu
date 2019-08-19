@@ -53,19 +53,11 @@ public class TrainProjectPlan extends Entitys implements Serializable {
     @Column(name = "train_end", columnDefinition = "VARCHAR(60) COMMENT '计划执行结束时间'")
     private String trainEnd;
 
+    //冗余字段，计划课程
+    @Column(name = "train_course", columnDefinition = "VARCHAR(800) COMMENT '计划课程编号'")
+    private String trainCourse;
+
     @Column(name = "train_admin", columnDefinition = "VARCHAR(60) COMMENT '计划负责人'")
     private String trainAdmin;
 
-    public TrainProjectPlan(String pjPlanId, String trainProjectId, String trainProjectName, String trainAreaId, String applyStart, String applyEnd, String trainStart, String trainEnd, String trainAdmin,String centerId) {
-        this.pjPlanId = pjPlanId;
-        this.trainProjectId = trainProjectId;
-        this.trainProjectName = trainProjectName;
-        this.trainAreaId = trainAreaId;
-        this.applyStart = applyStart;
-        this.applyEnd = applyEnd;
-        this.trainStart = trainStart;
-        this.trainEnd = trainEnd;
-        this.trainAdmin = trainAdmin;
-        super.centerAreaId=centerId;
-    }
 }

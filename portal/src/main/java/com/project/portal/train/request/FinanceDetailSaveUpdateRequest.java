@@ -41,14 +41,8 @@ public class FinanceDetailSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "money", value = "金额", dataType = "string")
     private String money;
 
-    @ApiModelProperty(name = "batches", value = "账目批次", dataType = "string")
-    private String batches;
-
-    @ApiModelProperty(name = "createYear", value = "创建年份", dataType = "string")
-    private String createYear;
-
-    @ApiModelProperty(name = "createMonth", value = "培训财务类型Id", dataType = "string")
-    private String createMonth;
+    @ApiModelProperty(name = "happenTime", value = "账目发生时间", dataType = "string")
+    private String  happenTime;
 
     @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
     private String centerAreaId;

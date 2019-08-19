@@ -71,8 +71,8 @@ public class TrainCourseController {
     @ApiOperation(value = "培训项目课程字典列表")
     @PostMapping(path = "/findById")
     @ApiImplicitParam(name = "planId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(trainCourseService.findId(JSONObject.parseObject(planId).getString("planId")));
+    public WebResult findById(@RequestBody String pjPlanId) {
+        MyAssert.isNull(pjPlanId, DefineCode.ERR0010, "项目计划id不为空");
+        return WebResult.okResult(trainCourseService.findId(JSONObject.parseObject(pjPlanId).getString("planId")));
     }
 }

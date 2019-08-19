@@ -55,11 +55,14 @@ public class FinanceDetail extends Entitys implements Serializable {
     @Column(name = "batches", columnDefinition = "VARCHAR(40) COMMENT '账目批次'")
     private String batches;
 
-    @Column(name = "create_year", columnDefinition = "VARCHAR(10) COMMENT '创建年份'")
+    @Column(name = "create_year", columnDefinition = "VARCHAR(10) COMMENT '培训财务发生年份'")
     private String createYear;
 
-    @Column(name = "create_month", columnDefinition = "VARCHAR(2) COMMENT '培训财务类型Id'")
+    @Column(name = "create_month", columnDefinition = "VARCHAR(2) COMMENT '培训财务发生月份'")
     private String createMonth;
+
+    @Column(name = "happen_time", columnDefinition = "VARCHAR(2) COMMENT '培训财务发生时间'")
+    private String happenTime;
 
     public FinanceDetail(String detailId, String financeTypeId, String trainClassId, String pjPlanId, String financeTypeName, String inOut, String money, String batches, String createYear, String createMonth,String centerId) {
         this.detailId = detailId;
