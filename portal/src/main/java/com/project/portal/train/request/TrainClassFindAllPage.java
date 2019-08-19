@@ -20,6 +20,6 @@ import java.io.Serializable;
 @ApiModel(value = "培训分页查询班级计划")
 public class TrainClassFindAllPage extends SortVo implements Serializable {
 
-    @ApiModelProperty(name = "planId", value = "培训项目计划编号", dataType = "string", required = true)
-    private String planId;
+    @ApiModelProperty(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true)
+    private String pjPlanId;
 }

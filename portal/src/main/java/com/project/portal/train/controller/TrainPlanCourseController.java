@@ -63,11 +63,7 @@ public class TrainPlanCourseController {
                     BeanUtil.copyProperties(vo, trainPlanCourse);
                     return trainPlanCourse;
                 }).collect(toList());
-        if (StrUtil.isBlank(request.getPlanId())) {
-            return WebResult.okResult(trainPlanCourseService.saveAll(list));
-        } else {
-            return WebResult.okResult(trainPlanCourseService.update(request.getPlanId(), list));
-        }
+            return WebResult.okResult(trainPlanCourseService.saveOrUpdate(request.getPjPlanId(),list));
     }
 
     @ApiOperation(value = "项目计划课程列表")

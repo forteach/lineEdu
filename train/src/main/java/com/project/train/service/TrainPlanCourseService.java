@@ -25,13 +25,14 @@ public class TrainPlanCourseService extends BaseMySqlService {
      * 项目计划添加
      */
     public List<TrainPlanCourse> saveAll(List<TrainPlanCourse> list){
+
         return trainPlanCourseRepository.saveAll(list);
     }
 
     /**
      * 项目计划修改
      */
-    public List<TrainPlanCourse> update(String planId, List<TrainPlanCourse> list){
+    public List<TrainPlanCourse> saveOrUpdate(String planId, List<TrainPlanCourse> list){
         trainPlanCourseRepository.deleteByPjPlanId(planId);
         return saveAll(list);
     }

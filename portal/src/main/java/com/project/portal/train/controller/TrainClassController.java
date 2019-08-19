@@ -64,14 +64,14 @@ public class TrainClassController {
     @ApiOperation(value = "培训项目班级列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
     })
     public WebResult findAllPage(@RequestBody TrainClassFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
-        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(trainClassService.findPlanPage(request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+        MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "项目计划id不为空");
+        return WebResult.okResult(trainClassService.findPlanPage(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
     }
 
     @ApiOperation(value = "培训项目班级管理")
