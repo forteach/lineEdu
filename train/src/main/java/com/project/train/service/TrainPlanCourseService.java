@@ -5,6 +5,8 @@ import com.project.train.domain.TrainPlanCourse;
 import com.project.train.repository.TrainPlanCourseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class TrainPlanCourseService extends BaseMySqlService {
     /**
      * 项目计划添加
      */
+    @Transactional
     public List<TrainPlanCourse> saveAll(List<TrainPlanCourse> list){
 
         return trainPlanCourseRepository.saveAll(list);
@@ -32,6 +35,7 @@ public class TrainPlanCourseService extends BaseMySqlService {
     /**
      * 项目计划修改
      */
+    @Transactional
     public List<TrainPlanCourse> saveOrUpdate(String planId, List<TrainPlanCourse> list){
         trainPlanCourseRepository.deleteByPjPlanId(planId);
         return saveAll(list);
