@@ -61,6 +61,7 @@ public class TrainPlanCourseController {
                 .map(vo -> {
                     TrainPlanCourse trainPlanCourse = new TrainPlanCourse();
                     BeanUtil.copyProperties(vo, trainPlanCourse);
+                    trainPlanCourse.setCenterAreaId(request.getCenterAreaId());
                     return trainPlanCourse;
                 }).collect(toList());
             return WebResult.okResult(trainPlanCourseService.saveOrUpdate(request.getPjPlanId(),list));
