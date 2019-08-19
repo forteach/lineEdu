@@ -46,11 +46,13 @@ public class TrainPlanCourseService extends BaseMySqlService {
             String course=list.stream().map(item->item.getCourseName().concat(",")).collect(Collectors.joining());
             TrainProjectPlan plan=trainProjectPlanRepository.getOne(planId);
             plan.setTrainCourse(course.substring(0,course.length()-1));
+            trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
             return saveAll(list);
         }else{
             TrainProjectPlan plan=trainProjectPlanRepository.getOne(planId);
             plan.setTrainCourse("");
+            trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
             return null;
         }
