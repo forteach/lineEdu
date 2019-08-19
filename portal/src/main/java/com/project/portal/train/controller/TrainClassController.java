@@ -72,7 +72,7 @@ public class TrainClassController {
     public WebResult findAllPage(@RequestBody TrainClassFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
 //        MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "项目计划id不为空");
-        if(StrUtil.isBlank(request.getPjPlanId())){
+        if(StrUtil.isNotBlank(request.getPjPlanId())){
             return WebResult.okResult(trainClassService.findPlanPage(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
         }else{
             return WebResult.okResult(trainClassService.findAllPage(request.getCenterAreaId(), PageRequest.of(request.getPage(), request.getSize())));
