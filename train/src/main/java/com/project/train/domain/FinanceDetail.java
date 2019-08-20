@@ -1,7 +1,6 @@
 package com.project.train.domain;
 
 import com.project.mysql.domain.Entitys;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -64,7 +63,7 @@ public class FinanceDetail extends Entitys implements Serializable {
     @Column(name = "happen_time", columnDefinition = "VARCHAR(20) COMMENT '培训财务发生时间'")
     private String happenTime;
 
-    public FinanceDetail(String detailId, String financeTypeId, String trainClassId, String pjPlanId, String financeTypeName, String inOut, String money, String batches, String createYear, String createMonth,String centerId) {
+    public FinanceDetail(String detailId, String financeTypeId, String trainClassId, String pjPlanId, String financeTypeName, String inOut, String money, String batches, String createYear, String createMonth, String centerId) {
         this.detailId = detailId;
         this.financeTypeId = financeTypeId;
         this.trainClassId = trainClassId;
@@ -75,6 +74,6 @@ public class FinanceDetail extends Entitys implements Serializable {
         this.batches = batches;
         this.createYear = createYear;
         this.createMonth = createMonth;
-        super.centerAreaId=centerId;
+        super.centerAreaId = centerId;
     }
 }

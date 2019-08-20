@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Optional;
@@ -32,9 +33,9 @@ public class FinanceDetailService extends BaseMySqlService {
     /**
      * 财务类型明细添加
      */
-    public FinanceDetail save(FinanceDetail financeDetail){
+    public FinanceDetail save(FinanceDetail financeDetail) {
         financeDetail.setDetailId(IdUtil.fastSimpleUUID());
-        String[] happenTime= StrUtil.split(financeDetail.getHappenTime(),"-");
+        String[] happenTime = StrUtil.split(financeDetail.getHappenTime(), "-");
         //发生年年
         financeDetail.setCreateYear(happenTime[0]);
         //发生月
@@ -45,59 +46,57 @@ public class FinanceDetailService extends BaseMySqlService {
     /**
      * 财务类型明细修改
      */
-    public FinanceDetail update(FinanceDetail financeDetail){
-        FinanceDetail obj= findId(financeDetail.getDetailId());
-        BeanUtil.copyProperties(financeDetail,obj);
+    public FinanceDetail update(FinanceDetail financeDetail) {
+        FinanceDetail obj = findId(financeDetail.getDetailId());
+        BeanUtil.copyProperties(financeDetail, obj);
         return financeDetailRepository.save(obj);
     }
 
 
     /**
      * 财务类型明细BYID
+     *
      * @param planId
      * @return
      */
-    public FinanceDetail findId(String planId){
-        Optional<FinanceDetail> obj=financeDetailRepository.findById(planId);
-        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014,"未找到该条记录");
+    public FinanceDetail findId(String planId) {
+        Optional<FinanceDetail> obj = financeDetailRepository.findById(planId);
+        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
 
     /**
-     *
-     * @param centerAreaId  获取前多少天项目计划列表
-     * @param agoDay    前多少天
+     * @param centerAreaId 获取前多少天项目计划列表
+     * @param agoDay       前多少天
      * @param pageable
      * @return
      */
     public Page<FinanceDetail> findAllPage(String centerAreaId, int agoDay, Pageable pageable) {
         //提前天数的日期
-        String fromDay= DateUtil.formatDate(DateUtil.offsetDay(new Date(),-agoDay));
+        String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
         //当前日期
-        return financeDetailRepository.findAllByCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(centerAreaId,fromDay,pageable);
+        return financeDetailRepository.findAllByCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(centerAreaId, fromDay, pageable);
     }
 
     /**
-     *
-     * @param centerAreaId  获取所有项目计划财务明细列表
+     * @param centerAreaId 获取所有项目计划财务明细列表
      * @param pageable
      * @return
      */
     public Page<FinanceDetail> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return financeDetailRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId,pageable);
+        return financeDetailRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId, pageable);
     }
 
     /**
-     *
-     * @param centerAreaId  获取所有项目计划财务明细列表
+     * @param centerAreaId 获取所有项目计划财务明细列表
      * @param pageable
      * @return
      */
-    public Page<FinanceDetail> findAllPage(String pjPlanId,String centerAreaId,int agoDay, Pageable pageable) {
+    public Page<FinanceDetail> findAllPage(String pjPlanId, String centerAreaId, int agoDay, Pageable pageable) {
         //提前天数的日期
-        String fromDay= DateUtil.formatDate(DateUtil.offsetDay(new Date(),-agoDay));
-        return financeDetailRepository.findAllByPjPlanIdAndCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(pjPlanId,centerAreaId,fromDay,pageable);
+        String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
+        return financeDetailRepository.findAllByPjPlanIdAndCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(pjPlanId, centerAreaId, fromDay, pageable);
     }
 
 

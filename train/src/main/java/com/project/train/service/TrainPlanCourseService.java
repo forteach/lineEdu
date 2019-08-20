@@ -32,7 +32,7 @@ public class TrainPlanCourseService extends BaseMySqlService {
      * 项目计划添加
      */
     @Transactional
-    public List<TrainPlanCourse> saveAll(List<TrainPlanCourse> list){
+    public List<TrainPlanCourse> saveAll(List<TrainPlanCourse> list) {
 
         return trainPlanCourseRepository.saveAll(list);
     }
@@ -41,16 +41,16 @@ public class TrainPlanCourseService extends BaseMySqlService {
      * 项目计划修改
      */
     @Transactional
-    public List<TrainPlanCourse> saveOrUpdate(String planId, List<TrainPlanCourse> list){
-        if (list.size()>0){
-            String course=list.stream().map(item->item.getCourseName().concat(",")).collect(Collectors.joining());
-            TrainProjectPlan plan=trainProjectPlanRepository.getOne(planId);
-            plan.setTrainCourse(course.substring(0,course.length()-1));
+    public List<TrainPlanCourse> saveOrUpdate(String planId, List<TrainPlanCourse> list) {
+        if (list.size() > 0) {
+            String course = list.stream().map(item -> item.getCourseName().concat(",")).collect(Collectors.joining());
+            TrainProjectPlan plan = trainProjectPlanRepository.getOne(planId);
+            plan.setTrainCourse(course.substring(0, course.length() - 1));
             trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
             return saveAll(list);
-        }else{
-            TrainProjectPlan plan=trainProjectPlanRepository.getOne(planId);
+        } else {
+            TrainProjectPlan plan = trainProjectPlanRepository.getOne(planId);
             plan.setTrainCourse("");
             trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
@@ -60,8 +60,7 @@ public class TrainPlanCourseService extends BaseMySqlService {
     }
 
     /**
-     *
-     * @param planId  项目计划课程列表，不分页
+     * @param planId 项目计划课程列表，不分页
      * @return
      */
     public List<TrainPlanCourse> findAll(String planId) {

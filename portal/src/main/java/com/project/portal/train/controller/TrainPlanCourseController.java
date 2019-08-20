@@ -1,7 +1,6 @@
 package com.project.portal.train.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -64,7 +63,7 @@ public class TrainPlanCourseController {
                     trainPlanCourse.setCenterAreaId(request.getCenterAreaId());
                     return trainPlanCourse;
                 }).collect(toList());
-            return WebResult.okResult(trainPlanCourseService.saveOrUpdate(request.getPjPlanId(),list));
+        return WebResult.okResult(trainPlanCourseService.saveOrUpdate(request.getPjPlanId(), list));
     }
 
     @ApiOperation(value = "项目计划课程列表")

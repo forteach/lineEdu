@@ -7,24 +7,17 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainCourseSaveUpdateRequest;
-import com.project.portal.train.request.TrainPlanCourseSaveUpateRequest;
 import com.project.train.domain.TrainCourse;
-import com.project.train.domain.TrainPlanCourse;
 import com.project.train.service.TrainCourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -42,6 +35,7 @@ public class TrainCourseController {
     public TrainCourseController(TrainCourseService trainCourseService) {
         this.trainCourseService = trainCourseService;
     }
+
     @ApiOperation(value = "培训项目课程字典保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({

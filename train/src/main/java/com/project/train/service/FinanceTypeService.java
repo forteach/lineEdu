@@ -6,12 +6,8 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.FinanceType;
-import com.project.train.domain.TrainClass;
 import com.project.train.repository.FinanceTypeRepository;
-import com.project.train.repository.TrainClassRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -33,7 +29,7 @@ public class FinanceTypeService extends BaseMySqlService {
     /**
      * 财务类型明细添加
      */
-    public FinanceType save(FinanceType financeType){
+    public FinanceType save(FinanceType financeType) {
         financeType.setFinanceTypeId(IdUtil.fastSimpleUUID());
         return financeTypeRepository.save(financeType);
     }
@@ -41,27 +37,27 @@ public class FinanceTypeService extends BaseMySqlService {
     /**
      * 财务类型明细修改
      */
-    public FinanceType update(FinanceType financeType){
-        FinanceType obj= findId(financeType.getFinanceTypeId());
-        BeanUtil.copyProperties(financeType,obj);
+    public FinanceType update(FinanceType financeType) {
+        FinanceType obj = findId(financeType.getFinanceTypeId());
+        BeanUtil.copyProperties(financeType, obj);
         return financeTypeRepository.save(obj);
     }
 
 
     /**
      * 财务类型明细BYID
+     *
      * @param planId
      * @return
      */
-    public FinanceType findId(String planId){
-        Optional<FinanceType> obj=financeTypeRepository.findById(planId);
-        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014,"未找到该条记录");
+    public FinanceType findId(String planId) {
+        Optional<FinanceType> obj = financeTypeRepository.findById(planId);
+        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
 
     /**
-     *
-     * @param centerAreaId  财务类型明细，不分页
+     * @param centerAreaId 财务类型明细，不分页
      * @return
      */
     public List<FinanceType> findAll(String centerAreaId) {

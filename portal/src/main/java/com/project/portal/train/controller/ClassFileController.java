@@ -8,16 +8,12 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.ClassFileFindAllPage;
 import com.project.portal.train.request.ClassFileSaveUpdateRequest;
-import com.project.portal.train.request.FinanceDetailFindAllPage;
-import com.project.portal.train.request.FinanceDetailSaveUpdateRequest;
 import com.project.train.domain.ClassFile;
-import com.project.train.domain.FinanceDetail;
 import com.project.train.service.ClassFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,7 +74,7 @@ public class ClassFileController {
         if (StrUtil.isNotBlank(request.getClassId())) {
             return WebResult.okResult(classFileService
                     .findAllPage(request.getCenterAreaId(), request.getClassId(), pageRequest));
-        }else {
+        } else {
             return WebResult.okResult(classFileService.findAllPage(request.getCenterAreaId(), pageRequest));
         }
     }

@@ -30,7 +30,7 @@ public class TrainClassStuService extends BaseMySqlService {
     /**
      * 项目计划班级成员添加
      */
-    public TrainClassStu save(TrainClassStu trainClassStu){
+    public TrainClassStu save(TrainClassStu trainClassStu) {
         trainClassStu.setTrainStuId(IdUtil.fastSimpleUUID());
         return trainClassStuRepository.save(trainClassStu);
     }
@@ -38,46 +38,45 @@ public class TrainClassStuService extends BaseMySqlService {
     /**
      * 项目计划班级成员修改
      */
-    public TrainClassStu update(TrainClassStu trainClassStu){
-        TrainClassStu obj= findId(trainClassStu.getTrainStuId());
-        BeanUtil.copyProperties(trainClassStu,obj);
+    public TrainClassStu update(TrainClassStu trainClassStu) {
+        TrainClassStu obj = findId(trainClassStu.getTrainStuId());
+        BeanUtil.copyProperties(trainClassStu, obj);
         return trainClassStuRepository.save(obj);
     }
 
 
     /**
      * 项目计划班级成员BYID
+     *
      * @param planId
      * @return
      */
-    public TrainClassStu findId(String planId){
-        Optional<TrainClassStu> obj=trainClassStuRepository.findById(planId);
-        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014,"未找到该条记录");
+    public TrainClassStu findId(String planId) {
+        Optional<TrainClassStu> obj = trainClassStuRepository.findById(planId);
+        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
 
 
     /**
-     *
-     * @param planId  获取计划项目的班级成员列表
+     * @param planId   获取计划项目的班级成员列表
      * @param pageable
      * @return
      */
     public Page<TrainClassStu> findPlanPage(String planId, Pageable pageable) {
 
-        return trainClassStuRepository.findByPjPlanIdOrderByCreateTimeDesc(planId,pageable);
+        return trainClassStuRepository.findByPjPlanIdOrderByCreateTimeDesc(planId, pageable);
     }
 
 
     /**
-     *
      * @param classId
      * @param pageable
      * @return
      */
     public Page<TrainClassStu> findClassPage(String classId, Pageable pageable) {
 
-        return trainClassStuRepository.findByTrainClassId(classId,pageable);
+        return trainClassStuRepository.findByTrainClassId(classId, pageable);
     }
 
 }

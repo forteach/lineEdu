@@ -1,8 +1,8 @@
 package com.project.train.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
@@ -14,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 项目计划信息记录
@@ -31,7 +33,7 @@ public class TrainPlanService extends BaseMySqlService {
     /**
      * 项目计划添加
      */
-    public TrainProjectPlan save(TrainProjectPlan trainProjectPlan){
+    public TrainProjectPlan save(TrainProjectPlan trainProjectPlan) {
         trainProjectPlan.setPjPlanId(IdUtil.fastSimpleUUID());
         return trainProjectPlanRepository.save(trainProjectPlan);
     }
@@ -39,52 +41,50 @@ public class TrainPlanService extends BaseMySqlService {
     /**
      * 项目计划添加
      */
-    public TrainProjectPlan update(TrainProjectPlan trainProjectPlan){
-        TrainProjectPlan obj= findId(trainProjectPlan.getPjPlanId());
-        BeanUtil.copyProperties(trainProjectPlan,obj);
+    public TrainProjectPlan update(TrainProjectPlan trainProjectPlan) {
+        TrainProjectPlan obj = findId(trainProjectPlan.getPjPlanId());
+        BeanUtil.copyProperties(trainProjectPlan, obj);
         return trainProjectPlanRepository.save(obj);
     }
 
 
     /**
      * 项目计划BYID
+     *
      * @param planId
      * @return
      */
-    public TrainProjectPlan findId(String planId){
-        Optional<TrainProjectPlan> obj=trainProjectPlanRepository.findById(planId);
-        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014,"未找到该条记录");
+    public TrainProjectPlan findId(String planId) {
+        Optional<TrainProjectPlan> obj = trainProjectPlanRepository.findById(planId);
+        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
 
     /**
-     *
-     * @param centerAreaId  获取前多少天项目计划列表
-     * @param agoDay    前多少天
+     * @param centerAreaId 获取前多少天项目计划列表
+     * @param agoDay       前多少天
      * @param pageable
      * @return
      */
-    public Page<TrainProjectPlan> findAllPage(String centerAreaId,int agoDay, Pageable pageable) {
+    public Page<TrainProjectPlan> findAllPage(String centerAreaId, int agoDay, Pageable pageable) {
         //提前天数的日期
-        String fromDay=DateUtil.formatDate(DateUtil.offsetDay(new Date(),-agoDay));
+        String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
         //当前日期
-       return trainProjectPlanRepository.findAllByCenterAreaIdAndTrainStartAfterOrderByTrainStartDesc(centerAreaId,fromDay,pageable);
+        return trainProjectPlanRepository.findAllByCenterAreaIdAndTrainStartAfterOrderByTrainStartDesc(centerAreaId, fromDay, pageable);
     }
 
     /**
-     *
-     * @param centerAreaId  获取所有项目计划列表
+     * @param centerAreaId 获取所有项目计划列表
      * @param pageable
      * @return
      */
     public Page<TrainProjectPlan> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return trainProjectPlanRepository.findAllByCenterAreaIdOrderByTrainStartDesc(centerAreaId,pageable);
+        return trainProjectPlanRepository.findAllByCenterAreaIdOrderByTrainStartDesc(centerAreaId, pageable);
     }
 
     /**
-     *
-     * @param centerAreaId  项目计划列表，不分页
+     * @param centerAreaId 项目计划列表，不分页
      * @return
      */
     public List<TrainProjectPlan> findAll(String centerAreaId) {

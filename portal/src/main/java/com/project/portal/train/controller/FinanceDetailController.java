@@ -6,18 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
-import com.project.portal.train.request.FinanceDetailFileFindAllPage;
-import com.project.portal.train.request.FinanceDetailFileSaveUpdateRequest;
 import com.project.portal.train.request.FinanceDetailFindAllPage;
 import com.project.portal.train.request.FinanceDetailSaveUpdateRequest;
 import com.project.train.domain.FinanceDetail;
-import com.project.train.domain.FinanceDetailFile;
 import com.project.train.service.FinanceDetailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,7 +79,7 @@ public class FinanceDetailController {
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (StrUtil.isNotBlank(String.valueOf(request.getAgoDay()))) {
             return WebResult.okResult(financeDetailService.findAllPage(request.getCenterAreaId(), Integer.valueOf(request.getAgoDay()), pageRequest));
-        }else {
+        } else {
             return WebResult.okResult(financeDetailService.findAllPage(request.getCenterAreaId(), pageRequest));
         }
     }

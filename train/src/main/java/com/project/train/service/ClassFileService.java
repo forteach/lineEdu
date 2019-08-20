@@ -6,9 +6,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.ClassFile;
-import com.project.train.domain.FinanceDetailFile;
 import com.project.train.repository.ClassFileRepository;
-import com.project.train.repository.FinanceDetailFileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,53 +30,52 @@ public class ClassFileService extends BaseMySqlService {
     /**
      * 文件明细添加
      */
-    public ClassFile save(ClassFile classFile){
+    public ClassFile save(ClassFile classFile) {
         classFile.setFileId(IdUtil.fastSimpleUUID());
         return classFileRepository.save(classFile);
     }
 
     /**
-     *文件修改
+     * 文件修改
      */
-    public ClassFile update(ClassFile classFile){
-        ClassFile obj= findId(classFile.getFileId());
-        BeanUtil.copyProperties(classFile,obj);
+    public ClassFile update(ClassFile classFile) {
+        ClassFile obj = findId(classFile.getFileId());
+        BeanUtil.copyProperties(classFile, obj);
         return classFileRepository.save(obj);
     }
 
 
     /**
      * 文件BYID
+     *
      * @param planId
      * @return
      */
-    public ClassFile findId(String planId){
-        Optional<ClassFile> obj=classFileRepository.findById(planId);
-        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014,"未找到该条记录");
+    public ClassFile findId(String planId) {
+        Optional<ClassFile> obj = classFileRepository.findById(planId);
+        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
 
     /**
-     *
-     * @param centerAreaId  获取文件列表
+     * @param centerAreaId 获取文件列表
      * @param pageable
      * @return
      */
-    public Page<ClassFile> findAllPage(String centerAreaId,String classId, Pageable pageable) {
+    public Page<ClassFile> findAllPage(String centerAreaId, String classId, Pageable pageable) {
 
-        return classFileRepository.findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(centerAreaId,classId,pageable);
+        return classFileRepository.findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(centerAreaId, classId, pageable);
     }
 
 
     /**
-     *
-     * @param centerAreaId  获取文件列表
+     * @param centerAreaId 获取文件列表
      * @param pageable
      * @return
      */
     public Page<ClassFile> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return classFileRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId,pageable);
+        return classFileRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId, pageable);
     }
 
 

@@ -1,8 +1,6 @@
 package com.project.train.repository;
 
 import com.project.train.domain.ClassFile;
-import com.project.train.domain.FinanceDetailFile;
-import com.project.train.domain.TrainProject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +17,6 @@ public interface ClassFileRepository extends JpaRepository<ClassFile, String>, J
     public Page<ClassFile> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId, Pageable pageable);
 
     //班级所有的文件列表
-    public Page<ClassFile> findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(String centerId,String classId, Pageable pageable);
+    public Page<ClassFile> findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(String centerId, String classId, Pageable pageable);
 
 }

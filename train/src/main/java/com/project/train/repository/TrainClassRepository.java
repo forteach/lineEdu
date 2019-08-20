@@ -1,7 +1,6 @@
 package com.project.train.repository;
 
 
-import com.project.train.domain.ClassFile;
 import com.project.train.domain.TrainClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

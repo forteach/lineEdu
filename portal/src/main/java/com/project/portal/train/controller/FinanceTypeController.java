@@ -7,24 +7,17 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FinanceTypeSaveUpdateRequest;
-import com.project.portal.train.request.TrainClassFindAllPage;
-import com.project.portal.train.request.TrainClassSaveUpdateRequest;
 import com.project.train.domain.FinanceType;
-import com.project.train.domain.TrainClass;
 import com.project.train.service.FinanceTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
  * @author: zhangyy
@@ -42,6 +35,7 @@ public class FinanceTypeController {
     public FinanceTypeController(FinanceTypeService financeTypeService) {
         this.financeTypeService = financeTypeService;
     }
+
     @ApiOperation(value = " 培训财务类型字典保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
