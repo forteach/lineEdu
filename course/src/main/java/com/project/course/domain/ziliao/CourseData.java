@@ -49,14 +49,4 @@ public class CourseData extends Entitys {
 
     @Column(name = "chapter_id", columnDefinition = "CHAR(32) COMMENT '章节编号'")
     private String chapterId;
-
-    @Column(name = "k_node_Id", columnDefinition = "CHAR(32) COMMENT '知识点编号'")
-    private String kNodeId;
-
-//    @Column(name = "teach_share", columnDefinition = "CHAR(1) COMMENT '教师共享 0不共享 1共享'")
-//    private String teachShare = "0";
-
-//    @Column(name = "stu_share", columnDefinition = "CHAR(1) COMMENT '学生共享 0不共享 1共享'")
-//    private String stuShare = "0";
-
 }

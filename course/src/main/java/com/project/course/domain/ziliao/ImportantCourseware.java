@@ -25,5 +25,4 @@ public class ImportantCourseware extends AbsFile {
 
     @Column(name = "video_time", columnDefinition = "VARCHAR(32) COMMENT '视频时间长度(单位秒)'")
     private String videoTime;
-
 }

@@ -15,20 +15,7 @@ import java.util.List;
  */
 public interface ChapteDataService {
 
-    public String save(String courseId, String chapterId, String datumArea, String datumType, List<DataDatumVo> files);
-
-    /**
-     * 修改资料领域和共享可见信息
-     *
-     * @param courseId
-     * @param chapterId
-     * @param fileId
-     * @param datumType
-     * @param datumArea
-     * @return
-     */
-    public String updateAreaAndShare(String courseId, String chapterId, String fileId, String datumType, String datumArea);
-
+    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files);
     /**
      * 课程资料详细列表
      *
@@ -39,9 +26,9 @@ public interface ChapteDataService {
      */
     public List<DatumResp> findDatumList(String chapterId, String datumType, Pageable pageable);
 
-    public List<DatumResp> findDatumList(String chapterId, String datumArea, String datumType, Pageable pageable);
+    public List<DatumResp> findDatumList(String chapterId, Pageable pageable);
 
     void removeChapteDataList(String courseId, String chapterId, String datumType);
 
-    void removeOne(String fileId, String datumArea);
+    void removeOne(String fileId, String datumType);
 }

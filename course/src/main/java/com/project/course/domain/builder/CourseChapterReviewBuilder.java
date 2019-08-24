@@ -10,8 +10,8 @@ import com.project.course.domain.CourseChapterReview;
  * @description:
  */
 public final class CourseChapterReviewBuilder {
-    public String createUser;
-    public String updateUser;
+    private String createUser;
+    private String updateUser;
     private String chapterId;
     private String averageScore;
     private Integer reviewAmount;

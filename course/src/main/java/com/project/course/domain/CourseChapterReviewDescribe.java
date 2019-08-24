@@ -43,5 +43,4 @@ public class CourseChapterReviewDescribe extends Entitys implements Serializable
 
     @Column(name = "score", columnDefinition = "INT(11) COMMENT '评论分数'")
     private Integer score;
-
 }

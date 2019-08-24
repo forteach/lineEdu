@@ -31,6 +31,4 @@ public class Photos extends AbsFile {
      */
     @Column(name = "arlits_id", columnDefinition = "VARCHAR(32) COMMENT '图集编号'")
     private String arlitsId;
-
-
 }

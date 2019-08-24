@@ -25,10 +25,6 @@ public class DatumResp implements Serializable {
      */
     public String fileId;
     /**
-     * 文件领域（预习,复习...）多领域逗号分隔
-     */
-    public String datumArea;
-    /**
      * 章节编号
      */
     public String chapterId;
@@ -48,13 +44,4 @@ public class DatumResp implements Serializable {
      * 文件类型（音频、视频....）
      */
     private String datumType;
-    /**
-     * 教师共享
-     */
-//    private String teachShare;
-    /**
-     * 教师共享
-     */
-//    private String stuShare;
-
 }

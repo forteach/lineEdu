@@ -26,9 +26,5 @@ public class DataDatumVo implements Serializable {
 
     private String fileUrl;
 
-    private String mount;
-
-    private int indexNum;
-
     private Integer videoDuration;
 }

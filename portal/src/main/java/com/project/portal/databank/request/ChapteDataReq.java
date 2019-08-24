@@ -24,26 +24,14 @@ import java.util.List;
 @ApiModel(value = "章节资料信息对象数据")
 public class ChapteDataReq {
 
-    /**
-     * 资料编号
-     */
-    @ApiModelProperty(name = "fileId", value = "资料编号", dataType = "string")
-    private String fileId;
-
     @ApiModelProperty(name = "courseId", value = "科目编号", dataType = "string", required = true)
     private String courseId;
 
     @ApiModelProperty(value = "章节编号", name = "chapterId", dataType = "string")
     private String chapterId;
 
-    @ApiModelProperty(name = "datumArea", dataType = "string", value = "资料领域", example = "1", notes = "资料领域：3预习参考 4教学参考 5授课案例", required = true)
-    private String datumArea;
-
     @ApiModelProperty(name = "datumType", dataType = "string", value = "资料类型", example = "1", notes = "资料类型 1文档　　3视频　4音频　5链接", required = true)
     private String datumType;
-
-    @ApiModelProperty(name = "datumName", value = "资料名称", dataType = "string", notes = "资料名称")
-    private String datumName;
 
     @ApiModelProperty(value = "files", name = "文件列表信息", dataType = "list", required = true)
     private List<DataDatumVo> files;

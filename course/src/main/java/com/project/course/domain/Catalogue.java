@@ -49,5 +49,4 @@ public class Catalogue extends Entitys {
 
     @Column(name = "publish", columnDefinition = "CHAR(1) COMMENT '是否发布 Y/N'")
     public String publish;
-
 }

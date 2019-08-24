@@ -41,5 +41,4 @@ public class CourseImages extends Entitys implements Serializable {
 
     @Column(name = "index_num", columnDefinition = "INT(11) COMMENT '顺序ID'")
     private Integer indexNum;
-
 }

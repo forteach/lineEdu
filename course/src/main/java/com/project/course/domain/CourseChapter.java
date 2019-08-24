@@ -55,5 +55,4 @@ public class CourseChapter extends Entitys {
 
     @Column(name = "video_time", columnDefinition = "INT(6) COMMENT '需要观看视频长度(秒)'")
     private Integer videoTime;
-
 }

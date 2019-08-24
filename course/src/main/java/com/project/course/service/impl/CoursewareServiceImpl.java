@@ -1,6 +1,7 @@
 package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
 import com.project.course.domain.ziliao.ImportantCourseware;
 import com.project.course.repository.ziliao.CourseArlitsRepository;
 import com.project.course.repository.ziliao.ImpCoursewareRepoitory;
@@ -55,6 +56,7 @@ public class CoursewareServiceImpl implements CoursewareService {
         //保存新的视频信息
         ImportantCourseware importantCourseware = new ImportantCourseware();
         BeanUtil.copyProperties(obj, importantCourseware);
+        importantCourseware.setId(IdUtil.fastSimpleUUID());
         importantCourseware.setImportantType("2");
         importantCourseware.setDatumType("3");
         impCoursewareRepoitory.save(importantCourseware);

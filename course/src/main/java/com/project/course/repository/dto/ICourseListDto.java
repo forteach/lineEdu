@@ -31,20 +31,6 @@ public interface ICourseListDto {
     public String getAlias();
 
     /**
-     * 课程编号
-     *
-     * @return
-     */
-//    public String getCourseNumber();
-
-    /**
-     * 备课类型
-     *
-     * @return
-     */
-//    public String getLessonPreparationType();
-
-    /**
      * 课程封面
      *
      * @return

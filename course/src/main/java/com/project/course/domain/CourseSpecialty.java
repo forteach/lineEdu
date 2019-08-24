@@ -32,5 +32,4 @@ public class CourseSpecialty extends Entitys {
     private String courseId;
 
     private String specialtyId;
-
 }

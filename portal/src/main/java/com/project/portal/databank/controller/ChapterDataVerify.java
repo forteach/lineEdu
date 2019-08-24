@@ -20,15 +20,10 @@ public class ChapterDataVerify {
         verify(chapteDataReq);
     }
 
-    public void updateVerify(ChapteDataReq chapteDataReq) {
-        MyAssert.blank(chapteDataReq.getFileId(), DefineCode.ERR0010, "资料编号不为空");
-        verify(chapteDataReq);
-    }
 
     private void verify(ChapteDataReq chapteDataReq) {
         MyAssert.blank(chapteDataReq.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
         MyAssert.blank(chapteDataReq.getCourseId(), DefineCode.ERR0010, "科目编号不为空");
-        MyAssert.blank(chapteDataReq.getDatumArea(), DefineCode.ERR0010, "资料领域不为空");
         MyAssert.blank(chapteDataReq.getDatumType(), DefineCode.ERR0010, "资料类型不为空");
     }
 

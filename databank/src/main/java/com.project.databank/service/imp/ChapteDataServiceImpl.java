@@ -1,6 +1,7 @@
 package com.project.databank.service.imp;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -27,8 +28,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -41,8 +42,8 @@ import static java.util.stream.Collectors.toList;
  * @Version: 1.0
  * @Description: 课程资料操作
  */
-@Service(value = "ChapteDataService")
 @Slf4j
+@Service
 public class ChapteDataServiceImpl implements ChapteDataService {
 
     @Resource
@@ -54,97 +55,43 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     @Resource
     private ViewDatumRepository viewDatumRepository;
     @Resource
-    private DatumAreaRepository datumAreaRepository;
-    @Resource
     private CourseChapter2Repository courseChapter2Repository;
 
 
     /**
      * @param chapterId
-     * @param datumArea
      * @param datumType
      * @param files
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String save(String courseId, String chapterId, String datumArea, String datumType, List<DataDatumVo> files) {
+    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files) {
         //根据文件类型，对应保存信息
         //1文档　3视频　4音频　5链接
         String size = "";
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
-                size = saveT(courseId, chapterId, datumArea, datumType, files, fileDatumRepository, new FileDatum());
+                size = saveT(courseId, chapterId, datumType, files, fileDatumRepository, new FileDatum());
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
-                size = saveT(courseId, chapterId, datumArea, datumType, files, viewDatumRepository, new ViewDatum());
+                size = saveT(courseId, chapterId, datumType, files, viewDatumRepository, new ViewDatum());
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
-                size = saveT(courseId, chapterId, datumArea, datumType, files, audioDatumRepository, new AudioDatum());
+                size = saveT(courseId, chapterId, datumType, files, audioDatumRepository, new AudioDatum());
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
-                size = saveT(courseId, chapterId, datumArea, datumType, files, linkDatumRepository, new LinkDatum());
+                size = saveT(courseId, chapterId, datumType, files, linkDatumRepository, new LinkDatum());
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
         }
         //添加成功后的文件数量
         return size;
-    }
-
-    /**
-     * 单个资料领域修改
-     *
-     * @param fileId    资料类型
-     * @param datumType 资料类型
-     * @param datumArea 资料领域
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public String updateAreaAndShare(String courseId, String chapterId,String fileId, String datumType, String datumArea) {
-
-        //1、根据资料编号和领域编号，获得领域表信息
-        DatumArea da = datumAreaRepository.findByFileIdAndDatumArea(fileId, datumArea);
-
-        //2、如果存在就删除，相反就添加
-        if (da != null) {
-            datumAreaRepository.deleteByFileIdAndDatumArea(fileId, datumArea);
-        } else {
-            da = new DatumArea();
-            da.setFileId(IdUtil.fastSimpleUUID());
-            da.setDatumArea(datumArea);
-            da.setDatumType(datumType);
-            da.setChapterId(chapterId);
-            da.setCourseId(courseId);
-            datumAreaRepository.save(da);
-        }
-
-        //4、修改文件资料表的资料领域字段
-        switch (datumType) {
-            //文档
-            case Dic.COURSE_ZILIAO_FILE:
-                fileDatumRepository.updateDatumArea(fileId, datumArea);
-                break;
-            //视频
-            case Dic.COURSE_ZILIAO_VIEW:
-                viewDatumRepository.updateDatumArea(fileId, datumArea);
-                break;
-            //音频
-            case Dic.COURSE_ZILIAO_AUDIO:
-                audioDatumRepository.updateDatumArea(fileId, datumArea);
-                break;
-            //链接
-            case Dic.COURSE_ZILIAO_LINK:
-                linkDatumRepository.updateDatumArea(fileId, datumArea);
-                break;
-            default:
-                MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
-        }
-        return "ok";
     }
 
     /**
@@ -227,59 +174,48 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         predicatesList.add(criteriaBuilder.equal(root.get("isValidated"), TAKE_EFFECT_OPEN));
 
         if (StrUtil.isNotBlank(chapterId)) {
-            predicatesList.add(
-                    criteriaBuilder.equal(root.get("chapterId"), chapterId));
+            predicatesList.add(criteriaBuilder.equal(root.get("chapterId"), chapterId));
         }
-//        if (StrUtil.isNotBlank(kNodeId)) {
-//            predicatesList.add(
-//                    criteriaBuilder.equal(root.get("kNodeId"), kNodeId));
-//        }
 
         //资料类型 1文档　　3视频　4音频　5链接
         if (StrUtil.isNotBlank(datumType)) {
-            predicatesList.add(
-                    criteriaBuilder.equal(root.get("datumType"), datumType));
+            predicatesList.add(criteriaBuilder.equal(root.get("datumType"), datumType));
         }
         return criteriaBuilder.and(predicatesList.toArray(new Predicate[predicatesList.size()]));
     }
 
     /**
      * @param chapterId
-     * @param datumArea 资料领域
-     * @param datumType
      * @param pageable
      * @return
      */
     @Override
-    public List<DatumResp> findDatumList(String chapterId, String datumArea, String datumType, Pageable pageable) {
-        //1、获得资料领域列表
-        List<String> datumAreas = Arrays.asList(datumArea.split(","));
-        List<AbsDatum> fileList = null;
-        //2、判断是否按知识点查询资料领域列表
-        List list = datumAreaRepository.findByChapterIdAndDatumAreaIn(chapterId, datumAreas, pageable)
-                .getContent()
-                .stream()
-                .map(item -> item.getFileId())
-                .collect(toList());
-        //3、根据不同资料类型，获得资料列表数据
-        if (datumType.equals(Dic.COURSE_ZILIAO_FILE)) {
-            fileList = fileDatumRepository.findAllById(list);
+    public List<DatumResp> findDatumList(String chapterId, Pageable pageable) {
+        List<AbsDatum> fileList = CollUtil.newArrayList();
+        //查询全部类型资源数据
+        List<FileDatum> fileDatums = fileDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_OPEN);
+        if (fileDatums != null && fileDatums.size() > 0) {
+            fileList.addAll(fileDatums);
         }
 
-        if (datumType.equals(Dic.COURSE_ZILIAO_AUDIO)) {
-            fileList = audioDatumRepository.findAllById(list);
+        List<AudioDatum> audioDatas = audioDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_OPEN);
+        if (audioDatas != null && audioDatas.size() > 0) {
+            fileList.addAll(audioDatas);
         }
 
-        if (datumType.equals(Dic.COURSE_ZILIAO_VIEW)) {
-            fileList = viewDatumRepository.findAllById(list);
+        List<ViewDatum> viewDatas = viewDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_OPEN);
+        if (viewDatas != null && viewDatas.size() > 0) {
+            fileList.addAll(viewDatas);
         }
 
-        if (datumType.equals(Dic.COURSE_ZILIAO_LINK)) {
-            fileList = linkDatumRepository.findAllById(list);
+        List<LinkDatum> linkDatas = linkDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_OPEN);
+        if (linkDatas != null && linkDatas.size() > 0) {
+            fileList.addAll(linkDatas);
         }
 
-        //4、转换LIST对象
+        //转换LIST对象
         return fileList.stream()
+                .filter(Objects::nonNull)
                 .map((AbsDatum item) -> {
                     DatumResp dr = new DatumResp();
                     BeanUtil.copyProperties(item, dr);
@@ -287,11 +223,11 @@ public class ChapteDataServiceImpl implements ChapteDataService {
                 }).collect(toList());
     }
 
-    private String saveT(String courseId, String chapterId, String datumArea, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd) {
+    private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd) {
 
         //1、添加资料文件列表明细
         List<AbsDatum> fileDatumList = new ArrayList<>();
-        Integer videoTime = null;
+        Integer videoTime = 0;
         for (DataDatumVo dataDatumVo : files) {
             String uuid = IdUtil.fastSimpleUUID();
             fd.setChapterId(chapterId);
@@ -300,51 +236,27 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             fd.setFileType(FileUtil.extName(dataDatumVo.getFileName()));
             fd.setFileUrl(dataDatumVo.getFileUrl());
             fd.setDatumType(datumType);
-            if (fd instanceof ViewDatum){
+            if (fd instanceof ViewDatum && dataDatumVo.getVideoDuration() != null) {
                 ((ViewDatum) fd).setVideoDuration(dataDatumVo.getVideoDuration());
                 videoTime = dataDatumVo.getVideoDuration();
             }
             fd.setCourseId(courseId);
-            fd.setDatumArea(datumArea);
             fileDatumList.add(fd);
         }
         rep.saveAll(fileDatumList);
         //判断是否设置长度值
-        if (videoTime != null && videoTime > 0){
+        if (videoTime != null && videoTime > 0) {
             Optional<CourseChapter> optional = courseChapter2Repository.findById(chapterId);
-            if (optional.isPresent()){
+            if (optional.isPresent()) {
                 CourseChapter courseChapter = optional.get();
                 courseChapter.setVideoTime(videoTime);
                 courseChapter2Repository.save(courseChapter);
             }
         }
-        //2、添加文件所属领域信息--不经常频繁的添加资料
-//        fileDatumList.stream().forEach((absDatum) ->
-//        {
-//            final String id = absDatum.getFileId();
-//            final String type = absDatum.getDatumType();
-//            final String courseId1 = absDatum.getCourseId();
-//            final String chapterId1 = absDatum.getChapterId();
-//            final String knodeId = absDatum.getKNodeId();
-//            List<DatumArea> list = new ArrayList<DatumArea>();
-//            Arrays.stream(datumArea.split(",")).forEach((area) -> {
-//                DatumArea da = new DatumArea();
-//                da.setFileId(id);
-//                da.setDatumArea(area);
-//                da.setDatumType(type);
-//                da.setCourseId(courseId1);
-//                da.setChapterId(chapterId1);
-//                da.setKNodeId(knodeId);
-//                list.add(da);
-//            });
-//            datumAreaRepository.saveAll(list);
-//        });
+
         //返回资料文件数量
         return String.valueOf(fileDatumList.size());
     }
-
-    //***************************************************************************************8
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -360,8 +272,6 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             //链接
             linkDatumRepository.deleteAllByCourseIdAndChapterId(courseId, chapterId);
 
-            //全部文件列表信息需要删除
-            datumAreaRepository.deleteAllByChapterIdAndCourseId(chapterId, courseId);
         } else {
             //传值,有具体要删除的类型
             removeTypeDataList(courseId, chapterId, datumType);
@@ -370,7 +280,6 @@ public class ChapteDataServiceImpl implements ChapteDataService {
 
     private void removeTypeDataList(String courseId, String chapterId, String datumType) {
         //删除文件信息列表
-        datumAreaRepository.deleteAllByCourseIdAndChapterIdAndDatumType(courseId, chapterId, datumType);
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
@@ -397,70 +306,34 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      * 删除单个文件信息和列表
      *
      * @param fileId
-     * @param datumArea
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void removeOne(String fileId, String datumArea) {
-        DatumArea datum = datumAreaRepository.findByFileIdAndDatumArea(fileId, datumArea);
-        MyAssert.isNull(datum, DefineCode.ERR0014, "不存在要删除的文件");
-        String datumType = datum.getDatumType();
+    public void removeOne(String fileId, String datumType) {
         //删除文件列表
-        datumAreaRepository.deleteByFileIdAndDatumArea(fileId, datumArea);
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
-                removeOne(fileId, datumArea, fileDatumRepository);
+                removeOne(fileId, fileDatumRepository);
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
-                removeOne(fileId, datumArea, viewDatumRepository);
+                removeOne(fileId, viewDatumRepository);
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
-                removeOne(fileId, datumArea, audioDatumRepository);
+                removeOne(fileId, audioDatumRepository);
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
-                removeOne(fileId, datumArea, linkDatumRepository);
+                removeOne(fileId, linkDatumRepository);
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
         }
     }
 
-    private void removeOne(String fileId, String datumArea, IDatumRepoitory rep) {
-        Optional<AbsDatum> absDatumOptional = rep.findById(fileId);
-        if (absDatumOptional.isPresent()) {
-            AbsDatum datum = absDatumOptional.get();
-            List<String> area = removeDatumArea(datum.getDatumArea(), datumArea);
-            if (area.isEmpty()) {
-                //删除领域类型,结果后领域为空，则没有相关类型，则可以删除文件详细信息
-                rep.deleteById(fileId);
-            } else {
-                //删除移除相关类型后，需要修改其中的类型
-                String dataAreas = StrUtil.join(",", area.stream().toArray(String[]::new));
-                datum.setDatumArea(dataAreas);
-                rep.save(datum);
-            }
-        }
-    }
-
-    /**
-     * 从领域类型中将要删除的领域数据移除
-     *
-     * @param datumAreas
-     * @param datumArea
-     * @return
-     */
-    private List<String> removeDatumArea(String datumAreas, String datumArea) {
-        List<String> datum = StrUtil.splitTrim(datumAreas, ",");
-        List<String> datumList = new ArrayList<>();
-        datum.forEach(d -> {
-            if (!datumArea.equals(d)) {
-                datumList.add(d);
-            }
-        });
-        return datumList;
+    private void removeOne(String fileId, IDatumRepoitory rep) {
+        rep.deleteById(fileId);
     }
 }

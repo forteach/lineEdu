@@ -45,11 +45,4 @@ public interface IChapterDataListDto {
      * @return
      */
     public String getDatumType();
-
-    /**
-     * 资料领域
-     *
-     * @return
-     */
-    public String getDatumArea();
 }

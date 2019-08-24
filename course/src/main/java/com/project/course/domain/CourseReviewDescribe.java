@@ -55,5 +55,4 @@ public class CourseReviewDescribe extends Entitys {
 
     @Column(name = "reply_time", columnDefinition = "VARCHAR(32) COMMENT '回复时间'")
     private String replyTime = StrUtil.isBlank(this.createTime) ? DateUtil.now() : this.createTime;
-    ;
 }
