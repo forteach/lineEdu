@@ -29,6 +29,9 @@ public class TrainClassStuSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "pjPlanId", value = "培训项目计划编号")
     private String pjPlanId;
 
+    @ApiModelProperty(name = "trainProjectName", value = "培训项目名称", dataType = "string")
+    private String trainProjectName;
+
     @ApiModelProperty(name = "gender", value = "性别", dataType = "string")
     private String gender;
 

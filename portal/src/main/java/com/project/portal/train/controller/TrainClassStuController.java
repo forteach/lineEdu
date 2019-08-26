@@ -2,10 +2,10 @@ package com.project.portal.train.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
+import com.project.portal.train.request.FindTrainClassStuAllPageRequest;
 import com.project.portal.train.request.TrainClassStuPageRequest;
 import com.project.portal.train.request.TrainClassStuSaveUpdateRequest;
 import com.project.train.domain.TrainClassStu;
@@ -46,6 +46,8 @@ public class TrainClassStuController {
             @ApiImplicitParam(name = "trainClassId", value = "培训项目班级编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "trainClassName", value = "培训班级名称", paramType = "form"),
             @ApiImplicitParam(name = "userId", value = "系统用户编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "trainProjectName", value = "培训项目名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "gender", value = "性别", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuName", value = "姓名", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "marriage", value = "民族", dataType = "string", paramType = "form"),
@@ -65,7 +67,7 @@ public class TrainClassStuController {
     }
 
     @ApiOperation(value = "项目计划课程列表")
-    @PostMapping(path = "/findAllPage")
+    @PostMapping(path = "/findByClassIdAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
@@ -77,11 +79,33 @@ public class TrainClassStuController {
         return WebResult.okResult(trainClassStuService.findClassPage(request.getClassId(), PageRequest.of(request.getPage(), request.getSize())));
     }
 
-    @ApiOperation(value = "培训项目班级学生列表")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(trainClassStuService.findId(JSONObject.parseObject(planId).getString("planId")));
+//    @ApiOperation(value = "培训项目班级学生列表")
+//    @PostMapping(path = "/findById")
+//    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
+//    public WebResult findById(@RequestBody String planId) {
+//        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
+//        return WebResult.okResult(trainClassStuService.findId(JSONObject.parseObject(planId).getString("planId")));
+//    }
+
+    @ApiOperation(value = "根据计划id分页查询班级学生")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15"),
+            @ApiImplicitParam(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "string"),
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "query")
+    })
+    @PostMapping(path = "/findAllPageAll")
+    public WebResult findByPlanIdPageAll(@RequestBody FindTrainClassStuAllPageRequest request){
+        valideSort(request.getPage(), request.getPage());
+        if (StrUtil.isNotBlank(request.getAgoDay()) && StrUtil.isNotBlank(request.getPjPlanId())){
+            return WebResult.okResult(trainClassStuService.findByCenterAreaIdAndAgoDayAll(request.getCenterAreaId(), request.getPjPlanId(), Integer.parseInt(request.getAgoDay()), PageRequest.of(request.getPage(), request.getSize())));
+        }else if (StrUtil.isBlank(request.getAgoDay()) && StrUtil.isNotBlank(request.getPjPlanId())){
+            return WebResult.okResult(trainClassStuService.findByPlanIdPageAll(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+        }else if (StrUtil.isNotBlank(request.getAgoDay()) && StrUtil.isBlank(request.getPjPlanId())){
+            return WebResult.okResult(trainClassStuService.findAgoDay(Integer.parseInt(request.getAgoDay()), PageRequest.of(request.getPage(), request.getSize())));
+        }else {
+            return WebResult.okResult(trainClassStuService.findAllPage(PageRequest.of(request.getPage(), request.getSize())));
+        }
     }
 }

@@ -1,19 +1,28 @@
 package com.project.train.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.TrainClassStu;
 import com.project.train.repository.TrainClassStuRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import com.project.mysql.service.BaseMySqlService;
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.Date;
 import java.util.Optional;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
  * 项目计划班级成员信息记录
@@ -59,15 +68,31 @@ public class TrainClassStuService extends BaseMySqlService {
 
 
     /**
-     * @param planId   获取计划项目的班级成员列表
+     * @param pjPlanId   获取计划项目的班级成员列表
      * @param pageable
      * @return
      */
-    public Page<TrainClassStu> findPlanPage(String planId, Pageable pageable) {
+    public Page<TrainClassStu> findByPlanIdPageAll(String pjPlanId, Pageable pageable) {
 
-        return trainClassStuRepository.findByPjPlanIdOrderByCreateTimeDesc(planId, pageable);
+        return trainClassStuRepository.findByPjPlanIdOrderByCreateTimeDesc(pjPlanId, pageable);
     }
 
+    public Page<TrainClassStu> findByCenterAreaIdAndAgoDayAll(String centerAreaId, String pjPlanId, int agoDay, Pageable pageable) {
+        //提前天数的日期
+        String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
+        return trainClassStuRepository.findAllByCenterAreaIdAndPjPlanIdAndCreateTimeAfterOrderByCreateTimeDesc(centerAreaId, pjPlanId, fromDay, pageable);
+    }
+
+    public Page<TrainClassStu> findAllPage(Pageable pageable) {
+
+        return trainClassStuRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
+    }
+
+    public Page<TrainClassStu> findAgoDay(int agoDay, PageRequest pageable) {
+        //提前天数的日期
+        String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
+        return trainClassStuRepository.findAllByCreateTimeAfterOrderByCreateTimeDesc(fromDay, pageable);
+    }
 
     /**
      * @param classId
@@ -79,4 +104,20 @@ public class TrainClassStuService extends BaseMySqlService {
         return trainClassStuRepository.findByTrainClassId(classId, pageable);
     }
 
+    public Page<TrainClassStu> findAllPage(String centerAreaId, String pjPlanId, int agoDay, Pageable pageable){
+        return trainClassStuRepository.findAll((Root<TrainClassStu> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            Predicate predicate = null;
+            if (StrUtil.isNotBlank(centerAreaId)) {
+                predicate = criteriaBuilder.equal(root.get("centerAreaId"), centerAreaId);
+            }
+            if (StrUtil.isNotBlank(pjPlanId)) {
+                predicate = criteriaBuilder.equal(root.get("pjPlanId"), pjPlanId);
+            }
+            if (StrUtil.isNotBlank(String.valueOf(agoDay))){
+                String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
+                predicate = criteriaBuilder.between(root.get("createTime"), fromDay, DateUtil.today());
+            }
+            return predicate;
+        }, pageable);
+    }
 }

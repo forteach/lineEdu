@@ -18,4 +18,10 @@ public interface TrainClassStuRepository extends JpaRepository<TrainClassStu, St
 
     //获得班级下的班级成员信息
     public Page<TrainClassStu> findByTrainClassId(String classId, Pageable pageable);
+
+    public Page<TrainClassStu> findAllByCenterAreaIdAndPjPlanIdAndCreateTimeAfterOrderByCreateTimeDesc(String centerId, String pjPlanId, String form, Pageable pageable);
+
+    public Page<TrainClassStu> findAllByCreateTimeAfterOrderByCreateTimeDesc(String form, Pageable pageable);
+
+    public Page<TrainClassStu> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
 }

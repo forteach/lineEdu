@@ -23,6 +23,6 @@ public class FindTrainPlanAllPageRequest extends SortVo implements Serializable 
     @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
     private String centerAreaId;
 
-    @ApiModelProperty(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "int")
+    @ApiModelProperty(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "string")
     private String agoDay;
 }

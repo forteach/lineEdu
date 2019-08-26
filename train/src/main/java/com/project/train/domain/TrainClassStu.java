@@ -41,6 +41,9 @@ public class TrainClassStu extends Entitys implements Serializable {
     @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目计划编号'")
     private String pjPlanId;
 
+    @Column(name = "train_project_name", columnDefinition = "VARCHAR(60) COMMENT '培训项目名称'")
+    private String trainProjectName;
+
     @Column(name = "user_id", columnDefinition = "VARCHAR(60) COMMENT '系统用户编号'")
     private String userId;
 
