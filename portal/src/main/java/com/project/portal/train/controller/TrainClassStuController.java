@@ -51,6 +51,7 @@ public class TrainClassStuController {
             @ApiImplicitParam(name = "gender", value = "性别", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuName", value = "姓名", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "marriage", value = "民族", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "nation", value = "民族", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "jobTitle", value = "单位职务", dataType = "string"),
             @ApiImplicitParam(name = "stuIdCard", value = "身份证号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuPhone", value = "联系方式", dataType = "string", paramType = "form"),
@@ -59,6 +60,7 @@ public class TrainClassStuController {
     public WebResult saveOrUpdate(@RequestBody TrainClassStuSaveUpdateRequest request) {
         TrainClassStu trainClassStu = new TrainClassStu();
         BeanUtil.copyProperties(request, trainClassStu);
+        trainClassStu.setNation(request.getMarriage());
         if (StrUtil.isBlank(request.getTrainStuId())) {
             return WebResult.okResult(trainClassStuService.save(trainClassStu));
         } else {
