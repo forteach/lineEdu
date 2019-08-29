@@ -1,5 +1,8 @@
 package com.project.portal.schoolroll.controller;
 
+import cn.hutool.json.JSONUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.SchoolRollFindRequest;
 import com.project.schoolroll.service.SchoolRollChangeService;
@@ -40,6 +43,15 @@ public class SchoolRollChangeController {
     })
     // todo 需要审批流程向后推
     public WebResult findSchoolRollChange(@RequestBody SchoolRollFindRequest request){
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "学生中心申请学生退学")
+    @PostMapping(path = "/applyChangeStudent")
+    @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
+    public WebResult applyChangeStudent(@RequestBody String studentId){
+        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生Id不为空");
+        schoolRollChangeService.applyChangeStudent(JSONUtil.parseObj(studentId).getStr("studentId"));
         return WebResult.okResult();
     }
 }

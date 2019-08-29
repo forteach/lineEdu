@@ -9,4 +9,5 @@ package com.project.schoolroll.service;
  */
 public interface SchoolRollChangeService {
 
+    void applyChangeStudent(String studentId);
 }

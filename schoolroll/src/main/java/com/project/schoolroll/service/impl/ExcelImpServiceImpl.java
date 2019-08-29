@@ -87,7 +87,10 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
 
 
     public void studentsExcel03Reader(InputStream inputStream,Class obj, String centerAreaId) {
-        List<StudentImport> list = ExcelReader(inputStream,obj);
+//        List<StudentImport> list = ExcelReader(inputStream,obj);
+        ExcelReader reader = ExcelUtil.getReader(inputStream);
+        setHeaderAlias(reader);
+        List<StudentImport> list = reader.readAll(StudentImport.class);
         saveStudent(list, centerAreaId);
         deleteKey();
     }
@@ -276,7 +279,7 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     private void setStudentExpandData(StudentImport studentImport, List<StudentExpand> studentExpandList, String centerAreaId){
         //学生邮箱
         if (StrUtil.isNotBlank(studentImport.getStuEmail())) {
-            setStudentExpandValue(studentImport.getStudentId(), stuEmail.name(), studentImport.getFamilyAddress(), stuEmail.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), stuEmail.name(), studentImport.getStuEmail(), stuEmail.getName(), studentExpandList, centerAreaId);
         }
         //家庭地址
         if (StrUtil.isNotBlank(studentImport.getFamilyAddress())) {
@@ -482,71 +485,5 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
         reader.addHeaderAlias(family2CompanyOrganization.getName(), family2CompanyOrganization.name());
         reader.addHeaderAlias(family2Position.getName(), family2Position.name());
         reader.addHeaderAlias(remark.getName(), remark.name());
-
-//        //学号
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(0, 0)), "stuId");
-//        //学生姓名
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(1, 0)), "stuName");
-//        //学生性别
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(2, 0)), "gender");
-//        //身份证号
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(3, 0)), "stuIDCard");
-//        //入学年度
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(4, 0)), "enrollmentDate");
-//        //招生批次
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(5, 0)), "recruitBatch");
-//        //专业名称
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(6, 0)), "specialtyName");
-//        //政治面貌
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(7, 0)), "politicalStatus");
-//        //民族
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(8, 0)), "nation");
-//        //学制及计划类别
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(9, 0)), "educationalSystem");
-//        //中招考试成绩/考试成绩
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(10, 0)), "totalExaminationAchievement");
-//        //准考证号
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(11, 0)), "entranceCertificateNumber");
-//        //考试市县 地区
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(12, 0)), "examinationArea");
-//        //毕业学校
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(13, 0)), "school");
-//        //就读方式 走读,住校,借宿,其它
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(14, 0)), "waysStudy");
-//        //报道日期
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(15, 0)), "arrivalDate");
-//        //家长姓名
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(16, 0)), "familyName");
-//        //家长电话
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(17, 0)), "familyPhone");
-//        //工作单位
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(18, 0)), "companyOrganization");
-//        //学生电话
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(19, 0)), "stuPhone");
-//        //学生邮箱
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(20, 0)), "stuEmail");
-//        //家庭住址
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(21, 0)), "familyAddress");
-//        //备注
-//        reader.addHeaderAlias(String.valueOf(reader.readCellValue(22, 0)), "remark");
-
-//        reader.addHeaderAlias("学号", "stuId");
-//        reader.addHeaderAlias("姓名","stuName");
-//        reader.addHeaderAlias("性别","gender");
-//        reader.addHeaderAlias("身份证号/生日","stuIDCard");
-//        reader.addHeaderAlias("入学年度","enrollmentDate");
-//        reader.addHeaderAlias("专业","specialtyName");
-//        reader.addHeaderAlias("政治面貌","politicalStatus");
-//        reader.addHeaderAlias("民族","nation");
-//        reader.addHeaderAlias("学制及计划类别","educationalSystem");
-//        reader.addHeaderAlias("中招成绩","totalExaminationAchievement");
-//        reader.addHeaderAlias("准考证号","entranceCertificateNumber");
-//        reader.addHeaderAlias("家长姓名","familyName");
-//        reader.addHeaderAlias("家长联系电话","familyPhone");
-//        reader.addHeaderAlias("工作单位","companyOrganization");
-//        reader.addHeaderAlias("学生电话","stuPhone");
-//        reader.addHeaderAlias("学生邮箱","stuEmail");
-//        reader.addHeaderAlias("家庭住址","familyAddress");
-//        reader.addHeaderAlias("备注","remark");
     }
 }
