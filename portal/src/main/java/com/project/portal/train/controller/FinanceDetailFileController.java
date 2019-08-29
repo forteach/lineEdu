@@ -45,7 +45,7 @@ public class FinanceDetailFileController {
             @ApiImplicitParam(name = "fileId", value = "财务凭证资料编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "财务凭证资料名称", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "财务凭证资料URL", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "planId", value = "财务凭证计划编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "pjPlanId", value = "财务凭证计划编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody FinanceDetailFileSaveUpdateRequest request) {
@@ -61,23 +61,15 @@ public class FinanceDetailFileController {
     @ApiOperation(value = "培训项目班级列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
     })
     public WebResult findAllPage(@RequestBody FinanceDetailFileFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
-        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "项目计划id不为空");
+        MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "项目计划id不为空");
         return WebResult.okResult(financeDetailFileService
-                .findPlanPage(request.getCenterAreaId(), request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
-    }
-
-    @ApiOperation(value = "财务类文件详细查询")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "培训项目计划编号id不为空");
-        return WebResult.okResult(financeDetailFileService.findId(JSONObject.parseObject(planId).getString("planId")));
+                .findPlanPage(request.getCenterAreaId(), request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
     }
 }

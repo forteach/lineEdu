@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FinanceDetailFindAllPage;
 import com.project.portal.train.request.FinanceDetailSaveUpdateRequest;
+import com.project.portal.train.request.FindFinanceDetailRequest;
 import com.project.train.domain.FinanceDetail;
 import com.project.train.service.FinanceDetailService;
 import io.swagger.annotations.Api;
@@ -84,11 +85,21 @@ public class FinanceDetailController {
         }
     }
 
-    @ApiOperation(value = "培训财务明细查询")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "培训项目计划编号id不为空");
-        return WebResult.okResult(financeDetailService.findId(JSONObject.parseObject(planId).getString("planId")));
+    @ApiOperation(value = "根基计划id查询财务明细")
+    @PostMapping(path = "/findByPjPlanIdAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "agoDay", value = "获取前多少天项目计划列表 前多少天", dataType = "string"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
+    })
+    public WebResult findByPjPlanIdAllPage(@RequestBody FindFinanceDetailRequest request) {
+        valideSort(request.getPage(), request.getPage());
+        MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "培训项目计划编号id不为空");
+        if (StrUtil.isBlank(request.getAgoDay())){
+            return WebResult.okResult(financeDetailService.findByPjPlandIdAllPage(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+        }else {
+            return WebResult.okResult(financeDetailService.findByPjPlandIdAllPage(request.getPjPlanId(), Integer.valueOf(request.getAgoDay()), PageRequest.of(request.getPage(), request.getSize())));
+        }
     }
 }

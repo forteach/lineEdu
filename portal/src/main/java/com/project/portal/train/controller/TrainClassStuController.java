@@ -98,7 +98,7 @@ public class TrainClassStuController {
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "query")
     })
     @PostMapping(path = "/findAllPageAll")
-    public WebResult findByPlanIdPageAll(@RequestBody FindTrainClassStuAllPageRequest request){
+    public WebResult findByPjPlanIdPageAll(@RequestBody FindTrainClassStuAllPageRequest request){
         valideSort(request.getPage(), request.getPage());
         if (StrUtil.isNotBlank(request.getAgoDay()) && StrUtil.isNotBlank(request.getPjPlanId())){
             return WebResult.okResult(trainClassStuService.findByCenterAreaIdAndAgoDayAll(request.getCenterAreaId(), request.getPjPlanId(), Integer.parseInt(request.getAgoDay()), PageRequest.of(request.getPage(), request.getSize())));

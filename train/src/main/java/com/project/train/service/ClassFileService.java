@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Optional;
@@ -26,13 +27,22 @@ public class ClassFileService extends BaseMySqlService {
     @Resource
     private ClassFileRepository classFileRepository;
 
+    @Resource
+    private TrainPlanFinishService trainPlanFinishService;
 
     /**
      * 文件明细添加
      */
+    @Transactional
     public ClassFile save(ClassFile classFile) {
         classFile.setFileId(IdUtil.fastSimpleUUID());
-        return classFileRepository.save(classFile);
+         classFileRepository.save(classFile);
+
+        //判断是否全部完善信息了
+        String planId=classFile.getPjPlanId();
+        trainPlanFinishService.updateAll(planId);
+
+        return classFile;
     }
 
     /**
@@ -79,4 +89,7 @@ public class ClassFileService extends BaseMySqlService {
     }
 
 
+    public Page<ClassFile> findByPjPlanIdPageAll(String pjPlanId, Pageable pageable){
+        return classFileRepository.findAllByPjPlanIdOrderByCreateTimeDesc(pjPlanId, pageable);
+    }
 }

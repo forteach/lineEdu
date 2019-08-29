@@ -47,11 +47,11 @@ public class FinanceTypeService extends BaseMySqlService {
     /**
      * 财务类型明细BYID
      *
-     * @param planId
+     * @param financeTypeId
      * @return
      */
-    public FinanceType findId(String planId) {
-        Optional<FinanceType> obj = financeTypeRepository.findById(planId);
+    public FinanceType findId(String financeTypeId) {
+        Optional<FinanceType> obj = financeTypeRepository.findById(financeTypeId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }

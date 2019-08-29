@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 培训项目财务明细管理
  */
@@ -20,6 +22,7 @@ public interface FinanceDetailRepository extends JpaRepository<FinanceDetail, St
     //所有的项目计划列表
     public Page<FinanceDetail> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId, Pageable pageable);
 
-    public Page<FinanceDetail> findAllByPjPlanIdAndCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(String pjPlanId, String centerId, String form, Pageable pageable);
+    public Page<FinanceDetail> findAllByPjPlanIdAndCreateTimeAfterOrderByCreateTimeDesc(String pjPlanId, String form, Pageable pageable);
 
+    public Page<FinanceDetail> findAllByPjPlanIdOrderByCreateTimeDesc(String pjPlanId, Pageable pageable);
 }

@@ -48,11 +48,11 @@ public class FinanceDetailFileService extends BaseMySqlService {
     /**
      * 文件BYID
      *
-     * @param planId
+     * @param fileId
      * @return
      */
-    public FinanceDetailFile findId(String planId) {
-        Optional<FinanceDetailFile> obj = financeDetailFileRepository.findById(planId);
+    public FinanceDetailFile findId(String fileId) {
+        Optional<FinanceDetailFile> obj = financeDetailFileRepository.findById(fileId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
@@ -62,8 +62,8 @@ public class FinanceDetailFileService extends BaseMySqlService {
      * @param pageable
      * @return
      */
-    public Page<FinanceDetailFile> findPlanPage(String centerAreaId, String planId, Pageable pageable) {
-        return financeDetailFileRepository.findAllByCenterAreaIdAndPlanIdOrderByCreateTimeDesc(centerAreaId, planId, pageable);
+    public Page<FinanceDetailFile> findPlanPage(String centerAreaId, String pjPlanId, Pageable pageable) {
+        return financeDetailFileRepository.findAllByCenterAreaIdAndPjPlanIdOrderByCreateTimeDesc(centerAreaId, pjPlanId, pageable);
     }
 
 

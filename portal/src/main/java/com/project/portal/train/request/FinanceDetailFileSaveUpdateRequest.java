@@ -27,8 +27,8 @@ public class FinanceDetailFileSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "fileUrl", value = "财务凭证资料URL")
     private String fileUrl;
 
-    @ApiModelProperty(name = "planId", value = "财务凭证计划编号")
-    private String planId;
+    @ApiModelProperty(name = "pjPlanId", value = "财务凭证计划编号")
+    private String pjPlanId;
 
     @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
     private String centerAreaId;

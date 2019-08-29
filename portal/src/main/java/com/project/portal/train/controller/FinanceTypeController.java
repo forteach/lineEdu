@@ -63,11 +63,11 @@ public class FinanceTypeController {
         return WebResult.okResult(financeTypeService.findAll(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
     }
 
-    @ApiOperation(value = "财务类型字典管理")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(financeTypeService.findId(JSONObject.parseObject(planId).getString("planId")));
-    }
+//    @ApiOperation(value = "财务类型字典管理")
+//    @PostMapping(path = "/findById")
+//    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
+//    public WebResult findById(@RequestBody String planId) {
+//        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
+//        return WebResult.okResult(financeTypeService.findId(JSONObject.parseObject(planId).getString("planId")));
+//    }
 }

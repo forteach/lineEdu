@@ -20,8 +20,11 @@ import java.io.Serializable;
 @ApiModel(value = "培训分页查询财务文件信息")
 public class FinanceDetailFileFindAllPage extends SortVo implements Serializable {
 
-    @ApiModelProperty(name = "planId", value = "培训项目计划编号", dataType = "string", required = true)
-    private String planId;
+    /**
+     * 项目id
+     */
+    @ApiModelProperty(name = "pjPlanId", value = "项目计划id", dataType = "string")
+    private String pjPlanId;
 
     @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
     private String centerAreaId;

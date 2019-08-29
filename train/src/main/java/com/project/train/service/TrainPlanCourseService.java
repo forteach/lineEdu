@@ -28,6 +28,9 @@ public class TrainPlanCourseService extends BaseMySqlService {
     @Resource
     private TrainProjectPlanRepository trainProjectPlanRepository;
 
+    @Resource
+    private TrainPlanFinishService trainPlanFinishService;
+
     /**
      * 项目计划添加
      */
@@ -48,24 +51,29 @@ public class TrainPlanCourseService extends BaseMySqlService {
             plan.setTrainCourse(course.substring(0, course.length() - 1));
             trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
+            //判断是否全部完善信息了
+            trainPlanFinishService.updateAll(planId);
             return saveAll(list);
         } else {
             TrainProjectPlan plan = trainProjectPlanRepository.getOne(planId);
             plan.setTrainCourse("");
             trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
+
+            //判断是否全部完善信息了
+            trainPlanFinishService.updateAll(planId);
             return null;
         }
 
     }
 
     /**
-     * @param planId 项目计划课程列表，不分页
+     * @param pjPlanId 项目计划课程列表，不分页
      * @return
      */
-    public List<TrainPlanCourse> findAll(String planId) {
+    public List<TrainPlanCourse> findAll(String pjPlanId) {
 
-        return trainPlanCourseRepository.findAllByPjPlanId(planId);
+        return trainPlanCourseRepository.findAllByPjPlanId(pjPlanId);
     }
 
 }

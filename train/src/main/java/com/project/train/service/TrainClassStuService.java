@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.train.domain.TrainClassStu;
+import com.project.train.domain.TrainPlanFinish;
 import com.project.train.repository.TrainClassStuRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.project.mysql.service.BaseMySqlService;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -35,13 +38,20 @@ public class TrainClassStuService extends BaseMySqlService {
     @Resource
     private TrainClassStuRepository trainClassStuRepository;
 
+    @Resource
+    private TrainPlanFinishService trainPlanFinishService;
 
     /**
      * 项目计划班级成员添加
      */
+    @Transactional
     public TrainClassStu save(TrainClassStu trainClassStu) {
         trainClassStu.setTrainStuId(IdUtil.fastSimpleUUID());
-        return trainClassStuRepository.save(trainClassStu);
+        trainClassStuRepository.save(trainClassStu);
+        //判断是否全部完善信息了
+        String planId=trainClassStu.getPjPlanId();
+        trainPlanFinishService.updateAll(planId);
+        return trainClassStu;
     }
 
     /**

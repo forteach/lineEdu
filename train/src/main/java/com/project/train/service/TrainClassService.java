@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Optional;
@@ -26,13 +27,21 @@ public class TrainClassService extends BaseMySqlService {
     @Resource
     private TrainClassRepository trainClassRepository;
 
+    @Resource
+    private TrainPlanFinishService trainPlanFinishService;
 
     /**
      * 项目计划班级添加
      */
+    @Transactional
     public TrainClass save(TrainClass trainClass) {
         trainClass.setTrainClassId(IdUtil.fastSimpleUUID());
-        return trainClassRepository.save(trainClass);
+        trainClassRepository.save(trainClass);
+
+        //判断是否全部完善信息了
+        String pjPlanId=trainClass.getPjPlanId();
+        trainPlanFinishService.updateAll(pjPlanId);
+        return trainClass;
     }
 
     /**
@@ -48,24 +57,24 @@ public class TrainClassService extends BaseMySqlService {
     /**
      * 项目计划班级BYID
      *
-     * @param planId
+     * @param trainClassId
      * @return
      */
-    public TrainClass findId(String planId) {
-        Optional<TrainClass> obj = trainClassRepository.findById(planId);
+    public TrainClass findId(String trainClassId) {
+        Optional<TrainClass> obj = trainClassRepository.findById(trainClassId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
 
 
     /**
-     * @param planId   获取计划项目的班级列表
+     * @param pjPlanId   获取计划项目的班级列表
      * @param pageable
      * @return
      */
-    public Page<TrainClass> findPlanPage(String planId, Pageable pageable) {
+    public Page<TrainClass> findPlanPage(String pjPlanId, Pageable pageable) {
 
-        return trainClassRepository.findByPjPlanIdOrderByCreateTime(planId, pageable);
+        return trainClassRepository.findByPjPlanIdOrderByCreateTime(pjPlanId, pageable);
     }
 
     /**

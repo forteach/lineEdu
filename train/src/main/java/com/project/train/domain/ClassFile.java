@@ -41,11 +41,7 @@ public class ClassFile extends Entitys implements Serializable {
     @Column(name = "class_id", columnDefinition = "VARCHAR(60) COMMENT '培训班级编号'")
     private String classId;
 
-    public ClassFile(String fileId, String fileName, String fileUrl, String classId,String centerId) {
-        this.fileId = fileId;
-        this.fileName = fileName;
-        this.fileUrl = fileUrl;
-        this.classId = classId;
-        super.centerAreaId=centerId;
-    }
+    @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目计划编号'")
+    private String pjPlanId;
+
 }

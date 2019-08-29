@@ -51,11 +51,11 @@ public class TrainPlanService extends BaseMySqlService {
     /**
      * 项目计划BYID
      *
-     * @param planId
+     * @param pjPlanId
      * @return
      */
-    public TrainProjectPlan findId(String planId) {
-        Optional<TrainProjectPlan> obj = trainProjectPlanRepository.findById(planId);
+    public TrainProjectPlan findId(String pjPlanId) {
+        Optional<TrainProjectPlan> obj = trainProjectPlanRepository.findById(pjPlanId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }

@@ -62,11 +62,11 @@ public class TrainCourseController {
         return WebResult.okResult(trainCourseService.findAll(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
     }
 
-    @ApiOperation(value = "培训项目课程字典列表")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String pjPlanId) {
-        MyAssert.isNull(pjPlanId, DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(trainCourseService.findId(JSONObject.parseObject(pjPlanId).getString("planId")));
-    }
+//    @ApiOperation(value = "培训项目课程字典列表")
+//    @PostMapping(path = "/findById")
+//    @ApiImplicitParam(name = "planId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
+//    public WebResult findById(@RequestBody String pjPlanId) {
+//        MyAssert.isNull(pjPlanId, DefineCode.ERR0010, "项目计划id不为空");
+//        return WebResult.okResult(trainCourseService.findId(JSONObject.parseObject(pjPlanId).getString("planId")));
+//    }
 }

@@ -79,13 +79,4 @@ public class TrainClassController {
         }
 
     }
-
-
-    @ApiOperation(value = "培训项目班级管理")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(trainClassService.findId(JSONObject.parseObject(planId).getString("planId")));
-    }
 }
