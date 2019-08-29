@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Optional;
@@ -26,13 +27,21 @@ public class TrainClassService extends BaseMySqlService {
     @Resource
     private TrainClassRepository trainClassRepository;
 
+    @Resource
+    private TrainPlanFinishService trainPlanFinishService;
 
     /**
      * 项目计划班级添加
      */
+    @Transactional
     public TrainClass save(TrainClass trainClass) {
         trainClass.setTrainClassId(IdUtil.fastSimpleUUID());
-        return trainClassRepository.save(trainClass);
+        trainClassRepository.save(trainClass);
+
+        //判断是否全部完善信息了
+        String planId=trainClass.getPjPlanId();
+        trainPlanFinishService.updateAll(planId);
+        return trainClass;
     }
 
     /**

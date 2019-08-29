@@ -43,6 +43,7 @@ public class ClassFileController {
     @ApiOperation(value = "培训财务明细保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "pjPlanId", value = "项目计划id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileId", value = "培训资料编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "培训资料名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "培训资料URL", dataType = "string", paramType = "form"),
