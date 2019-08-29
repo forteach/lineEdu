@@ -85,7 +85,7 @@ public class FinanceDetailController {
         }
     }
 
-    @ApiOperation(value = "培训财务明细查询")
+    @ApiOperation(value = "根基计划id查询财务明细")
     @PostMapping(path = "/findByPjPlanId")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
@@ -93,7 +93,7 @@ public class FinanceDetailController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
     })
-    public WebResult findById(@RequestBody FindFinanceDetailRequest request) {
+    public WebResult findByPjPlanId(@RequestBody FindFinanceDetailRequest request) {
         valideSort(request.getPage(), request.getPage());
         MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "培训项目计划编号id不为空");
         if (StrUtil.isBlank(request.getAgoDay())){
