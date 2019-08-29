@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 public interface TrainClassRepository extends JpaRepository<TrainClass, String>, JpaSpecificationExecutor<TrainClass> {
 
     //获得计划下的班级信息
-    public Page<TrainClass> findByPjPlanIdOrderByCreateTime(String planId, Pageable pageable);
+    public Page<TrainClass> findByPjPlanIdOrderByCreateTime(String pjPlanId, Pageable pageable);
 
     //所有的文件列表
     public Page<TrainClass> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId, Pageable pageable);

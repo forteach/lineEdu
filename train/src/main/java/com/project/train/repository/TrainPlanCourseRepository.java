@@ -14,7 +14,7 @@ import java.util.List;
 @Repository("trainPlanCourseRepository")
 public interface TrainPlanCourseRepository extends JpaRepository<TrainPlanCourse, String>, JpaSpecificationExecutor<TrainPlanCourse> {
 
-    public List<TrainPlanCourse> findAllByPjPlanId(String planId);
+    public List<TrainPlanCourse> findAllByPjPlanId(String pjPlanId);
 
-    public int deleteByPjPlanId(String planId);
+    public int deleteByPjPlanId(String pjPlanId);
 }

@@ -17,7 +17,7 @@ public interface FinanceDetailFileRepository extends JpaRepository<FinanceDetail
     /**
      * 项目计划的文件列表
      */
-    public Page<FinanceDetailFile> findAllByCenterAreaIdAndPlanIdOrderByCreateTimeDesc(String centerId, String planId, Pageable pageable);
+    public Page<FinanceDetailFile> findAllByCenterAreaIdAndPjPlanIdOrderByCreateTimeDesc(String centerId, String pjPlanId, Pageable pageable);
 
     /**
      * 所有的文件列表

@@ -68,12 +68,12 @@ public class TrainPlanCourseService extends BaseMySqlService {
     }
 
     /**
-     * @param planId 项目计划课程列表，不分页
+     * @param pjPlanId 项目计划课程列表，不分页
      * @return
      */
-    public List<TrainPlanCourse> findAll(String planId) {
+    public List<TrainPlanCourse> findAll(String pjPlanId) {
 
-        return trainPlanCourseRepository.findAllByPjPlanId(planId);
+        return trainPlanCourseRepository.findAllByPjPlanId(pjPlanId);
     }
 
 }

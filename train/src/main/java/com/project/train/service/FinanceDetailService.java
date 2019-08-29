@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -89,15 +90,19 @@ public class FinanceDetailService extends BaseMySqlService {
     }
 
     /**
-     * @param centerAreaId 获取所有项目计划财务明细列表
+     * @param pjPlanId 获取所有项目计划财务明细列表
+     * @param agoDay
      * @param pageable
      * @return
      */
-    public Page<FinanceDetail> findAllPage(String pjPlanId, String centerAreaId, int agoDay, Pageable pageable) {
+    public Page<FinanceDetail> findByPjPlandIdAllPage(String pjPlanId, int agoDay, Pageable pageable) {
         //提前天数的日期
         String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
-        return financeDetailRepository.findAllByPjPlanIdAndCenterAreaIdAndCreateTimeAfterOrderByCreateTimeDesc(pjPlanId, centerAreaId, fromDay, pageable);
+        return financeDetailRepository.findAllByPjPlanIdAndCreateTimeAfterOrderByCreateTimeDesc(pjPlanId, fromDay, pageable);
     }
 
 
+    public Page<FinanceDetail> findByPjPlandIdAllPage(String pjPlanId, Pageable pageable){
+        return financeDetailRepository.findAllByPjPlanIdOrderByCreateTimeDesc(pjPlanId, pageable);
+    }
 }

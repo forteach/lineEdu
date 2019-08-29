@@ -47,11 +47,11 @@ public class TrainCourseService extends BaseMySqlService {
     /**
      * 财务类型明细BYID
      *
-     * @param planId
+     * @param courseId
      * @return
      */
-    public TrainCourse findId(String planId) {
-        Optional<TrainCourse> obj = trainCourseRepository.findById(planId);
+    public TrainCourse findId(String courseId) {
+        Optional<TrainCourse> obj = trainCourseRepository.findById(courseId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }

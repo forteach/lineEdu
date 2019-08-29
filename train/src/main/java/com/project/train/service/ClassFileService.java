@@ -89,4 +89,7 @@ public class ClassFileService extends BaseMySqlService {
     }
 
 
+    public Page<ClassFile> findByPjPlanIdPageAll(String pjPlanId, Pageable pageable){
+        return classFileRepository.findAllByPjPlanIdOrderByCreateTimeDesc(pjPlanId, pageable);
+    }
 }

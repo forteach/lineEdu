@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface TrainClassStuRepository extends JpaRepository<TrainClassStu, String>, JpaSpecificationExecutor<TrainClassStu> {
 
     //获得计划下的班级成员信息
-    public Page<TrainClassStu> findByPjPlanIdOrderByCreateTimeDesc(String planId, Pageable pageable);
+    public Page<TrainClassStu> findByPjPlanIdOrderByCreateTimeDesc(String pjPlanId, Pageable pageable);
 
     //获得班级下的班级成员信息
     public Page<TrainClassStu> findByTrainClassId(String classId, Pageable pageable);

@@ -51,7 +51,7 @@ public class TrainPlanCourseController {
             @ApiImplicitParam(name = "teacherName", value = "培训课程教师名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "credit", value = "培训课程学分", dataType = "string", paramType = "form"),
 //            @ApiImplicitParam(name = "list", value = "培训计划集合", dataTypeClass = List.class, paramType = "form"),
-            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainPlanCourseSaveUpateRequest request) {
@@ -66,11 +66,11 @@ public class TrainPlanCourseController {
         return WebResult.okResult(trainPlanCourseService.saveOrUpdate(request.getPjPlanId(), list));
     }
 
-    @ApiOperation(value = "项目计划课程列表")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(trainPlanCourseService.findAll(JSONObject.parseObject(planId).getString("planId")));
+    @ApiOperation(value = "项目计划ID获取项目课程列表")
+    @PostMapping(path = "/findByPjPlanId")
+    @ApiImplicitParam(name = "pjPlanId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
+    public WebResult findById(@RequestBody String pjPlanId) {
+        MyAssert.isNull(pjPlanId, DefineCode.ERR0010, "项目计划id不为空");
+        return WebResult.okResult(trainPlanCourseService.findAll(JSONObject.parseObject(pjPlanId).getString("pjPlanId")));
     }
 }

@@ -65,12 +65,12 @@ public class TrainPlanController {
         }
     }
 
-    @ApiOperation(value = "根据id查询")
+    @ApiOperation(value = "根据项目计划id查询计划详情")
     @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "项目计划id不为空");
-        return WebResult.okResult(trainPlanService.findId(JSONObject.parseObject(planId).getString("planId")));
+    @ApiImplicitParam(name = "pjPlanId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
+    public WebResult findById(@RequestBody String pjPlanId) {
+        MyAssert.isNull(pjPlanId, DefineCode.ERR0010, "项目计划id不为空");
+        return WebResult.okResult(trainPlanService.findId(JSONObject.parseObject(pjPlanId).getString("pjPlanId")));
     }
 
     @ApiOperation(value = "根据学习中心编号id查询列表(不分页)")

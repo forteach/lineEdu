@@ -19,4 +19,12 @@ public interface ClassFileRepository extends JpaRepository<ClassFile, String>, J
     //班级所有的文件列表
     public Page<ClassFile> findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(String centerId, String classId, Pageable pageable);
 
+    /**
+     * 根据计划编号查询对应的班级资料分页信息
+     * @param pjPlanId
+     * @param pageable
+     * @return
+     */
+    public Page<ClassFile> findAllByPjPlanIdOrderByCreateTimeDesc(String pjPlanId, Pageable pageable);
+
 }

@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.ClassFileFindAllPage;
+import com.project.portal.train.request.ClassFileFindByPjPlanIdRequest;
 import com.project.portal.train.request.ClassFileSaveUpdateRequest;
 import com.project.train.domain.ClassFile;
 import com.project.train.service.ClassFileService;
@@ -80,11 +81,16 @@ public class ClassFileController {
         }
     }
 
-    @ApiOperation(value = "班级资料明细查询")
-    @PostMapping(path = "/findById")
-    @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query")
-    public WebResult findById(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "培训项目计划编号id不为空");
-        return WebResult.okResult(classFileService.findId(JSONObject.parseObject(planId).getString("planId")));
+    @ApiOperation(value = "根据计划编号分页查询班级资料明细")
+    @PostMapping(path = "/findByPjPlanId")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
+    })
+    public WebResult findById(@RequestBody ClassFileFindByPjPlanIdRequest request) {
+        valideSort(request.getPage(), request.getPage());
+        MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "培训项目计划编号id不为空");
+        return WebResult.okResult(classFileService.findByPjPlanIdPageAll(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
     }
 }
