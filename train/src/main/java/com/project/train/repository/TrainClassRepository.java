@@ -19,4 +19,8 @@ public interface TrainClassRepository extends JpaRepository<TrainClass, String>,
 
     //所有的文件列表
     public Page<TrainClass> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId, Pageable pageable);
+
+    //获得计划下面的班级数量
+    public int countByPjPlanId(String pjPlanId);
+
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -26,5 +27,9 @@ public interface ClassFileRepository extends JpaRepository<ClassFile, String>, J
      * @return
      */
     public Page<ClassFile> findAllByPjPlanIdOrderByCreateTimeDesc(String pjPlanId, Pageable pageable);
+
+    //获得计划下面的班级数量
+    @Query(value = "select count(*) from class_file where class_id in(select distinct class_id form class_file where pj_plan_id=?1)", nativeQuery = true)
+    public int countClass(String pjPlanId);
 
 }

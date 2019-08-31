@@ -86,4 +86,13 @@ public class TrainClassService extends BaseMySqlService {
 
         return trainClassRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerId, pageable);
     }
+
+    /**
+     * 返回计划下的班级数量
+     * @param pjPlanId
+     * @return
+     */
+    public int countClass(String pjPlanId){
+        return trainClassRepository.countByPjPlanId(pjPlanId);
+    }
 }
