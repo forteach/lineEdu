@@ -51,11 +51,15 @@ public class TrainPlanFinishService extends BaseMySqlService {
 
     @Transactional
     public TrainPlanFinish updateAll( String planId){
-        //判断是否全部完善信息了
-        existsAll(planId);
-        TrainPlanFinish tf= findPjPlanId(planId);
-        tf.setIsAll(1);
-        save(tf);
+           TrainPlanFinish tf=null;
+            //判断是否全部完善信息了
+            boolean  result= existsAll(planId);
+            if(result) {
+                 tf = findPjPlanId(planId);
+                tf.setIsAll(1);
+                save(tf);
+            }
+
         return tf;
     }
 

@@ -6,6 +6,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.TrainClass;
+import com.project.train.domain.TrainPlanFinish;
 import com.project.train.repository.TrainClassRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,11 @@ public class TrainClassService extends BaseMySqlService {
 
         //判断是否全部完善信息了
         String pjPlanId=trainClass.getPjPlanId();
+
+        TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(pjPlanId);
+        tf.setIsClass(1);
+        trainPlanFinishService.save(tf);
+
         trainPlanFinishService.updateAll(pjPlanId);
         return trainClass;
     }

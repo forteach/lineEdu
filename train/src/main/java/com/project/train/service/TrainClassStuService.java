@@ -59,7 +59,7 @@ public class TrainClassStuService extends BaseMySqlService {
        int ccount=countClass(planId);
 
        //如果两个数量相等，改变计划完成情况的班级添加完成状态为1
-        if(pcount==ccount){
+        if((pcount==ccount)&&(pcount!=0)){
             TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(planId);
             tf.setIsStudent(1);
             trainPlanFinishService.save(tf);
