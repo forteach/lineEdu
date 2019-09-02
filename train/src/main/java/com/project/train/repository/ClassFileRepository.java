@@ -29,7 +29,7 @@ public interface ClassFileRepository extends JpaRepository<ClassFile, String>, J
     public Page<ClassFile> findAllByPjPlanIdOrderByCreateTimeDesc(String pjPlanId, Pageable pageable);
 
     //获得计划下面的班级数量
-    @Query(value = "select count(*) from class_file where class_id in(select distinct class_id form class_file where pj_plan_id=?1)", nativeQuery = true)
+    @Query(value = "select count(*) from class_file where class_id in(select distinct class_id from class_file where pj_plan_id=?1)", nativeQuery = true)
     public int countClass(String pjPlanId);
 
 }

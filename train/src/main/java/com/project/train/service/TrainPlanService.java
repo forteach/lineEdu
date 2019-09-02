@@ -6,12 +6,14 @@ import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
+import com.project.train.domain.TrainPlanFinish;
 import com.project.train.domain.TrainProjectPlan;
 import com.project.train.repository.TrainProjectPlanRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -29,13 +31,22 @@ public class TrainPlanService extends BaseMySqlService {
     @Resource
     private TrainProjectPlanRepository trainProjectPlanRepository;
 
+    @Resource
+    private TrainPlanFinishService trainPlanFinishService;
 
     /**
      * 项目计划添加
      */
+    @Transactional
     public TrainProjectPlan save(TrainProjectPlan trainProjectPlan) {
         trainProjectPlan.setPjPlanId(IdUtil.fastSimpleUUID());
-        return trainProjectPlanRepository.save(trainProjectPlan);
+        trainProjectPlanRepository.save(trainProjectPlan);
+
+        TrainPlanFinish tf= new TrainPlanFinish();
+        tf.setPjPlanId(trainProjectPlan.getPjPlanId());
+        tf.setCenterAreaId(trainProjectPlan.getCenterAreaId());
+        trainPlanFinishService.save(tf);
+        return trainProjectPlan;
     }
 
     /**

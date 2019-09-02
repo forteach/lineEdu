@@ -2,6 +2,7 @@ package com.project.train.service;
 
 import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.TrainPlanCourse;
+import com.project.train.domain.TrainPlanFinish;
 import com.project.train.domain.TrainProjectPlan;
 import com.project.train.repository.TrainPlanCourseRepository;
 import com.project.train.repository.TrainProjectPlanRepository;
@@ -51,6 +52,11 @@ public class TrainPlanCourseService extends BaseMySqlService {
             plan.setTrainCourse(course.substring(0, course.length() - 1));
             trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
+
+            TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(planId);
+            tf.setIsCourse(1);
+            trainPlanFinishService.save(tf);
+
             //判断是否全部完善信息了
             trainPlanFinishService.updateAll(planId);
             return saveAll(list);
@@ -59,6 +65,10 @@ public class TrainPlanCourseService extends BaseMySqlService {
             plan.setTrainCourse("");
             trainProjectPlanRepository.save(plan);
             trainPlanCourseRepository.deleteByPjPlanId(planId);
+
+            TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(planId);
+            tf.setIsCourse(0);
+            trainPlanFinishService.save(tf);
 
             //判断是否全部完善信息了
             trainPlanFinishService.updateAll(planId);
