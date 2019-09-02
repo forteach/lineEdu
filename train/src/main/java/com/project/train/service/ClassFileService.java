@@ -15,7 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * 班级资料
@@ -91,7 +96,7 @@ public class ClassFileService extends BaseMySqlService {
      */
     public Page<ClassFile> findAllPage(String centerAreaId, String classId, Pageable pageable) {
 
-        return classFileRepository.findAllByCenterAreaIdAndClassIdOrderByCreateTimeDesc(centerAreaId, classId, pageable);
+        return classFileRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, classId, pageable);
     }
 
 
@@ -102,12 +107,12 @@ public class ClassFileService extends BaseMySqlService {
      */
     public Page<ClassFile> findAllPage(String centerAreaId, Pageable pageable) {
 
-        return classFileRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId, pageable);
+        return classFileRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageable);
     }
 
 
     public Page<ClassFile> findByPjPlanIdPageAll(String pjPlanId, Pageable pageable){
-        return classFileRepository.findAllByPjPlanIdOrderByCreateTimeDesc(pjPlanId, pageable);
+        return classFileRepository.findAllByIsValidatedEqualsAndPjPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pjPlanId, pageable);
     }
 
     /**
@@ -117,5 +122,23 @@ public class ClassFileService extends BaseMySqlService {
      */
     public int countClass(String pjPlanId){
         return classFileRepository.countClass(pjPlanId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeByClassId(String classId){
+        List<ClassFile> list = classFileRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId)
+                .stream()
+                .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))
+                .collect(toList());
+        classFileRepository.saveAll(list);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeByPjPlanId(String pjPlanId){
+        List<ClassFile> list = classFileRepository.findAllByIsValidatedEqualsAndPjPlanId(TAKE_EFFECT_OPEN, pjPlanId)
+                .stream()
+                .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))
+                .collect(toList());
+        classFileRepository.saveAll(list);
     }
 }

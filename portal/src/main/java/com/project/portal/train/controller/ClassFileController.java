@@ -17,10 +17,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -41,7 +38,7 @@ public class ClassFileController {
         this.classFileService = classFileService;
     }
 
-    @ApiOperation(value = "培训财务明细保存修改")
+    @ApiOperation(value = "培训班级资料保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pjPlanId", value = "项目计划id", dataType = "string", paramType = "form"),
@@ -92,5 +89,23 @@ public class ClassFileController {
         valideSort(request.getPage(), request.getPage());
         MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "培训项目计划编号id不为空");
         return WebResult.okResult(classFileService.findByPjPlanIdPageAll(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+    }
+
+    @ApiOperation(value = "根据班级id移除对应培训资料")
+    @DeleteMapping(path = "/removeByClassId")
+    @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "form", required = true)
+    public WebResult removeByClassId(@RequestBody String classId){
+        MyAssert.isNull(classId, DefineCode.ERR0010, "班级id不为空");
+        classFileService.removeByClassId(JSONObject.parseObject(classId).getString(classId));
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "根据计划id移除对应培训资料")
+    @DeleteMapping(path = "/removeByPjPlanId")
+    @ApiImplicitParam(name = "pjPlanId", value = "培训计划id", dataType = "string", paramType = "form", required = true)
+    public WebResult removeByPjPlanId(@RequestBody String pjPlanId){
+        MyAssert.isNull(pjPlanId, DefineCode.ERR0010, "班级id不为空");
+        classFileService.removeByPjPlanId(JSONObject.parseObject(pjPlanId).getString(pjPlanId));
+        return WebResult.okResult();
     }
 }
