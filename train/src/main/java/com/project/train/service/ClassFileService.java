@@ -39,8 +39,8 @@ public class ClassFileService extends BaseMySqlService {
          classFileRepository.save(classFile);
 
         //判断是否全部完善信息了
-        String planId=classFile.getPjPlanId();
-        trainPlanFinishService.updateAll(planId);
+        String pjPlanId=classFile.getPjPlanId();
+        trainPlanFinishService.updateAll(pjPlanId);
 
         return classFile;
     }
@@ -56,21 +56,21 @@ public class ClassFileService extends BaseMySqlService {
 
 
     /**
-     * 文件BYID
-     *
-     * @param planId
-     * @return
+     * 文件 findById
+     * @param fileId
+     * @return ClassFile
      */
-    public ClassFile findId(String planId) {
-        Optional<ClassFile> obj = classFileRepository.findById(planId);
+    public ClassFile findId(String fileId) {
+        Optional<ClassFile> obj = classFileRepository.findById(fileId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
-        return obj.get();
+        return obj.orElse(new ClassFile());
     }
 
     /**
      * @param centerAreaId 获取文件列表
+     * @param classId
      * @param pageable
-     * @return
+     * @return Page<ClassFile>
      */
     public Page<ClassFile> findAllPage(String centerAreaId, String classId, Pageable pageable) {
 
@@ -81,7 +81,7 @@ public class ClassFileService extends BaseMySqlService {
     /**
      * @param centerAreaId 获取文件列表
      * @param pageable
-     * @return
+     * @return Page<ClassFile>
      */
     public Page<ClassFile> findAllPage(String centerAreaId, Pageable pageable) {
 
