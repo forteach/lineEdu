@@ -39,6 +39,9 @@ public class TrainClassStuService extends BaseMySqlService {
     private TrainClassStuRepository trainClassStuRepository;
 
     @Resource
+    private TrainClassService trainClassService;
+
+    @Resource
     private TrainPlanFinishService trainPlanFinishService;
 
     /**
@@ -48,8 +51,22 @@ public class TrainClassStuService extends BaseMySqlService {
     public TrainClassStu save(TrainClassStu trainClassStu) {
         trainClassStu.setTrainStuId(IdUtil.fastSimpleUUID());
         trainClassStuRepository.save(trainClassStu);
-        //判断是否全部完善信息了
+
         String planId=trainClassStu.getPjPlanId();
+        //计划班级数量
+        int pcount=trainClassService.countClass(planId);
+        //添加班级学生的班级数量
+       int ccount=countClass(planId);
+
+       //如果两个数量相等，改变计划完成情况的班级添加完成状态为1
+        if(pcount==ccount){
+            TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(planId);
+            tf.setIsStudent(1);
+            trainPlanFinishService.save(tf);
+        }
+
+        //判断是否全部完善信息了
+
         trainPlanFinishService.updateAll(planId);
         return trainClassStu;
     }
@@ -130,4 +147,15 @@ public class TrainClassStuService extends BaseMySqlService {
             return predicate;
         }, pageable);
     }
+
+    /**
+     * 返回计划下的班级数量
+     * @param pjPlanId
+     * @return
+     */
+    public int countClass(String pjPlanId){
+        return trainClassStuRepository.countClass(pjPlanId);
+    }
+
+
 }

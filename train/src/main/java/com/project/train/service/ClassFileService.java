@@ -6,6 +6,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.ClassFile;
+import com.project.train.domain.TrainPlanFinish;
 import com.project.train.repository.ClassFileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,9 @@ public class ClassFileService extends BaseMySqlService {
     private ClassFileRepository classFileRepository;
 
     @Resource
+    private TrainClassService trainClassService;
+
+    @Resource
     private TrainPlanFinishService trainPlanFinishService;
 
     /**
@@ -38,9 +42,22 @@ public class ClassFileService extends BaseMySqlService {
         classFile.setFileId(IdUtil.fastSimpleUUID());
          classFileRepository.save(classFile);
 
+        String planId=classFile.getPjPlanId();
+
+        //计划班级数量
+        int pcount=trainClassService.countClass(planId);
+        //添加班级学生的班级数量
+        int ccount=countClass(planId);
+
+        //如果两个数量相等，改变计划完成情况的班级添加完成状态为1
+        if(pcount==ccount){
+            TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(planId);
+            tf.setIsFile(1);
+            trainPlanFinishService.save(tf);
+        }
+
         //判断是否全部完善信息了
-        String pjPlanId=classFile.getPjPlanId();
-        trainPlanFinishService.updateAll(pjPlanId);
+        trainPlanFinishService.updateAll(planId);
 
         return classFile;
     }
@@ -91,5 +108,14 @@ public class ClassFileService extends BaseMySqlService {
 
     public Page<ClassFile> findByPjPlanIdPageAll(String pjPlanId, Pageable pageable){
         return classFileRepository.findAllByPjPlanIdOrderByCreateTimeDesc(pjPlanId, pageable);
+    }
+
+    /**
+     * 返回计划下的班级文件资料数量
+     * @param pjPlanId
+     * @return
+     */
+    public int countClass(String pjPlanId){
+        return classFileRepository.countClass(pjPlanId);
     }
 }
