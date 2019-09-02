@@ -38,8 +38,8 @@ public class TrainClassStuSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "stuName", value = "姓名", dataType = "string")
     private String stuName;
 
-    @ApiModelProperty(name = "marriage", value = "民族", dataType = "string")
-    private String marriage;
+//    @ApiModelProperty(name = "marriage", value = "民族", dataType = "string")
+//    private String marriage;
 
     @ApiModelProperty(name = "nation", value = "民族", dataType = "string")
     private String nation;
