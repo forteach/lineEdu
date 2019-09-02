@@ -27,6 +27,6 @@ public interface TrainClassStuRepository extends JpaRepository<TrainClassStu, St
     public Page<TrainClassStu> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
 
     //获得计划下面的班级数量
-    @Query(value = "select count(*) from train_class_stu where train_class_id in(select distinct train_class_id from train_class_stu where pj_plan_id=?1)", nativeQuery = true)
+    @Query(value = "select count(*) from (select distinct train_class_id from train_class_stu where  is_validated = '0'AND pj_plan_id=?1) as t", nativeQuery = true)
     public int countClass(String pjPlanId);
 }
