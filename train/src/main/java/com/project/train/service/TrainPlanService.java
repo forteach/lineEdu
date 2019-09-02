@@ -45,6 +45,7 @@ public class TrainPlanService extends BaseMySqlService {
         TrainPlanFinish tf= new TrainPlanFinish();
         tf.setPjPlanId(trainProjectPlan.getPjPlanId());
         tf.setCenterAreaId(trainProjectPlan.getCenterAreaId());
+        tf.setTrainProjectName(trainProjectPlan.getTrainProjectName());
         trainPlanFinishService.save(tf);
         return trainProjectPlan;
     }

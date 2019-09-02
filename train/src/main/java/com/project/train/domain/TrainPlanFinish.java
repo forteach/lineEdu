@@ -30,6 +30,9 @@ public class TrainPlanFinish extends Entitys implements Serializable {
     @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(40) COMMENT '培训项目计划编号'")
     private String pjPlanId;
 
+    @Column(name = "train_project_name", columnDefinition = "VARCHAR(60) COMMENT '培训项目名称'")
+    private String trainProjectName;
+
     @Column(name = "is_course", columnDefinition = "tinyint COMMENT '课程是否添加'")
     private int isCourse;
 
