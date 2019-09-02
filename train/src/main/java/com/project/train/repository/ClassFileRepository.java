@@ -32,7 +32,7 @@ public interface ClassFileRepository extends JpaRepository<ClassFile, String>, J
     public Page<ClassFile> findAllByIsValidatedEqualsAndPjPlanIdOrderByCreateTimeDesc(String isValidated, String pjPlanId, Pageable pageable);
 
     //获得计划下面的班级数量
-    @Query(value = "SELECT COUNT(*) FROM class_file WHERE is_validated = '0' AND class_id IN(SELECT DISTINCT class_id from class_file WHERE is_validated = '0' AND pj_plan_id=?1)", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM (SELECT DISTINCT class_id from class_file WHERE is_validated = '0' AND pj_plan_id=?1)", nativeQuery = true)
     public int countClass(String pjPlanId);
 
     @Transactional(readOnly = true)
