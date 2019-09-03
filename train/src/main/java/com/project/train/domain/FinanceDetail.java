@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -21,7 +18,7 @@ import java.io.Serializable;
 @DynamicUpdate
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "finance_detail", comment = "培训财务明细")
-@Table(name = "finance_detail")
+@Table(name = "finance_detail", indexes = {@Index(columnList = "detail_id", name = "detail_id_index")})
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class FinanceDetail extends Entitys implements Serializable {

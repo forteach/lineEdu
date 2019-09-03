@@ -19,7 +19,7 @@ import java.io.Serializable;
 @DynamicUpdate
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "traint_plan_finish", comment = "培训计划资料填写情况")
-@Table(name = "traint_plan_finish")
+@Table(name = "traint_plan_finish", indexes = {@Index(columnList = "pj_plan_id", name = "pj_plan_id_index")})
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor

@@ -19,7 +19,7 @@ import java.io.Serializable;
 @DynamicUpdate
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "finance_detail_file", comment = "财务凭证文件")
-@Table(name = "finance_detail_file")
+@Table(name = "finance_detail_file", indexes = {@Index(columnList = "file_id", name = "file_id_index")})
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
