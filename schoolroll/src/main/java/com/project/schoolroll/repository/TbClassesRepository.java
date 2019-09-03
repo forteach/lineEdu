@@ -1,7 +1,9 @@
 package com.project.schoolroll.repository;
 
-import com.project.schoolroll.domain.TbClasses;
+import com.project.schoolroll.domain.online.TbClasses;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -11,5 +13,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @description:
  */
 public interface TbClassesRepository extends JpaRepository<TbClasses, String> {
+
+//    public boolean existsByClassName(String className);
+
+    public Optional<TbClasses> findByClassName(String className);
 
 }
