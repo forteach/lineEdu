@@ -1,16 +1,13 @@
 package com.project.schoolroll.service.online;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.db.Page;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.domain.online.TbClasses;
-import com.project.schoolroll.repository.TbClassesRepository;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS;
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS_ONLINE;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
 
@@ -32,13 +30,11 @@ public class StudentOnLineService {
 
     private final RedisTemplate redisTemplate;
     private final TbClassService tbClassService;
-    private final TbClassesRepository tbClassesRepository;
     private final StudentOnLineRepository studentOnLineRepository;
 
     @Autowired
-    public StudentOnLineService(StudentOnLineRepository studentOnLineRepository,  RedisTemplate redisTemplate, TbClassesRepository tbClassesRepository, TbClassService tbClassService) {
+    public StudentOnLineService(StudentOnLineRepository studentOnLineRepository, RedisTemplate redisTemplate, TbClassService tbClassService) {
         this.studentOnLineRepository = studentOnLineRepository;
-        this.tbClassesRepository = tbClassesRepository;
         this.tbClassService = tbClassService;
         this.redisTemplate = redisTemplate;
     }
@@ -49,7 +45,7 @@ public class StudentOnLineService {
     public void checkoutKey(){
         MyAssert.isTrue(redisTemplate.hasKey(IMPORT_STUDENTS_ONLINE), DefineCode.ERR0013, "有人操作，请稍后再试!");
     }
-    public void setStudentKey(){
+    private void setStudentKey(){
         redisTemplate.opsForValue().set(IMPORT_STUDENTS_ONLINE, DateUtil.now(), 30L, TimeUnit.MINUTES);
     }
 
