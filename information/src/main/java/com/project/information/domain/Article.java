@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-@Table(name = "article")
+@Table(name = "article", indexes = {@Index(columnList = "article_id", name = "article_id_index")})
 @EqualsAndHashCode(callSuper = true)
 @org.hibernate.annotations.Table(appliesTo = "article", comment = "文章")
 @AllArgsConstructor

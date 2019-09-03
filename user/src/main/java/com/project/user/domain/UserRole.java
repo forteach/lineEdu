@@ -21,8 +21,10 @@ import javax.persistence.*;
 @DynamicInsert
 @DynamicUpdate
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "user_role", indexes = {@Index(columnList = "role_id", name = "role_id_index"),
-        @Index(name = "user_id_index", columnList = "user_id")})
+@Table(name = "user_role", indexes = {
+        @Index(columnList = "role_id", name = "role_id_index"),
+        @Index(name = "user_id_index", columnList = "user_id")
+})
 @IdClass(UserRoleFundPrimarykey.class)
 @org.hibernate.annotations.Table(appliesTo = "user_role", comment = "用户角色")
 public class UserRole extends Entitys {

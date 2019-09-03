@@ -8,10 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -22,7 +20,7 @@ import java.io.Serializable;
 @DynamicUpdate
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "class_fee", comment = "课时费管理")
-@Table(name = "class_fee")
+@Table(name = "class_fee", indexes = {@Index(columnList = "class_fee_id", name = "class_fee_id_index")})
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor

@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-@Table(name = "friendly_link")
+@Table(name = "friendly_link", indexes = {@Index(columnList = "link_id", name = "link_id_index")})
 @EqualsAndHashCode(callSuper = true)
 @org.hibernate.annotations.Table(appliesTo = "friendly_link", comment = "友情链接资讯")
 @AllArgsConstructor

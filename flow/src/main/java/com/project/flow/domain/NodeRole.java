@@ -21,7 +21,10 @@ import java.io.Serializable;
 @DynamicInsert
 @IdClass(NodeRolePk.class)
 @org.hibernate.annotations.Table(appliesTo = "node_role", comment = "流程节点角色管理")
-@Table(name = "node_role")
+@Table(name = "node_role", indexes = {
+        @Index(columnList = "node_id", name = "node_id_index"),
+        @Index(columnList = "role_id", name = "role_id_index")
+})
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor

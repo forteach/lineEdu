@@ -1,10 +1,8 @@
 package com.project.information.domain;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +16,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "article_comment")
+@Table(name = "article_comment", indexes = {@Index(columnList = "comment_id", name = "comment_id_index")})
 @org.hibernate.annotations.Table(appliesTo = "article_comment", comment = "文章评论")
 @AllArgsConstructor
 @NoArgsConstructor
