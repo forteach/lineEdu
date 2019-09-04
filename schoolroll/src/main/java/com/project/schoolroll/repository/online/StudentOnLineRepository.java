@@ -18,4 +18,6 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
     public List<StudentOnLine> findAllByIsValidatedEqualsAndImportStatusAndCenterAreaId(String isValidated, int importStatus, String centerAreaId);
 
     public Page<StudentOnLine> findAllByIsValidatedEqualsAndImportStatusAndCenterAreaId(String isValidated, int importStatus, String centerAreaId, Pageable pageable);
+
+    int countAllByIsValidatedEqualsAndClassId(String isValidated, String classId);
 }

@@ -14,10 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,14 +37,13 @@ public class StudentOnLineController {
 
     @UserLoginToken
     @ApiOperation(value = "导入学生信息数据")
-    @PostMapping(path = "/saveImport")
+    @PostMapping(path = "/saveImport/{centerAreaId}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心Id", required = true, paramType = "form", dataType = "string")
     })
-    public WebResult saveImport(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    public WebResult saveImport(@RequestParam("file") MultipartFile file, @PathVariable(value = "@PathVariable") String centerAreaId) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
-        String centerAreaId = request.getParameter("centerAreaId");
         try {
             studentOnLineService.checkoutKey();
             //设置导入修改时间 防止失败没有过期时间

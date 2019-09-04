@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS_ONLINE;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
 
@@ -90,4 +91,10 @@ public class StudentOnLineService {
         reader.addHeaderAlias(enrollmentDate.getName(), enrollmentDate.name());
         reader.addHeaderAlias(nation.getName(), nation.name());
     }
+
+    public int countByClassId(String classId){
+        return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
+    }
+
+//    private
 }

@@ -1,10 +1,14 @@
 package com.project.schoolroll.service.online;
 
 import cn.hutool.core.util.IdUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.online.TbClasses;
 import com.project.schoolroll.repository.TbClassesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class TbClassService {
@@ -18,5 +22,15 @@ public class TbClassService {
     public TbClasses getClassIdByClassName(String className){
            return tbClassesRepository.findByClassName(className)
                    .orElse(tbClassesRepository.save(new TbClasses(IdUtil.simpleUUID(), className)));
+    }
+
+    public TbClasses findClassByClassId(String classId){
+        Optional<TbClasses> optionalTbClasses = tbClassesRepository.findById(classId);
+        if (optionalTbClasses.isPresent()){
+            return optionalTbClasses.get();
+        }else {
+            MyAssert.isNull(null, DefineCode.ERR0010, "不存在对应班级信息");
+            return null;
+        }
     }
 }
