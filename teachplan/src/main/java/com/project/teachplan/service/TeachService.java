@@ -26,6 +26,10 @@ import java.util.stream.Collectors;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
+/**
+ * @author zhang
+ * @apiNote 在线教学计划
+ */
 @Service
 public class TeachService {
     private final StudentOnLineService studentOnLineService;
@@ -54,7 +58,7 @@ public class TeachService {
             saveTeachPlanCourse(teachPlan.getPlanId(), courseIds);
             return teachPlanRepository.save(teachPlan);
         } else {
-            if (!classIds.isEmpty() && classIds.size() > 0) {
+            if (!classIds.isEmpty()) {
                 teachPlanClassRepository.deleteAllByPlanId(teachPlan.getPlanId());
                 saveTeachPlanClass(teachPlan.getPlanId(), teachPlan, classIds);
             }
@@ -72,21 +76,13 @@ public class TeachService {
     }
 
     private void setTeachPlanNumber(TeachPlan teachPlan, List<String> classIds, List<String> courseIds) {
-        if (!courseIds.isEmpty() && courseIds.size() > 0) {
+        if (!courseIds.isEmpty()) {
             teachPlan.setClassNumber(courseIds.size());
         }
-        if (!classIds.isEmpty() && classIds.size() > 0) {
+        if (!classIds.isEmpty()) {
             teachPlan.setClassNumber(classIds.size());
         }
     }
-//    private void setTeachPlan(TeachPlan teachPlan, List<String> classIds, List<String> courseIds){
-//        if (!courseIds.isEmpty() && courseIds.size() > 0) {
-//            teachPlan.setPlanCourse(CollUtil.join(courseIds, ","));
-//        }
-//        if (!classIds.isEmpty() && classIds.size() > 0){
-//            teachPlan.setClassIds(CollUtil.join(classIds, ","));
-//        }
-//    }
 
     private void saveTeachPlanCourse(String planId, List<String> courseIds) {
         List<TeachPlanCourse> planCourseList = courseIds.parallelStream().filter(Objects::nonNull)
@@ -100,7 +96,7 @@ public class TeachService {
                 .map(c -> new TeachPlanClass(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c)))
                 .collect(Collectors.toList());
         teachPlanClassRepository.saveAll(planClassList);
-        int sumNumber = planClassList.stream().mapToInt(p -> p.getClassNumber()).sum();
+        int sumNumber = planClassList.stream().mapToInt(TeachPlanClass::getClassNumber).sum();
         teachPlan.setSumNumber(sumNumber);
     }
 

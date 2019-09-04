@@ -74,10 +74,10 @@ public class ArticleCommentService {
             //增加资讯回复数量
             String replykey=ArticleKey.ARTCOMMENTREPLY.concat(artcomment.getArticleId());
             String count=stringRedisTemplate.opsForValue().get(replykey);
-            int newcount=Integer.valueOf(count).intValue()+1;
-            stringRedisTemplate.opsForValue().set(replykey,String.valueOf(newcount));
+            int newCount=Integer.valueOf(count).intValue()+1;
+            stringRedisTemplate.opsForValue().set(replykey,String.valueOf(newCount));
 
-            if(artcomment.getUserType().equals("C")){
+            if("C".equals(artcomment.getUserType())){
                 //学生名称
                 artcomment.setUserName(findStudentsName(userId));
                 //学生头像
