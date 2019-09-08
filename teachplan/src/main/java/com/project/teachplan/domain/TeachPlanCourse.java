@@ -44,9 +44,33 @@ public class TeachPlanCourse extends Entitys implements Serializable {
     @Column(name = "course_name", columnDefinition = "VARCHAR(32) COMMENT '课程名称'")
     private String courseName;
 
-    public TeachPlanCourse(String planId, String courseId, String courseName) {
+    /**
+     * 学分
+     */
+    @Column(name = "credit", columnDefinition = "VARCHAR(32) COMMENT '学分'")
+    private String credit;
+    /**
+     * 线上占比
+     */
+    @Column(name = "on_line_percentage", columnDefinition = "TINYINT(4) COMMENT '线上占比'")
+    private Integer onLinePercentage;
+    /**
+     * 线下占比
+     */
+    @Column(name = "line_percentage", columnDefinition = "TINYINT(4) COMMENT '线下占比'")
+    private String linePercentage;
+
+    @Column(name = "teacher_Id", columnDefinition = "VARCHAR(32) COMMENT '创建教师id'")
+    private String teacherId;
+
+    public TeachPlanCourse(String planId, String courseId, String courseName,
+                           String credit, Integer onLinePercentage, String linePercentage, String teacherId) {
         this.planId = planId;
         this.courseId = courseId;
         this.courseName = courseName;
+        this.credit = credit;
+        this.onLinePercentage = onLinePercentage;
+        this.linePercentage = linePercentage;
+        this.teacherId = teacherId;
     }
 }
