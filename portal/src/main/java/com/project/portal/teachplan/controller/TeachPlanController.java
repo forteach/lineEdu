@@ -24,7 +24,7 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 
 @RestController
 @RequestMapping(path = "/teachPlan", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-@Api(value = "管理学生", tags = {"管理学生信息"})
+@Api(value = "在线计划管理", tags = {"在线计划管理"})
 public class TeachPlanController {
 
     private final TeachService teachService;
