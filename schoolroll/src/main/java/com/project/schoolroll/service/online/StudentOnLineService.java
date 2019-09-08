@@ -76,11 +76,17 @@ public class StudentOnLineService {
                 .collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
     }
     private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId){
-        return list.stream().peek(s -> {
-            s.setClassId(classIds.get(s.getClassName()));
-            s.setCenterAreaId(centerAreaId);
-        }).collect(Collectors.toList());
+        return list.stream()
+                .map(s -> setStudentOnLine(s, classIds, centerAreaId))
+                .collect(Collectors.toList());
     }
+
+    private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId){
+        studentOnLine.setClassId(classIds.get(studentOnLine.getClassName()));
+        studentOnLine.setCenterAreaId(centerAreaId);
+        return studentOnLine;
+    }
+
     private void setHeaderAlias(@NonNull ExcelReader reader) {
         reader.addHeaderAlias(studentId.getName(), studentId.name());
         reader.addHeaderAlias(studentName.getName(), studentName.name());
@@ -95,6 +101,4 @@ public class StudentOnLineService {
     public int countByClassId(String classId){
         return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
     }
-
-//    private
 }

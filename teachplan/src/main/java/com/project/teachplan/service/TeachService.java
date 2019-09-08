@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.service.CourseService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
 import com.project.teachplan.domain.TeachPlanCourse;
@@ -41,10 +42,11 @@ public class TeachService {
     private final TbClassService tbClassService;
     private final TeachPlanClassRepository teachPlanClassRepository;
     private final TeachPlanCourseRepository teachPlanCourseRepository;
+    private final CourseService courseService;
 
     @Autowired
     public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
-                        TeachPlanCourseRepository teachPlanCourseRepository,
+                        TeachPlanCourseRepository teachPlanCourseRepository, CourseService courseService,
                         TbClassService tbClassService, TeachPlanClassRepository teachPlanClassRepository,
                         TeachPlanCourseService teachPlanCourseService) {
         this.studentOnLineService = studentOnLineService;
@@ -53,6 +55,7 @@ public class TeachService {
         this.teachPlanClassRepository = teachPlanClassRepository;
         this.teachPlanCourseService = teachPlanCourseService;
         this.teachPlanCourseRepository = teachPlanCourseRepository;
+        this.courseService = courseService;
     }
 
 
@@ -94,11 +97,13 @@ public class TeachService {
 
     private void saveTeachPlanCourse(String planId, List<String> courseIds) {
         List<TeachPlanCourse> planCourseList = courseIds.parallelStream().filter(Objects::nonNull)
-                //todo 转换为 TeachPlanCourse
-                .map(c -> new TeachPlanCourse())
-//                .map(c -> new TeachPlanCourse(planId, c, teachPlanCourseService.findByCourseId(c).getCourseName()))
+                .map(c -> createTeachPlanCourse(planId, c))
                 .collect(Collectors.toList());
         teachPlanCourseService.saveAll(planCourseList);
+    }
+
+    private TeachPlanCourse createTeachPlanCourse(String planId, String courseId){
+        return new TeachPlanCourse(planId, courseId, courseService.findByCourseId(courseId).getCourseName());
     }
 
     private void saveTeachPlanClass(String planId, TeachPlan teachPlan, List<String> classIds) {

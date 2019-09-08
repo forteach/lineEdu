@@ -1,8 +1,9 @@
 package com.project.course.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseEntity;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -49,12 +51,6 @@ public class CourseServiceImpl implements CourseService {
     @Resource
     private CourseImagesServiceImpl courseImagesServiceImpl;
 
-    /**
-     * 集体备课课程共享资源
-     */
-//    @Resource
-//    private CourseShareService courseShareService;
-
     @Resource
     private CourseEntrityRepository courseEntrityRepository;
 
@@ -76,7 +72,7 @@ public class CourseServiceImpl implements CourseService {
             course.setCourseId(IdUtil.fastSimpleUUID());
             course.setUpdateUser(course.getCreateUser());
             return courseRepository.save(course).getCourseId();
-        }else {
+        } else {
             courseRepository.findById(course.getCourseId()).ifPresent(c -> {
                 UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
@@ -144,8 +140,12 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     public Course getById(String id) {
-        return courseRepository.findById(id)
-                .orElse(new Course());
+        Optional<Course> optionalCourse = courseRepository.findById(id);
+        if (optionalCourse.isPresent()){
+            return optionalCourse.get();
+        }
+        MyAssert.isNull(null, DefineCode.ERR0010, "编号对应的课程信息不存在");
+        return null;
     }
 
 

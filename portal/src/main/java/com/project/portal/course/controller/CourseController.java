@@ -1,12 +1,15 @@
 package com.project.portal.course.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
+import com.project.course.domain.OnLineCourseDic;
 import com.project.course.service.CourseService;
+import com.project.course.service.OnLineCourseDicService;
 import com.project.course.web.resp.CourseSaveResp;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
@@ -50,21 +53,24 @@ public class CourseController {
     @Resource
     private TokenService tokenService;
 
+    @Resource
+    private OnLineCourseDicService onLineCourseDicService;
+
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
     @PostMapping("/save")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目编号ID", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseName", value = "科目名称", dataType = "string", required = true, paramType = "form"),
-//            @ApiImplicitParam(name = "courseNumber", value = "科目编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "courseNumber", value = "课程字典编号", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "topPicSrc", value = "封面图片路径", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseDescribe", value = "课程描述富文本", example = "<p>富文本</p>", paramType = "form"),
             @ApiImplicitParam(name = "alias", value = "别名", dataType = "string", example = "第一学期", paramType = "form"),
-            @ApiImplicitParam(name = "courseType", value = "课程类别 公共基础课,实训课,专业", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "courseType", value = "课程类别 公共基础课,实训课,专业", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "isRequired", value = "是否必修课 Y/N", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "scoringMethod", dataType = "string", value = "评分方式 笔试,口试,网上考试", paramType = "form"),
+//            @ApiImplicitParam(name = "scoringMethod", dataType = "string", value = "评分方式 笔试,口试,网上考试", paramType = "form"),
             @ApiImplicitParam(name = "learningTime", value = "需要学习的总时长(小时)", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "credit", value = "学分", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "credit", value = "学分", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "videoPercentage", value = "观看视频占百分比", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "jobsPercentage", value = "平时作业占百分比", dataType = "string", paramType = "form"),
     })
@@ -76,6 +82,12 @@ public class CourseController {
         UpdateUtil.copyNullProperties(req, course);
         String userId = tokenService.getUserId(request.getHeader("token"));
         course.setCreateUser(userId);
+        if(StrUtil.isNotBlank(req.getCourseNumber())){
+            OnLineCourseDic courseDic = onLineCourseDicService.findId(req.getCourseNumber());
+            if (StrUtil.isNotBlank(courseDic.getCourseId())){
+                course.setCourseNumber(courseDic.getCourseId());
+            }
+        }
         String courseId = courseService.saveUpdate(course);
         //创建输出课程对象
         CourseSaveResp courseSaveResp = CourseSaveResp.builder()

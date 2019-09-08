@@ -68,7 +68,7 @@ public class LearnCenterController {
             MyAssert.isNull(request.getPrincipal(), DefineCode.ERR0010, "学习中心负责人不为空");
             MyAssert.isNull(request.getAddress(), DefineCode.ERR0010, "学习中心地址不为空");
             List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
-            if (!learnCenters.isEmpty() && learnCenters.size() > 0) {
+            if (!learnCenters.isEmpty()) {
                 MyAssert.isNull(null, DefineCode.ERR0011, "已经存在同名学习中心");
             }
             LearnCenter learnCenter = new LearnCenter();

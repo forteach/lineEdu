@@ -13,19 +13,24 @@
 
     <packaging>jar</packaging>
     <dependencies>
-    <dependency>
-        <groupId>com.project</groupId>
-        <artifactId>base</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.project</groupId>
-        <artifactId>mysql</artifactId>
-        <version>${project.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.project</groupId>
             <artifactId>schoolroll</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>course</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -19,15 +19,14 @@ public class RCourse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-
     @ApiModelProperty(value = "科目编号ID", name = "courseId", dataType = "string", example = "ff808181673e8df401673e8e49cb0000")
     private String courseId;
 
     @ApiModelProperty(name = "courseName", value = "科目名称", dataType = "string", example = "商务英语", required = true)
     private String courseName;
 
-//    @ApiModelProperty(name = "courseNumber", value = "科目编号", dataType = "string", example = "S123456", required = true)
-//    private String courseNumber;
+    @ApiModelProperty(name = "courseNumber", value = "课程编号", dataType = "string", example = "S123456", required = true)
+    private String courseNumber;
 
     @ApiModelProperty(value = "封面图片路径", name = "topPicSrc", notes = "保存的是封面图片路径", example = "http://wx2.sinaimg.cn/large/006nLajtly1fk65lrevkqj30dw0dwadz.jpg")
     private String topPicSrc;
@@ -38,20 +37,20 @@ public class RCourse implements Serializable {
     @ApiModelProperty(name = "alias", value = "别名", dataType = "string", example = "第一学期")
     private String alias;
 
-    @ApiModelProperty(name = "courseType", value = "课程类别 公共基础课,实训课,专业", dataType = "string")
-    private String courseType;
+//    @ApiModelProperty(name = "courseType", value = "课程类别 公共基础课,实训课,专业", dataType = "string")
+//    private String courseType;
 
     @ApiModelProperty(name = "isRequired", value = "是否必修课 Y/N", dataType = "string")
     private String isRequired;
 
-    @ApiModelProperty(name = "scoringMethod", value = "评分方式 笔试,口试,网上考试", dataType = "string")
-    private String scoringMethod;
+//    @ApiModelProperty(name = "scoringMethod", value = "评分方式 笔试,口试,网上考试", dataType = "string")
+//    private String scoringMethod;
 
     @ApiModelProperty(name = "learningTime", value = "需要学习的总时长(小时)", dataType = "string")
     private String learningTime;
 
-    @ApiModelProperty(name = "credit", value = "学分", dataType = "string")
-    private String credit;
+//    @ApiModelProperty(name = "credit", value = "学分", dataType = "string")
+//    private String credit;
 
     @ApiModelProperty(name = "videoPercentage", value = "观看视频占百分比", dataType = "string")
     private String videoPercentage;
