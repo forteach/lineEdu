@@ -11,6 +11,8 @@ import com.project.schoolroll.domain.online.TbClasses;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,5 +102,10 @@ public class StudentOnLineService {
 
     public int countByClassId(String classId){
         return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
+    }
+
+    /* 查询*/
+    public Page<StudentOnLine> findAllPage(PageRequest request){
+        return studentOnLineRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, request);
     }
 }

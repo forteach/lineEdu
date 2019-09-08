@@ -11,13 +11,15 @@ import java.util.List;
 public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, String> {
 
 
-    public List<StudentOnLine> findAllByIsValidatedEqualsAndImportStatus(String isValidated, int importStatus);
+    List<StudentOnLine> findAllByIsValidatedEqualsAndImportStatus(String isValidated, int importStatus);
 
-    public Page<StudentOnLine> findAllByIsValidatedEqualsAndImportStatus(String isValidated, int importStatus, Pageable pageable);
+    Page<StudentOnLine> findAllByIsValidatedEqualsAndImportStatus(String isValidated, int importStatus, Pageable pageable);
 
-    public List<StudentOnLine> findAllByIsValidatedEqualsAndImportStatusAndCenterAreaId(String isValidated, int importStatus, String centerAreaId);
+    List<StudentOnLine> findAllByIsValidatedEqualsAndImportStatusAndCenterAreaId(String isValidated, int importStatus, String centerAreaId);
 
-    public Page<StudentOnLine> findAllByIsValidatedEqualsAndImportStatusAndCenterAreaId(String isValidated, int importStatus, String centerAreaId, Pageable pageable);
+    Page<StudentOnLine> findAllByIsValidatedEqualsAndImportStatusAndCenterAreaId(String isValidated, int importStatus, String centerAreaId, Pageable pageable);
 
     int countAllByIsValidatedEqualsAndClassId(String isValidated, String classId);
+
+    Page<StudentOnLine> findAllByIsValidatedEquals(String isValidated, Pageable pageable);
 }
