@@ -7,17 +7,20 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.OnLineCourseDicSaveUpdateRequest;
+import com.project.portal.schoolroll.request.OnlLineCourseFindAllPage;
+import com.project.schoolroll.domain.online.OnLineCourse;
 import com.project.schoolroll.domain.online.OnLineCourseDic;
+import com.project.schoolroll.service.online.OnLineCourseDicService;
 import com.project.schoolroll.service.online.OnLineCourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
  * @Auther: zhangyy
@@ -28,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Api(value = "在线项目课程字典管理", tags = {"在线项目课程字典管理"})
-@RequestMapping(path = "/onLineCourseDic", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(path = "/onLineCourse", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class OnLineCourseController {
     private final OnLineCourseService onLineCourseService;
 
@@ -44,27 +47,41 @@ public class OnLineCourseController {
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody OnLineCourseDicSaveUpdateRequest request) {
-        OnLineCourseDic onLineCourseDic = new OnLineCourseDic();
-        BeanUtil.copyProperties(request, onLineCourseDic);
+        OnLineCourse onLineCourse = new OnLineCourse();
+        BeanUtil.copyProperties(request, onLineCourse);
         if (StrUtil.isBlank(request.getCourseId())) {
-            return WebResult.okResult(onLineCourseService.save(onLineCourseDic));
+            return WebResult.okResult(onLineCourseService.save(onLineCourse));
         } else {
-            return WebResult.okResult(onLineCourseService.update(onLineCourseDic));
+            return WebResult.okResult(onLineCourseService.update(onLineCourse));
         }
     }
 
-    @ApiOperation(value = "培训项目课程字典列表")
-    @PostMapping(path = "/findAll")
-    @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", example = "没有此参数查询全部", paramType = "query")
-    public WebResult findAll(@RequestBody String centerAreaId) {
-        if (StrUtil.isNotBlank(centerAreaId)){
-            return WebResult.okResult(onLineCourseService.findAllByCenterAreaId(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
+    @PostMapping("/findAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", example = "没有此参数查询全部", paramType = "query"),
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
+    })
+    public WebResult findAllPage(@RequestBody OnlLineCourseFindAllPage request){
+        valideSort(request.getPage(), request.getSize());
+        if (StrUtil.isBlank(request.getCenterAreaId())) {
+            return WebResult.okResult(onLineCourseService.findAllPage(PageRequest.of(request.getPage(), request.getSize())));
         }
-        return WebResult.okResult(onLineCourseService.findAll());
+        return WebResult.okResult(onLineCourseService.findAllPageByCenterAreaId(request.getCenterAreaId(), PageRequest.of(request.getPage(), request.getSize())));
     }
+
+//    @ApiOperation(value = "在线项目课程列表")
+//    @PostMapping(path = "/findAll")
+//    @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", example = "没有此参数查询全部", paramType = "query")
+//    public WebResult findAll(@RequestBody String centerAreaId) {
+//        if (StrUtil.isNotBlank(centerAreaId)){
+//            return WebResult.okResult(onLineCourseService.findAllByCenterAreaId(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
+//        }
+//        return WebResult.okResult(onLineCourseService.findAll());
+//    }
 
     @PostMapping(path = "/removeByCourseId")
-    @ApiOperation(value = "移除课程字典中的课程信息")
+    @ApiOperation(value = "移除课程信息")
     @ApiImplicitParam(name = "courseId", dataType = "string", required = true, paramType = "form")
     public WebResult removeByCourseId(@RequestBody String courseId){
         MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不为空");
@@ -72,12 +89,12 @@ public class OnLineCourseController {
         return WebResult.okResult();
     }
 
-    @PostMapping(path = "/deleteByCourseId")
-    @ApiOperation(value = "删除课程字典中的课程信息")
+    @DeleteMapping(path = "/{courseId}")
+    @ApiOperation(value = "删除课程信息")
     @ApiImplicitParam(name = "courseId", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteByCourseId(@RequestBody String courseId){
+    public WebResult deleteByCourseId(@PathVariable(value = "courseId") String courseId){
         MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不为空");
-        onLineCourseService.deleteByCourseId(JSONObject.parseObject(courseId).getString("courseId"));
+        onLineCourseService.deleteByCourseId(courseId);
         return WebResult.okResult();
     }
 }

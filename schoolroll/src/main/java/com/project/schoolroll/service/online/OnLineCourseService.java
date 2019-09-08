@@ -5,12 +5,16 @@ import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
+import com.project.schoolroll.domain.online.OnLineCourse;
 import com.project.schoolroll.domain.online.OnLineCourseDic;
-import com.project.schoolroll.repository.online.OnLineCourseDicRepository;
+import com.project.schoolroll.repository.online.OnLineCourseRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,32 +22,38 @@ import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 /**
- * 财务类型明细
+ * 在线课程
  */
 
 @Slf4j
 @Service
 public class OnLineCourseService extends BaseMySqlService {
 
-    @Resource
-    private OnLineCourseDicRepository onLineCourseDicRepository;
+    private final OnLineCourseRepository onLineCourseRepository;
+
+    @Autowired
+    public OnLineCourseService(OnLineCourseRepository onLineCourseRepository) {
+        this.onLineCourseRepository = onLineCourseRepository;
+    }
 
 
     /**
      * 财务类型明细添加
      */
-    public OnLineCourseDic save(OnLineCourseDic OnlineCourse) {
-        OnlineCourse.setCourseId(IdUtil.fastSimpleUUID());
-        return onLineCourseDicRepository.save(OnlineCourse);
+    @Transactional(rollbackFor = Exception.class)
+    public OnLineCourse save(OnLineCourse onlineCourse) {
+        onlineCourse.setCourseId(IdUtil.fastSimpleUUID());
+        return onLineCourseRepository.save(onlineCourse);
     }
 
     /**
      * 财务类型明细修改
      */
-    public OnLineCourseDic update(OnLineCourseDic OnlineCourse) {
-        OnLineCourseDic obj = findId(OnlineCourse.getCourseId());
-        BeanUtil.copyProperties(OnlineCourse, obj);
-        return onLineCourseDicRepository.save(obj);
+    @Transactional(rollbackFor = Exception.class)
+    public OnLineCourse update(OnLineCourse onlineCourse) {
+        OnLineCourse obj = findId(onlineCourse.getCourseId());
+        BeanUtil.copyProperties(onlineCourse, obj);
+        return onLineCourseRepository.save(obj);
     }
 
 
@@ -53,8 +63,8 @@ public class OnLineCourseService extends BaseMySqlService {
      * @param courseId
      * @return
      */
-    public OnLineCourseDic findId(String courseId) {
-        Optional<OnLineCourseDic> obj = onLineCourseDicRepository.findById(courseId);
+    public OnLineCourse findId(String courseId) {
+        Optional<OnLineCourse> obj = onLineCourseRepository.findById(courseId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
         return obj.get();
     }
@@ -63,22 +73,33 @@ public class OnLineCourseService extends BaseMySqlService {
      * @param centerAreaId 财务类型明细，不分页
      * @return
      */
-    public List<OnLineCourseDic> findAllByCenterAreaId(String centerAreaId) {
-        return onLineCourseDicRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerAreaId);
+    public List<OnLineCourse> findAllByCenterAreaId(String centerAreaId) {
+        return onLineCourseRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerAreaId);
     }
 
-    public List<OnLineCourseDic> findAll() {
-        return onLineCourseDicRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
+    public List<OnLineCourse> findAll() {
+        return onLineCourseRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
     }
 
+    public Page<OnLineCourse> findAllPage(PageRequest request){
+        return onLineCourseRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, request);
+    }
+
+    public Page<OnLineCourse> findAllPageByCenterAreaId(String centerAreaId, PageRequest request){
+        return onLineCourseRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerAreaId, request);
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
     public void removeByCourseId(String courseId) {
-        onLineCourseDicRepository.findById(courseId).ifPresent(o -> {
+        onLineCourseRepository.findById(courseId).ifPresent(o -> {
             o.setIsValidated(TAKE_EFFECT_CLOSE);
-            onLineCourseDicRepository.save(o);
+            onLineCourseRepository.save(o);
         });
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteByCourseId(String courseId) {
-        onLineCourseDicRepository.deleteById(courseId);
+        onLineCourseRepository.deleteById(courseId);
     }
 }

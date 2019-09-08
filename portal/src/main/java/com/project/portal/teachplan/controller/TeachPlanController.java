@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
+import com.project.portal.teachplan.request.TeachPlanClassSaveUpdateRequest;
+import com.project.portal.teachplan.request.TeachPlanCourseSaveUpdateRequest;
 import com.project.portal.teachplan.request.TeachPlanPageAllRequest;
 import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
 import com.project.teachplan.domain.online.TeachPlan;
@@ -42,8 +44,8 @@ public class TeachPlanController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form"),
             @ApiImplicitParam(name = "planName", dataType = "string", value = "计划名称", paramType = "form"),
-            @ApiImplicitParam(name = "courseIds", dataType = "list", value = "课程id集合", paramType = "form"),
-            @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form"),
+//            @ApiImplicitParam(name = "courseIds", dataType = "list", value = "课程id集合", paramType = "form"),
+//            @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form"),
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form")
@@ -51,7 +53,31 @@ public class TeachPlanController {
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request){
         TeachPlan teachPlan = new TeachPlan();
         BeanUtil.copyProperties(request, teachPlan);
-        return WebResult.okResult(teachService.saveUpdatePlan(teachPlan, request.getClassIds(), request.getCourseIds()));
+        return WebResult.okResult(teachService.saveUpdatePlan(teachPlan));
+    }
+
+    @ApiOperation(value = "保存修改计划对应的班级接口")
+    @PostMapping(path = "/saveUpdateClass")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form")
+    })
+    public WebResult saveUpdateClass(@RequestBody TeachPlanClassSaveUpdateRequest request){
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+        MyAssert.isTrue(request.getClassIds().isEmpty(), DefineCode.ERR0010, "班级信息不为空");
+        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds()));
+    }
+
+    @ApiOperation(value = "保存修改计划对应的课程接口")
+    @PostMapping(path = "/saveUpdateCourse")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "courseIds", dataType = "list", value = "课程id集合", paramType = "form"),
+    })
+    public WebResult saveUpdateCourse(@RequestBody TeachPlanCourseSaveUpdateRequest request){
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+        MyAssert.isTrue(request.getCourseIds().isEmpty(), DefineCode.ERR0010, "课程信息不为空");
+        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourseIds()));
     }
 
     @ApiOperation(value = "分页查询教学计划")
@@ -72,9 +98,9 @@ public class TeachPlanController {
     @ApiOperation(value = "移除(逻辑)对应计划的信息")
     @PostMapping(path = "/removeByPlanId")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form")
-    public WebResult removeByPlanId(@RequestBody String plonId){
-        MyAssert.isNull(plonId, DefineCode.ERR0010, "计划id不为空");
-        teachService.removeByPlanId(JSONObject.parseObject(plonId).getString("planId"));
+    public WebResult removeByPlanId(@RequestBody String planId){
+        MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
+        teachService.removeByPlanId(JSONObject.parseObject(planId).getString("planId"));
         return WebResult.okResult();
     }
 

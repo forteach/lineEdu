@@ -1,6 +1,5 @@
 package com.project.teachplan.domain.online;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;

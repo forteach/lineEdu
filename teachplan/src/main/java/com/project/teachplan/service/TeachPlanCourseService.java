@@ -2,7 +2,6 @@ package com.project.teachplan.service;
 
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.schoolroll.domain.online.TbClasses;
 import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import lombok.NonNull;
@@ -16,15 +15,15 @@ import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 @Service
 public class TeachPlanCourseService {
-    protected final TeachPlanCourseRepository teachPlanCourseRepository;
+    private final TeachPlanCourseRepository teachPlanCourseRepository;
 
     @Autowired
     public TeachPlanCourseService(TeachPlanCourseRepository teachPlanCourseRepository) {
         this.teachPlanCourseRepository = teachPlanCourseRepository;
     }
 
-    public TeachPlanCourse findByCourseId(String centerId){
-        Optional<TeachPlanCourse> optionalTeachPlanCourse = teachPlanCourseRepository.findById(centerId);
+    public TeachPlanCourse findByCourseId(String courseId, String planId){
+        Optional<TeachPlanCourse> optionalTeachPlanCourse = teachPlanCourseRepository.findByIsValidatedEqualsAndPlanIdAndCourseId(TAKE_EFFECT_OPEN, planId, courseId);
         if (optionalTeachPlanCourse.isPresent()){
             return optionalTeachPlanCourse.get();
         }else {

@@ -17,10 +17,6 @@ public interface TeachPlanClassRepository extends JpaRepository<TeachPlanClass, 
     @Query("update TeachPlanClass set isValidated = ?1 where planId = ?2")
     int updateIsValidatedByPlanId(String isValidated, String planId);
 
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    int deleteByPlanId(String planId);
-
     @Transactional(readOnly = true)
     List<TeachPlanClass> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
 }

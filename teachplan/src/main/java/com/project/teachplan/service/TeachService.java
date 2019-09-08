@@ -3,6 +3,7 @@ package com.project.teachplan.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.schoolroll.service.online.StudentOnLineService;
@@ -11,6 +12,7 @@ import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.domain.online.TeachPlan;
 import com.project.teachplan.domain.online.TeachPlanClass;
 import com.project.teachplan.repository.TeachPlanClassRepository;
+import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,33 +40,38 @@ public class TeachService {
     private final TeachPlanRepository teachPlanRepository;
     private final TbClassService tbClassService;
     private final TeachPlanClassRepository teachPlanClassRepository;
+    private final TeachPlanCourseRepository teachPlanCourseRepository;
 
     @Autowired
-    public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository, TbClassService tbClassService, TeachPlanClassRepository teachPlanClassRepository, TeachPlanCourseService teachPlanCourseService) {
+    public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
+                        TeachPlanCourseRepository teachPlanCourseRepository,
+                        TbClassService tbClassService, TeachPlanClassRepository teachPlanClassRepository,
+                        TeachPlanCourseService teachPlanCourseService) {
         this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
         this.teachPlanClassRepository = teachPlanClassRepository;
         this.teachPlanCourseService = teachPlanCourseService;
+        this.teachPlanCourseRepository = teachPlanCourseRepository;
     }
 
 
     @Transactional(rollbackFor = Exception.class)
-    public TeachPlan saveUpdatePlan(TeachPlan teachPlan, List<String> classIds, List<String> courseIds) {
+    public TeachPlan saveUpdatePlan(TeachPlan teachPlan) {
         if (StrUtil.isBlank(teachPlan.getPlanId())) {
             String planId = IdUtil.fastSimpleUUID();
-            saveTeachPlanClass(planId, teachPlan, classIds);
+//            saveTeachPlanClass(planId, teachPlan, classIds);
             teachPlan.setPlanId(planId);
-            setTeachPlanNumber(teachPlan, classIds, courseIds);
-            saveTeachPlanCourse(teachPlan.getPlanId(), courseIds);
+//            setTeachPlanNumber(teachPlan, classIds, courseIds);
+//            saveTeachPlanCourse(planId, courseIds);
             return teachPlanRepository.save(teachPlan);
         } else {
-            if (!classIds.isEmpty()) {
-                teachPlanClassRepository.deleteAllByPlanId(teachPlan.getPlanId());
-                saveTeachPlanClass(teachPlan.getPlanId(), teachPlan, classIds);
-            }
-            setTeachPlanNumber(teachPlan, classIds, courseIds);
-            saveTeachPlanCourse(teachPlan.getPlanId(), courseIds);
+//            if (!classIds.isEmpty()) {
+//                teachPlanClassRepository.deleteAllByPlanId(teachPlan.getPlanId());
+//                saveTeachPlanClass(teachPlan.getPlanId(), teachPlan, classIds);
+//            }
+//            setTeachPlanNumber(teachPlan, classIds, courseIds);
+//            saveTeachPlanCourse(teachPlan.getPlanId(), courseIds);
             Optional<TeachPlan> optional = teachPlanRepository.findById(teachPlan.getPlanId());
             if (optional.isPresent()) {
                 TeachPlan t = optional.get();
@@ -77,7 +85,7 @@ public class TeachService {
 
     private void setTeachPlanNumber(TeachPlan teachPlan, List<String> classIds, List<String> courseIds) {
         if (!courseIds.isEmpty()) {
-            teachPlan.setClassNumber(courseIds.size());
+            teachPlan.setCourseNumber(courseIds.size());
         }
         if (!classIds.isEmpty()) {
             teachPlan.setClassNumber(classIds.size());
@@ -86,7 +94,9 @@ public class TeachService {
 
     private void saveTeachPlanCourse(String planId, List<String> courseIds) {
         List<TeachPlanCourse> planCourseList = courseIds.parallelStream().filter(Objects::nonNull)
-                .map(c -> new TeachPlanCourse(planId, c, teachPlanCourseService.findByCourseId(c).getCourseName()))
+                //todo 转换为 TeachPlanCourse
+                .map(c -> new TeachPlanCourse())
+//                .map(c -> new TeachPlanCourse(planId, c, teachPlanCourseService.findByCourseId(c).getCourseName()))
                 .collect(Collectors.toList());
         teachPlanCourseService.saveAll(planCourseList);
     }
@@ -98,6 +108,34 @@ public class TeachService {
         teachPlanClassRepository.saveAll(planClassList);
         int sumNumber = planClassList.stream().mapToInt(TeachPlanClass::getClassNumber).sum();
         teachPlan.setSumNumber(sumNumber);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TeachPlan saveUpdatePlanClass(String planId, List<String> classIds){
+        Optional<TeachPlan> teachPlanOptional = teachPlanRepository.findById(planId);
+        if (teachPlanOptional.isPresent()){
+            TeachPlan teachPlan = teachPlanOptional.get();
+            teachPlanClassRepository.deleteAllByPlanId(planId);
+            saveTeachPlanClass(planId, teachPlan, classIds);
+            setTeachPlanNumber(teachPlan, classIds, new ArrayList<>());
+            return teachPlanRepository.save(teachPlan);
+        }
+        MyAssert.isNull(null, DefineCode.ERR0010, "不存在对应的计划编号");
+        return null;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TeachPlan saveUpdatePlanCourse(String planId, List<String> courseIds){
+        Optional<TeachPlan> teachPlanOptional = teachPlanRepository.findById(planId);
+        if (teachPlanOptional.isPresent()){
+            TeachPlan teachPlan = teachPlanOptional.get();
+            teachPlanCourseRepository.deleteAllByPlanId(planId);
+            saveTeachPlanCourse(planId, courseIds);
+            setTeachPlanNumber(teachPlan, new ArrayList<>(), courseIds);
+            return teachPlanRepository.save(teachPlan);
+        }
+        MyAssert.isNull(null, DefineCode.ERR0010, "不存在对应的计划编号");
+        return null;
     }
 
     public Page<TeachPlan> findByPlanIdPageAll(String planId, Pageable pageable) {
