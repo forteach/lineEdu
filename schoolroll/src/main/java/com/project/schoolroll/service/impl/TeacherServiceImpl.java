@@ -39,6 +39,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional(rollbackFor = Exception.class)
     public Teacher save(Teacher teacher) {
         teacher.setTeacherId(IdUtil.simpleUUID());
+        //todo 保存用户
         return teacherRepository.save(teacher);
     }
 
