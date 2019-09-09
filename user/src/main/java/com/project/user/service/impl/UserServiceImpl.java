@@ -28,8 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.jws.WebResult;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +45,7 @@ import static com.project.token.constant.TokenKey.USER_TOKEN_PREFIX;
  */
 @Slf4j
 @Service
-public class UserServiceImpl implements UserService<T> {
+public class UserServiceImpl implements UserService {
 
     /**
      * HMacMD5加密的盐

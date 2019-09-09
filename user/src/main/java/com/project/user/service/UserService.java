@@ -13,7 +13,7 @@ import com.project.user.web.vo.RegisterTeacherVo;
  * @Version: 1.0
  * @Description:
  */
-public interface UserService<T> {
+public interface UserService {
 
     /**
      * 教师端用户登录
