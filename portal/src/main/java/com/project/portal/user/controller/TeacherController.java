@@ -1,4 +1,4 @@
-package com.project.portal.schoolroll.controller;
+package com.project.portal.user.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
@@ -7,10 +7,10 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
-import com.project.portal.schoolroll.request.TeacherSaveUpdateRequest;
-import com.project.schoolroll.domain.Teacher;
-import com.project.schoolroll.service.TeacherService;
+import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.user.domain.Teacher;
+import com.project.user.service.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

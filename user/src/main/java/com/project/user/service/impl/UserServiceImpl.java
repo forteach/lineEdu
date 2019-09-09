@@ -8,15 +8,19 @@ import com.project.base.util.Md5Util;
 import com.project.token.service.TokenService;
 import com.project.user.domain.SysRole;
 import com.project.user.domain.SysUsers;
+import com.project.user.domain.Teacher;
 import com.project.user.domain.UserRole;
 import com.project.user.repository.SysRoleRepository;
+import com.project.user.repository.TeacherRepository;
 import com.project.user.repository.UserRepository;
 import com.project.user.repository.UserRoleRepository;
 import com.project.user.repository.dto.SysRoleDto;
 import com.project.user.service.UserService;
+import com.project.user.web.req.RegisterUserReq;
 import com.project.user.web.req.UpdatePassWordReq;
 import com.project.user.web.req.UserLoginReq;
 import com.project.user.web.resp.LoginResponse;
+import com.project.user.web.vo.RegisterTeacherVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.jws.WebResult;
 
 import java.util.List;
 import java.util.Map;
@@ -65,8 +70,8 @@ public class UserServiceImpl implements UserService<T> {
     @Resource
     private TokenService tokenService;
 
-//    @Resource
-//    private TeacherRepository teacherRepository;
+    @Resource
+    private TeacherRepository teacherRepository;
 
     @Resource
     private SysRoleRepository sysRoleRepository;
@@ -107,64 +112,65 @@ public class UserServiceImpl implements UserService<T> {
         return loginResponse;
     }
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public WebResult registerUser(RegisterUserReq registerUserReq) {
-//        Optional<Teacher> teacher = teacherRepository.findById(registerUserReq.getTeacherCode());
-//        if (!teacher.isPresent()) {
-//            return WebResult.failException("不存在您的信息，请联系管理员");
-//        }
-//        //验证是否注册
-//        SysUsers users = userRepository.findByTeacherId(registerUserReq.getTeacherCode());
-//        if (users != null) {
-//            return WebResult.failException("您已经注册过了");
-//        }
-//        SysUsers user = new SysUsers();
-//        user.setId(registerUserReq.getTeacherCode());
-//        user.setPassWord(Md5Util.macMD5(registerUserReq.getPassWord().concat(salt)));
-//        user.setTeacherId(registerUserReq.getTeacherCode());
-//        user.setUserName(registerUserReq.getUserName());
-//        SysUsers sysUsers = userRepository.save(user);
-//        //分配角色
-//        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
-//        userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(sysRole.getRoleId()).build());
-//        return WebResult.okResult();
-//    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean registerUser(RegisterUserReq registerUserReq) {
+        Optional<Teacher> teacher = teacherRepository.findById(registerUserReq.getTeacherCode());
+        if (!teacher.isPresent()) {
+            MyAssert.isNull(null, DefineCode.ERR0014, "不存在您的信息，请联系管理员");
+        }
+        //验证是否注册
+        SysUsers users = userRepository.findByTeacherId(registerUserReq.getTeacherCode());
+        if (users != null) {
+            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
+        }
+        SysUsers user = new SysUsers();
+        user.setId(registerUserReq.getTeacherCode());
+        user.setPassWord(Md5Util.macMD5(registerUserReq.getPassWord().concat(salt)));
+        user.setTeacherId(registerUserReq.getTeacherCode());
+        user.setUserName(registerUserReq.getUserName());
+        SysUsers sysUsers = userRepository.save(user);
+        //分配角色
+        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
+        userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(sysRole.getRoleId()).build());
+        return true;
+    }
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public WebResult resetPassWord(String teacherCode) {
-//        SysUsers users = userRepository.findByTeacherId(teacherCode);
-//        if (users == null) {
-//            return WebResult.failException("不存在您的信息，请联系管理员");
-//        }
-//        users.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
-//        userRepository.save(users);
-//        return WebResult.okResult();
-//    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean resetPassWord(String teacherCode) {
+        SysUsers users = userRepository.findByTeacherId(teacherCode);
+        if (users == null) {
+            MyAssert.isNull(null, DefineCode.ERR0014, "不存在您的信息，请联系管理员");
+        }
+        users.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
+        userRepository.save(users);
+        return true;
+    }
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public String addSysTeacher(String teacherCode) {
-//        Optional<Teacher> teacher = teacherRepository.findById(teacherCode);
-//        if (!teacher.isPresent()) {
-//            return WebResult.failException("不存在您的信息，请联系管理员");
-//        }
-//        //验证是否注册
-//        SysUsers users = userRepository.findByTeacherId(teacherCode);
-//        if (users != null) {
-//            return WebResult.failException("您已经注册过了");
-//        }
-//        SysUsers user = new SysUsers();
-//        user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
-//        user.setTeacherId(teacherCode);
-//        user.setId(teacherCode);
-//        user.setUserName(teacher.get().getTeacherName());
-//        userRepository.save(user);
-//        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
-//        userRoleRepository.save(UserRole.builder().userId(user.getId()).roleId(sysRole.getRoleId()).build());
-//        return WebResult.okResult("添加成功");
-//    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean addSysTeacher(String teacherCode) {
+        Optional<Teacher> teacherOptional = teacherRepository.findById(teacherCode);
+        if (!teacherOptional.isPresent()) {
+            MyAssert.isNull(null, DefineCode.ERR0014, "不存在您的信息，请联系管理员");
+        }
+        Teacher teacher = teacherOptional.get();
+        //验证是否注册
+        SysUsers users = userRepository.findByTeacherId(teacherCode);
+        if (users != null) {
+            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
+        }
+        SysUsers user = new SysUsers();
+        user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
+        user.setTeacherId(teacherCode);
+        user.setId(teacherCode);
+        user.setUserName(teacher.getTeacherName());
+        userRepository.save(user);
+        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
+        userRoleRepository.save(UserRole.builder().userId(user.getId()).roleId(sysRole.getRoleId()).build());
+        return true;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -202,5 +208,23 @@ public class UserServiceImpl implements UserService<T> {
             tokenService.removeToken(users.getId());
         }
         MyAssert.isNull(users, DefineCode.OK, "未找到要修改的用户");
+    }
+
+    @Override
+    public void registerTeacher(RegisterTeacherVo vo) {
+        SysUsers users = userRepository.findByTeacherId(vo.getPhone());
+        if (users != null) {
+            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
+        }
+        SysUsers user = new SysUsers();
+        user.setId(vo.getPhone());
+        user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
+        user.setTeacherId(vo.getPhone());
+        user.setUserName(vo.getUserName());
+        user.setRegisterPhone(vo.getPhone());
+        SysUsers sysUsers = userRepository.save(user);
+        //分配角色
+        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
+        userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(sysRole.getRoleId()).build());
     }
 }

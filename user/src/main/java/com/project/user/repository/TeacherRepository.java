@@ -1,6 +1,7 @@
-package com.project.schoolroll.repository;
+package com.project.user.repository;
 
-import com.project.schoolroll.domain.Teacher;
+
+import com.project.user.domain.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

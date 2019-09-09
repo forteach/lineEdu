@@ -1,4 +1,4 @@
-package com.project.portal.schoolroll.request;
+package com.project.portal.user.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

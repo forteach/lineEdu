@@ -1,4 +1,4 @@
-package com.project.schoolroll.domain;
+package com.project.user.domain;
 
 import com.project.mysql.domain.Entitys;
 import lombok.Data;

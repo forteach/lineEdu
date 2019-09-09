@@ -1,12 +1,15 @@
-package com.project.schoolroll.service.impl;
+package com.project.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.schoolroll.domain.Teacher;
-import com.project.schoolroll.repository.TeacherRepository;
-import com.project.schoolroll.service.TeacherService;
+import com.project.user.domain.Teacher;
+import com.project.user.repository.SysUsersRepository;
+import com.project.user.repository.TeacherRepository;
+import com.project.user.service.TeacherService;
+import com.project.user.service.UserService;
+import com.project.user.web.vo.RegisterTeacherVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,16 +33,25 @@ import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 @Slf4j
 public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
+    private final SysUsersRepository sysUsersRepository;
+    private final UserService userService;
 
-    public TeacherServiceImpl(TeacherRepository teacherRepository) {
+    public TeacherServiceImpl(TeacherRepository teacherRepository,
+                              UserService userService,
+                              SysUsersRepository sysUsersRepository) {
         this.teacherRepository = teacherRepository;
+        this.sysUsersRepository = sysUsersRepository;
+        this.userService = userService;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Teacher save(Teacher teacher) {
         teacher.setTeacherId(IdUtil.simpleUUID());
-        //todo 保存用户
+        // 添加到用户保存用户
+        RegisterTeacherVo vo = new RegisterTeacherVo();
+        BeanUtil.copyProperties(teacher, vo);
+        userService.registerTeacher(vo);
         return teacherRepository.save(teacher);
     }
 

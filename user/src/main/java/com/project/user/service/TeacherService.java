@@ -1,9 +1,8 @@
-package com.project.schoolroll.service;
+package com.project.user.service;
 
-import com.project.schoolroll.domain.Teacher;
+import com.project.user.domain.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
 import java.util.List;
 
 /**
@@ -15,10 +14,16 @@ import java.util.List;
  */
 public interface TeacherService {
     public Teacher save(Teacher teacher);
+
     public Teacher update(Teacher teacher);
+
     public Page<Teacher> findAllPage(PageRequest pageRequest);
+
     public List<Teacher> findAll();
+
     public void deleteByTeacherCode(String teacherCode);
+
     public void removeByTeacherId(String teacherId);
+
     public void deleteByTeacherId(String teacherId);
 }

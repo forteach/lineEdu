@@ -1,8 +1,10 @@
 package com.project.user.service;
 
+import com.project.user.web.req.RegisterUserReq;
 import com.project.user.web.req.UpdatePassWordReq;
 import com.project.user.web.req.UserLoginReq;
 import com.project.user.web.resp.LoginResponse;
+import com.project.user.web.vo.RegisterTeacherVo;
 
 /**
  * @Auther: zhangyy
@@ -27,21 +29,21 @@ public interface UserService<T> {
      * @param registerUserReq
      * @return
      */
-//    T registerUser(RegisterUserReq registerUserReq);
+    boolean registerUser(RegisterUserReq registerUserReq);
 
     /**
      * 重置用户密码
      * @param teacherCode
      * @return
      */
-//    T resetPassWord(String teacherCode);
+    boolean resetPassWord(String teacherCode);
 
     /**
      * 添加教师用户信息
      * @param teacherCode
      * @return
      */
-//    T addSysTeacher(String teacherCode);
+    boolean addSysTeacher(String teacherCode);
 
     /**
      * 修改密码
@@ -57,4 +59,6 @@ public interface UserService<T> {
      * @param teacherCodeStr
      */
     void updateState(String teacherCodeStr);
+
+    void registerTeacher(RegisterTeacherVo vo);
 }
