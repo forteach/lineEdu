@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -26,7 +27,7 @@ public interface SysRoleRepository extends JpaRepository<SysRole, Long> {
      * @return
      */
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    SysRole findSysRoleByRoleNameAndIsValidated(String roleName, String isValidated);
+    Optional<SysRole> findSysRoleByRoleNameAndIsValidated(String roleName, String isValidated);
 
     /**
      * 找到可用的权限角色

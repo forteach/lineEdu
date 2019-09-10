@@ -129,8 +129,9 @@ public class UserServiceImpl implements UserService {
         user.setUserName(registerUserReq.getUserName());
         SysUsers sysUsers = userRepository.save(user);
         //分配角色
-        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
-        userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(sysRole.getRoleId()).build());
+        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
+            userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(s.getRoleId()).build());
+        });
         return true;
     }
 
@@ -165,8 +166,9 @@ public class UserServiceImpl implements UserService {
         user.setId(teacherCode);
         user.setUserName(teacher.getTeacherName());
         userRepository.save(user);
-        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
-        userRoleRepository.save(UserRole.builder().userId(user.getId()).roleId(sysRole.getRoleId()).build());
+        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
+            userRoleRepository.save(UserRole.builder().userId(user.getId()).roleId(s.getRoleId()).build());
+        });
         return true;
     }
 
@@ -184,11 +186,12 @@ public class UserServiceImpl implements UserService {
         }
         users.setPassWord(newPassWord);
         userRepository.save(users);
-        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
-        userRoleRepository.save(UserRole.builder()
+        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
+            userRoleRepository.save(UserRole.builder()
                 .userId(users.getId())
-                .roleId(sysRole.getRoleId())
+                .roleId(s.getRoleId())
                 .build());
+        });
     }
 
     @Override
@@ -222,7 +225,8 @@ public class UserServiceImpl implements UserService {
         user.setRegisterPhone(vo.getPhone());
         SysUsers sysUsers = userRepository.save(user);
         //分配角色
-        SysRole sysRole = sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN);
-        userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(sysRole.getRoleId()).build());
+        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
+            userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(s.getRoleId()).build());
+        });
     }
 }

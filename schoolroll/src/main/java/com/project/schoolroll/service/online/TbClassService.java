@@ -8,7 +8,10 @@ import com.project.schoolroll.repository.TbClassesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
 @Service
 public class TbClassService {
@@ -32,5 +35,9 @@ public class TbClassService {
             MyAssert.isNull(null, DefineCode.ERR0010, "不存在对应班级信息");
             return null;
         }
+    }
+
+    public List<TbClasses> findAll(){
+        return tbClassesRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
     }
 }
