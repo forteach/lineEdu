@@ -17,6 +17,7 @@ import com.project.schoolroll.service.StudentExpandDictionaryService;
 import com.project.schoolroll.service.StudentExpandService;
 import com.project.schoolroll.service.StudentService;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -55,6 +56,7 @@ public class StudentController {
         this.studentExpandDictionaryService = studentExpandDictionaryService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存修改学生信息")
     @PostMapping(path = "/saveUpdate")
     @ApiImplicitParams({
@@ -99,6 +101,7 @@ public class StudentController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询学生信息列表")
     @PostMapping(path = "/findStudentsPageAll")
     @ApiImplicitParams({
@@ -128,6 +131,7 @@ public class StudentController {
         return WebResult.okResult(studentService.findStudentsPageAll(vo));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "删除学生信息")
     @PostMapping(path = "/deleteStudentByStuId")
     @ApiImplicitParam(name = "studentId", value = "学生id", required = true, dataType = "string", paramType = "form")
@@ -137,6 +141,7 @@ public class StudentController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询扩展学生信息")
     @PostMapping(path = "/findStudentExpandInfo")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
@@ -145,6 +150,7 @@ public class StudentController {
         return WebResult.okResult(studentExpandService.findStudentExpandInfo(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "删除学生对应的扩展信息")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/deleteAllStudentExpandByStuId")
@@ -153,6 +159,7 @@ public class StudentController {
         return WebResult.okResult(studentExpandService.deleteAllStudentExpandByStudentId(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "删除扩展字段")
     @PostMapping(path = "/deleteStudentExpandById")
     @ApiImplicitParam(name = "expandId", value = "扩展编号", required = true, paramType = "form")
@@ -162,6 +169,7 @@ public class StudentController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存修改学生扩展字段")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form"),
@@ -184,6 +192,7 @@ public class StudentController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询学生详细信息")
     @PostMapping(path = "/findStudentPeopleByStuId")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "query")
@@ -192,6 +201,7 @@ public class StudentController {
         return WebResult.okResult(studentService.findStudentPeopleDtoByStudentId(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询扩展字段列表字典")
     @GetMapping(path = "/findStudentExpandDic")
     public WebResult findStudentExpandDic() {

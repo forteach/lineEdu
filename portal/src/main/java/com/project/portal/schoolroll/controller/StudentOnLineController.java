@@ -63,6 +63,7 @@ public class StudentOnLineController {
         return WebResult.failException("导入的文件格式不是Excel文件");
     }
 
+    @UserLoginToken
     @ApiOperation(value = "分页查询在线学生信息(暂无查询条件)")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
@@ -74,10 +75,10 @@ public class StudentOnLineController {
         return WebResult.okResult(studentOnLineService.findAllPage(PageRequest.of(request.getPage(), request.getSize())));
     }
 
-    @PostMapping("/")
-    public WebResult save() {
-        String centerAreaId = "10001";
-        studentOnLineService.importStudent(FileUtil.getInputStream("C:\\Users\\zzz\\Desktop\\00.xlsx"), centerAreaId);
-        return WebResult.okResult();
-    }
+//    @PostMapping("/")
+//    public WebResult save() {
+//        String centerAreaId = "10001";
+//        studentOnLineService.importStudent(FileUtil.getInputStream("C:\\Users\\zzz\\Desktop\\00.xlsx"), centerAreaId);
+//        return WebResult.okResult();
+//    }
 }

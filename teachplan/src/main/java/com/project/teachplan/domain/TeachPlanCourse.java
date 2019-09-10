@@ -27,7 +27,6 @@ import java.io.Serializable;
         @Index(columnList = "plan_id", name = "plan_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 @NoArgsConstructor
 @IdClass(TeachPlanCoursePk.class)
 public class TeachPlanCourse extends Entitys implements Serializable {
@@ -67,7 +66,8 @@ public class TeachPlanCourse extends Entitys implements Serializable {
     private String teacherName;
 
     public TeachPlanCourse(String planId, String courseId, String courseName,
-                           String credit, Integer onLinePercentage, Integer linePercentage, String teacherId, String teacherName) {
+                           String credit, Integer onLinePercentage, Integer linePercentage, String teacherId, String teacherName, String centerAreaId) {
+        super(centerAreaId);
         this.planId = planId;
         this.courseId = courseId;
         this.courseName = courseName;

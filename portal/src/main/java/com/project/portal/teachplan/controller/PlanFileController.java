@@ -1,4 +1,4 @@
-package com.project.portal.train.controller;
+package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
@@ -9,6 +9,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.train.request.ClassFileFindAllPage;
 import com.project.portal.train.request.ClassFileFindByPjPlanIdRequest;
 import com.project.portal.train.request.ClassFileSaveUpdateRequest;
+import com.project.teachplan.service.PlanFileService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.ClassFile;
 import com.project.train.service.ClassFileService;
@@ -30,13 +31,13 @@ import static com.project.portal.request.ValideSortVo.valideSort;
  * @description:
  */
 @RestController
-@Api(value = "培训班级资料管理", tags = {"培训班级资料管理"})
-@RequestMapping(path = "/classFile", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class ClassFileController {
-    private final ClassFileService classFileService;
+@Api(value = "在线计划班级资料管理", tags = {"在线计划班级资料管理"})
+@RequestMapping(path = "/planFile", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+public class PlanFileController {
+    private final PlanFileService planFileService;
 
-    public ClassFileController(ClassFileService classFileService) {
-        this.classFileService = classFileService;
+    public PlanFileController(PlanFileService planFileService) {
+        this.planFileService = planFileService;
     }
 
     @UserLoginToken

@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.token.constant.TokenKey.USER_ROLE_CODE_TEACHER;
 import static com.project.token.constant.TokenKey.USER_TOKEN_PREFIX;
 
 /**
@@ -163,6 +164,7 @@ public class UserServiceImpl implements UserService {
         user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
         user.setTeacherId(teacherCode);
         user.setId(teacherCode);
+        user.setRoleCode(USER_ROLE_CODE_TEACHER);
         user.setUserName(teacher.getTeacherName());
         userRepository.save(user);
         sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
@@ -218,7 +220,7 @@ public class UserServiceImpl implements UserService {
         }
         SysUsers user = new SysUsers();
         user.setId(vo.getPhone());
-        user.setRoleCode("3");
+        user.setRoleCode(USER_ROLE_CODE_TEACHER);
         user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
         user.setTeacherId(vo.getPhone());
         user.setUserName(vo.getUserName());

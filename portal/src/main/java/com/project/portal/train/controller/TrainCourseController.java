@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainCourseSaveUpdateRequest;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.TrainCourse;
 import com.project.train.service.TrainCourseService;
 import io.swagger.annotations.Api;
@@ -36,6 +37,7 @@ public class TrainCourseController {
         this.trainCourseService = trainCourseService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训项目课程字典保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -54,6 +56,7 @@ public class TrainCourseController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训项目课程字典列表")
     @PostMapping(path = "/findAll")
     @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query")

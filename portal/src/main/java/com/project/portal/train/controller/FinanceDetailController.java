@@ -9,6 +9,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FinanceDetailFindAllPage;
 import com.project.portal.train.request.FinanceDetailSaveUpdateRequest;
 import com.project.portal.train.request.FindFinanceDetailRequest;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.FinanceDetail;
 import com.project.train.service.FinanceDetailService;
 import io.swagger.annotations.Api;
@@ -42,6 +43,7 @@ public class FinanceDetailController {
         this.financeDetailService = financeDetailService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训财务明细保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -66,6 +68,7 @@ public class FinanceDetailController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训财务明细列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
@@ -85,6 +88,7 @@ public class FinanceDetailController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "根基计划id查询财务明细")
     @PostMapping(path = "/findByPjPlanIdAllPage")
     @ApiImplicitParams({

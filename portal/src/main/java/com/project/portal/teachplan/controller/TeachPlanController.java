@@ -51,21 +51,15 @@ public class TeachPlanController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form"),
             @ApiImplicitParam(name = "planName", dataType = "string", value = "计划名称", paramType = "form"),
-//            @ApiImplicitParam(name = "courseIds", dataType = "list", value = "课程id集合", paramType = "form"),
-//            @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form"),
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form")
-//            @ApiImplicitParam(name = "teacherId", dataType = "string", value = "教师Id", paramType = "string")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest){
         String token = httpServletRequest.getHeader("token");
-//        if (StrUtil.isBlank(request.getTeacherId())){
-//            request.setTeacherId(tokenService.getTeacherId(token));
-//        }
-        request.setCenterAreaId(tokenService.getCenterAreaId(token));
         TeachPlan teachPlan = new TeachPlan();
         BeanUtil.copyProperties(request, teachPlan);
+        teachPlan.setCenterAreaId(tokenService.getCenterAreaId(token));
         return WebResult.okResult(teachService.saveUpdatePlan(teachPlan));
     }
 
@@ -76,10 +70,11 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form")
     })
-    public WebResult saveUpdateClass(@RequestBody TeachPlanClassSaveUpdateRequest request){
+    public WebResult saveUpdateClass(@RequestBody TeachPlanClassSaveUpdateRequest request, HttpServletRequest httpServletRequest){
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
         MyAssert.isTrue(request.getClassIds().isEmpty(), DefineCode.ERR0010, "班级信息不为空");
-        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds()));
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds(), centerAreaId));
     }
 
     @UserLoginToken
@@ -94,11 +89,11 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "onLinePercentage", dataType = "int", value = "线上占比", paramType = "form"),
             @ApiImplicitParam(name = "linePercentage", dataType = "int", value = "线下占比", paramType = "form")
     })
-    public WebResult saveUpdateCourse(@RequestBody TeachPlanCourseSaveUpdateRequest request){
+    public WebResult saveUpdateCourse(@RequestBody TeachPlanCourseSaveUpdateRequest request, HttpServletRequest httpServletRequest){
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
-//        MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");
         MyAssert.isTrue(request.getCourses().isEmpty(), DefineCode.ERR0010, "课程信息不为空");
-        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses()));
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses(), centerAreaId));
     }
 
     @UserLoginToken

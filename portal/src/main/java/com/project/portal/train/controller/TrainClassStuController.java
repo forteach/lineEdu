@@ -8,6 +8,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FindTrainClassStuAllPageRequest;
 import com.project.portal.train.request.TrainClassStuPageRequest;
 import com.project.portal.train.request.TrainClassStuSaveUpdateRequest;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.TrainClassStu;
 import com.project.train.service.TrainClassStuService;
 import io.swagger.annotations.Api;
@@ -39,6 +40,7 @@ public class TrainClassStuController {
     public TrainClassStuController(TrainClassStuService trainClassStuService) {
         this.trainClassStuService = trainClassStuService;
     }
+    @UserLoginToken
     @ApiOperation(value = "保存培训项目修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -50,7 +52,6 @@ public class TrainClassStuController {
             @ApiImplicitParam(name = "trainProjectName", value = "培训项目名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "gender", value = "性别", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "stuName", value = "姓名", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "marriage", value = "民族", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "nation", value = "民族", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "jobTitle", value = "单位职务", dataType = "string"),
             @ApiImplicitParam(name = "stuIdCard", value = "身份证号", dataType = "string", paramType = "form"),
@@ -60,7 +61,6 @@ public class TrainClassStuController {
     public WebResult saveOrUpdate(@RequestBody TrainClassStuSaveUpdateRequest request) {
         TrainClassStu trainClassStu = new TrainClassStu();
         BeanUtil.copyProperties(request, trainClassStu);
-//        trainClassStu.setNation(request.getMarriage());
         if (StrUtil.isBlank(request.getTrainStuId())) {
             return WebResult.okResult(trainClassStuService.save(trainClassStu));
         } else {
@@ -68,6 +68,7 @@ public class TrainClassStuController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "项目计划课程列表")
     @PostMapping(path = "/findByClassIdAllPage")
     @ApiImplicitParams({
@@ -89,6 +90,7 @@ public class TrainClassStuController {
 //        return WebResult.okResult(trainClassStuService.findId(JSONObject.parseObject(planId).getString("planId")));
 //    }
 
+    @UserLoginToken
     @ApiOperation(value = "根据计划id分页查询班级学生")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),

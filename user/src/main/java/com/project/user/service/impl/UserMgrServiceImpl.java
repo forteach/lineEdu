@@ -1,6 +1,5 @@
 package com.project.user.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;

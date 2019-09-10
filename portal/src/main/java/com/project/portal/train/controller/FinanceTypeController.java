@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FinanceTypeSaveUpdateRequest;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.FinanceType;
 import com.project.train.service.FinanceTypeService;
 import io.swagger.annotations.Api;
@@ -36,6 +37,7 @@ public class FinanceTypeController {
         this.financeTypeService = financeTypeService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = " 培训财务类型字典保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -53,6 +55,7 @@ public class FinanceTypeController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "财务类型字典列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({

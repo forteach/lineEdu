@@ -11,6 +11,7 @@ import com.project.portal.schoolroll.request.LearnCenterSaveUpdateRequest;
 import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.LearnCenterRepository;
 import com.project.schoolroll.service.LearnCenterService;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -42,6 +43,7 @@ public class LearnCenterController {
         this.learnCenterRepository = learnCenterRepository;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "添加修改学习中心信息")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -79,6 +81,7 @@ public class LearnCenterController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询中心信息", notes = "查询简介信息学习中心")
     @GetMapping(path = "/select")
     public WebResult findAllDto() {
@@ -95,7 +98,7 @@ public class LearnCenterController {
         valideSort(sortVo.getPage(), sortVo.getSize());
         return WebResult.okResult(learnCenterRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
-
+    @UserLoginToken
     @ApiOperation(value = "移除学习中心信息")
     @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/removeById")

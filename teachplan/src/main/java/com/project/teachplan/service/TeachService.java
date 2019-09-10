@@ -67,10 +67,7 @@ public class TeachService {
     public TeachPlan saveUpdatePlan(TeachPlan teachPlan) {
         if (StrUtil.isBlank(teachPlan.getPlanId())) {
             String planId = IdUtil.fastSimpleUUID();
-//            saveTeachPlanClass(planId, teachPlan, classIds);
             teachPlan.setPlanId(planId);
-//            setTeachPlanNumber(teachPlan, classIds, courseIds);
-//            saveTeachPlanCourse(planId, courseIds);
             return teachPlanRepository.save(teachPlan);
         } else {
             Optional<TeachPlan> optional = teachPlanRepository.findById(teachPlan.getPlanId());
@@ -93,21 +90,21 @@ public class TeachService {
         }
     }
 
-    private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses) {
+    private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses, String centerAreaId) {
         List<TeachPlanCourse> planCourseList = courses.parallelStream().filter(Objects::nonNull)
-                .map(t -> createTeachPlanCourse(planId, t))
+                .map(t -> createTeachPlanCourse(planId, t, centerAreaId))
                 .collect(toList());
         teachPlanCourseService.saveAll(planCourseList);
     }
 
-    private TeachPlanCourse createTeachPlanCourse(String planId, TeachPlanCourseVo vo) {
+    private TeachPlanCourse createTeachPlanCourse(String planId, TeachPlanCourseVo vo, String centerAreaId) {
         return new TeachPlanCourse(planId, vo.getCourseId(), onLineCourseDicService.findId(vo.getCourseId()).getCourseName(),
-                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), vo.getTeacherName());
+                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), vo.getTeacherName(), centerAreaId);
     }
 
-    private void saveTeachPlanClass(String planId, TeachPlan teachPlan, List<String> classIds) {
+    private void saveTeachPlanClass(String planId, TeachPlan teachPlan, List<String> classIds, String centerAreaId) {
         List<TeachPlanClass> planClassList = classIds.parallelStream().filter(Objects::nonNull)
-                .map(c -> new TeachPlanClass(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c)))
+                .map(c -> new TeachPlanClass(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c), centerAreaId))
                 .collect(toList());
         teachPlanClassRepository.saveAll(planClassList);
         int sumNumber = planClassList.stream().mapToInt(TeachPlanClass::getClassNumber).sum();
@@ -115,12 +112,12 @@ public class TeachService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeachPlan saveUpdatePlanClass(String planId, List<String> classIds) {
+    public TeachPlan saveUpdatePlanClass(String planId, List<String> classIds, String centerAreaId) {
         Optional<TeachPlan> teachPlanOptional = teachPlanRepository.findById(planId);
         if (teachPlanOptional.isPresent()) {
             TeachPlan teachPlan = teachPlanOptional.get();
             teachPlanClassRepository.deleteAllByPlanId(planId);
-            saveTeachPlanClass(planId, teachPlan, classIds);
+            saveTeachPlanClass(planId, teachPlan, classIds, centerAreaId);
             setTeachPlanNumber(teachPlan, classIds, new ArrayList<>());
             return teachPlanRepository.save(teachPlan);
         }
@@ -129,12 +126,12 @@ public class TeachService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeachPlan saveUpdatePlanCourse(String planId, List<TeachPlanCourseVo> courses) {
+    public TeachPlan saveUpdatePlanCourse(String planId, List<TeachPlanCourseVo> courses, String centerAreaId) {
         Optional<TeachPlan> teachPlanOptional = teachPlanRepository.findById(planId);
         if (teachPlanOptional.isPresent()) {
             TeachPlan teachPlan = teachPlanOptional.get();
             teachPlanCourseRepository.deleteAllByPlanId(planId);
-            saveTeachPlanCourse(planId, courses);
+            saveTeachPlanCourse(planId, courses, centerAreaId);
             if (!courses.isEmpty()) {
                 teachPlan.setCourseNumber(courses.size());
             }

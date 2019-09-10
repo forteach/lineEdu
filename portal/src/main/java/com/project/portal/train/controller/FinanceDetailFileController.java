@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FinanceDetailFileFindAllPage;
 import com.project.portal.train.request.FinanceDetailFileSaveUpdateRequest;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.FinanceDetailFile;
 import com.project.train.service.FinanceDetailFileService;
 import io.swagger.annotations.Api;
@@ -39,6 +40,7 @@ public class FinanceDetailFileController {
     public FinanceDetailFileController(FinanceDetailFileService financeDetailFileService) {
         this.financeDetailFileService = financeDetailFileService;
     }
+    @UserLoginToken
     @ApiOperation(value = "培训项目班级保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -58,6 +60,7 @@ public class FinanceDetailFileController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训项目班级列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({

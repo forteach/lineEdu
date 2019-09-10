@@ -19,4 +19,9 @@ public class TokenKey {
      * 用户 token 前缀
      */
     public final static String USER_TOKEN_PREFIX ="userToken$";
+
+    /** 管理端用户角色*/
+    public final static String USER_ROLE_CODE_ADMIN = "1";
+    public final static String USER_ROLE_CODE_ = "1";
+    public final static String USER_ROLE_CODE_TEACHER = "3";
 }

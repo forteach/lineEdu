@@ -6,6 +6,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.SchoolRollFindRequest;
 import com.project.schoolroll.service.SchoolRollChangeService;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -34,6 +35,7 @@ public class SchoolRollChangeController {
         this.schoolRollChangeService = schoolRollChangeService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询学籍异动信息")
     @PostMapping(path = "/findSchoolRollChange")
     @ApiImplicitParams({
@@ -46,6 +48,7 @@ public class SchoolRollChangeController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "学生中心申请学生退学")
     @PostMapping(path = "/applyChangeStudent")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")

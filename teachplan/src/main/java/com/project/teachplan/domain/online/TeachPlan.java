@@ -55,7 +55,4 @@ public class TeachPlan extends Entitys implements Serializable {
 
     @Column(name = "sum_number", columnDefinition = "TINYINT (4) DEFAULT 0 COMMENT '总人数'")
     private Integer sumNumber;
-
-//    @Column(name = "teacher_Id", columnDefinition = "VARCHAR(32) COMMENT '创建教师id'")
-//    private String teacherId;
 }

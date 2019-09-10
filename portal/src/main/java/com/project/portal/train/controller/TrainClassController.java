@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainClassFindAllPage;
 import com.project.portal.train.request.TrainClassSaveUpdateRequest;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.TrainClass;
 import com.project.train.service.TrainClassService;
 import io.swagger.annotations.Api;
@@ -40,6 +41,7 @@ public class TrainClassController {
         this.trainClassService = trainClassService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训项目班级保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -61,6 +63,7 @@ public class TrainClassController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训项目班级列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
@@ -71,12 +74,10 @@ public class TrainClassController {
     })
     public WebResult findAllPage(@RequestBody TrainClassFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
-//        MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "项目计划id不为空");
         if (StrUtil.isNotBlank(request.getPjPlanId())) {
             return WebResult.okResult(trainClassService.findPlanPage(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
         } else {
             return WebResult.okResult(trainClassService.findAllPage(request.getCenterAreaId(), PageRequest.of(request.getPage(), request.getSize())));
         }
-
     }
 }

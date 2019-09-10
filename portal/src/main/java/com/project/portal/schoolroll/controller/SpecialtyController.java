@@ -9,6 +9,7 @@ import com.project.course.service.SpecialtyService;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.SpecialtySaveUpdateRequest;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -37,6 +38,7 @@ public class SpecialtyController {
         this.specialtyService = specialtyService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存修改专业信息")
     @PostMapping(path = "/saveUpdate")
     @ApiImplicitParams({
@@ -51,12 +53,14 @@ public class SpecialtyController {
         return WebResult.okResult(specialtyService.saveUpdate(request.getSpecialtyId(), request.getSpecialtyName()));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询全部专业信息")
     @GetMapping(path = "/findAll")
     public WebResult finaAll() {
         return WebResult.okResult(specialtyService.findAllSpecialty());
     }
 
+    @UserLoginToken
     @ApiOperation(value = "分页查询专业信息")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
@@ -68,6 +72,7 @@ public class SpecialtyController {
         return WebResult.okResult(specialtyService.findAllPage(vo.getPage(), vo.getSize()));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "物理删除专业信息")
     @PostMapping(path = "/deleteById")
     @ApiImplicitParam(name = "specialtyId", value = "专业id", dataType = "string", paramType = "form")
@@ -77,6 +82,7 @@ public class SpecialtyController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "移除专业信息(逻辑删除)")
     @PostMapping(path = "/removeById")
     @ApiImplicitParam(name = "specialtyId", value = "专业id", dataType = "string", paramType = "form")
@@ -86,6 +92,7 @@ public class SpecialtyController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "根据id查询专业详情")
     @ApiImplicitParam(name = "specialtyId", value = "专业id", dataType = "string", paramType = "query")
     @PostMapping(path = "/findById")

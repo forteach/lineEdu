@@ -46,4 +46,10 @@ public abstract class Entitys{
     @Column(name = "center_area_id", columnDefinition = "VARCHAR(40) COMMENT '归属的学习中心编号'")
     public String centerAreaId;
 
+    public Entitys() {
+    }
+
+    public Entitys(String centerAreaId) {
+        this.centerAreaId = centerAreaId;
+    }
 }

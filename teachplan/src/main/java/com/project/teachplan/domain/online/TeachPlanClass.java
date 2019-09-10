@@ -24,7 +24,6 @@ import java.io.Serializable;
 @org.hibernate.annotations.Table(appliesTo = "teach_plan_class", comment = "在线教学计划班级管理")
 @EqualsAndHashCode(callSuper = true)
 @IdClass(TeachPlanClassPk.class)
-@AllArgsConstructor
 public class TeachPlanClass extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -43,10 +42,12 @@ public class TeachPlanClass extends Entitys implements Serializable {
     @Column(name = "classNumber", columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '班级人数'")
     private Integer classNumber;
 
+
     public TeachPlanClass() {
     }
 
-    public TeachPlanClass(String classId, String planId, String className, String planName, int classNumber) {
+    public TeachPlanClass(String classId, String planId, String className, String planName, int classNumber, String centerAreaId) {
+        super(centerAreaId);
         this.classId = classId;
         this.planId = planId;
         this.className = className;

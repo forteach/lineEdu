@@ -11,6 +11,7 @@ import com.project.portal.schoolroll.request.FamilySaveUpdateRequest;
 import com.project.schoolroll.domain.Family;
 import com.project.schoolroll.repository.FamilyRepository;
 import com.project.schoolroll.service.FamilyService;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -38,6 +39,7 @@ public class FamilyController {
         this.familyRepository = familyRepository;
     }
 
+    @UserLoginToken
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "familyId", value = "家庭成员id", dataType = "string", paramType = "form"),
@@ -74,6 +76,7 @@ public class FamilyController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询基本家庭成员信息")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "query")
     @PostMapping("/findFamilyDtoList")
@@ -82,6 +85,7 @@ public class FamilyController {
         return WebResult.okResult(familyService.findFamilyDtoList(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询全部有效家庭成员信息")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "query")
     @PostMapping("/findFamilies")
@@ -90,6 +94,7 @@ public class FamilyController {
         return WebResult.okResult(familyService.findFamilies(JSONObject.parseObject(studentId).getString("studentId")));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "移除家庭成员信息")
     @ApiImplicitParam(name = "familyId", value = "家庭成员id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/removeFamilyById")
