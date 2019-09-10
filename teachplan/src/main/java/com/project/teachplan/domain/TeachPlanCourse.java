@@ -58,7 +58,7 @@ public class TeachPlanCourse extends Entitys implements Serializable {
      * 线下占比
      */
     @Column(name = "line_percentage", columnDefinition = "TINYINT(4) COMMENT '线下占比'")
-    private String linePercentage;
+    private Integer linePercentage;
 
     @Column(name = "teacher_Id", columnDefinition = "VARCHAR(32) COMMENT '创建教师id'")
     private String teacherId;
@@ -67,7 +67,7 @@ public class TeachPlanCourse extends Entitys implements Serializable {
     private String teacherName;
 
     public TeachPlanCourse(String planId, String courseId, String courseName,
-                           String credit, Integer onLinePercentage, String linePercentage, String teacherId, String teacherName) {
+                           String credit, Integer onLinePercentage, Integer linePercentage, String teacherId, String teacherName) {
         this.planId = planId;
         this.courseId = courseId;
         this.courseName = courseName;

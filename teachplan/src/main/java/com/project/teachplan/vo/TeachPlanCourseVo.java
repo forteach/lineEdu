@@ -29,7 +29,7 @@ public class TeachPlanCourseVo implements Serializable {
     /**
      * 线下占比
      */
-    private String linePercentage;
+    private Integer linePercentage;
     /**
     * 教师id
     */

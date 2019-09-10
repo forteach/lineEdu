@@ -55,8 +55,8 @@ public class TeachPlanController {
 //            @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form"),
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
-            @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form"),
-            @ApiImplicitParam(name = "teacherId", dataType = "string", value = "教师Id", paramType = "string")
+            @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form")
+//            @ApiImplicitParam(name = "teacherId", dataType = "string", value = "教师Id", paramType = "string")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest){
 //        if (StrUtil.isBlank(request.getTeacherId())){
