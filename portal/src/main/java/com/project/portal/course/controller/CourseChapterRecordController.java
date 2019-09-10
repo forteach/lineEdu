@@ -9,6 +9,7 @@ import com.project.course.service.CourseRecordsService;
 import com.project.portal.course.request.CourseChapterFindPageAllReq;
 import com.project.portal.course.request.CourseRecordsSaveReq;
 import com.project.portal.response.WebResult;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -52,6 +53,7 @@ public class CourseChapterRecordController {
         MyAssert.isNull(videoDuration, DefineCode.ERR0010, "视频总长度不为空");
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存学习观看视频记录")
     @PostMapping(path = "/saveVideoRecord")
     @ApiImplicitParams({
@@ -71,6 +73,7 @@ public class CourseChapterRecordController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询学生对应的学习课程")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string"),

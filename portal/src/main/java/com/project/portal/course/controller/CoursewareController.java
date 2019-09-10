@@ -8,6 +8,7 @@ import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
 import com.project.portal.response.WebResult;
+import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class CoursewareController {
     @Resource
     private TokenService tokenService;
 
+    @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
     @PostMapping("/savefile")
     @ApiImplicitParams({
@@ -127,6 +129,7 @@ public class CoursewareController {
 //
 //    }
 
+    @UserLoginToken
     @ApiOperation(value = "删除视频信息(逻辑删除)", notes = "删除重要课件图册列表(逻辑删除)")
     @PostMapping("/deleteCourseChapterId")
     @ApiImplicitParams({
@@ -159,6 +162,7 @@ public class CoursewareController {
 //    }
 
 
+    @UserLoginToken
     @ApiOperation(value = "查询章节对应教学视频")
     @PostMapping("/findByChapterId")
     @ApiImplicitParams({

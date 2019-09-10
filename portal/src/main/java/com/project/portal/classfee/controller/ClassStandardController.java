@@ -12,6 +12,7 @@ import com.project.portal.request.ByIdReq;
 import com.project.portal.response.PageListRes;
 import com.project.portal.controller.BaseController;
 import com.project.portal.response.WebResult;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -40,6 +41,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
     @Resource
     private ClassStandardService classStandardService;
 
+    @UserLoginToken
     @ApiOperation(value = "添加修改课时费信息")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -86,6 +88,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
         return WebResult.okResult(res);
     }
 
+    @UserLoginToken
     @PostMapping("/findId")
     @ApiOperation(value = "根据课时信息id查询课时详情信息")
     @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "string", paramType = "id")
@@ -99,6 +102,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
         return WebResult.okResult(res);
     }
 
+    @UserLoginToken
     @ApiOperation(value = "分页查询课程标准")
     @PostMapping("/findAllPage")
     @ApiImplicitParams({

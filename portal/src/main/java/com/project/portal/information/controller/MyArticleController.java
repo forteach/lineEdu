@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 //@RestController
 //@RequestMapping(path = "/myArticle", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 //@Api(value = "我的资讯资料", tags = {"我的资讯资料（收藏、发布）"})
-public class MyArticleController {
+//public class MyArticleController {
 //	@Autowired
 //	private MyArticleService myArticleService;
 
@@ -62,4 +62,4 @@ public class MyArticleController {
 //		return WebResult.okResult(myArticleService.deleteMyArticle(req.getArticleId(),req.getUserId(),myArticleService.SHOUCANG));
 //	}
 
-}
+//}

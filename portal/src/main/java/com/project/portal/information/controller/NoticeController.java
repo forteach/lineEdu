@@ -8,6 +8,7 @@ import com.project.portal.information.request.notice.FindCerterIdListRequest;
 import com.project.portal.information.request.notice.SaveNoticeRequest;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -32,6 +33,7 @@ public class NoticeController {
 	@Autowired
 	private NoticeService noticeService;
 
+	@UserLoginToken
 	@ApiOperation(value = "保存修改公告")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "noticeId", value = "公告ID", dataType = "string", paramType = "form", example = "空添加，否则修改"),
@@ -44,6 +46,7 @@ public class NoticeController {
 		return WebResult.okResult(noticeService.save(request.getNoticeId(),request.getContent(),request.getCenterId(),request.getArea()));
 	}
 
+	@UserLoginToken
 	@ApiOperation(value = "公告ID 查询详情")
 	@ApiImplicitParam(name = "noticeId", value = "公告ID", dataType = "string", paramType = "query")
 	@PostMapping("/findById")
@@ -57,6 +60,7 @@ public class NoticeController {
 	 * @param request
 	 * @return
 	 */
+	@UserLoginToken
 	@ApiOperation(value = "根据Id删除公告")
 	@ApiImplicitParam(name = "noticeId", value = "公告ID", dataType = "string", paramType = "form", example = "空添加，否则修改")
 	@PostMapping("/delNotice")
@@ -71,6 +75,7 @@ public class NoticeController {
 	 * @param
 	 * @return
 	 */
+	@UserLoginToken
 	@ApiOperation(value = "所有公告倒序分页获取")
 	@PostMapping("/findAllDesc")
 	@ApiImplicitParams({
@@ -89,6 +94,7 @@ public class NoticeController {
 	 * @param request
 	 * @return
 	 */
+	@UserLoginToken
 	@ApiOperation(value = "所有公告倒序分页获取")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "cennterId", value = "中心Id", dataType = "string", example = "0", paramType = "query"),

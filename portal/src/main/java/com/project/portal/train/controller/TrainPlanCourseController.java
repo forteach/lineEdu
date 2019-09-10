@@ -7,6 +7,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainPlanCourseSaveUpateRequest;
 import com.project.portal.train.vo.TrainPlanCourseVo;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.TrainPlanCourse;
 import com.project.train.service.TrainPlanCourseService;
 import io.swagger.annotations.Api;
@@ -41,6 +42,7 @@ public class TrainPlanCourseController {
         this.trainPlanCourseService = trainPlanCourseService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存培训项目修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -66,6 +68,7 @@ public class TrainPlanCourseController {
         return WebResult.okResult(trainPlanCourseService.saveOrUpdate(request.getPjPlanId(), list));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "项目计划ID获取项目课程列表")
     @PostMapping(path = "/findByPjPlanId")
     @ApiImplicitParam(name = "pjPlanId", value = "项目计划id", dataType = "string", required = true, paramType = "query")

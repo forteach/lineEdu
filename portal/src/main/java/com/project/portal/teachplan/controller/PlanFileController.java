@@ -6,13 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
-import com.project.portal.train.request.ClassFileFindAllPage;
-import com.project.portal.train.request.ClassFileFindByPjPlanIdRequest;
-import com.project.portal.train.request.ClassFileSaveUpdateRequest;
+import com.project.portal.teachplan.request.PlanFileFindAllPage;
+import com.project.portal.teachplan.request.PlanFileFindByPlanIdRequest;
+import com.project.portal.teachplan.request.PlanFileSaveUpdateRequest;
+import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.service.PlanFileService;
 import com.project.token.annotation.UserLoginToken;
-import com.project.train.domain.ClassFile;
-import com.project.train.service.ClassFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -41,23 +40,23 @@ public class PlanFileController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "培训班级资料保存修改")
+    @ApiOperation(value = "班级资料保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pjPlanId", value = "项目计划id", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "fileId", value = "培训资料编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "fileName", value = "培训资料名称", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "fileUrl", value = "培训资料URL", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "classId", value = "培训班级编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "fileId", value = "资料编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "fileName", value = "资料名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "classId", value = "班级编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody ClassFileSaveUpdateRequest request) {
-        ClassFile classFile = new ClassFile();
-        BeanUtil.copyProperties(request, classFile);
+    public WebResult saveOrUpdate(@RequestBody PlanFileSaveUpdateRequest request) {
+        PlanFile planFile = new PlanFile();
+        BeanUtil.copyProperties(request, planFile);
         if (StrUtil.isBlank(request.getFileId())) {
-            return WebResult.okResult(classFileService.save(classFile));
+            return WebResult.okResult(planFileService.save(planFile));
         } else {
-            return WebResult.okResult(classFileService.update(classFile));
+            return WebResult.okResult(planFileService.update(planFile));
         }
     }
 
@@ -67,52 +66,52 @@ public class PlanFileController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody ClassFileFindAllPage request) {
+    public WebResult findAllPage(@RequestBody PlanFileFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
         MyAssert.isNull(request.getCenterAreaId(), DefineCode.ERR0010, "归属的学习中心编号不为空");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (StrUtil.isNotBlank(request.getClassId())) {
-            return WebResult.okResult(classFileService
+            return WebResult.okResult(planFileService
                     .findAllPage(request.getCenterAreaId(), request.getClassId(), pageRequest));
         } else {
-            return WebResult.okResult(classFileService.findAllPage(request.getCenterAreaId(), pageRequest));
+            return WebResult.okResult(planFileService.findAllPage(request.getCenterAreaId(), pageRequest));
         }
     }
 
     @UserLoginToken
     @ApiOperation(value = "根据计划编号分页查询班级资料明细")
-    @PostMapping(path = "/findByPjPlanId")
+    @PostMapping(path = "/findByPlanId")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
+            @ApiImplicitParam(name = "planId", value = "项目计划编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
-    public WebResult findById(@RequestBody ClassFileFindByPjPlanIdRequest request) {
+    public WebResult findById(@RequestBody PlanFileFindByPlanIdRequest request) {
         valideSort(request.getPage(), request.getPage());
-        MyAssert.isNull(request.getPjPlanId(), DefineCode.ERR0010, "培训项目计划编号id不为空");
-        return WebResult.okResult(classFileService.findByPjPlanIdPageAll(request.getPjPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "项目计划编号id不为空");
+        return WebResult.okResult(planFileService.findByPjPlanIdPageAll(request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
     }
 
     @UserLoginToken
-    @ApiOperation(value = "根据班级id移除对应培训资料")
+    @ApiOperation(value = "根据班级id移除对应资料")
     @DeleteMapping(path = "/removeByClassId")
     @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "form", required = true)
-    public WebResult removeByClassId(@RequestBody String classId){
+    public WebResult removeByClassId(@RequestBody String classId) {
         MyAssert.isNull(classId, DefineCode.ERR0010, "班级id不为空");
-        classFileService.removeByClassId(JSONObject.parseObject(classId).getString(classId));
+        planFileService.removeByClassId(JSONObject.parseObject(classId).getString(classId));
         return WebResult.okResult();
     }
 
     @UserLoginToken
-    @ApiOperation(value = "根据计划id移除对应培训资料")
-    @DeleteMapping(path = "/removeByPjPlanId")
-    @ApiImplicitParam(name = "pjPlanId", value = "培训计划id", dataType = "string", paramType = "form", required = true)
-    public WebResult removeByPjPlanId(@RequestBody String pjPlanId){
-        MyAssert.isNull(pjPlanId, DefineCode.ERR0010, "班级id不为空");
-        classFileService.removeByPjPlanId(JSONObject.parseObject(pjPlanId).getString(pjPlanId));
+    @ApiOperation(value = "根据计划id移除对应资料")
+    @DeleteMapping(path = "/removeByPlanId")
+    @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true)
+    public WebResult removeByPlanId(@RequestBody String planId) {
+        MyAssert.isNull(planId, DefineCode.ERR0010, "班级id不为空");
+        planFileService.removeByPlanId(JSONObject.parseObject(planId).getString(planId));
         return WebResult.okResult();
     }
 }

@@ -82,9 +82,7 @@ public class ImportClassFeeController {
     @PostMapping(path = "/students")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
     public WebResult inportStudents(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            MyAssert.isNull(null, DefineCode.ERR0010, "导入的文件不存在,请重新选择");
-        }
+        MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         try {
 
             excelImpService.checkoutKey();

@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FindTrainPlanAllPageRequest;
 import com.project.portal.train.request.TrainProjectPlanSaveRequest;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.domain.TrainProjectPlan;
 import com.project.train.service.TrainPlanService;
 import io.swagger.annotations.Api;
@@ -41,6 +42,7 @@ public class TrainPlanController {
         this.trainPlanService = trainPlanService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存培训项目修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -65,6 +67,7 @@ public class TrainPlanController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "根据项目计划id查询计划详情")
     @PostMapping(path = "/findById")
     @ApiImplicitParam(name = "pjPlanId", value = "项目计划id", dataType = "string", required = true, paramType = "query")
@@ -73,6 +76,7 @@ public class TrainPlanController {
         return WebResult.okResult(trainPlanService.findId(JSONObject.parseObject(pjPlanId).getString("pjPlanId")));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "根据学习中心编号id查询列表(不分页)")
     @PostMapping(path = "/findByCenterAreaId")
     @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query")
@@ -81,6 +85,7 @@ public class TrainPlanController {
         return WebResult.okResult(trainPlanService.findAll(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "分页查询培训项目列表/获取前多少天项目计划列表")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({

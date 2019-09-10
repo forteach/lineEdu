@@ -12,6 +12,7 @@ import com.project.portal.information.request.article.SaveArticleRequest;
 import com.project.portal.information.response.article.ArticleResponse;
 import com.project.portal.information.valid.ArticleValide;
 import com.project.portal.response.WebResult;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -39,6 +40,7 @@ public class ArticleController {
     /**
      * 保存资讯、资讯所属模块信息
      */
+    @UserLoginToken
     @ApiOperation(value = "保存资讯、资讯所属模块信息")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -75,6 +77,7 @@ public class ArticleController {
      * @param req
      * @return
      */
+    @UserLoginToken
     @ApiOperation(value = "获得资讯详情")
     @PostMapping("/findId")
     @ApiImplicitParam(name = "id", value = "主键编号", dataType = "string", paramType = "form")
@@ -93,6 +96,7 @@ public class ArticleController {
      * @param req
      * @return
      */
+    @UserLoginToken
     @ApiOperation(value = "逻辑删除资讯内容")
     @ApiImplicitParam(name = "id", value = "主键编号", dataType = "string", paramType = "form")
     @PostMapping("/delId")
@@ -109,6 +113,7 @@ public class ArticleController {
      * @param request
      * @return
      */
+    @UserLoginToken
     @ApiOperation(value = "所有资讯倒序分页获取")
     @PostMapping("/findAllDesc")
     @ApiImplicitParams({
@@ -123,16 +128,16 @@ public class ArticleController {
     }
 
 
-    public static void main(String[] args) {
-        Article  articleSrc = new Article();
-        articleSrc.setImgUrl("wdwed");
-        articleSrc.setIsNice("y");
-        Article article = new Article();
-        article.setIsNice("n");
-        article.setArticleConten("cents");
-//        BeanUtil.copyProperties(articleSrc, article);
-        UpdateUtil.copyNullProperties(articleSrc, article);
-        System.out.println("src   "+articleSrc);
-        System.out.println("art    "+article);
-    }
+//    public static void main(String[] args) {
+//        Article  articleSrc = new Article();
+//        articleSrc.setImgUrl("wdwed");
+//        articleSrc.setIsNice("y");
+//        Article article = new Article();
+//        article.setIsNice("n");
+//        article.setArticleConten("cents");
+////        BeanUtil.copyProperties(articleSrc, article);
+//        UpdateUtil.copyNullProperties(articleSrc, article);
+//        System.out.println("src   "+articleSrc);
+//        System.out.println("art    "+article);
+//    }
 }

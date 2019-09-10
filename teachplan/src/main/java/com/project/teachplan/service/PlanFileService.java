@@ -138,7 +138,7 @@ public class PlanFileService extends BaseMySqlService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void removeByPjPlanId(String pjPlanId) {
+    public void removeByPlanId(String pjPlanId) {
         List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, pjPlanId)
                 .stream()
                 .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))

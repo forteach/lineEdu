@@ -56,6 +56,7 @@ public class CourseChapterReviewController {
 //        return courseChapterReviewService.save(reviewSaveReq);
 //    }
 
+    @UserLoginToken
     @ApiOperation(value = "查询当课程章节评价的信息", notes = "查询章节评价信息(评价的分数, 评价的人数)")
     @PostMapping("/findChapterReview")
     @ApiImplicitParam(name = "chapterId", value = "课程章节id", dataType = "string", required = true, paramType = "query")

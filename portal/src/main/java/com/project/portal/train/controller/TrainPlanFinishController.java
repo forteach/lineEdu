@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
+import com.project.token.annotation.UserLoginToken;
 import com.project.train.service.TrainPlanFinishService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -34,6 +35,7 @@ public class TrainPlanFinishController {
         this.trainPlanFinishService = trainPlanFinishService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "根据学习中心编号id查询，未填写完成列表")
     @PostMapping(path = "/noFinishList")
     @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query")

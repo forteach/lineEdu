@@ -9,6 +9,7 @@ import com.project.course.domain.OnLineCourseDic;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.portal.course.request.OnLineCourseDicSaveUpdateRequest;
 import com.project.portal.response.WebResult;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -36,6 +37,7 @@ public class OnLineCourseDicController {
         this.onLineCourseDicService = onLineCourseDicService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "在线项目课程字典保存修改")
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
@@ -53,6 +55,7 @@ public class OnLineCourseDicController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "培训项目课程字典列表")
     @PostMapping(path = "/findAll")
     @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", example = "没有此参数查询全部", paramType = "query")
@@ -63,6 +66,7 @@ public class OnLineCourseDicController {
         return WebResult.okResult(onLineCourseDicService.findAll());
     }
 
+    @UserLoginToken
     @PostMapping(path = "/removeByCourseId")
     @ApiOperation(value = "移除课程字典中的课程信息")
     @ApiImplicitParam(name = "courseId", dataType = "string", required = true, paramType = "form")
@@ -72,6 +76,7 @@ public class OnLineCourseDicController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @PostMapping(path = "/deleteByCourseId")
     @ApiOperation(value = "删除课程字典中的课程信息")
     @ApiImplicitParam(name = "courseId", dataType = "string", required = true, paramType = "form")
