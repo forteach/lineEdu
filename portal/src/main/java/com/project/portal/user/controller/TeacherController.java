@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.user.request.TeacherSaveUpdateRequest;
+import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.token.annotation.UserLoginToken;
 import com.project.user.domain.Teacher;
 import com.project.user.service.TeacherService;
@@ -64,6 +65,7 @@ public class TeacherController {
         Teacher teacher = new Teacher();
         BeanUtil.copyProperties(request, teacher);
         if (StrUtil.isBlank(request.getTeacherId())) {
+            MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "联系电话不为空");
             return WebResult.okResult(teacherService.save(teacher));
         } else {
             return WebResult.okResult(teacherService.update(teacher));
@@ -112,9 +114,24 @@ public class TeacherController {
     @UserLoginToken
     @ApiOperation(value = "根据教师代码删除教师信息")
     @DeleteMapping(path = "/teacherCode/{teacherCode}")
+    @ApiImplicitParam(name = "teacherCode", value = "教师代码", dataType = "string", required = true, paramType = "form")
     public WebResult deleteByTeacherCode(@PathVariable String teacherCode){
         MyAssert.isNull(teacherCode, DefineCode.ERR0010, "教师id不能为空");
         teacherService.deleteByTeacherCode(JSONObject.parseObject(teacherCode).getString("teacherCode"));
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "上传文件")
+    @PostMapping("/uploadFile")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form")
+    })
+    public WebResult uploadFile(@RequestBody TeacherUploadFileRequest request){
+        MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");
+        MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件不为空");
+        teacherService.uploadFile(request.getTeacherId(), request.getFileUrl());
         return WebResult.okResult();
     }
 }

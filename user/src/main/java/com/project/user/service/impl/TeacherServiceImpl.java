@@ -98,4 +98,14 @@ public class TeacherServiceImpl implements TeacherService {
     public void deleteByTeacherId(String teacherId) {
         teacherRepository.deleteById(teacherId);
     }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void uploadFile(String teacherId, String fileUrl){
+        teacherRepository.findById(teacherId).ifPresent(t -> {
+            t.setFileUrl(fileUrl);
+            teacherRepository.save(t);
+        });
+    }
 }

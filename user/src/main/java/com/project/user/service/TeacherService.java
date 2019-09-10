@@ -26,4 +26,6 @@ public interface TeacherService {
     public void removeByTeacherId(String teacherId);
 
     public void deleteByTeacherId(String teacherId);
+
+    public void uploadFile(String teacherId, String fileUrl);
 }
