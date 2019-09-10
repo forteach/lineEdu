@@ -1,6 +1,7 @@
 package com.project.schoolroll.service;
 
 import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,5 +37,9 @@ public interface StudentScoreService {
      */
     public void deleteStudentScoreById(String scoreId);
 
-    public Page<?> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of);
+    public Page<StudentScore> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of);
+
+    public boolean save();
+
+    public void updateOffLineScore(OffLineScoreUpdateVo vo);
 }

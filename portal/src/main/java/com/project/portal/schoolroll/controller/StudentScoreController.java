@@ -6,9 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
+import com.project.portal.schoolroll.request.OffLineScoreUpdateRequest;
 import com.project.portal.schoolroll.request.StudentScoreRequest;
 import com.project.schoolroll.service.StudentScoreService;
+import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -36,6 +39,7 @@ public class StudentScoreController {
         this.studentScoreService = studentScoreService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询学生对应成绩信息")
     @PostMapping(path = "/findStudentScore")
     @ApiImplicitParams({
@@ -54,6 +58,7 @@ public class StudentScoreController {
         }
     }
 
+    @UserLoginToken
     @ApiOperation(value = "删除无效的学生成绩信息")
     @DeleteMapping(path = "/deleteByScoreId")
     @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", paramType = "form")
@@ -63,6 +68,7 @@ public class StudentScoreController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "分页查询学生对应成绩信息", tags = {"多条件分页查询学生成绩信息"})
     @PostMapping(path = "/findStudentScorePageAll")
     @ApiImplicitParams({
@@ -71,6 +77,8 @@ public class StudentScoreController {
             @ApiImplicitParam(name = "term", value = "学期", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "courseType", value = "课程类别", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "schoolYear", value = "学年", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "startDate", value = "开始日期", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "endDate", value = "结束日期", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
@@ -79,5 +87,19 @@ public class StudentScoreController {
         StudentScorePageAllVo pageAllVo = new StudentScorePageAllVo();
         BeanUtil.copyProperties(request, pageAllVo);
         return WebResult.okResult(studentScoreService.findStudentScorePageAll(pageAllVo, PageRequest.of(request.getPage(), request.getSize())));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "更新线下成绩录入")
+    @PostMapping(path = "/updateOfflineScore")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "offLineScore", value = "线下成绩", dataType = "string", paramType = "form")
+    })
+    public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request){
+        MyAssert.isNull(request.getScoreId(), DefineCode.ERR0010, "成绩id信息不为空");
+        MyAssert.isNull(request.getOffLineScore(), DefineCode.ERR0010, "成绩不为空");
+        studentScoreService.updateOffLineScore(new OffLineScoreUpdateVo(request.getScoreId(), request.getOffLineScore()));
+        return WebResult.okResult();
     }
 }

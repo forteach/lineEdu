@@ -2,9 +2,9 @@ package com.project.portal.schoolroll.controller;
 
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.service.online.TbClassService;
+import com.project.token.annotation.UserLoginToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +20,10 @@ public class TbClassController {
         this.tbClassService = tbClassService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询所有有效班级信息")
-    @GetMapping(path ="/list")
-    public WebResult findAll(){
+    @GetMapping(path = "/list")
+    public WebResult findAll() {
         return WebResult.okResult(tbClassService.findAll());
     }
 }

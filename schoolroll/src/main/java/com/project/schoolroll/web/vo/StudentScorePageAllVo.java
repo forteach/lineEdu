@@ -12,10 +12,11 @@ import org.springframework.data.domain.Pageable;
  */
 @Data
 public class StudentScorePageAllVo {
-    private String
-            studentId,
-            courseId,
-            term,
-            courseType,
-            schoolYear;
+    private String studentId;
+    private String courseId;
+    private String term;
+    private String courseType;
+    private String schoolYear;
+    private String startDate;
+    private String endDate;
 }

@@ -35,8 +35,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.base.common.keyword.Dic.*;
-import static com.project.token.constant.TokenKey.TOKEN_STUDENT;
-import static com.project.token.constant.TokenKey.TOKEN_VALIDITY_TIME;
+import static com.project.token.constant.TokenKey.*;
 
 /**
  * @Auther: zhangyy

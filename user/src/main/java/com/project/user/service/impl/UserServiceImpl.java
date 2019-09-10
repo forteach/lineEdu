@@ -6,7 +6,6 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.Md5Util;
 import com.project.token.service.TokenService;
-import com.project.user.domain.SysRole;
 import com.project.user.domain.SysUsers;
 import com.project.user.domain.Teacher;
 import com.project.user.domain.UserRole;
@@ -22,7 +21,6 @@ import com.project.user.web.req.UserLoginReq;
 import com.project.user.web.resp.LoginResponse;
 import com.project.user.web.vo.RegisterTeacherVo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +83,7 @@ public class UserServiceImpl implements UserService {
         } else if (!user.getPassWord().equals(Md5Util.macMD5(userLoginReq.getPassWord().concat(salt)))) {
             MyAssert.isNull(null, DefineCode.ERR0016, "密码错误");
         }
-        String token = tokenService.createToken(user.getId());
+        String token = tokenService.createToken(user.getId(), user.getCenterAreaId());
         //保存token到redis
         Map<String, Object> map = BeanUtil.beanToMap(user);
         map.put("token", token);

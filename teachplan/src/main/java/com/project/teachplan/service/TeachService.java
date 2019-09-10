@@ -135,7 +135,7 @@ public class TeachService {
             TeachPlan teachPlan = teachPlanOptional.get();
             teachPlanCourseRepository.deleteAllByPlanId(planId);
             saveTeachPlanCourse(planId, courses);
-            if (!courses.isEmpty()){
+            if (!courses.isEmpty()) {
                 teachPlan.setCourseNumber(courses.size());
             }
             return teachPlanRepository.save(teachPlan);
@@ -144,12 +144,12 @@ public class TeachService {
         return null;
     }
 
-    public Page<TeachPlan> findByPlanIdPageAll(String planId, Pageable pageable) {
-        return teachPlanRepository.findByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, pageable);
+    public Page<TeachPlan> findByPlanIdPageAll(String centerAreaId, String planId, Pageable pageable) {
+        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, planId, pageable);
     }
 
-    public Page<TeachPlan> findPageAll(Pageable pageable) {
-        return teachPlanRepository.findByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
+    public Page<TeachPlan> findPageAll(String centerAreaId, Pageable pageable) {
+        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageable);
     }
 
     @Transactional(rollbackFor = Exception.class)
