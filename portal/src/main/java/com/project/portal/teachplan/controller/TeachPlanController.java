@@ -60,9 +60,9 @@ public class TeachPlanController {
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest){
         String token = httpServletRequest.getHeader("token");
-        if (StrUtil.isBlank(request.getTeacherId())){
-            request.setTeacherId(tokenService.getTeacherId(token));
-        }
+//        if (StrUtil.isBlank(request.getTeacherId())){
+//            request.setTeacherId(tokenService.getTeacherId(token));
+//        }
         request.setCenterAreaId(tokenService.getCenterAreaId(token));
         TeachPlan teachPlan = new TeachPlan();
         BeanUtil.copyProperties(request, teachPlan);

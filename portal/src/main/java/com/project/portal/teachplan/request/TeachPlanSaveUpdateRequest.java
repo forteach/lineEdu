@@ -30,8 +30,8 @@ public class TeachPlanSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "endDate", dataType = "string", value = "计划结束时间")
     private String endDate;
 
-    @ApiModelProperty(name = "teacherId", dataType = "string", value = "创建的教师id")
-    private String teacherId;
+//    @ApiModelProperty(name = "teacherId", dataType = "string", value = "创建的教师id")
+//    private String teacherId;
 
     @ApiModelProperty(name = "centerAreaId", dataType = "string", hidden = true)
     private String centerAreaId;
