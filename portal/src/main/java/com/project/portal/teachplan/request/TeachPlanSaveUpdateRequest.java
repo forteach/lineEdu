@@ -32,4 +32,7 @@ public class TeachPlanSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "teacherId", dataType = "string", value = "创建的教师id")
     private String teacherId;
+
+    @ApiModelProperty(name = "centerAreaId", dataType = "string", hidden = true)
+    private String centerAreaId;
 }

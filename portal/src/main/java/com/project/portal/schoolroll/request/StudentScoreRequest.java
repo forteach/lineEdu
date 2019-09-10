@@ -1,6 +1,7 @@
 package com.project.portal.schoolroll.request;
 
 import com.project.portal.request.SortVo;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -34,4 +35,10 @@ public class StudentScoreRequest extends SortVo implements Serializable {
 
     @ApiModelProperty(name = "schoolYear", value = "学年", dataType = "string")
     private String schoolYear;
+
+    @ApiModelProperty(name = "startDate", value = "开始日期", dataType = "string")
+    private String startDate;
+
+    @ApiModelProperty(name = "endDate", value = "结束日期", dataType = "string")
+    private String endDate;
 }

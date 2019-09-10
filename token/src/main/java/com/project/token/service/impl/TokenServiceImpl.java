@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Map;
@@ -43,13 +44,31 @@ public class TokenServiceImpl implements TokenService {
      * @return
      */
     @Override
-    public String createToken(String userId) {
+    public String createToken(String userId, String centerAreaId) {
         return JWT.create()
-                .withAudience(userId, TOKEN_TEACHER)
+                .withAudience(userId, TOKEN_TEACHER, centerAreaId)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_VALIDITY_TIME * 1000))
                 .sign(Algorithm.HMAC256(salt.concat(userId)));
     }
+
+    @Override
+    public String createToken(String userId) {
+        return JWT.create()
+                .withAudience(userId, TOKEN_STUDENT)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_VALIDITY_TIME * 1000))
+                .sign(Algorithm.HMAC256(salt.concat(userId)));
+    }
+
+    @Override
+    public String getCenterAreaId(String token){
+        if (TOKEN_TEACHER.equals(getValue(token, 1))){
+            return getValue(token, 2);
+        }
+        return null;
+    }
+
 
     /**
      * 校验token

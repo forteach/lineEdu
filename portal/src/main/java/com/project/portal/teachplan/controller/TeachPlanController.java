@@ -59,14 +59,17 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "teacherId", dataType = "string", value = "教师Id", paramType = "string")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest){
-//        if (StrUtil.isBlank(request.getTeacherId())){
-//            request.setTeacherId(tokenService.getTeacherId(httpServletRequest.getHeader("token")));
-//        }
+        String token = httpServletRequest.getHeader("token");
+        if (StrUtil.isBlank(request.getTeacherId())){
+            request.setTeacherId(tokenService.getTeacherId(token));
+        }
+        request.setCenterAreaId(tokenService.getCenterAreaId(token));
         TeachPlan teachPlan = new TeachPlan();
         BeanUtil.copyProperties(request, teachPlan);
         return WebResult.okResult(teachService.saveUpdatePlan(teachPlan));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存修改计划对应的班级接口")
     @PostMapping(path = "/saveUpdateClass")
     @ApiImplicitParams({
@@ -79,6 +82,7 @@ public class TeachPlanController {
         return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds()));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存修改计划对应的课程接口")
     @PostMapping(path = "/saveUpdateCourse")
     @ApiImplicitParams({
@@ -97,6 +101,7 @@ public class TeachPlanController {
         return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses()));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "分页查询教学计划")
     @PostMapping(path = "/findByPlanIdPageAll")
     @ApiImplicitParams({
@@ -104,14 +109,17 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
-    public WebResult findByPlanIdPageAll(@RequestBody TeachPlanPageAllRequest request){
+    public WebResult findByPlanIdPageAll(@RequestBody TeachPlanPageAllRequest request, HttpServletRequest httpServletRequest){
         valideSort(request.getPage(), request.getSize());
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         if (StrUtil.isNotBlank(request.getPlanId())) {
-            return WebResult.okResult(teachService.findByPlanIdPageAll(request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+            return WebResult.okResult(teachService.findByPlanIdPageAll(centerAreaId, request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
         }else {
-            return WebResult.okResult(teachService.findPageAll(PageRequest.of(request.getPage(), request.getSize())));
+            return WebResult.okResult(teachService.findPageAll(centerAreaId, PageRequest.of(request.getPage(), request.getSize())));
         }
     }
+
+    @UserLoginToken
     @ApiOperation(value = "移除(逻辑)对应计划的信息")
     @PostMapping(path = "/removeByPlanId")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form")
@@ -121,6 +129,7 @@ public class TeachPlanController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "删除(物理)对应计划的信息")
     @DeleteMapping(path = "/{planId}")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form")
@@ -129,6 +138,7 @@ public class TeachPlanController {
         teachService.deleteByPlanId(planId);
         return WebResult.okResult();
     }
+    @UserLoginToken
     @ApiOperation(value = "查询计划对应课程信息")
     @PostMapping(path = "/course/{planId}")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query")
@@ -137,6 +147,7 @@ public class TeachPlanController {
         return WebResult.okResult(teachPlanCourseService.findAllCourseByPlanId(planId));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询计划对应班级信息")
     @PostMapping(path = "/class/{planId}")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query")

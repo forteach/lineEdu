@@ -55,7 +55,7 @@ public class StudentScore extends Entitys implements Serializable {
      * 课程分数
      */
     @Column(name = "course_score", columnDefinition = "FLOAT(5,2) COMMENT '课程分数'")
-    private float courseScore;
+    private Float courseScore;
     /**
      * 学期
      */
@@ -66,4 +66,10 @@ public class StudentScore extends Entitys implements Serializable {
      */
     @Column(name = "school_year", columnDefinition = "VARCHAR(32) COMMENT '学年'")
     private String schoolYear;
+
+    @Column(name = "on_line_score", columnDefinition = "VARCHAR(32) COMMENT '线上成绩'")
+    private String onLineScore;
+
+    @Column(name = "off_line_score", columnDefinition = "VARCHAR(32) COMMENT '线下成绩'")
+    private String offLineScore;
 }

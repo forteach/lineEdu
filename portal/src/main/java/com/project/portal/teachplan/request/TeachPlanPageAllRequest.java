@@ -12,4 +12,6 @@ import java.io.Serializable;
 public class TeachPlanPageAllRequest extends SortVo implements Serializable {
     @ApiModelProperty(name = "planId", dataType = "string", value = "计划id")
     private String planId;
+    @ApiModelProperty(name = "centerAreaId", dataType = "string", hidden = true)
+    private String centerAreaId;
 }

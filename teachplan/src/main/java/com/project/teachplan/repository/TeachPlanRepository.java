@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, JpaSpecificationExecutor<TeachPlan> {
 
     @Transactional(readOnly = true)
-    Page<TeachPlan> findByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId, Pageable pageable);
+    Page<TeachPlan> findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, String planId, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<TeachPlan> findByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
+    Page<TeachPlan> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "update TeachPlan set isValidated = ?1 where planId = ?2")
