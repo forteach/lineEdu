@@ -18,5 +18,5 @@ public interface TeachPlanClassRepository extends JpaRepository<TeachPlanClass, 
     int updateIsValidatedByPlanId(String isValidated, String planId);
 
     @Transactional(readOnly = true)
-    List<TeachPlanClass> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
+    List<TeachPlanClass> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId);
 }

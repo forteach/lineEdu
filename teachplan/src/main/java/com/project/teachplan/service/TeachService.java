@@ -73,12 +73,6 @@ public class TeachService {
 //            saveTeachPlanCourse(planId, courseIds);
             return teachPlanRepository.save(teachPlan);
         } else {
-//            if (!classIds.isEmpty()) {
-//                teachPlanClassRepository.deleteAllByPlanId(teachPlan.getPlanId());
-//                saveTeachPlanClass(teachPlan.getPlanId(), teachPlan, classIds);
-//            }
-//            setTeachPlanNumber(teachPlan, classIds, courseIds);
-//            saveTeachPlanCourse(teachPlan.getPlanId(), courseIds);
             Optional<TeachPlan> optional = teachPlanRepository.findById(teachPlan.getPlanId());
             if (optional.isPresent()) {
                 TeachPlan t = optional.get();
@@ -99,16 +93,16 @@ public class TeachService {
         }
     }
 
-    private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses, String teacherId) {
+    private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses) {
         List<TeachPlanCourse> planCourseList = courses.parallelStream().filter(Objects::nonNull)
-                .map(t -> createTeachPlanCourse(planId, t, teacherId))
+                .map(t -> createTeachPlanCourse(planId, t))
                 .collect(toList());
         teachPlanCourseService.saveAll(planCourseList);
     }
 
-    private TeachPlanCourse createTeachPlanCourse(String planId, TeachPlanCourseVo vo, String teacherId) {
+    private TeachPlanCourse createTeachPlanCourse(String planId, TeachPlanCourseVo vo) {
         return new TeachPlanCourse(planId, vo.getCourseId(), onLineCourseDicService.findId(vo.getCourseId()).getCourseName(),
-                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), teacherId);
+                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), vo.getTeacherName());
     }
 
     private void saveTeachPlanClass(String planId, TeachPlan teachPlan, List<String> classIds) {
@@ -135,12 +129,12 @@ public class TeachService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeachPlan saveUpdatePlanCourse(String planId, List<TeachPlanCourseVo> courses, String teacherId) {
+    public TeachPlan saveUpdatePlanCourse(String planId, List<TeachPlanCourseVo> courses) {
         Optional<TeachPlan> teachPlanOptional = teachPlanRepository.findById(planId);
         if (teachPlanOptional.isPresent()) {
             TeachPlan teachPlan = teachPlanOptional.get();
             teachPlanCourseRepository.deleteAllByPlanId(planId);
-            saveTeachPlanCourse(planId, courses, teacherId);
+            saveTeachPlanCourse(planId, courses);
             if (!courses.isEmpty()){
                 teachPlan.setCourseNumber(courses.size());
             }
@@ -151,11 +145,11 @@ public class TeachService {
     }
 
     public Page<TeachPlan> findByPlanIdPageAll(String planId, Pageable pageable) {
-        return teachPlanRepository.findByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId, pageable);
+        return teachPlanRepository.findByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, pageable);
     }
 
     public Page<TeachPlan> findPageAll(Pageable pageable) {
-        return teachPlanRepository.findByIsValidatedEquals(TAKE_EFFECT_OPEN, pageable);
+        return teachPlanRepository.findByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -171,6 +165,6 @@ public class TeachService {
     }
 
     public List<TeachPlanClass> findAllClassByPlanId(String planId) {
-        return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId);
+        return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
     }
 }

@@ -51,7 +51,7 @@ public class TeachPlan extends Entitys implements Serializable {
     private Integer courseNumber;
 
     @Column(name = "class_number", columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的班级数'")
-    private int classNumber;
+    private Integer classNumber;
 
     @Column(name = "sum_number", columnDefinition = "TINYINT (4) DEFAULT 0 COMMENT '总人数'")
     private Integer sumNumber;

@@ -13,6 +13,7 @@ import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
 import com.project.teachplan.domain.online.TeachPlan;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.teachplan.service.TeachService;
+import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +45,7 @@ public class TeachPlanController {
         this.tokenService = tokenService;
     }
 
+    @UserLoginToken
     @ApiOperation(value = "保存修改教学计划")
     @PostMapping(path = "/saveUpdate")
     @ApiImplicitParams({
@@ -57,9 +59,9 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "teacherId", dataType = "string", value = "教师Id", paramType = "string")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest){
-        if (StrUtil.isBlank(request.getTeacherId())){
-            request.setTeacherId(tokenService.getTeacherId(httpServletRequest.getHeader("token")));
-        }
+//        if (StrUtil.isBlank(request.getTeacherId())){
+//            request.setTeacherId(tokenService.getTeacherId(httpServletRequest.getHeader("token")));
+//        }
         TeachPlan teachPlan = new TeachPlan();
         BeanUtil.copyProperties(request, teachPlan);
         return WebResult.okResult(teachService.saveUpdatePlan(teachPlan));
@@ -90,9 +92,9 @@ public class TeachPlanController {
     })
     public WebResult saveUpdateCourse(@RequestBody TeachPlanCourseSaveUpdateRequest request){
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
-        MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");
+//        MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");
         MyAssert.isTrue(request.getCourses().isEmpty(), DefineCode.ERR0010, "课程信息不为空");
-        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses(), request.getTeacherId()));
+        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses()));
     }
 
     @ApiOperation(value = "分页查询教学计划")
