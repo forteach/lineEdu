@@ -30,6 +30,8 @@ public class LoginResponse implements Serializable {
 
     private String roleId;
 
+    private String roleCode;
+
     private String roleName;
 
     private String roleActivity;

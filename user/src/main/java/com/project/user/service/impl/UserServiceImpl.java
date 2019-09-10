@@ -91,6 +91,7 @@ public class UserServiceImpl implements UserService {
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(user.getId())
                 .token(token)
+                .roleCode(user.getRoleCode())
                 .userName(user.getUserName())
                 .teacherId(user.getTeacherId())
                 .build();
@@ -217,6 +218,7 @@ public class UserServiceImpl implements UserService {
         }
         SysUsers user = new SysUsers();
         user.setId(vo.getPhone());
+        user.setRoleCode("3");
         user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
         user.setTeacherId(vo.getPhone());
         user.setUserName(vo.getUserName());
