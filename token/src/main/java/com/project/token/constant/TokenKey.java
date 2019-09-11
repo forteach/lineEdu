@@ -22,6 +22,6 @@ public class TokenKey {
 
     /** 管理端用户角色*/
     public final static String USER_ROLE_CODE_ADMIN = "1";
-    public final static String USER_ROLE_CODE_ = "1";
+    public final static String USER_ROLE_CODE_CENTER = "2";
     public final static String USER_ROLE_CODE_TEACHER = "3";
 }

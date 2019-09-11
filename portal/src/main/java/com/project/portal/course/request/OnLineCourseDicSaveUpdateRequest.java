@@ -23,6 +23,6 @@ public class OnLineCourseDicSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "courseName", value = "培训课程名称", dataType = "string")
     private String courseName;
 
-    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
-    private String centerAreaId;
+//    @ApiModelProperty(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string")
+//    private String centerAreaId;
 }

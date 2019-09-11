@@ -12,6 +12,8 @@ import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.LearnCenterRepository;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
+import com.project.user.service.UserService;
+import com.project.user.web.vo.RegisterCenterVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -37,10 +39,14 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class LearnCenterController {
     private final LearnCenterService learnCenterService;
     private final LearnCenterRepository learnCenterRepository;
+    private final UserService userService;
 
-    public LearnCenterController(LearnCenterService learnCenterService, LearnCenterRepository learnCenterRepository) {
+    public LearnCenterController(LearnCenterService learnCenterService,
+                                 UserService userService,
+                                 LearnCenterRepository learnCenterRepository) {
         this.learnCenterService = learnCenterService;
         this.learnCenterRepository = learnCenterRepository;
+        this.userService = userService;
     }
 
     @UserLoginToken
@@ -63,6 +69,7 @@ public class LearnCenterController {
             learnCenterRepository.findById(request.getCenterId()).ifPresent(learnCenter -> {
                 BeanUtils.copyProperties(request, learnCenter);
                 learnCenterRepository.save(learnCenter);
+                userService.updateCenter(learnCenter.getCenterName(), request.getCenterName());
             });
         } else {
             MyAssert.isNull(request.getCenterName(), DefineCode.ERR0010, "学习中心名称不为空");
@@ -77,6 +84,7 @@ public class LearnCenterController {
             BeanUtils.copyProperties(request, learnCenter);
             learnCenter.setCenterId(IdUtil.fastSimpleUUID());
             learnCenterRepository.save(learnCenter);
+            userService.registerCenter(request.getCenterName());
         }
         return WebResult.okResult();
     }

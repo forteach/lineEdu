@@ -10,6 +10,7 @@ import com.project.course.domain.Course;
 import com.project.course.domain.OnLineCourseDic;
 import com.project.course.service.CourseService;
 import com.project.course.service.OnLineCourseDicService;
+import com.project.course.web.resp.CourseResp;
 import com.project.course.web.resp.CourseSaveResp;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
@@ -34,6 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import java.util.Map;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
@@ -104,17 +107,18 @@ public class CourseController {
     }
 
 
-//    @UserLoginToken
-//    @PostMapping("/getCourse")
-//    @ApiOperation(value = "获取科目课程信息", notes = "根据科目课程ID查询科目信息")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
-//    })
-//    public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
-//                                         @RequestBody String courseId) {
-//        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
+    @UserLoginToken
+    @PostMapping("/getCourse")
+    @ApiOperation(value = "获取科目课程信息", notes = "根据科目课程ID查询科目信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
+    })
+    public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
+                                         @RequestBody String courseId) {
+        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
 //        Map<String, Object> result = courseService.getCourseById(String.valueOf(JSONObject.parseObject(courseId).get("courseId")));
 //        Course course = (Course) result.get("course");
+//        Course course = courseService.getById(JSONObject.parseObject(courseId).getString("courseId"));
 //        String shareId = result.get("shareId").toString();
 //        CourseResp reps = new CourseResp(course.getCourseId(),
 //                course.getCourseName(),
@@ -126,8 +130,8 @@ public class CourseController {
 //                course.getCourseDescribe(),
 //                shareId,
 //                course.getAlias());
-//        return WebResult.okResult(reps);
-//    }
+        return WebResult.okResult(courseService.getById(JSONObject.parseObject(courseId).getString("courseId")));
+    }
 
     @UserLoginToken
     @ApiOperation(value = "分页查询", notes = "分页查询分页科目信息")
@@ -183,13 +187,13 @@ public class CourseController {
 //        return WebResult.okResult(list);
 //    }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "学生查询我的课程信息", notes = "学生端查询我的课程信息")
-//    @GetMapping(path = "/myCourseList")
-//    public WebResult myCourseList(HttpServletRequest request){
-//        String classId = tokenService.getClassId(request);
-//        return WebResult.okResult(courseService.myCourseList(classId));
-//    }
+    @UserLoginToken
+    @ApiOperation(value = "学生查询我的课程信息", notes = "学生端查询我的课程信息")
+    @GetMapping(path = "/myCourseList")
+    public WebResult myCourseList(HttpServletRequest request){
+        String classId = tokenService.getClassId(request.getHeader("token"));
+        return WebResult.okResult(courseService.myCourseList(classId));
+    }
 
     @UserLoginToken
     @ApiOperation(value = "查询课程信息", notes = "查询同步的外部课程信息")

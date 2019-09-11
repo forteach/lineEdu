@@ -1,5 +1,6 @@
 package com.project.course.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
@@ -15,6 +16,7 @@ import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.service.CourseService;
 import com.project.course.web.req.CourseImagesReq;
+import com.project.course.web.resp.CourseListResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -22,8 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -154,28 +155,28 @@ public class CourseServiceImpl implements CourseService {
      * @param classId
      * @return
      */
-//    @Override
-//    @Cacheable(value = "myCourseList", key = "#classId", sync = true, unless = "#result eq null")
-//    public List<CourseListResp> myCourseList(String classId) {
-//        List<CourseListResp> listRespList = CollUtil.newArrayList();
-//        courseRepository.findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(classId)
-//                .stream()
-//                .filter(Objects::nonNull)
-//                .forEach(iCourseChapterListDto -> {
-//                    listRespList.add(CourseListResp.builder()
-//                            .courseId(iCourseChapterListDto.getCourseId())
-//                            .courseName(iCourseChapterListDto.getCourseName())
-//                            .alias(iCourseChapterListDto.getAlias())
-//                            .topPicSrc(iCourseChapterListDto.getTopPicSrc())
-//                            .courseDescribe(iCourseChapterListDto.getCourseDescribe())
-//                            .joinChapterId(iCourseChapterListDto.getChapterId())
-//                            .joinChapterName(iCourseChapterListDto.getChapterName())
-//                            .teacherId(iCourseChapterListDto.getTeacherId())
-//                            .teacherName(iCourseChapterListDto.getTeacherName())
-//                            .build());
-//                });
-//        return listRespList;
-//    }
+    @Override
+    @Cacheable(value = "myCourseList", key = "#classId", sync = true, unless = "#result eq null")
+    public List<CourseListResp> myCourseList(String classId) {
+        List<CourseListResp> listRespList = CollUtil.newArrayList();
+        courseRepository.findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(classId)
+                .stream()
+                .filter(Objects::nonNull)
+                .forEach(iCourseChapterListDto -> {
+                    listRespList.add(CourseListResp.builder()
+                            .courseId(iCourseChapterListDto.getCourseId())
+                            .courseName(iCourseChapterListDto.getCourseName())
+                            .alias(iCourseChapterListDto.getAlias())
+                            .topPicSrc(iCourseChapterListDto.getTopPicSrc())
+                            .courseDescribe(iCourseChapterListDto.getCourseDescribe())
+                            .joinChapterId(iCourseChapterListDto.getChapterId())
+                            .joinChapterName(iCourseChapterListDto.getChapterName())
+                            .teacherId(iCourseChapterListDto.getTeacherId())
+                            .teacherName(iCourseChapterListDto.getTeacherName())
+                            .build());
+                });
+        return listRespList;
+    }
 
     /**
      * 根据课程ID，获得课程基本信息和集体备课共享编号
@@ -183,21 +184,21 @@ public class CourseServiceImpl implements CourseService {
      * @param courseId
      * @return
      */
-//    @Override
-//    public Map<String, Object> getCourseById(String courseId) {
-//        Map<String, Object> result = new HashMap<>(2);
-//        courseRepository.findById(courseId).ifPresent(course -> {
+    @Override
+    public Map<String, Object> getCourseById(String courseId) {
+        Map<String, Object> result = new HashMap<>(2);
+        courseRepository.findById(courseId).ifPresent(course -> {
 //            String shareId = "";
-//            //课程为集体备课
+            //课程为集体备课
 //            if (course.getLessonPreparationType().equals(LESSON_PREPARATION_TYPE_GROUP)) {
 //                CourseShare cs = courseShareService.findByCourseIdAll(course.getCourseId());
 //                shareId = cs.getShareId();
 //            }
-//            result.put("course", course);
+            result.put("course", course);
 //            result.put("shareId", shareId);
-//        });
-//        return result;
-//    }
+        });
+        return result;
+    }
     @Override
     @Transactional(rollbackForClassName = "Exception")
     public void deleteIsValidById(String courseId) {
