@@ -9,6 +9,7 @@ import com.project.train.domain.TrainCourse;
 import com.project.train.repository.TrainCourseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -29,6 +30,7 @@ public class TrainCourseService extends BaseMySqlService {
     /**
      * 财务类型明细添加
      */
+    @Transactional(rollbackFor = Exception.class)
     public TrainCourse save(TrainCourse trainCourse) {
         trainCourse.setCourseId(IdUtil.fastSimpleUUID());
         return trainCourseRepository.save(trainCourse);
@@ -37,6 +39,7 @@ public class TrainCourseService extends BaseMySqlService {
     /**
      * 财务类型明细修改
      */
+    @Transactional(rollbackFor = Exception.class)
     public TrainCourse update(TrainCourse trainCourse) {
         TrainCourse obj = findId(trainCourse.getCourseId());
         BeanUtil.copyProperties(trainCourse, obj);

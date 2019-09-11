@@ -47,7 +47,7 @@ public class ArticleCommentService {
      * @param  artcomment
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ArticleComment save(  ArticleComment artcomment) {
         // 获得页面设置的资讯值
         String commentId = artcomment.getCommentId();
@@ -134,7 +134,7 @@ public class ArticleCommentService {
      * @param commentId  评论编号
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int addClickGood(String commentId) {
 
         //资讯点赞次数+1
@@ -155,7 +155,7 @@ public class ArticleCommentService {
      * @param replyUserName  回复人名称
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String saveReply( String reply,String commentId,String replyUserName){
         articleCommentDao.saveReply(reply,commentId,DateUtil.now(),replyUserName);
         return "Y";

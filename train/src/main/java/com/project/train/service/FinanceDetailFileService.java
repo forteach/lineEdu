@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class FinanceDetailFileService extends BaseMySqlService {
     /**
      * 文件明细添加
      */
+    @Transactional(rollbackFor = Exception.class)
     public FinanceDetailFile save(FinanceDetailFile financeDetailFile) {
         financeDetailFile.setFileId(IdUtil.fastSimpleUUID());
         return financeDetailFileRepository.save(financeDetailFile);
@@ -38,6 +40,7 @@ public class FinanceDetailFileService extends BaseMySqlService {
     /**
      * 文件修改
      */
+    @Transactional(rollbackFor = Exception.class)
     public FinanceDetailFile update(FinanceDetailFile financeDetailFile) {
         FinanceDetailFile obj = findId(financeDetailFile.getFileId());
         BeanUtil.copyProperties(financeDetailFile, obj);

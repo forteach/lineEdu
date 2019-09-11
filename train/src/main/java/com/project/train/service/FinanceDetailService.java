@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -34,6 +35,7 @@ public class FinanceDetailService extends BaseMySqlService {
     /**
      * 财务类型明细添加
      */
+    @Transactional(rollbackFor = Exception.class)
     public FinanceDetail save(FinanceDetail financeDetail) {
         financeDetail.setDetailId(IdUtil.fastSimpleUUID());
         String[] happenTime = StrUtil.split(financeDetail.getHappenTime(), "-");
@@ -47,6 +49,7 @@ public class FinanceDetailService extends BaseMySqlService {
     /**
      * 财务类型明细修改
      */
+    @Transactional(rollbackFor = Exception.class)
     public FinanceDetail update(FinanceDetail financeDetail) {
         FinanceDetail obj = findId(financeDetail.getDetailId());
         BeanUtil.copyProperties(financeDetail, obj);

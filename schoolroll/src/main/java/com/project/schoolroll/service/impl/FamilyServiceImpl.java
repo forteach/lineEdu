@@ -6,6 +6,7 @@ import com.project.schoolroll.repository.FamilyRepository;
 import com.project.schoolroll.service.FamilyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class FamilyServiceImpl implements FamilyService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeFamilyById(String familyId) {
         familyRepository.findById(familyId)
                 .ifPresent(family -> {

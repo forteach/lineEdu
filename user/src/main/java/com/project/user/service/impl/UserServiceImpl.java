@@ -213,6 +213,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void registerTeacher(RegisterTeacherVo vo) {
         SysUsers users = userRepository.findByTeacherId(vo.getPhone());
         if (users != null) {

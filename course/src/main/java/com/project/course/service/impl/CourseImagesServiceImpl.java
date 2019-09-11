@@ -42,6 +42,7 @@ public class CourseImagesServiceImpl implements CourseImagesService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteImagesByCourseId(String courseId) {
         return courseImagesRepository.deleteAllByCourseId(courseId);
     }

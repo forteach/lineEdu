@@ -19,10 +19,13 @@ import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 public class NoticeService {
 
 
-	@Autowired
-	private NoticeDao noticeDao;
+	private final NoticeDao noticeDao;
 
-	@Transactional
+	public NoticeService(NoticeDao noticeDao) {
+		this.noticeDao = noticeDao;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
 	public Notice save(String noticeId, String content, String centerId,int area) {
 
 		Notice nc=null;
@@ -62,7 +65,7 @@ public class NoticeService {
 		return noticeDao.findByCenterAreaIdOrAreaAndIsValidatedOrderByCreateTimeDesc(centerId,1,TAKE_EFFECT_OPEN,pageable);
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public String deleteByNoticeId(String noticeId){
 		 noticeDao.deleteByNoticeId(noticeId);
 		 return "Y";

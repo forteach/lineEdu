@@ -35,7 +35,7 @@ public class TrainPlanCourseService extends BaseMySqlService {
     /**
      * 项目计划添加
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<TrainPlanCourse> saveAll(List<TrainPlanCourse> list) {
 
         return trainPlanCourseRepository.saveAll(list);
@@ -44,7 +44,7 @@ public class TrainPlanCourseService extends BaseMySqlService {
     /**
      * 项目计划修改
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<TrainPlanCourse> saveOrUpdate(String planId, List<TrainPlanCourse> list) {
         if (list.size() > 0) {
             String course = list.stream().map(item -> item.getCourseName().concat(",")).collect(Collectors.joining());

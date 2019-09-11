@@ -62,7 +62,7 @@ public class ClassFeeInfoService extends BaseMySqlService{
      * @param centerId  中心ID
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean impFile(List<ClassFeeInfo> roms,String year,String month,String centerId){
 
         //获得文件里面的专业信息
@@ -150,6 +150,7 @@ public class ClassFeeInfoService extends BaseMySqlService{
      * @param centerId
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public ClassFeeInfo save(String classFeeId, String fullName, String createYear, String createMonth, String specialtyIds, int classFee, int classCount,String centerId){
         ClassFeeInfo classFeeInfo=new ClassFeeInfo(IdUtil.fastSimpleUUID(),classFeeId,fullName,createYear,createMonth,specialtyIds,classFee,classCount,centerId);
         return classFeeInfoRepository.save(classFeeInfo);

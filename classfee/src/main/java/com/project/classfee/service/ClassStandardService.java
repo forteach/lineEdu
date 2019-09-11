@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -30,6 +32,7 @@ public class ClassStandardService extends BaseMySqlService {
      * @param subsidiesSum
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,String centerId){
         ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,centerId);
         return classStandardRepository.save(classStandard);
@@ -44,6 +47,7 @@ public class ClassStandardService extends BaseMySqlService {
      * @param subsidiesSum
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum){
         ClassStandard obj= findId(standardId);
         ClassStandard classStandard=new ClassStandard();

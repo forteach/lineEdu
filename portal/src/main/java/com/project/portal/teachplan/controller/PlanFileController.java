@@ -12,6 +12,7 @@ import com.project.portal.teachplan.request.PlanFileSaveUpdateRequest;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.service.PlanFileService;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,6 +20,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -34,9 +37,11 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @RequestMapping(path = "/planFile", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class PlanFileController {
     private final PlanFileService planFileService;
+    private final TokenService tokenService;
 
-    public PlanFileController(PlanFileService planFileService) {
+    public PlanFileController(PlanFileService planFileService, TokenService tokenService) {
         this.planFileService = planFileService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -50,10 +55,12 @@ public class PlanFileController {
             @ApiImplicitParam(name = "classId", value = "班级编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody PlanFileSaveUpdateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody PlanFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         PlanFile planFile = new PlanFile();
         BeanUtil.copyProperties(request, planFile);
         if (StrUtil.isBlank(request.getFileId())) {
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            planFile.setCenterAreaId(centerAreaId);
             return WebResult.okResult(planFileService.save(planFile));
         } else {
             return WebResult.okResult(planFileService.update(planFile));
@@ -65,19 +72,17 @@ public class PlanFileController {
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody PlanFileFindAllPage request) {
+    public WebResult findAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
         valideSort(request.getPage(), request.getPage());
-        MyAssert.isNull(request.getCenterAreaId(), DefineCode.ERR0010, "归属的学习中心编号不为空");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         if (StrUtil.isNotBlank(request.getClassId())) {
-            return WebResult.okResult(planFileService
-                    .findAllPage(request.getCenterAreaId(), request.getClassId(), pageRequest));
+            return WebResult.okResult(planFileService.findAllPage(centerAreaId, request.getClassId(), pageRequest));
         } else {
-            return WebResult.okResult(planFileService.findAllPage(request.getCenterAreaId(), pageRequest));
+            return WebResult.okResult(planFileService.findAllPage(centerAreaId, pageRequest));
         }
     }
 

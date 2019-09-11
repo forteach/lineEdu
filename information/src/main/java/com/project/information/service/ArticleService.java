@@ -32,7 +32,7 @@ public class ArticleService {
     private ArticleDao articleDao;
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Article save(Article article) {
         // 保存资讯信息
         Article art = articleDao.save(article);
@@ -48,6 +48,7 @@ public class ArticleService {
      * @param newArt
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public Article setDoMain(Article newArt) {
         // 获得页面设置的资讯值
         String artId = newArt.getArticleId();
@@ -101,7 +102,7 @@ public class ArticleService {
     }
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int deleteArticleById(String articleId) {
         return articleDao.deleteArticleById(articleId);
     }
@@ -118,5 +119,4 @@ public class ArticleService {
 
         return content;
     }
-
 }

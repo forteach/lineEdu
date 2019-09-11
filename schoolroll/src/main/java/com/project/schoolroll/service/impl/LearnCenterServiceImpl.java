@@ -5,6 +5,7 @@ import com.project.schoolroll.repository.dto.LearnCenterDto;
 import com.project.schoolroll.service.LearnCenterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeById(String centerId) {
         learnCenterRepository.findById(centerId).ifPresent(learnCenter -> {
             learnCenter.setIsValidated(TAKE_EFFECT_CLOSE);

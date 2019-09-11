@@ -9,6 +9,7 @@ import com.project.train.domain.FinanceType;
 import com.project.train.repository.FinanceTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -29,6 +30,7 @@ public class FinanceTypeService extends BaseMySqlService {
     /**
      * 财务类型明细添加
      */
+    @Transactional(rollbackFor = Exception.class)
     public FinanceType save(FinanceType financeType) {
         financeType.setFinanceTypeId(IdUtil.fastSimpleUUID());
         return financeTypeRepository.save(financeType);
@@ -37,6 +39,7 @@ public class FinanceTypeService extends BaseMySqlService {
     /**
      * 财务类型明细修改
      */
+    @Transactional(rollbackFor = Exception.class)
     public FinanceType update(FinanceType financeType) {
         FinanceType obj = findId(financeType.getFinanceTypeId());
         BeanUtil.copyProperties(financeType, obj);

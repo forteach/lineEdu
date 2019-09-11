@@ -42,7 +42,7 @@ public class ClassFileService extends BaseMySqlService {
     /**
      * 文件明细添加
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ClassFile save(ClassFile classFile) {
         classFile.setFileId(IdUtil.fastSimpleUUID());
          classFileRepository.save(classFile);
@@ -70,6 +70,7 @@ public class ClassFileService extends BaseMySqlService {
     /**
      * 文件修改
      */
+    @Transactional(rollbackFor = Exception.class)
     public ClassFile update(ClassFile classFile) {
         ClassFile obj = findId(classFile.getFileId());
         BeanUtil.copyProperties(classFile, obj);

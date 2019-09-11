@@ -126,6 +126,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean save() {
         // todo 生成对应成绩信息,
         StudentScore studentScore = new StudentScore();

@@ -27,6 +27,7 @@ public class TrainPlanFinishService extends BaseMySqlService {
     /**
      * 计划信息完善执行情况
      */
+    @Transactional(rollbackFor = Exception.class)
     public TrainPlanFinish save(TrainPlanFinish trainPlanFinish) {
 
        return trainPlanFinishRepository.save(trainPlanFinish);
@@ -49,7 +50,7 @@ public class TrainPlanFinishService extends BaseMySqlService {
         return trainPlanFinishRepository.findByPjPlanId(planId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public TrainPlanFinish updateAll( String planId){
            TrainPlanFinish tf=null;
             //判断是否全部完善信息了

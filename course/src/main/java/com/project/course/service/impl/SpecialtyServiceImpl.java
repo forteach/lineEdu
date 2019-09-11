@@ -40,6 +40,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Specialty saveUpdate(String specialtyId, String specialtyName) {
         if (StrUtil.isNotBlank(specialtyId)) {
             Optional<Specialty> optionalSpecialty = specialtyRepository.findById(specialtyId);
@@ -91,5 +92,4 @@ public class SpecialtyServiceImpl implements SpecialtyService {
                     specialtyRepository.save(specialty);
                 });
     }
-
 }

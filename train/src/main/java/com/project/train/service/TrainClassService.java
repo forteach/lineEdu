@@ -34,7 +34,7 @@ public class TrainClassService extends BaseMySqlService {
     /**
      * 项目计划班级添加
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public TrainClass save(TrainClass trainClass) {
         trainClass.setTrainClassId(IdUtil.fastSimpleUUID());
         trainClassRepository.save(trainClass);
@@ -53,6 +53,7 @@ public class TrainClassService extends BaseMySqlService {
     /**
      * 项目计划班级修改
      */
+    @Transactional(rollbackFor = Exception.class)
     public TrainClass update(TrainClass trainClass) {
         TrainClass obj = findId(trainClass.getTrainClassId());
         BeanUtil.copyProperties(trainClass, obj);

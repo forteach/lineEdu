@@ -48,8 +48,6 @@ import static com.project.token.constant.TokenKey.*;
 @Service
 public class WeChatUserServiceImpl implements WeChatUserService {
 
-    //    private final StudentEntitysRepository studentEntitysRepository;
-    private final StudentRepository studentRepository;
     private final StudentPeopleRepository studentPeopleRepository;
     private final WeChatUserRepository weChatUserRepository;
 
@@ -59,18 +57,12 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
 
     @Autowired
-    public WeChatUserServiceImpl(
-//            StudentEntitysRepository studentEntitysRepository,
-            StudentRepository studentRepository,
-            StudentPeopleRepository studentPeopleRepository,
-            WeChatUserRepository weChatUserRepository,
-            StringRedisTemplate stringRedisTemplate,
-            TokenService tokenService) {
-//        this.studentEntitysRepository = studentEntitysRepository;
+    public WeChatUserServiceImpl(StudentPeopleRepository studentPeopleRepository,
+                                 WeChatUserRepository weChatUserRepository, StringRedisTemplate stringRedisTemplate,
+                                 TokenService tokenService) {
         this.weChatUserRepository = weChatUserRepository;
         this.stringRedisTemplate = stringRedisTemplate;
         this.tokenService = tokenService;
-        this.studentRepository = studentRepository;
         this.studentPeopleRepository = studentPeopleRepository;
     }
 
@@ -207,9 +199,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
             BeanUtil.copyProperties(weChatUserReq, weChatUser);
             weChatUserRepository.save(weChatUser);
             return "操作成功!";
-        } else {
-            MyAssert.isNull(null, DefineCode.ERR0014, "用户不存在");
         }
+        MyAssert.isNull(null, DefineCode.ERR0014, "用户不存在");
         return null;
     }
 

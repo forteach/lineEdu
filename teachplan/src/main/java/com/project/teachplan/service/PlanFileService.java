@@ -46,34 +46,16 @@ public class PlanFileService extends BaseMySqlService {
     /**
      * 文件明细添加
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public PlanFile save(PlanFile classFile) {
         classFile.setFileId(IdUtil.fastSimpleUUID());
-        planFileRepository.save(classFile);
-
-        String planId = classFile.getPlanId();
-
-        //计划班级数量
-        int pCount = planFileRepository.countClass(planId);
-        //添加班级学生的班级数量
-        int cCount = countClass(planId);
-
-//        //如果两个数量相等，改变计划完成情况的班级添加完成状态为1
-//        if(pCount == cCount && (pCount != 0)){
-//            TrainPlanFinish tf=tbClassesRepository.f(planId);
-//            tf.setIsFile(1);
-//            trainPlanFinishService.save(tf);
-//        }
-
-        //判断是否全部完善信息了
-//        trainPlanFinishService.updateAll(planId);
-
-        return classFile;
+        return planFileRepository.save(classFile);
     }
 
     /**
      * 文件修改
      */
+    @Transactional(rollbackFor = Exception.class)
     public PlanFile update(PlanFile planFile) {
         PlanFile obj = findId(planFile.getFileId());
         BeanUtil.copyProperties(planFile, obj);
@@ -114,8 +96,8 @@ public class PlanFileService extends BaseMySqlService {
     }
 
 
-    public Page<PlanFile> findByPjPlanIdPageAll(String pjPlanId, Pageable pageable) {
-        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pjPlanId, pageable);
+    public Page<PlanFile> findByPjPlanIdPageAll(String planId, Pageable pageable) {
+        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, pageable);
     }
 
     /**
@@ -138,8 +120,8 @@ public class PlanFileService extends BaseMySqlService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void removeByPlanId(String pjPlanId) {
-        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, pjPlanId)
+    public void removeByPlanId(String planId) {
+        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId)
                 .stream()
                 .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))
                 .collect(toList());

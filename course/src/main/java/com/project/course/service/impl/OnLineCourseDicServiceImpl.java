@@ -10,6 +10,7 @@ import com.project.course.service.OnLineCourseDicService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
      * 财务类型明细添加
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public OnLineCourseDic save(OnLineCourseDic onLineCourseDic) {
         onLineCourseDic.setCourseId(IdUtil.fastSimpleUUID());
         return onLineCourseDicRepository.save(onLineCourseDic);
@@ -46,6 +48,7 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
      * 财务类型明细修改
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public OnLineCourseDic update(OnLineCourseDic onLineCourseDic) {
         OnLineCourseDic obj = findId(onLineCourseDic.getCourseId());
         BeanUtil.copyProperties(onLineCourseDic, obj);
@@ -81,6 +84,7 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeByCourseId(String courseId) {
         onLineCourseDicRepository.findById(courseId).ifPresent(o -> {
             o.setIsValidated(TAKE_EFFECT_CLOSE);
@@ -89,6 +93,7 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteByCourseId(String courseId) {
         onLineCourseDicRepository.deleteById(courseId);
     }
