@@ -68,25 +68,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
             " order by c.createTime ")
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     List<ICourseChapterListDto> findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(String classId);
-//    @Query(value = " select " +
-//            "  c.courseId       as courseId, " +
-//            "  c.courseName     as courseName, " +
-//            "  c.alias          as alias, " +
-//            "  c.topPicSrc     as topPicSrc, " +
-//            "  c.courseDescribe as courseDescribe, " +
-//            "  t.teacherId      as teacherId, " +
-//            "  t.teacherName    as teacherName " +
-//            " from Course as c " +
-//            " left join TeacherClassCourse as tcc on c.courseNumber = tcc.courseId " +
-//            " left join Teacher as t on t.teacherId= tcc.teacherId " +
-//            " where c.isValidated = '0' " +
-//            " and t.isValidated = '0' " +
-//            " and tcc.isValidated = '0'" +
-//            " and c.createUser = tcc.teacherId " +
-//            " and tcc.classId = ?1 " +
-//            " order by c.createTime ")
-//    @Transactional(readOnly = true, rollbackFor = Exception.class)
-//    List<ICourseChapterListDto> findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(String classId);
 
+    @Transactional(readOnly = true)
     List<Course> findAllByIsValidatedEqualsAndCourseNumberAndCreateUserOrderByCreateTimeDesc(String isValidated, String courseNumber, String cUser);
 }
