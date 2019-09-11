@@ -22,4 +22,6 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
     int countAllByIsValidatedEqualsAndClassId(String isValidated, String classId);
 
     Page<StudentOnLine> findAllByIsValidatedEquals(String isValidated, Pageable pageable);
+
+    List<StudentOnLine> findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(String isValidated, String stuIDCard, String studentName);
 }

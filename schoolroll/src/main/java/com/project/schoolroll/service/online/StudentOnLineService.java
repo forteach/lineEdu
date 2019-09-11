@@ -1,5 +1,6 @@
 package com.project.schoolroll.service.online;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -78,15 +79,13 @@ public class StudentOnLineService {
                 .collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
     }
     private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId){
-        return list.stream()
-                .map(s -> setStudentOnLine(s, classIds, centerAreaId))
-                .collect(Collectors.toList());
+        return list.stream().map(s -> setStudentOnLine(s, classIds, centerAreaId)).collect(Collectors.toList());
     }
 
     private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId){
         studentOnLine.setClassId(classIds.get(studentOnLine.getClassName()));
         studentOnLine.setCenterAreaId(centerAreaId);
-        return studentOnLine;
+        return BeanUtil.trimStrFields(studentOnLine);
     }
 
     private void setHeaderAlias(@NonNull ExcelReader reader) {
@@ -107,5 +106,9 @@ public class StudentOnLineService {
     /* 查询*/
     public Page<StudentOnLine> findAllPage(PageRequest request){
         return studentOnLineRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, request);
+    }
+
+    public List<StudentOnLine> findByStuIDCardAndStudentName(String stuIDCard, String studentName){
+        return studentOnLineRepository.findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, stuIDCard, studentName);
     }
 }

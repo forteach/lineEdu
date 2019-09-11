@@ -8,6 +8,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.StudentOnLineFindAllPageRequest;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 
@@ -31,27 +33,30 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class StudentOnLineController {
 
     private final StudentOnLineService studentOnLineService;
+    private final TokenService tokenService;
 
 
     @Autowired
-    public StudentOnLineController(StudentOnLineService studentOnLineService) {
+    public StudentOnLineController(StudentOnLineService studentOnLineService, TokenService tokenService) {
         this.studentOnLineService = studentOnLineService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
     @ApiOperation(value = "导入学生信息数据")
-    @PostMapping(path = "/saveImport/{centerAreaId}")
+    @PostMapping(path = "/saveImport/{token}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心Id", required = true, paramType = "form", dataType = "string")
     })
-    public WebResult saveImport(@RequestParam("file") MultipartFile file, @PathVariable(value = "centerAreaId") String centerAreaId) {
+    public WebResult saveImport(@RequestParam("file") MultipartFile file, @PathVariable String token) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         try {
             studentOnLineService.checkoutKey();
             //设置导入修改时间 防止失败没有过期时间
             String type = FileUtil.extName(file.getOriginalFilename());
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type) || "xls".equals(type)) {
+                String centerAreaId = tokenService.getCenterAreaId(token);
                 studentOnLineService.importStudent(file.getInputStream(), centerAreaId);
                 return WebResult.okResult();
             }

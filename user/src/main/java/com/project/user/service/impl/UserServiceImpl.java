@@ -232,6 +232,16 @@ public class UserServiceImpl implements UserService {
             userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(s.getRoleId()).build());
         });
     }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTeacher(String phone, String newPhone){
+        userRepository.findById(phone).ifPresent(u -> {
+            u.setRegisterPhone(newPhone);
+            u.setId(newPhone);
+            u.setTeacherId(newPhone);
+            userRepository.save(u);
+        });
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

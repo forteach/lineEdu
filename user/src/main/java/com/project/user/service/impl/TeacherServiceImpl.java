@@ -2,6 +2,7 @@ package com.project.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.user.domain.Teacher;
@@ -47,7 +48,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Teacher save(Teacher teacher) {
-        teacher.setTeacherId(IdUtil.simpleUUID());
+        teacher.setTeacherId(teacher.getPhone());
         // 添加到用户保存用户
         RegisterTeacherVo vo = new RegisterTeacherVo();
         BeanUtil.copyProperties(teacher, vo);
@@ -62,6 +63,9 @@ public class TeacherServiceImpl implements TeacherService {
         if (optionalTeacher.isPresent()) {
             Teacher t = optionalTeacher.get();
             BeanUtil.copyProperties(teacher, t);
+            if (StrUtil.isNotBlank(teacher.getPhone()) && !t.getPhone().equals(teacher.getPhone())){
+                userService.updateTeacher(t.getPhone(), teacher.getPhone());
+            }
             return teacherRepository.save(teacher);
         }
         MyAssert.isNull(null, DefineCode.ERR0014, "没有要修改的数据");

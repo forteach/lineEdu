@@ -116,20 +116,6 @@ public class CourseController {
     public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
                                          @RequestBody String courseId) {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
-//        Map<String, Object> result = courseService.getCourseById(String.valueOf(JSONObject.parseObject(courseId).get("courseId")));
-//        Course course = (Course) result.get("course");
-//        Course course = courseService.getById(JSONObject.parseObject(courseId).getString("courseId"));
-//        String shareId = result.get("shareId").toString();
-//        CourseResp reps = new CourseResp(course.getCourseId(),
-//                course.getCourseName(),
-//                course.getCourseNumber(),
-//                course.getLessonPreparationType(),
-//                course.getTeachingType(),
-//                course.getTopPicSrc(),
-//                course.getShareType(),
-//                course.getCourseDescribe(),
-//                shareId,
-//                course.getAlias());
         return WebResult.okResult(courseService.getById(JSONObject.parseObject(courseId).getString("courseId")));
     }
 
@@ -312,8 +298,8 @@ public class CourseController {
     }
 
 
-    @ApiOperation(value = "学生端登录后加载对应的课程信息")
     @UserLoginToken
+    @ApiOperation(value = "学生端登录后加载对应的课程信息")
     @GetMapping("/studentCourseList")
     public WebResult findCourseStudent(HttpServletRequest request){
         String classId = tokenService.getClassId(request.getHeader("token"));

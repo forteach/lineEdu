@@ -37,7 +37,8 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
     List<String> findAllByIsValidatedEqualsAndClassId(String classId);
 
     @Query(value = "select courseId as courseId, teacherId as teacherId from TeachPlanCourse where isValidated = '0'" +
-            " and planId in (select distinct planId from TeachPlanClass where isValidated = '0' and classId = ?1)")
+            " and planId in (select distinct planId from TeachPlanClass where isValidated = '0' and classId = ?1) " +
+            " order by createTime desc ")
     @Transactional(readOnly = true)
     List<CourseTeacherDto> findAllByIsValidatedEqualsAndClassIdDto(String classId);
 }

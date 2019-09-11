@@ -63,6 +63,8 @@ public interface UserService {
 
     void registerTeacher(RegisterTeacherVo vo);
 
+    void updateTeacher(String phone, String newPhone);
+
     void registerCenter(String centerName);
 
     void updateCenter(String center, String newCenter);

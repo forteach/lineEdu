@@ -8,9 +8,11 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.repository.StudentPeopleRepository;
 import com.project.schoolroll.repository.StudentRepository;
 import com.project.schoolroll.repository.dto.StuentWeChatDto;
+import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.token.service.TokenService;
 import com.project.wechat.mini.app.config.WeChatMiniAppConfig;
 import com.project.wechat.mini.app.domain.WeChatUser;
@@ -49,6 +51,7 @@ import static com.project.token.constant.TokenKey.*;
 public class WeChatUserServiceImpl implements WeChatUserService {
 
     private final StudentPeopleRepository studentPeopleRepository;
+    private final StudentOnLineService studentOnLineService;
     private final WeChatUserRepository weChatUserRepository;
 
     private final StringRedisTemplate stringRedisTemplate;
@@ -57,30 +60,28 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
 
     @Autowired
-    public WeChatUserServiceImpl(StudentPeopleRepository studentPeopleRepository,
+    public WeChatUserServiceImpl(StudentPeopleRepository studentPeopleRepository, StudentOnLineService studentOnLineService,
                                  WeChatUserRepository weChatUserRepository, StringRedisTemplate stringRedisTemplate,
                                  TokenService tokenService) {
         this.weChatUserRepository = weChatUserRepository;
         this.stringRedisTemplate = stringRedisTemplate;
         this.tokenService = tokenService;
         this.studentPeopleRepository = studentPeopleRepository;
+        this.studentOnLineService = studentOnLineService;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String bindingUser(BindingUserRequest bindingUserReq) {
-        List<StuentWeChatDto> list = studentPeopleRepository.findWeChatUserByStudentNameAndStuIDCard(bindingUserReq.getStudentName(), bindingUserReq.getStuIDCard());
+        List<StudentOnLine> list = studentOnLineService.findByStuIDCardAndStudentName(StrUtil.trim(bindingUserReq.getStuIDCard()), StrUtil.trim(bindingUserReq.getStudentName()));
         if (!list.isEmpty()) {
-            Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(bindingUserReq.getOpenId())
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .findFirst();
+            Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(bindingUserReq.getOpenId()).stream().filter(Objects::nonNull).findFirst();
             if (weChatUserInfoOptional.isPresent() && WX_INFO_BINDIND_0.equals(weChatUserInfoOptional.get().getBinding())) {
                 MyAssert.isNull(null, DefineCode.ERR0014, "该微信账号已经认证");
             }
             WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
-            StuentWeChatDto stuentWeChatDto = list.get(0);
-            if (checkStudent(bindingUserReq, stuentWeChatDto.getStudentName(), stuentWeChatDto.getStuIDCard())) {
+            StudentOnLine studentOnLine = list.get(0);
+            if (checkStudent(bindingUserReq, studentOnLine.getStudentName(), studentOnLine.getStuIDCard())) {
                 final WxMaService wxService = WeChatMiniAppConfig.getMaService();
                 String openId = bindingUserReq.getOpenId();
                 String key = USER_PREFIX.concat(openId);
@@ -96,8 +97,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                     BeanUtils.copyProperties(wxMaUserInfo, weChatUser);
                 }
                 weChatUser.setBinding(WX_INFO_BINDIND_0);
-                weChatUser.setStudentId(stuentWeChatDto.getStudentId());
-                weChatUser.setClassId(stuentWeChatDto.getClassId());
+                weChatUser.setStudentId(studentOnLine.getStudentId());
+                weChatUser.setClassId(studentOnLine.getClassId());
                 weChatUser.setOpenId(openId);
                 weChatUserRepository.save(weChatUser);
                 //保存redis 设置有效期7天
