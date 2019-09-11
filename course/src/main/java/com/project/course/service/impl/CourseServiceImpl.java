@@ -261,4 +261,14 @@ public class CourseServiceImpl implements CourseService {
     public int deleteImagesByCourseId(String courseId) {
         return courseImagesServiceImpl.deleteImagesByCourseId(courseId);
     }
+
+    @Override
+    public Course findByCourseNumberAndTeacherId(String courseId, String teacherId){
+        List<Course> list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberAndCreateUserOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, teacherId);
+        if (!list.isEmpty()){
+            return list.get(0);
+        }else {
+            return new Course();
+        }
+    }
 }

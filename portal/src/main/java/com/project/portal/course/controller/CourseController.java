@@ -15,11 +15,12 @@ import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
 import com.project.portal.course.request.CourseFindAllReq;
 import com.project.portal.course.request.CourseImagesReq;
-import com.project.portal.course.request.CourseSaveReq;
 import com.project.portal.course.request.CourseStudyReq;
 import com.project.portal.course.response.CourseListResp;
 import com.project.portal.course.vo.RCourse;
 import com.project.portal.response.WebResult;
+import com.project.teachplan.repository.dto.CourseTeacherDto;
+import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.*;
@@ -30,6 +31,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
@@ -52,6 +56,9 @@ public class CourseController {
 
     @Resource
     private TokenService tokenService;
+
+    @Resource
+    private TeachPlanCourseService teachPlanCourseService;
 
     @Resource
     private OnLineCourseDicService onLineCourseDicService;
@@ -82,9 +89,9 @@ public class CourseController {
         UpdateUtil.copyNullProperties(req, course);
         String userId = tokenService.getUserId(request.getHeader("token"));
         course.setCreateUser(userId);
-        if(StrUtil.isNotBlank(req.getCourseNumber())){
+        if (StrUtil.isNotBlank(req.getCourseNumber())) {
             OnLineCourseDic courseDic = onLineCourseDicService.findId(req.getCourseNumber());
-            if (StrUtil.isNotBlank(courseDic.getCourseId())){
+            if (StrUtil.isNotBlank(courseDic.getCourseId())) {
                 course.setCourseNumber(courseDic.getCourseId());
             }
         }
@@ -298,5 +305,16 @@ public class CourseController {
     public WebResult deleteImagesByCourseId(@RequestBody String courseId) {
         MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不为空");
         return WebResult.okResult(courseService.deleteImagesByCourseId(String.valueOf(JSONObject.parseObject(courseId).getString("courseId"))));
+    }
+
+
+    @ApiOperation(value = "学生端登录后加载对应的课程信息")
+    @UserLoginToken
+    @GetMapping("/studentCourseList")
+    public WebResult findCourseStudent(HttpServletRequest request){
+        String classId = tokenService.getClassId(request.getHeader("token"));
+        List<CourseTeacherDto> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId);
+        List<Course> list = courseIds.parallelStream().map(d -> courseService.findByCourseNumberAndTeacherId(d.getCourseId(), d.getTeacherId())).collect(toList());
+        return WebResult.okResult(list);
     }
 }

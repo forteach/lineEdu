@@ -68,4 +68,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 //            " order by c.createTime ")
 //    @Transactional(readOnly = true, rollbackFor = Exception.class)
 //    List<ICourseChapterListDto> findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(String classId);
+
+    List<Course> findAllByIsValidatedEqualsAndCourseNumberAndCreateUserOrderByCreateTimeDesc(String isValidated, String courseNumber, String cUser);
 }

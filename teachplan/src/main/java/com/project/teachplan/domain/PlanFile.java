@@ -19,7 +19,10 @@ import java.io.Serializable;
 @DynamicUpdate
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "plan_file", comment = "在线计划资料管理")
-@Table(name = "plan_file", indexes = {@Index(columnList = "file_id", name = "file_id_index")})
+@Table(name = "plan_file", indexes = {
+        @Index(columnList = "file_id", name = "file_id_index"),
+        @Index(columnList = "plan_id", name = "plan_id_index")
+})
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,6 +40,9 @@ public class PlanFile extends Entitys implements Serializable {
 
     @Column(name = "class_id", columnDefinition = "VARCHAR(60) COMMENT '班级编号'")
     private String classId;
+
+//    @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '课程id'")
+//    private String courseId;
 
     @Column(name = "plan_id", columnDefinition = "VARCHAR(40) COMMENT '在线项目计划编号'")
     private String planId;

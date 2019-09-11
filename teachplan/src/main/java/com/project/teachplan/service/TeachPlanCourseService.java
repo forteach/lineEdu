@@ -4,6 +4,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
+import com.project.teachplan.repository.dto.CourseTeacherDto;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,13 @@ public class TeachPlanCourseService {
 
     public List<TeachPlanCourse> findAllCourseByPlanId(String planId){
         return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId);
+    }
+
+    public List<String> findCourseIdByClassId(String classId){
+        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndClassId(classId);
+    }
+
+    public List<CourseTeacherDto> findCourseIdAndTeacherIdByClassId(String classId){
+        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndClassIdDto(classId);
     }
 }
