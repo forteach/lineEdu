@@ -19,6 +19,7 @@ import com.project.user.web.req.RegisterUserReq;
 import com.project.user.web.req.UpdatePassWordReq;
 import com.project.user.web.req.UserLoginReq;
 import com.project.user.web.resp.LoginResponse;
+import com.project.user.web.vo.RegisterCenterVo;
 import com.project.user.web.vo.RegisterTeacherVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +33,7 @@ import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
-import static com.project.token.constant.TokenKey.USER_ROLE_CODE_TEACHER;
-import static com.project.token.constant.TokenKey.USER_TOKEN_PREFIX;
+import static com.project.token.constant.TokenKey.*;
 
 /**
  * @Auther: zhangyy
@@ -230,6 +230,35 @@ public class UserServiceImpl implements UserService {
         //分配角色
         sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
             userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(s.getRoleId()).build());
+        });
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void registerCenter(String centerName) {
+        Optional<SysUsers> optionalSysUsers = userRepository.findById(centerName);
+        if (optionalSysUsers.isPresent()) {
+            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
+        }
+        SysUsers user = new SysUsers();
+        user.setId(centerName);
+        user.setRoleCode(USER_ROLE_CODE_CENTER);
+        user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
+        user.setTeacherId(centerName);
+        user.setUserName(centerName);
+        user.setRegisterPhone(centerName);
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCenter(String centerName, String newCenterName){
+        userRepository.findById(centerName).ifPresent(s -> {
+            s.setId(newCenterName);
+            s.setTeacherId(newCenterName);
+            s.setRegisterPhone(newCenterName);
+            s.setUserName(newCenterName);
+            userRepository.save(s);
         });
     }
 }

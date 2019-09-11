@@ -10,6 +10,7 @@ import com.project.course.service.OnLineCourseDicService;
 import com.project.portal.course.request.OnLineCourseDicSaveUpdateRequest;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Auther: zhangyy
@@ -32,9 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/onLineCourseDic", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class OnLineCourseDicController {
     private final OnLineCourseDicService onLineCourseDicService;
+    private final TokenService tokenService;
 
-    public OnLineCourseDicController(OnLineCourseDicService onLineCourseDicService) {
+    public OnLineCourseDicController(OnLineCourseDicService onLineCourseDicService, TokenService tokenService) {
         this.onLineCourseDicService = onLineCourseDicService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -42,13 +47,15 @@ public class OnLineCourseDicController {
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "课程编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "form")
+            //@ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody OnLineCourseDicSaveUpdateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody OnLineCourseDicSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         OnLineCourseDic onLineCourseDic = new OnLineCourseDic();
         BeanUtil.copyProperties(request, onLineCourseDic);
         if (StrUtil.isBlank(request.getCourseId())) {
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            onLineCourseDic.setCenterAreaId(centerAreaId);
             return WebResult.okResult(onLineCourseDicService.save(onLineCourseDic));
         } else {
             return WebResult.okResult(onLineCourseDicService.update(onLineCourseDic));
@@ -56,14 +63,15 @@ public class OnLineCourseDicController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "培训项目课程字典列表")
+    @ApiOperation(value = "在线项目课程字典列表")
     @PostMapping(path = "/findAll")
     @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", example = "没有此参数查询全部", paramType = "query")
     public WebResult findAll(@RequestBody String centerAreaId) {
-        if (StrUtil.isNotBlank(centerAreaId)) {
-            return WebResult.okResult(onLineCourseDicService.findAllByCenterAreaId(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
+        String centerId = JSONObject.parseObject(centerAreaId).getString("centerAreaId");
+        if (StrUtil.isBlank(centerId)) {
+            return WebResult.okResult(onLineCourseDicService.findAll());
         }
-        return WebResult.okResult(onLineCourseDicService.findAll());
+        return WebResult.okResult(onLineCourseDicService.findAllByCenterAreaId(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
     }
 
     @UserLoginToken

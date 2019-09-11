@@ -7,9 +7,11 @@ import com.project.course.domain.CourseImages;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.web.req.CourseImagesReq;
+import com.project.course.web.resp.CourseListResp;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: zhangyy
@@ -34,7 +36,7 @@ public interface CourseService {
 
     public List<ICourseListDto> findAll(PageRequest page);
 
-//    public Map<String, Object> getCourseById(String courseId);
+    public Map<String, Object> getCourseById(String courseId);
 
     public List<CourseImages> findImagesByCourseId(String courseId);
 
@@ -44,7 +46,7 @@ public interface CourseService {
 
     public Course getById(String id);
 
-//    public List<CourseListResp> myCourseList(String classId);
+    public List<CourseListResp> myCourseList(String classId);
 
     public List<CourseEntity> findCourseList();
 
