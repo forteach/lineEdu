@@ -20,10 +20,14 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
      */
     public Page<PlanFile> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerId, Pageable pageable);
 
+    public Page<PlanFile> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
+
     /**
      * 班级所有的文件列表
      */
     public Page<PlanFile> findAllByIsValidatedEqualsAndCenterAreaIdAndClassIdOrderByCreateTimeDesc(String isValidated, String centerId, String classId, Pageable pageable);
+
+    public Page<PlanFile> findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(String isValidated, String classId, Pageable pageable);
 
     /**
      * 根据计划编号查询对应的班级资料分页信息

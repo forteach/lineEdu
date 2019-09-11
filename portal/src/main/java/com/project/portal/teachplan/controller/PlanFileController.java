@@ -53,7 +53,6 @@ public class PlanFileController {
             @ApiImplicitParam(name = "fileName", value = "资料名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody PlanFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         PlanFile planFile = new PlanFile();
@@ -68,21 +67,39 @@ public class PlanFileController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "班级资料明细列表")
+    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
+    @PostMapping(path = "/findByCenterAreaIdAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+    })
+    public WebResult findByCenterAreaIdAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
+        valideSort(request.getPage(), request.getPage());
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        if (StrUtil.isNotBlank(request.getClassId())) {
+            return WebResult.okResult(planFileService.findByCenterAreaIdAndClassIdAllPage(centerAreaId, request.getClassId(), pageRequest));
+        } else {
+            return WebResult.okResult(planFileService.findByCenterAreaIdAllPage(centerAreaId, pageRequest));
+        }
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "班级资料明细列表分页查询")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
+    public WebResult findAllPage(@RequestBody PlanFileFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         if (StrUtil.isNotBlank(request.getClassId())) {
-            return WebResult.okResult(planFileService.findAllPage(centerAreaId, request.getClassId(), pageRequest));
+            return WebResult.okResult(planFileService.findByClassIdPageAll(request.getClassId(), pageRequest));
         } else {
-            return WebResult.okResult(planFileService.findAllPage(centerAreaId, pageRequest));
+            return WebResult.okResult(planFileService.findAllPage(pageRequest));
         }
     }
 
@@ -97,7 +114,7 @@ public class PlanFileController {
     public WebResult findById(@RequestBody PlanFileFindByPlanIdRequest request) {
         valideSort(request.getPage(), request.getPage());
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "项目计划编号id不为空");
-        return WebResult.okResult(planFileService.findByPjPlanIdPageAll(request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+        return WebResult.okResult(planFileService.findByPlanIdPageAll(request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
     }
 
     @UserLoginToken

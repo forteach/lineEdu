@@ -81,7 +81,7 @@ public class PlanFileService extends BaseMySqlService {
      * @param pageable
      * @return Page<ClassFile>
      */
-    public Page<PlanFile> findAllPage(String centerAreaId, String classId, Pageable pageable) {
+    public Page<PlanFile> findByCenterAreaIdAndClassIdAllPage(String centerAreaId, String classId, Pageable pageable) {
         return planFileRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, classId, pageable);
     }
 
@@ -91,14 +91,24 @@ public class PlanFileService extends BaseMySqlService {
      * @param pageable
      * @return Page<ClassFile>
      */
-    public Page<PlanFile> findAllPage(String centerAreaId, Pageable pageable) {
+    public Page<PlanFile> findByCenterAreaIdAllPage(String centerAreaId, Pageable pageable) {
         return planFileRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageable);
     }
 
 
-    public Page<PlanFile> findByPjPlanIdPageAll(String planId, Pageable pageable) {
+    public Page<PlanFile> findByPlanIdPageAll(String planId, Pageable pageable) {
         return planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, pageable);
     }
+
+    public Page<PlanFile> findAllPage(Pageable pageable) {
+        return planFileRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
+    }
+
+
+    public Page<PlanFile> findByClassIdPageAll(String classId, Pageable pageable) {
+        return planFileRepository.findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId, pageable);
+    }
+
 
     /**
      * 返回计划下的班级文件资料数量
