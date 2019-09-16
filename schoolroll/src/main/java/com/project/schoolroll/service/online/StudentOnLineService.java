@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,7 @@ public class StudentOnLineService {
                 .filter(s -> StrUtil.isNotBlank(s.getClassName()))
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
         //判断班级信息存在则设值，不存在新建
-        Map<String, String> classIds = getClass(stringListMap);
+        Map<String, String> classIds = getClass(stringListMap.keySet());
         stringListMap.forEach((k, v) -> {
             List<StudentOnLine> lineList = setClassId(classIds, v, centerAreaId);
             studentOnLineRepository.saveAll(lineList);
@@ -72,8 +73,8 @@ public class StudentOnLineService {
         //删除键值操作
         deleteKey();
     }
-    private Map<String, String> getClass(Map<String, List<StudentOnLine>> map){
-        return map.keySet().stream()
+    private Map<String, String> getClass(Set<String> set){
+        return set.stream()
                 .filter(Objects::nonNull)
                 .map(tbClassService::getClassIdByClassName)
                 .collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));

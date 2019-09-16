@@ -8,8 +8,8 @@ import com.project.schoolroll.repository.TbClassesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
@@ -25,6 +25,10 @@ public class TbClassService {
     public TbClasses getClassIdByClassName(String className){
            return tbClassesRepository.findByClassName(className)
                    .orElse(tbClassesRepository.save(new TbClasses(IdUtil.simpleUUID(), className)));
+    }
+
+    public Map<String, String> getClassMap(Set<String> className){
+        return className.stream().map(this::getClassIdByClassName).collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
     }
 
     public TbClasses findClassByClassId(String classId){
