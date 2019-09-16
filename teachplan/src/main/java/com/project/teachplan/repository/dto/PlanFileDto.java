@@ -9,12 +9,12 @@ package com.project.teachplan.repository.dto;
  */
 public interface PlanFileDto {
     /** 文件url*/
-    public String getFileId();
+//    public String getFileId();
     /** 文件名称*/
-    public String getFileName();
+//    public String getFileName();
     /** 文件url*/
-    public String getFileUrl();
-    /*×班级id*/
+//    public String getFileUrl();
+    /**班级id*/
     public String getClassId();
     /** 班级名称*/
     public String getClassName();
@@ -24,8 +24,10 @@ public interface PlanFileDto {
     public String getPlanName();
     /** 计划结束时间*/
     public String getStartDate();
-    /*× 计划结束时间*/
+    /** 计划结束时间*/
     public String getEndDate();
     /** 计划负责人*/
     public String getPlanAdmin();
+    /** 计划创建时间*/
+    public String getCreateTime();
 }

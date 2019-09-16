@@ -32,12 +32,12 @@ public class LoginResponse implements Serializable {
     /**
      * 班级id
      */
-//    private String classId;
+    private String classId;
 
     /**
      * 班级名称
      */
-//    private String className;
+    private String className;
 
     /**
      * 学生id
