@@ -151,11 +151,11 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         });
 
         //todo 获取登陆用户信息
-        IWeChatUser iWeChatUser = weChatUserRepository.findByIsValidatedEqualsAndOpenId(openId);
+        IWeChatUser iWeChatUser = weChatUserRepository.findAllByIsValidatedEqualsAndOpenId(openId);
         LoginResponse loginResp = new LoginResponse();
         if (iWeChatUser != null) {
-//            loginResp.setClassId(iWeChatUser.getClassId());
-//            loginResp.setClassName(iWeChatUser.getClassName());
+            loginResp.setClassId(iWeChatUser.getClassId());
+            loginResp.setClassName(iWeChatUser.getClassName());
             loginResp.setPortrait(iWeChatUser.getPortrait());
             loginResp.setStudentId(iWeChatUser.getStudentId());
             loginResp.setStudentName(iWeChatUser.getStudentName());
