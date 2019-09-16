@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
+import com.project.portal.teachplan.request.FlanFileFindAllRequest;
 import com.project.portal.teachplan.request.PlanFileFindAllPage;
 import com.project.portal.teachplan.request.PlanFileFindByPlanIdRequest;
 import com.project.portal.teachplan.request.PlanFileSaveUpdateRequest;
@@ -79,9 +80,9 @@ public class PlanFileController {
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         if (StrUtil.isNotBlank(request.getClassId())) {
-            return WebResult.okResult(planFileService.findByCenterAreaIdAndClassIdAllPage(centerAreaId, request.getClassId(), pageRequest));
+            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
         } else {
-            return WebResult.okResult(planFileService.findByCenterAreaIdAllPage(centerAreaId, pageRequest));
+            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaId(centerAreaId, pageRequest));
         }
     }
 
@@ -115,6 +116,18 @@ public class PlanFileController {
         valideSort(request.getPage(), request.getPage());
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "项目计划编号id不为空");
         return WebResult.okResult(planFileService.findByPlanIdPageAll(request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+    }
+
+    @ApiOperation(value = "根据计划id和班级id查询对应的文件列表信息")
+    @PostMapping(path = "/findAllByPlanIdAndClassId")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", value = "项目计划编号", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "form", required = true)
+    })
+    public WebResult findAllByPlanIdAndClassId(@RequestBody FlanFileFindAllRequest request){
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "项目计划编号id不为空");
+        MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级id不为空");
+        return WebResult.okResult(planFileService.findAllPlanIdAndClassId(request.getPlanId(), request.getClassId()));
     }
 
     @UserLoginToken

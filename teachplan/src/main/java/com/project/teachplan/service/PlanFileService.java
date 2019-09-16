@@ -11,6 +11,7 @@ import com.project.schoolroll.repository.TbClassesRepository;
 import com.project.schoolroll.service.online.TbClassService;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.repository.PlanFileRepository;
+import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.dto.PlanFileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +44,12 @@ public class PlanFileService extends BaseMySqlService {
     @PersistenceContext
     private EntityManager entityManager;
     private final PlanFileRepository planFileRepository;
-    private final TbClassesRepository tbClassesRepository;
-    private final TbClassService tbClassService;
+    private final TeachPlanClassRepository teachPlanClassRepository;
 
     @Autowired
-    public PlanFileService(TbClassesRepository tbClassesRepository, PlanFileRepository planFileRepository, TbClassService tbClassService) {
+    public PlanFileService(PlanFileRepository planFileRepository, TeachPlanClassRepository teachPlanClassRepository) {
         this.planFileRepository = planFileRepository;
-        this.tbClassesRepository = tbClassesRepository;
-        this.tbClassService = tbClassService;
+        this.teachPlanClassRepository = teachPlanClassRepository;
     }
 
 
@@ -115,6 +114,10 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
     }
 
+    public List<PlanFile> findAllPlanIdAndClassId(String planId, String classId){
+        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassId(TAKE_EFFECT_OPEN, planId, classId);
+    }
+
 
     public Page<PlanFile> findByClassIdPageAll(String classId, Pageable pageable) {
         return planFileRepository.findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId, pageable);
@@ -128,6 +131,14 @@ public class PlanFileService extends BaseMySqlService {
 //        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, pageable);
 //    }
 
+
+    public Page<PlanFileDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable){
+        return teachPlanClassRepository.findAllByCenterAreaIdDto(centerAreaId, pageable);
+    }
+
+    public Page<PlanFileDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable){
+        return teachPlanClassRepository.findAllByCenterAreaIdAndClassIdDto(centerAreaId, classId, pageable);
+    }
 
     /**
      * 返回计划下的班级文件资料数量

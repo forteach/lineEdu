@@ -51,6 +51,9 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     @Transactional(readOnly = true)
     public List<PlanFile> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
 
+    @Transactional(readOnly = true)
+    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassId(String isValidated, String planId, String classId);
+
 //    public Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndCourseIdOrderByCreateTimeDesc(String isValidated, String planId, String courseId, Pageable pageable);
 
 //    public Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(String isValidated, String planId, String classId, Pageable pageable);

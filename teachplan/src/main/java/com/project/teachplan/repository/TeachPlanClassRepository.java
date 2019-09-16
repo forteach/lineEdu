@@ -1,6 +1,9 @@
 package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.online.TeachPlanClass;
+import com.project.teachplan.repository.dto.PlanFileDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +22,34 @@ public interface TeachPlanClassRepository extends JpaRepository<TeachPlanClass, 
 
     @Transactional(readOnly = true)
     List<TeachPlanClass> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId);
+
+    @Query(value = " select " +
+            " tpc.classId as classId," +
+            " tpc.className as className," +
+            " tp.planId as planId," +
+            " tp.planName as planName," +
+            " tp.planAdmin as planAdmin," +
+            " tp.startDate as startDate," +
+            " tp.endDate as endDate, " +
+            " tp.createTime as createTime " +
+            " from TeachPlanClass AS tpc left join TeachPlan as tp " +
+            " on tpc.planId = tp.planId " +
+            " where tpc.isValidated = '0' and tp.isValidated = '0' and tpc.centerAreaId = ?1")
+    @Transactional(readOnly = true)
+    Page<PlanFileDto> findAllByCenterAreaIdDto(String centerAreaId, Pageable pageable);
+
+    @Query(value = " select " +
+            " tpc.classId as classId," +
+            " tpc.className as className," +
+            " tp.planId as planId," +
+            " tp.planName as planName," +
+            " tp.planAdmin as planAdmin," +
+            " tp.startDate as startDate," +
+            " tp.endDate as endDate," +
+            " tp.createTime as createTime " +
+            " from TeachPlanClass AS tpc left join TeachPlan as tp " +
+            " on tpc.planId = tp.planId " +
+            " where tpc.isValidated = '0' and tp.isValidated = '0' and tpc.centerAreaId = ?1 and tpc.classId = ?2")
+    @Transactional(readOnly = true)
+    Page<PlanFileDto> findAllByCenterAreaIdAndClassIdDto(String centerAreaId, String classId, Pageable pageable);
 }
