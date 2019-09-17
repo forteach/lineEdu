@@ -80,10 +80,11 @@ public class StudentOnLineController {
         return WebResult.okResult(studentOnLineService.findAllPage(PageRequest.of(request.getPage(), request.getSize())));
     }
 
-//    @PostMapping("/")
-//    public WebResult save() {
-//        String centerAreaId = "10001";
-//        studentOnLineService.importStudent(FileUtil.getInputStream("C:\\Users\\zzz\\Desktop\\00.xlsx"), centerAreaId);
-//        return WebResult.okResult();
-//    }
+    @GetMapping("/import")
+    public WebResult save() {
+        studentOnLineService.checkoutKey();
+        String centerAreaId = "1001";
+        studentOnLineService.importStudent(FileUtil.getInputStream("/home/yy/nextcloud-forteach/zip/工作簿1.xlsx"), centerAreaId);
+        return WebResult.okResult();
+    }
 }
