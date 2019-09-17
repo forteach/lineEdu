@@ -22,7 +22,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     Page<Teacher> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
 
     @Transactional(readOnly = true)
-    List<Teacher> findAllByIsValidatedEquals(String isValidated);
+    Page<Teacher> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);
+
+    @Transactional(readOnly = true)
+    List<Teacher> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId);
 
     @Transactional(readOnly = true)
     List<Teacher> findAllByIsValidatedEqualsAndTeacherCode(String isValidated, String teacherCode);

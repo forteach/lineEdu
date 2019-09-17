@@ -75,9 +75,10 @@ public class StudentOnLineController {
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
     })
-    public WebResult findPageAll(@RequestBody StudentOnLineFindAllPageRequest request){
+    public WebResult findPageAll(@RequestBody StudentOnLineFindAllPageRequest request, HttpServletRequest httpServletRequest){
         valideSort(request.getPage(), request.getSize());
-        return WebResult.okResult(studentOnLineService.findAllPage(PageRequest.of(request.getPage(), request.getSize())));
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(studentOnLineService.findAllPageByCenterAreaId(centerAreaId, PageRequest.of(request.getPage(), request.getSize())));
     }
 
 //    @GetMapping("/import")

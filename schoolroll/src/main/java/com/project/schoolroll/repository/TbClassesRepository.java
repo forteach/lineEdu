@@ -2,6 +2,7 @@ package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.online.TbClasses;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +16,10 @@ import java.util.Optional;
  */
 public interface TbClassesRepository extends JpaRepository<TbClasses, String> {
 
-//    public boolean existsByClassName(String className);
+    @Transactional(readOnly = true)
+    public Optional<TbClasses> findByClassNameAndCenterAreaId(String className, String centerAreaId);
 
-    public Optional<TbClasses> findByClassName(String className);
-
-    public List<TbClasses> findAllByIsValidatedEquals(String isValidated);
+    @Transactional(readOnly = true)
+    public List<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId);
 
 }

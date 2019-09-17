@@ -122,10 +122,11 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody ClassStandardListReq request){
+    public WebResult findAllPage(@RequestBody ClassStandardListReq request, HttpServletRequest httpServletRequest){
         valideSort(request.getPage(), request.getSize());
         PageRequest pageReq = PageRequest.of(request.getPage(), request.getSize());
-        Page<ClassStandard> result= classStandardService.findAllPage(request.getCenterAreaId(),request.getCreateYear(),pageReq);
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        Page<ClassStandard> result= classStandardService.findAllPage(centerAreaId,request.getCreateYear(),pageReq);
         //设置分页返回对象
         return WebResult.okResult(getPageResult(new PageListRes<ClassStandardSaveReq>(),result,new ClassStandardSaveReq()));
     }

@@ -63,7 +63,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (optionalTeacher.isPresent()) {
             Teacher t = optionalTeacher.get();
             BeanUtil.copyProperties(teacher, t);
-            if (StrUtil.isNotBlank(teacher.getPhone()) && !t.getPhone().equals(teacher.getPhone())){
+            if (StrUtil.isNotBlank(teacher.getPhone()) && !t.getPhone().equals(teacher.getPhone())) {
                 userService.updateTeacher(t.getPhone(), teacher.getPhone());
             }
             return teacherRepository.save(teacher);
@@ -73,13 +73,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Page<Teacher> findAllPage(PageRequest pageRequest) {
-        return teacherRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageRequest);
+    public Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest) {
+        return teacherRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageRequest);
     }
 
     @Override
-    public List<Teacher> findAll() {
-        return teacherRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
+    public List<Teacher> findAll(String centerAreaId) {
+        return teacherRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId);
     }
 
     @Override
@@ -92,9 +92,9 @@ public class TeacherServiceImpl implements TeacherService {
     @Transactional(rollbackFor = Exception.class)
     public void removeByTeacherId(String teacherId) {
         teacherRepository.findById(teacherId).ifPresent(t -> {
-                    t.setIsValidated(TAKE_EFFECT_CLOSE);
-                    teacherRepository.save(t);
-                });
+            t.setIsValidated(TAKE_EFFECT_CLOSE);
+            teacherRepository.save(t);
+        });
     }
 
     @Override
@@ -106,10 +106,20 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void uploadFile(String teacherId, String fileUrl){
+    public void uploadFile(String teacherId, String fileUrl) {
         teacherRepository.findById(teacherId).ifPresent(t -> {
             t.setFileUrl(fileUrl);
             teacherRepository.save(t);
         });
+    }
+
+    @Override
+    public Teacher findById(String teacherId) {
+        Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
+        if (optionalTeacher.isPresent()) {
+            return optionalTeacher.get();
+        }
+        MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的教师信息");
+        return null;
     }
 }

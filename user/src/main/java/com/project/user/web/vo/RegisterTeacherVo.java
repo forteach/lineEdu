@@ -18,4 +18,5 @@ public class RegisterTeacherVo implements Serializable {
     private String teacherName;
     private String teacherId;
     private String userName;
+    private String centerAreaId;
 }

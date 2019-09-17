@@ -65,7 +65,7 @@ public class StudentOnLineService {
                 .filter(s -> StrUtil.isNotBlank(s.getClassName()))
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
         //判断班级信息存在则设值，不存在新建
-        Map<String, String> classIds = getClass(stringListMap.keySet());
+        Map<String, String> classIds = getClass(stringListMap.keySet(), centerAreaId);
         stringListMap.forEach((k, v) -> {
             List<StudentOnLine> lineList = setClassId(classIds, v, centerAreaId);
             studentOnLineRepository.saveAll(lineList);
@@ -73,10 +73,10 @@ public class StudentOnLineService {
         //删除键值操作
         deleteKey();
     }
-    private Map<String, String> getClass(Set<String> set){
+    private Map<String, String> getClass(Set<String> set, String centerAreaId){
         return set.stream()
                 .filter(Objects::nonNull)
-                .map(tbClassService::getClassIdByClassName)
+                .map(className -> tbClassService.getClassIdByClassName(className, centerAreaId))
                 .collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
     }
     private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId){
@@ -106,7 +106,11 @@ public class StudentOnLineService {
 
     /* 查询*/
     public Page<StudentOnLine> findAllPage(PageRequest request){
-        return studentOnLineRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, request);
+        return studentOnLineRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, request);
+    }
+
+    public Page<StudentOnLine> findAllPageByCenterAreaId(String centerAreaId, PageRequest request){
+        return studentOnLineRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, request);
     }
 
     public List<StudentOnLine> findByStuIDCardAndStudentName(String stuIDCard, String studentName){

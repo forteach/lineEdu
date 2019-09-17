@@ -82,8 +82,9 @@ public class TeacherController {
     @UserLoginToken
     @ApiOperation(value = "查询有效教师信息集合")
     @GetMapping(path = "/")
-    public WebResult findAll() {
-        return WebResult.okResult(teacherService.findAll());
+    public WebResult findAll(HttpServletRequest httpServletRequest) {
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(teacherService.findAll(centerAreaId));
     }
 
     @UserLoginToken
@@ -93,9 +94,10 @@ public class TeacherController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody SortVo sortVo) {
+    public WebResult findAllPage(@RequestBody SortVo sortVo, HttpServletRequest httpServletRequest) {
         valideSort(sortVo.getPage(), sortVo.getSize());
-        return WebResult.okResult(teacherService.findAllPage(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(teacherService.findAllPageByCenterAreaId(centerAreaId, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
 
     @UserLoginToken
@@ -114,7 +116,7 @@ public class TeacherController {
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
     public WebResult deleteByTeacherId(@PathVariable String teacherId) {
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不能为空");
-        teacherService.deleteByTeacherId(JSONObject.parseObject(teacherId).getString("teacherId"));
+        teacherService.deleteByTeacherId(teacherId);
         return WebResult.okResult();
     }
 
@@ -124,7 +126,7 @@ public class TeacherController {
     @ApiImplicitParam(name = "teacherCode", value = "教师代码", dataType = "string", required = true, paramType = "form")
     public WebResult deleteByTeacherCode(@PathVariable String teacherCode){
         MyAssert.isNull(teacherCode, DefineCode.ERR0010, "教师id不能为空");
-        teacherService.deleteByTeacherCode(JSONObject.parseObject(teacherCode).getString("teacherCode"));
+        teacherService.deleteByTeacherCode(teacherCode);
         return WebResult.okResult();
     }
 

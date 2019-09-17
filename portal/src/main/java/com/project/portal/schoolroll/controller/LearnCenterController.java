@@ -86,7 +86,7 @@ public class LearnCenterController {
             learnCenter.setCenterId(centerAreaId);
             learnCenter.setCenterAreaId(centerAreaId);
             learnCenterRepository.save(learnCenter);
-            userService.registerCenter(request.getCenterName());
+            userService.registerCenter(request.getCenterName(), centerAreaId);
         }
         return WebResult.okResult();
     }

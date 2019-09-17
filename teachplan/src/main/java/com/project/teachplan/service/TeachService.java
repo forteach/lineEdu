@@ -16,6 +16,7 @@ import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.vo.TeachPlanCourseVo;
+import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,21 +45,21 @@ public class TeachService {
     private final TbClassService tbClassService;
     private final TeachPlanClassRepository teachPlanClassRepository;
     private final TeachPlanCourseRepository teachPlanCourseRepository;
-    private final CourseService courseService;
     private final OnLineCourseDicService onLineCourseDicService;
+    private final TeacherService teacherService;
 
     @Autowired
     public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
-                        TeachPlanCourseRepository teachPlanCourseRepository, CourseService courseService,
-                        TbClassService tbClassService, TeachPlanClassRepository teachPlanClassRepository,
+                        TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
+                        TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
                         TeachPlanCourseService teachPlanCourseService, OnLineCourseDicService onLineCourseDicService) {
         this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
+        this.teacherService = teacherService;
         this.teachPlanClassRepository = teachPlanClassRepository;
         this.teachPlanCourseService = teachPlanCourseService;
         this.teachPlanCourseRepository = teachPlanCourseRepository;
-        this.courseService = courseService;
         this.onLineCourseDicService = onLineCourseDicService;
     }
 
@@ -98,8 +99,9 @@ public class TeachService {
     }
 
     private TeachPlanCourse createTeachPlanCourse(String planId, TeachPlanCourseVo vo, String centerAreaId) {
+        String teacherName = teacherService.findById(vo.getTeacherId()).getTeacherName();
         return new TeachPlanCourse(planId, vo.getCourseId(), onLineCourseDicService.findId(vo.getCourseId()).getCourseName(),
-                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), vo.getTeacherName(), centerAreaId);
+                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), teacherName, centerAreaId);
     }
 
     private void saveTeachPlanClass(String planId, TeachPlan teachPlan, List<String> classIds, String centerAreaId) {

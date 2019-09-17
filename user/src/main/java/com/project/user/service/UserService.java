@@ -65,7 +65,7 @@ public interface UserService {
 
     void updateTeacher(String phone, String newPhone);
 
-    void registerCenter(String centerName);
+    void registerCenter(String centerName, String centerAreaId);
 
     void updateCenter(String center, String newCenter);
 }

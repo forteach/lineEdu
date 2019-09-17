@@ -226,6 +226,7 @@ public class UserServiceImpl implements UserService {
         user.setTeacherId(vo.getPhone());
         user.setUserName(vo.getUserName());
         user.setRegisterPhone(vo.getPhone());
+        user.setCenterAreaId(vo.getCenterAreaId());
         SysUsers sysUsers = userRepository.save(user);
         //分配角色
         sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
@@ -245,7 +246,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void registerCenter(String centerName) {
+    public void registerCenter(String centerName, String centerAreaId) {
         Optional<SysUsers> optionalSysUsers = userRepository.findById(centerName);
         if (optionalSysUsers.isPresent()) {
             MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
@@ -257,6 +258,7 @@ public class UserServiceImpl implements UserService {
         user.setTeacherId(centerName);
         user.setUserName(centerName);
         user.setRegisterPhone(centerName);
+        user.setCenterAreaId(centerAreaId);
         userRepository.save(user);
     }
 

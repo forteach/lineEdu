@@ -33,4 +33,10 @@ public class TbClasses extends Entitys implements Serializable {
     private String classId;
     @Column(name = "class_name", columnDefinition = "VARCHAR(32) COMMENT '班级名称'")
     private String className;
+
+    public TbClasses(String centerAreaId, String classId, String className) {
+        super(centerAreaId);
+        this.classId = classId;
+        this.className = className;
+    }
 }

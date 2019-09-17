@@ -4,6 +4,7 @@ import com.project.user.domain.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -17,9 +18,9 @@ public interface TeacherService {
 
     public Teacher update(Teacher teacher);
 
-    public Page<Teacher> findAllPage(PageRequest pageRequest);
+    public Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest);
 
-    public List<Teacher> findAll();
+    public List<Teacher> findAll(String centerAreaId);
 
     public void deleteByTeacherCode(String teacherCode);
 
@@ -28,4 +29,6 @@ public interface TeacherService {
     public void deleteByTeacherId(String teacherId);
 
     public void uploadFile(String teacherId, String fileUrl);
+
+    public Teacher findById(String teacherId);
 }

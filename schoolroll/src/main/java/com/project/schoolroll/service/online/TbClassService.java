@@ -22,14 +22,11 @@ public class TbClassService {
         this.tbClassesRepository = tbClassesRepository;
     }
 
-    public TbClasses getClassIdByClassName(String className){
-           return tbClassesRepository.findByClassName(className)
-                   .orElse(tbClassesRepository.save(new TbClasses(IdUtil.simpleUUID(), className)));
+    TbClasses getClassIdByClassName(String className, String centerAreaId){
+           return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId)
+                   .orElse(tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className)));
     }
 
-    public Map<String, String> getClassMap(Set<String> className){
-        return className.stream().map(this::getClassIdByClassName).collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
-    }
 
     public TbClasses findClassByClassId(String classId){
         Optional<TbClasses> optionalTbClasses = tbClassesRepository.findById(classId);
@@ -41,7 +38,7 @@ public class TbClassService {
         }
     }
 
-    public List<TbClasses> findAll(){
-        return tbClassesRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN);
+    public List<TbClasses> findAllByCenterAreaId(String centerAreaId){
+        return tbClassesRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId);
     }
 }
