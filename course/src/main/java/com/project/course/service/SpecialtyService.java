@@ -20,7 +20,7 @@ public interface SpecialtyService {
      * @param specialtyId
      * @param specialtyName
      */
-    public Specialty saveUpdate(String specialtyId, String specialtyName);
+    public Specialty saveUpdate(String specialtyId, String specialtyName, String centerAreaId);
 
     /**
      * 查询对应专业信息(全部)

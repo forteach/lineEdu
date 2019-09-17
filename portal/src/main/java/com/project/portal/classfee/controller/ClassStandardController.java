@@ -13,16 +13,19 @@ import com.project.portal.response.PageListRes;
 import com.project.portal.controller.BaseController;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -38,8 +41,15 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @RequestMapping(path = "/classStandard", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ClassStandardController extends BaseController<ClassStandard,ClassStandardSaveReq> {
 
-    @Resource
-    private ClassStandardService classStandardService;
+    private final ClassStandardService classStandardService;
+    private final TokenService tokenService;
+
+    @Autowired
+    public ClassStandardController(TokenService tokenService, ClassStandardService classStandardService) {
+        this.classStandardService = classStandardService;
+        this.tokenService = tokenService;
+    }
+
 
     @UserLoginToken
     @ApiOperation(value = "添加修改课时费信息")
@@ -54,20 +64,21 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
             @ApiImplicitParam(value = "中心补贴总金额", name = "subsidiesSum", dataType = "int", paramType = "form"),
             @ApiImplicitParam(value = "每节课课时费", name = "classFee", dataType = "int", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody ClassStandardSaveReq request) {
+    public WebResult saveOrUpdate(@RequestBody ClassStandardSaveReq request, HttpServletRequest httpServletRequest) {
         log.info("课时费添加");
 
         String staId=request.getStandardId();
         ClassStandard cls=null;
         if(StrUtil.isBlank(staId)){
             //保存课时费标准
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
              cls=classStandardService.save(
                     request.getCreateYear(),
                     request.getSpecialtyIds(),
                     request.getStudentSum(),
                     request.getStudentSubsidies(),
                     request.getSubsidiesSum(),
-                    request.getCenterAreaId());
+                    centerAreaId);
         }else{
             //保存课时费标准
              cls=classStandardService.update(

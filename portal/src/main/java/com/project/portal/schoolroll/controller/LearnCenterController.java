@@ -82,7 +82,9 @@ public class LearnCenterController {
             }
             LearnCenter learnCenter = new LearnCenter();
             BeanUtils.copyProperties(request, learnCenter);
-            learnCenter.setCenterId(IdUtil.fastSimpleUUID());
+            String centerAreaId = IdUtil.fastSimpleUUID();
+            learnCenter.setCenterId(centerAreaId);
+            learnCenter.setCenterAreaId(centerAreaId);
             learnCenterRepository.save(learnCenter);
             userService.registerCenter(request.getCenterName());
         }

@@ -10,6 +10,7 @@ import com.project.portal.train.request.ClassFileFindAllPage;
 import com.project.portal.train.request.ClassFileFindByPjPlanIdRequest;
 import com.project.portal.train.request.ClassFileSaveUpdateRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.train.domain.ClassFile;
 import com.project.train.service.ClassFileService;
 import io.swagger.annotations.Api;
@@ -19,6 +20,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -34,9 +37,11 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @RequestMapping(path = "/classFile", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ClassFileController {
     private final ClassFileService classFileService;
+    private final TokenService tokenService;
 
-    public ClassFileController(ClassFileService classFileService) {
+    public ClassFileController(ClassFileService classFileService, TokenService tokenService) {
         this.classFileService = classFileService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -50,10 +55,12 @@ public class ClassFileController {
             @ApiImplicitParam(name = "classId", value = "培训班级编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody ClassFileSaveUpdateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody ClassFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         ClassFile classFile = new ClassFile();
         BeanUtil.copyProperties(request, classFile);
         if (StrUtil.isBlank(request.getFileId())) {
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            classFile.setCenterAreaId(centerAreaId);
             return WebResult.okResult(classFileService.save(classFile));
         } else {
             return WebResult.okResult(classFileService.update(classFile));

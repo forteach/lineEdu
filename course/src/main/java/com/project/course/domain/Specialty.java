@@ -47,7 +47,7 @@ public class Specialty extends Entitys implements Serializable {
     public Specialty() {
     }
 
-    public Specialty(String specialtyId, String specialtyName) {
+    public Specialty(String specialtyId, String specialtyName, String centerAreaId) {
         this.specialtyId = specialtyId;
         this.specialtyName = specialtyName;
     }

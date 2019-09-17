@@ -1,6 +1,7 @@
 package com.project.portal.train.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -8,6 +9,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainPlanCourseSaveUpateRequest;
 import com.project.portal.train.vo.TrainPlanCourseVo;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.train.domain.TrainPlanCourse;
 import com.project.train.service.TrainPlanCourseService;
 import io.swagger.annotations.Api;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -37,9 +40,11 @@ import static java.util.stream.Collectors.toList;
 public class TrainPlanCourseController {
 
     private final TrainPlanCourseService trainPlanCourseService;
+    private final TokenService tokenService;
 
-    public TrainPlanCourseController(TrainPlanCourseService trainPlanCourseService) {
+    public TrainPlanCourseController(TrainPlanCourseService trainPlanCourseService, TokenService tokenService) {
         this.trainPlanCourseService = trainPlanCourseService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -56,13 +61,17 @@ public class TrainPlanCourseController {
 //            @ApiImplicitParam(name = "planId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody TrainPlanCourseSaveUpateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody TrainPlanCourseSaveUpateRequest request, HttpServletRequest httpServletRequest) {
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         List<TrainPlanCourse> list = request.getList()
                 .stream()
                 .map(vo -> {
                     TrainPlanCourse trainPlanCourse = new TrainPlanCourse();
                     BeanUtil.copyProperties(vo, trainPlanCourse);
                     trainPlanCourse.setCenterAreaId(request.getCenterAreaId());
+                    if (StrUtil.isBlank(request.getCenterAreaId())){
+                        trainPlanCourse.setCenterAreaId(centerAreaId);
+                    }
                     return trainPlanCourse;
                 }).collect(toList());
         return WebResult.okResult(trainPlanCourseService.saveOrUpdate(request.getPjPlanId(), list));

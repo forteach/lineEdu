@@ -10,6 +10,7 @@ import com.project.portal.train.request.FinanceDetailFindAllPage;
 import com.project.portal.train.request.FinanceDetailSaveUpdateRequest;
 import com.project.portal.train.request.FindFinanceDetailRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.train.domain.FinanceDetail;
 import com.project.train.service.FinanceDetailService;
 import io.swagger.annotations.Api;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -38,9 +41,11 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class FinanceDetailController {
 
     private final FinanceDetailService financeDetailService;
+    private final TokenService tokenService;
 
-    public FinanceDetailController(FinanceDetailService financeDetailService) {
+    public FinanceDetailController(FinanceDetailService financeDetailService, TokenService tokenService) {
         this.financeDetailService = financeDetailService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -58,10 +63,12 @@ public class FinanceDetailController {
             @ApiImplicitParam(name = "happenTime", value = "账目发生时间", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody FinanceDetailSaveUpdateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody FinanceDetailSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         FinanceDetail financeDetail = new FinanceDetail();
         BeanUtil.copyProperties(request, financeDetail);
         if (StrUtil.isBlank(request.getDetailId())) {
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            financeDetail.setCenterAreaId(centerAreaId);
             return WebResult.okResult(financeDetailService.save(financeDetail));
         } else {
             return WebResult.okResult(financeDetailService.update(financeDetail));

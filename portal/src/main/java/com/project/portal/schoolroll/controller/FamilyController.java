@@ -12,12 +12,15 @@ import com.project.schoolroll.domain.Family;
 import com.project.schoolroll.repository.FamilyRepository;
 import com.project.schoolroll.service.FamilyService;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: zhangyy
@@ -34,9 +37,11 @@ public class FamilyController {
 
     private final FamilyService familyService;
     private final FamilyRepository familyRepository;
-    private FamilyController(FamilyService familyService, FamilyRepository familyRepository){
+    private final TokenService tokenService;
+    private FamilyController(FamilyService familyService, FamilyRepository familyRepository, TokenService tokenService){
         this.familyService = familyService;
         this.familyRepository = familyRepository;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -55,7 +60,7 @@ public class FamilyController {
             @ApiImplicitParam(name = "companyOrganization", value = "工作单位", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "politicalStatus", value = "政治面貌", dataType = "string", paramType = "form"),
     })
-    public WebResult saveOrUpdate(@RequestBody FamilySaveUpdateRequest request){
+    public WebResult saveOrUpdate(@RequestBody FamilySaveUpdateRequest request, HttpServletRequest httpServletRequest){
         if (StrUtil.isNotBlank(request.getFamilyId())){
             //是修改
             familyRepository.findById(request.getFamilyId()).ifPresent(family -> {
@@ -71,6 +76,8 @@ public class FamilyController {
             Family family = new Family();
             BeanUtil.copyProperties(request, family);
             family.setFamilyId(IdUtil.fastSimpleUUID());
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            family.setCenterAreaId(centerAreaId);
             familyRepository.save(family);
         }
         return WebResult.okResult();

@@ -11,16 +11,14 @@ import com.project.portal.response.WebResult;
 import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -41,22 +39,24 @@ import java.util.List;
 public class ImportClassFeeController {
     private final ClassFeeInfoService classFeeInfoService;
     private final ExcelImpServiceImpl excelImpService;
+    private final TokenService tokenService;
 
 
     @Autowired
-    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService, ExcelImpServiceImpl excelImpService) {
+    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService, ExcelImpServiceImpl excelImpService, TokenService tokenService) {
         this.classFeeInfoService = classFeeInfoService;
         this.excelImpService = excelImpService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
     @ApiOperation(value = "导入课时费信息")
-    @PostMapping(path = "/classFee")
+    @PostMapping(path = "/classFee/{token}")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
-    public WebResult leadingInStudents(@RequestParam("file") MultipartFile file) {
+    public WebResult leadingInStudents(@RequestParam("file") MultipartFile file, @PathVariable String token) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         //TODO 需要从公共的REDIS信息里面取值
-        String centerId = "01";
+        String centerAreaId = tokenService.getCenterAreaId(token);
         try {
             List<ClassFeeInfo> list = classFeeInfoService.excelReader(file.getInputStream(), ClassFeeInfo.class);
 
@@ -66,7 +66,7 @@ public class ImportClassFeeController {
                 MyAssert.isTrue(true, DefineCode.ERR0010, "没有可导入的数据");
             }
             //文件信息的数据库添加操作。
-            classFeeInfoService.impFile(list, list.get(0).getCreateYear(), list.get(0).getCreateMonth(), centerId);
+            classFeeInfoService.impFile(list, list.get(0).getCreateYear(), list.get(0).getCreateMonth(), centerAreaId);
             return WebResult.okResult();
         } catch (IOException e) {
             //导入错误，删除REDIS键值
@@ -79,9 +79,9 @@ public class ImportClassFeeController {
 
     @UserLoginToken
     @ApiOperation(value = "导入学生信息数据")
-    @PostMapping(path = "/students")
+    @PostMapping(path = "/students/{token}")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
-    public WebResult inportStudents(@RequestParam("file") MultipartFile file) {
+    public WebResult inportStudents(@RequestParam("file") MultipartFile file, @PathVariable String token) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         try {
 
@@ -89,7 +89,7 @@ public class ImportClassFeeController {
             //设置导入修改时间 防止失败没有过期时间
             String type = FileUtil.extName(file.getOriginalFilename());
             //todo 需要获取上传的学生中心id数据
-            String centerAreaId = "1001";
+            String centerAreaId = tokenService.getCenterAreaId(token);
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
                 excelImpService.setStudentKey();
                 excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class, centerAreaId);

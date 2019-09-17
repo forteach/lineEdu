@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.train.service.TrainPlanFinishService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: zhangyy
@@ -30,9 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TrainPlanFinishController {
 
     private final TrainPlanFinishService trainPlanFinishService;
+    private final TokenService tokenService;
 
-    private TrainPlanFinishController(TrainPlanFinishService trainPlanFinishService) {
+    private TrainPlanFinishController(TrainPlanFinishService trainPlanFinishService, TokenService tokenService) {
         this.trainPlanFinishService = trainPlanFinishService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken

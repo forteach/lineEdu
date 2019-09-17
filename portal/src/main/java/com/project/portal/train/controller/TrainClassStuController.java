@@ -9,6 +9,7 @@ import com.project.portal.train.request.FindTrainClassStuAllPageRequest;
 import com.project.portal.train.request.TrainClassStuPageRequest;
 import com.project.portal.train.request.TrainClassStuSaveUpdateRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.train.domain.TrainClassStu;
 import com.project.train.service.TrainClassStuService;
 import io.swagger.annotations.Api;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -36,9 +39,11 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @RequestMapping(path = "/trainClassStu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class TrainClassStuController {
     private final TrainClassStuService trainClassStuService;
+    private final TokenService tokenService;
 
-    public TrainClassStuController(TrainClassStuService trainClassStuService) {
+    public TrainClassStuController(TrainClassStuService trainClassStuService, TokenService tokenService) {
         this.trainClassStuService = trainClassStuService;
+        this.tokenService = tokenService;
     }
     @UserLoginToken
     @ApiOperation(value = "保存培训项目修改")
@@ -58,10 +63,12 @@ public class TrainClassStuController {
             @ApiImplicitParam(name = "stuPhone", value = "联系方式", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody TrainClassStuSaveUpdateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody TrainClassStuSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         TrainClassStu trainClassStu = new TrainClassStu();
         BeanUtil.copyProperties(request, trainClassStu);
         if (StrUtil.isBlank(request.getTrainStuId())) {
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            trainClassStu.setCenterAreaId(centerAreaId);
             return WebResult.okResult(trainClassStuService.save(trainClassStu));
         } else {
             return WebResult.okResult(trainClassStuService.update(trainClassStu));

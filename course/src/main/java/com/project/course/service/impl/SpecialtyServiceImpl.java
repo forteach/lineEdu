@@ -41,7 +41,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Specialty saveUpdate(String specialtyId, String specialtyName) {
+    public Specialty saveUpdate(String specialtyId, String specialtyName, String centerAreaId) {
         if (StrUtil.isNotBlank(specialtyId)) {
             Optional<Specialty> optionalSpecialty = specialtyRepository.findById(specialtyId);
             if (optionalSpecialty.isPresent()) {
@@ -52,7 +52,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
             MyAssert.isNull(null, DefineCode.ERR0014, "不存在要修改的专业");
             return null;
         } else {
-            return specialtyRepository.save(new Specialty(IdUtil.fastSimpleUUID(), specialtyName));
+            return specialtyRepository.save(new Specialty(IdUtil.fastSimpleUUID(), specialtyName, centerAreaId));
         }
     }
 

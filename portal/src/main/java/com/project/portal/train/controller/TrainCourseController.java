@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainCourseSaveUpdateRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.train.domain.TrainCourse;
 import com.project.train.service.TrainCourseService;
 import io.swagger.annotations.Api;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: zhangyy
@@ -32,9 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/trainCourse", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class TrainCourseController {
     private final TrainCourseService trainCourseService;
+    private final TokenService tokenService;
 
-    public TrainCourseController(TrainCourseService trainCourseService) {
+    public TrainCourseController(TrainCourseService trainCourseService, TokenService tokenService) {
         this.trainCourseService = trainCourseService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -46,10 +51,12 @@ public class TrainCourseController {
             @ApiImplicitParam(name = "trainAreaId", value = "培训项目领域", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody TrainCourseSaveUpdateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody TrainCourseSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         TrainCourse trainCourse = new TrainCourse();
         BeanUtil.copyProperties(request, trainCourse);
         if (StrUtil.isBlank(request.getCourseId())) {
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            trainCourse.setCenterAreaId(centerAreaId);
             return WebResult.okResult(trainCourseService.save(trainCourse));
         } else {
             return WebResult.okResult(trainCourseService.update(trainCourse));

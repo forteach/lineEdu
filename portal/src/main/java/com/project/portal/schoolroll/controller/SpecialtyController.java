@@ -10,6 +10,7 @@ import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.SpecialtySaveUpdateRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -17,6 +18,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -32,10 +35,12 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @RequestMapping(path = "/specialty", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class SpecialtyController {
     private final SpecialtyService specialtyService;
+    private final TokenService tokenService;
 
     @Autowired
-    public SpecialtyController(SpecialtyService specialtyService) {
+    public SpecialtyController(SpecialtyService specialtyService, TokenService tokenService) {
         this.specialtyService = specialtyService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -45,12 +50,13 @@ public class SpecialtyController {
             @ApiImplicitParam(name = "specialtyId", value = "专业id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
     })
-    public WebResult saveUpdate(@RequestBody SpecialtySaveUpdateRequest request) {
+    public WebResult saveUpdate(@RequestBody SpecialtySaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         if (StrUtil.isBlank(request.getSpecialtyId())) {
             Specialty specialty = specialtyService.findBySpecialtyName(request.getSpecialtyName());
             MyAssert.notNull(specialty, DefineCode.ERR0014, "已经存在相同专业名称");
         }
-        return WebResult.okResult(specialtyService.saveUpdate(request.getSpecialtyId(), request.getSpecialtyName()));
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(specialtyService.saveUpdate(request.getSpecialtyId(), request.getSpecialtyName(), centerAreaId));
     }
 
     @UserLoginToken

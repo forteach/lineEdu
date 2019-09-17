@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FinanceTypeSaveUpdateRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.train.domain.FinanceType;
 import com.project.train.service.FinanceTypeService;
 import io.swagger.annotations.Api;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: zhangyy
@@ -32,9 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/financeType", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class FinanceTypeController {
     private final FinanceTypeService financeTypeService;
+    private final TokenService tokenService;
 
-    public FinanceTypeController(FinanceTypeService financeTypeService) {
+    public FinanceTypeController(FinanceTypeService financeTypeService, TokenService tokenService) {
         this.financeTypeService = financeTypeService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -45,10 +50,12 @@ public class FinanceTypeController {
             @ApiImplicitParam(name = "financeTypeName", value = "培训财务类型名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
-    public WebResult saveOrUpdate(@RequestBody FinanceTypeSaveUpdateRequest request) {
+    public WebResult saveOrUpdate(@RequestBody FinanceTypeSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         FinanceType financeType = new FinanceType();
         BeanUtil.copyProperties(request, financeType);
         if (StrUtil.isBlank(request.getFinanceTypeId())) {
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            financeType.setCenterAreaId(centerAreaId);
             return WebResult.okResult(financeTypeService.save(financeType));
         } else {
             return WebResult.okResult(financeTypeService.update(financeType));

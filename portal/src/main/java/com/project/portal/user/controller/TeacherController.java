@@ -10,6 +10,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.user.domain.Teacher;
 import com.project.user.service.TeacherService;
 import io.swagger.annotations.Api;
@@ -19,6 +20,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -34,9 +37,11 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @RequestMapping(path = "/teacher", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class TeacherController {
     private final TeacherService teacherService;
+    private final TokenService tokenService;
 
-    public TeacherController(TeacherService teacherService) {
+    public TeacherController(TeacherService teacherService, TokenService tokenService) {
         this.teacherService = teacherService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -61,11 +66,13 @@ public class TeacherController {
             @ApiImplicitParam(name = "bankCardAccount", value = "银行卡账户", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankCardBank", value = "银行卡开户行", dataType = "string", paramType = "form")
     })
-    public WebResult saveUpdate(@RequestBody TeacherSaveUpdateRequest request) {
+    public WebResult saveUpdate(@RequestBody TeacherSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         Teacher teacher = new Teacher();
         BeanUtil.copyProperties(request, teacher);
         if (StrUtil.isBlank(request.getTeacherId())) {
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "联系电话不为空");
+            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            teacher.setCenterAreaId(centerAreaId);
             return WebResult.okResult(teacherService.save(teacher));
         } else {
             return WebResult.okResult(teacherService.update(teacher));
