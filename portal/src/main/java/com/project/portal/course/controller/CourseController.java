@@ -10,7 +10,6 @@ import com.project.course.domain.Course;
 import com.project.course.domain.OnLineCourseDic;
 import com.project.course.service.CourseService;
 import com.project.course.service.OnLineCourseDicService;
-import com.project.course.web.resp.CourseResp;
 import com.project.course.web.resp.CourseSaveResp;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
@@ -32,11 +31,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
-import java.util.stream.Collectors;
-
-import java.util.Map;
+import java.util.Objects;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
@@ -176,7 +172,7 @@ public class CourseController {
     @UserLoginToken
     @ApiOperation(value = "学生查询我的课程信息", notes = "学生端查询我的课程信息")
     @GetMapping(path = "/myCourseList")
-    public WebResult myCourseList(HttpServletRequest request){
+    public WebResult myCourseList(HttpServletRequest request) {
         String classId = tokenService.getClassId(request.getHeader("token"));
         return WebResult.okResult(courseService.myCourseList(classId));
     }
@@ -301,10 +297,9 @@ public class CourseController {
     @UserLoginToken
     @ApiOperation(value = "学生端登录后加载对应的课程信息")
     @GetMapping("/studentCourseList")
-    public WebResult findCourseStudent(HttpServletRequest request){
+    public WebResult findCourseStudent(HttpServletRequest request) {
         String classId = tokenService.getClassId(request.getHeader("token"));
         List<CourseTeacherDto> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId);
-        List<Course> list = courseIds.parallelStream().map(d -> courseService.findByCourseNumberAndTeacherId(d.getCourseId(), d.getTeacherId())).collect(toList());
-        return WebResult.okResult(list);
+        return WebResult.okResult(courseIds.parallelStream().filter(Objects::nonNull).map(d -> courseService.findByCourseNumberAndTeacherId(d.getCourseId(), d.getTeacherId())).collect(toList()));
     }
 }

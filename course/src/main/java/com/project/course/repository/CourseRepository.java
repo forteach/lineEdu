@@ -2,6 +2,7 @@ package com.project.course.repository;
 
 import com.project.course.domain.Course;
 import com.project.course.repository.dto.ICourseChapterListDto;
+import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -71,4 +72,25 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Transactional(readOnly = true)
     List<Course> findAllByIsValidatedEqualsAndCourseNumberAndCreateUserOrderByCreateTimeDesc(String isValidated, String courseNumber, String cUser);
+
+
+    @Query(value = "select " +
+            " c.courseId as courseId, " +
+            " c.courseName as courseName, " +
+            " c.courseNumber as courseNumber, " +
+            " c.alias as alias, " +
+            " c.topPicSrc as topPicSrc, " +
+            " c.courseDescribe as courseDescribe, " +
+            " c.learningTime as learningTime, " +
+            " c.videoPercentage as videoPercentage, " +
+            " c.jobsPercentage as jobsPercentage, " +
+            " c.createUser as createUser, " +
+            " t.teacherName as createUserName " +
+            " from Course as c " +
+            " left join Teacher as t on t.teacherId = c.createUser " +
+            " where c.isValidated = '0' " +
+            " and c.courseNumber = ?1 " +
+            " and c.createUser = ?2 order by c.createTime desc")
+    @Transactional(readOnly = true)
+    List<ICourseDto> findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(String courseNumber, String cUser);
 }

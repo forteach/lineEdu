@@ -12,6 +12,7 @@ import com.project.course.domain.CourseImages;
 import com.project.course.repository.CourseEntrityRepository;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
+import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.service.CourseService;
@@ -264,12 +265,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course findByCourseNumberAndTeacherId(String courseId, String teacherId){
-        List<Course> list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberAndCreateUserOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, teacherId);
+    public ICourseDto findByCourseNumberAndTeacherId(String courseNumber, String teacherId){
+        List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(courseNumber, teacherId);
         if (!list.isEmpty()){
             return list.get(0);
         }else {
-            return new Course();
+            return null;
         }
     }
 }

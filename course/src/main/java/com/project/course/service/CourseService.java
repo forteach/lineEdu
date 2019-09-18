@@ -4,6 +4,7 @@ package com.project.course.service;
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseEntity;
 import com.project.course.domain.CourseImages;
+import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.web.req.CourseImagesReq;
@@ -54,5 +55,5 @@ public interface CourseService {
 
     public int deleteImagesByCourseId(String courseId);
 
-    Course findByCourseNumberAndTeacherId(String courseId, String teacherId);
+    ICourseDto findByCourseNumberAndTeacherId(String courseNumber, String teacherId);
 }
