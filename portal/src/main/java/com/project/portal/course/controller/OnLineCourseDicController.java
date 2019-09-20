@@ -53,8 +53,12 @@ public class OnLineCourseDicController {
     public WebResult saveOrUpdate(@RequestBody OnLineCourseDicSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         OnLineCourseDic onLineCourseDic = new OnLineCourseDic();
         BeanUtil.copyProperties(request, onLineCourseDic);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        onLineCourseDic.setCreateUser(userId);
+        onLineCourseDic.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getCourseId())) {
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
             onLineCourseDic.setCenterAreaId(centerAreaId);
             return WebResult.okResult(onLineCourseDicService.save(onLineCourseDic));
         } else {

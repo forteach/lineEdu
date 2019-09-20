@@ -66,26 +66,26 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files) {
+    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser) {
         //根据文件类型，对应保存信息
         //1文档　3视频　4音频　5链接
         String size = "";
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
-                size = saveT(courseId, chapterId, datumType, files, fileDatumRepository, new FileDatum());
+                size = saveT(courseId, chapterId, datumType, files, fileDatumRepository, new FileDatum(), createUser);
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
-                size = saveT(courseId, chapterId, datumType, files, viewDatumRepository, new ViewDatum());
+                size = saveT(courseId, chapterId, datumType, files, viewDatumRepository, new ViewDatum(), createUser);
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
-                size = saveT(courseId, chapterId, datumType, files, audioDatumRepository, new AudioDatum());
+                size = saveT(courseId, chapterId, datumType, files, audioDatumRepository, new AudioDatum(), createUser);
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
-                size = saveT(courseId, chapterId, datumType, files, linkDatumRepository, new LinkDatum());
+                size = saveT(courseId, chapterId, datumType, files, linkDatumRepository, new LinkDatum(), createUser);
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
@@ -223,7 +223,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
                 }).collect(toList());
     }
 
-    private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd) {
+    private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd, String createUser) {
 
         //1、添加资料文件列表明细
         List<AbsDatum> fileDatumList = new ArrayList<>();
@@ -236,6 +236,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             fd.setFileType(FileUtil.extName(dataDatumVo.getFileName()));
             fd.setFileUrl(dataDatumVo.getFileUrl());
             fd.setDatumType(datumType);
+            fd.setCreateUser(createUser);
+            fd.setUpdateUser(createUser);
             if (fd instanceof ViewDatum && dataDatumVo.getVideoDuration() != null) {
                 ((ViewDatum) fd).setVideoDuration(dataDatumVo.getVideoDuration());
                 videoTime = dataDatumVo.getVideoDuration();
@@ -250,6 +252,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             if (optional.isPresent()) {
                 CourseChapter courseChapter = optional.get();
                 courseChapter.setVideoTime(videoTime);
+                courseChapter.setUpdateUser(createUser);
                 courseChapter2Repository.save(courseChapter);
             }
         }

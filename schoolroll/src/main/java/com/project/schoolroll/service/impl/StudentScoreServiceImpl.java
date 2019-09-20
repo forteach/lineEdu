@@ -139,6 +139,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
     public void updateOffLineScore(OffLineScoreUpdateVo vo) {
         studentScoreRepository.findById(vo.getScoreId()).ifPresent(s -> {
             s.setOffLineScore(vo.getOffLineScore());
+            s.setUpdateUser(vo.getUpdateUser());
             studentScoreRepository.save(s);
         });
     }

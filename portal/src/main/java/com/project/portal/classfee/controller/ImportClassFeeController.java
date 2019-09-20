@@ -55,8 +55,8 @@ public class ImportClassFeeController {
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
     public WebResult leadingInStudents(@RequestParam("file") MultipartFile file, @PathVariable String token) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
-        //TODO 需要从公共的REDIS信息里面取值
         String centerAreaId = tokenService.getCenterAreaId(token);
+        String creteUser = tokenService.getUserId(token);
         try {
             List<ClassFeeInfo> list = classFeeInfoService.excelReader(file.getInputStream(), ClassFeeInfo.class);
 
@@ -66,7 +66,7 @@ public class ImportClassFeeController {
                 MyAssert.isTrue(true, DefineCode.ERR0010, "没有可导入的数据");
             }
             //文件信息的数据库添加操作。
-            classFeeInfoService.impFile(list, list.get(0).getCreateYear(), list.get(0).getCreateMonth(), centerAreaId);
+            classFeeInfoService.impFile(list, list.get(0).getCreateYear(), list.get(0).getCreateMonth(), centerAreaId, creteUser);
             return WebResult.okResult();
         } catch (IOException e) {
             //导入错误，删除REDIS键值
@@ -90,13 +90,14 @@ public class ImportClassFeeController {
             String type = FileUtil.extName(file.getOriginalFilename());
             //todo 需要获取上传的学生中心id数据
             String centerAreaId = tokenService.getCenterAreaId(token);
+            String userId = tokenService.getUserId(token);
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
                 excelImpService.setStudentKey();
-                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class, centerAreaId);
+                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class, centerAreaId, userId);
                 return WebResult.okResult();
             } else if (StrUtil.isNotBlank(type) && "xls".equals(type)) {
                 excelImpService.setStudentKey();
-                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class, centerAreaId);
+                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class, centerAreaId, userId);
                 return WebResult.okResult();
             }
         } catch (IOException e) {

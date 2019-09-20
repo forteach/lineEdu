@@ -14,7 +14,6 @@ import java.io.Serializable;
  * @Version: 1.0
  * @Description: 课程首页轮播图信息
  */
-@Builder
 @Entity
 @Data
 @NoArgsConstructor
@@ -41,4 +40,13 @@ public class CourseImages extends Entitys implements Serializable {
 
     @Column(name = "index_num", columnDefinition = "INT(11) COMMENT '顺序ID'")
     private Integer indexNum;
+
+    public CourseImages(String createUser, String updateUser, String centerAreaId,
+                        String imageName, String imageUrl, String courseId, Integer indexNum) {
+        super(createUser, updateUser, centerAreaId);
+        this.imageName = imageName;
+        this.imageUrl = imageUrl;
+        this.courseId = courseId;
+        this.indexNum = indexNum;
+    }
 }

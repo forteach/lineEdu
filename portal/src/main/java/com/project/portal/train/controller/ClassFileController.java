@@ -58,8 +58,12 @@ public class ClassFileController {
     public WebResult saveOrUpdate(@RequestBody ClassFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         ClassFile classFile = new ClassFile();
         BeanUtil.copyProperties(request, classFile);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        classFile.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getFileId())) {
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            classFile.setCreateUser(userId);
             classFile.setCenterAreaId(centerAreaId);
             return WebResult.okResult(classFileService.save(classFile));
         } else {

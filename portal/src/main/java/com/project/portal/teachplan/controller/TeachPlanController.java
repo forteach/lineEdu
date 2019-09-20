@@ -57,9 +57,12 @@ public class TeachPlanController {
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest){
         String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
         TeachPlan teachPlan = new TeachPlan();
         BeanUtil.copyProperties(request, teachPlan);
         teachPlan.setCenterAreaId(tokenService.getCenterAreaId(token));
+        teachPlan.setCreateUser(userId);
+        teachPlan.setUpdateUser(userId);
         return WebResult.okResult(teachService.saveUpdatePlan(teachPlan));
     }
 
@@ -73,8 +76,10 @@ public class TeachPlanController {
     public WebResult saveUpdateClass(@RequestBody TeachPlanClassSaveUpdateRequest request, HttpServletRequest httpServletRequest){
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
         MyAssert.isTrue(request.getClassIds().isEmpty(), DefineCode.ERR0010, "班级信息不为空");
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds(), centerAreaId));
+        String token = httpServletRequest.getHeader("token");
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        String userId = tokenService.getUserId(token);
+        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds(), centerAreaId, userId));
     }
 
     @UserLoginToken
@@ -92,8 +97,10 @@ public class TeachPlanController {
     public WebResult saveUpdateCourse(@RequestBody TeachPlanCourseSaveUpdateRequest request, HttpServletRequest httpServletRequest){
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
         MyAssert.isTrue(request.getCourses().isEmpty(), DefineCode.ERR0010, "课程信息不为空");
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses(), centerAreaId));
+        String token = httpServletRequest.getHeader("token");
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        String userId = tokenService.getUserId(token);
+        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses(), centerAreaId, userId));
     }
 
     @UserLoginToken

@@ -47,7 +47,5 @@ public class TrainPlanFinishController {
     public WebResult findAll(@RequestBody String centerAreaId) {
         MyAssert.isNull(centerAreaId, DefineCode.ERR0010, "学习中心编号id不为空");
         return WebResult.okResult(trainPlanFinishService.findTOP4(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
-
     }
-
 }

@@ -27,7 +27,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.USER_PREFIX;
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS_ONLINE;
+import static com.project.schoolroll.domain.excel.Dic.STUDENT_ON_LINE_IMPORT_STATUS_IMPORT;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
 
 @Service
@@ -55,37 +57,44 @@ public class StudentOnLineService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void importStudent(InputStream inputStream, String centerAreaId){
+    public void importStudent(InputStream inputStream, String centerAreaId, String userId){
         //设置键操作
         setStudentKey();
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
         List<StudentOnLine> list = reader.readAll(StudentOnLine.class);
+
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "导入数据不存在");
+
         Map<String, List<StudentOnLine>> stringListMap = list.stream()
                 .filter(s -> StrUtil.isNotBlank(s.getClassName()))
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
         //判断班级信息存在则设值，不存在新建
-        Map<String, String> classIds = getClass(stringListMap.keySet(), centerAreaId);
+        Map<String, String> classIds = getClass(stringListMap.keySet(), centerAreaId, userId);
         stringListMap.forEach((k, v) -> {
-            List<StudentOnLine> lineList = setClassId(classIds, v, centerAreaId);
+            List<StudentOnLine> lineList = setClassId(classIds, v, centerAreaId, userId);
             studentOnLineRepository.saveAll(lineList);
         });
         //删除键值操作
         deleteKey();
     }
-    private Map<String, String> getClass(Set<String> set, String centerAreaId){
+    private Map<String, String> getClass(Set<String> set, String centerAreaId, String userId){
         return set.stream()
                 .filter(Objects::nonNull)
-                .map(className -> tbClassService.getClassIdByClassName(className, centerAreaId))
+                .map(className -> tbClassService.getClassIdByClassName(className, centerAreaId, userId))
                 .collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
     }
-    private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId){
-        return list.stream().map(s -> setStudentOnLine(s, classIds, centerAreaId)).collect(Collectors.toList());
+    private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId, String userId){
+        return list.stream().map(s -> setStudentOnLine(s, classIds, centerAreaId, userId)).collect(Collectors.toList());
     }
 
-    private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId){
+    private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId, String userId){
         studentOnLine.setClassId(classIds.get(studentOnLine.getClassName()));
         studentOnLine.setCenterAreaId(centerAreaId);
+        studentOnLine.setCreateUser(userId);
+        studentOnLine.setUpdateUser(userId);
+        //设置属性字段是导入数据
+        studentOnLine.setImportStatus(STUDENT_ON_LINE_IMPORT_STATUS_IMPORT);
         return BeanUtil.trimStrFields(studentOnLine);
     }
 
@@ -98,6 +107,7 @@ public class StudentOnLineService {
         reader.addHeaderAlias(className.getName(), className.name());
         reader.addHeaderAlias(enrollmentDate.getName(), enrollmentDate.name());
         reader.addHeaderAlias(nation.getName(), nation.name());
+        reader.addHeaderAlias(learningModality.getName(), learningModality.name());
     }
 
     public int countByClassId(String classId){

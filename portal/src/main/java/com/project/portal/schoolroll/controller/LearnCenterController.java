@@ -12,6 +12,7 @@ import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.LearnCenterRepository;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import com.project.user.service.UserService;
 import com.project.user.web.vo.RegisterCenterVo;
 import io.swagger.annotations.Api;
@@ -22,6 +23,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.portal.request.ValideSortVo.valideSort;
@@ -40,13 +43,15 @@ public class LearnCenterController {
     private final LearnCenterService learnCenterService;
     private final LearnCenterRepository learnCenterRepository;
     private final UserService userService;
+    private final TokenService tokenService;
 
     public LearnCenterController(LearnCenterService learnCenterService,
-                                 UserService userService,
+                                 UserService userService, TokenService tokenService,
                                  LearnCenterRepository learnCenterRepository) {
         this.learnCenterService = learnCenterService;
         this.learnCenterRepository = learnCenterRepository;
         this.userService = userService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -64,10 +69,13 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "accountHolderPhone", value = "开户人电话", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccountAddress", value = "开户行地址", dataType = "string", paramType = "form")
     })
-    public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request) {
+    public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
         if (StrUtil.isNotBlank(request.getCenterId())) {
             learnCenterRepository.findById(request.getCenterId()).ifPresent(learnCenter -> {
                 BeanUtils.copyProperties(request, learnCenter);
+                learnCenter.setUpdateUser(userId);
                 learnCenterRepository.save(learnCenter);
                 userService.updateCenter(learnCenter.getCenterName(), request.getCenterName());
             });
@@ -85,6 +93,8 @@ public class LearnCenterController {
             String centerAreaId = IdUtil.fastSimpleUUID();
             learnCenter.setCenterId(centerAreaId);
             learnCenter.setCenterAreaId(centerAreaId);
+            learnCenter.setUpdateUser(userId);
+            learnCenter.setUpdateUser(userId);
             learnCenterRepository.save(learnCenter);
             userService.registerCenter(request.getCenterName(), centerAreaId);
         }

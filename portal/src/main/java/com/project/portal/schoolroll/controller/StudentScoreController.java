@@ -12,6 +12,7 @@ import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,6 +20,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -34,9 +37,11 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @Api(value = "学生成绩管理", tags = {"学生成绩管理"})
 public class StudentScoreController {
     private final StudentScoreService studentScoreService;
+    private final TokenService tokenService;
 
-    public StudentScoreController(StudentScoreService studentScoreService) {
+    public StudentScoreController(StudentScoreService studentScoreService, TokenService tokenService) {
         this.studentScoreService = studentScoreService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -96,10 +101,12 @@ public class StudentScoreController {
             @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "offLineScore", value = "线下成绩", dataType = "string", paramType = "form")
     })
-    public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request){
+    public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request, HttpServletRequest httpServletRequest){
         MyAssert.isNull(request.getScoreId(), DefineCode.ERR0010, "成绩id信息不为空");
         MyAssert.isNull(request.getOffLineScore(), DefineCode.ERR0010, "成绩不为空");
-        studentScoreService.updateOffLineScore(new OffLineScoreUpdateVo(request.getScoreId(), request.getOffLineScore()));
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        studentScoreService.updateOffLineScore(new OffLineScoreUpdateVo(request.getScoreId(), request.getOffLineScore(), userId));
         return WebResult.okResult();
     }
 }

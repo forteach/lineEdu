@@ -53,8 +53,12 @@ public class FinanceTypeController {
     public WebResult saveOrUpdate(@RequestBody FinanceTypeSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         FinanceType financeType = new FinanceType();
         BeanUtil.copyProperties(request, financeType);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        financeType.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getFinanceTypeId())) {
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            financeType.setCreateUser(userId);
             financeType.setCenterAreaId(centerAreaId);
             return WebResult.okResult(financeTypeService.save(financeType));
         } else {

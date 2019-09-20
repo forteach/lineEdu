@@ -25,4 +25,8 @@ public class CourseImagesReq implements Serializable {
     private String courseId;
 
     private List<DataDatumVo> images;
+
+    private String createUser;
+
+    private String centerAreaId;
 }

@@ -15,12 +15,14 @@ import java.io.Serializable;
 public class OffLineScoreUpdateVo implements Serializable {
     private String scoreId;
     private String offLineScore;
+    private String updateUser;
 
     public OffLineScoreUpdateVo() {
     }
 
-    public OffLineScoreUpdateVo(String scoreId, String offLineScore) {
+    public OffLineScoreUpdateVo(String scoreId, String offLineScore, String updateUser) {
         this.scoreId = scoreId;
         this.offLineScore = offLineScore;
+        this.updateUser = updateUser;
     }
 }

@@ -6,6 +6,8 @@ import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.online.TbClasses;
 import com.project.schoolroll.repository.TbClassesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,9 +24,9 @@ public class TbClassService {
         this.tbClassesRepository = tbClassesRepository;
     }
 
-    TbClasses getClassIdByClassName(String className, String centerAreaId){
+    TbClasses getClassIdByClassName(String className, String centerAreaId, String userId){
            return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId)
-                   .orElse(tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className)));
+                   .orElse(tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId)));
     }
 
 
@@ -40,5 +42,13 @@ public class TbClassService {
 
     public List<TbClasses> findAllByCenterAreaId(String centerAreaId){
         return tbClassesRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId);
+    }
+
+    public Page<TbClasses> findAllPage(Pageable pageable){
+        return tbClassesRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
+    }
+
+    public Page<TbClasses> findAllPageByCenterAreaId(String centerAreaId, Pageable pageable){
+        return tbClassesRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageable);
     }
 }

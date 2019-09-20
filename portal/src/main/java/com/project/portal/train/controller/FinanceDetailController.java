@@ -66,9 +66,13 @@ public class FinanceDetailController {
     public WebResult saveOrUpdate(@RequestBody FinanceDetailSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         FinanceDetail financeDetail = new FinanceDetail();
         BeanUtil.copyProperties(request, financeDetail);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        financeDetail.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getDetailId())) {
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
             financeDetail.setCenterAreaId(centerAreaId);
+            financeDetail.setCreateUser(userId);
             return WebResult.okResult(financeDetailService.save(financeDetail));
         } else {
             return WebResult.okResult(financeDetailService.update(financeDetail));

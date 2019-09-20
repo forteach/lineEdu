@@ -46,8 +46,8 @@ public class TeachPlanClass extends Entitys implements Serializable {
     public TeachPlanClass() {
     }
 
-    public TeachPlanClass(String classId, String planId, String className, String planName, int classNumber, String centerAreaId) {
-        super(centerAreaId);
+    public TeachPlanClass(String classId, String planId, String className, String planName, int classNumber, String centerAreaId, String userId) {
+        super(userId, userId, centerAreaId);
         this.classId = classId;
         this.planId = planId;
         this.className = className;

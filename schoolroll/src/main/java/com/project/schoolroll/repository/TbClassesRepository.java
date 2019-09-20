@@ -1,6 +1,8 @@
 package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.online.TbClasses;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,4 +24,9 @@ public interface TbClassesRepository extends JpaRepository<TbClasses, String> {
     @Transactional(readOnly = true)
     public List<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId);
 
+    @Transactional(readOnly = true)
+    Page<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);
+
+    @Transactional(readOnly = true)
+    Page<TbClasses> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
 }

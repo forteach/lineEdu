@@ -61,10 +61,13 @@ public class FamilyController {
             @ApiImplicitParam(name = "politicalStatus", value = "政治面貌", dataType = "string", paramType = "form"),
     })
     public WebResult saveOrUpdate(@RequestBody FamilySaveUpdateRequest request, HttpServletRequest httpServletRequest){
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
         if (StrUtil.isNotBlank(request.getFamilyId())){
             //是修改
             familyRepository.findById(request.getFamilyId()).ifPresent(family -> {
                 BeanUtil.copyProperties(request, family);
+                family.setUpdateUser(userId);
                 familyRepository.save(family);
             });
         }else {
@@ -78,6 +81,7 @@ public class FamilyController {
             family.setFamilyId(IdUtil.fastSimpleUUID());
             String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
             family.setCenterAreaId(centerAreaId);
+            family.setCreateUser(userId);
             familyRepository.save(family);
         }
         return WebResult.okResult();

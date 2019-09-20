@@ -10,6 +10,7 @@ import com.project.portal.course.request.CourseChapterFindPageAllReq;
 import com.project.portal.course.request.CourseRecordsSaveReq;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -35,10 +36,13 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class CourseChapterRecordController {
     private final CourseChapterService courseChapterService;
     private final CourseRecordsService courseRecordsService;
+    private final TokenService tokenService;
 
-    public CourseChapterRecordController(CourseChapterService courseChapterService, CourseRecordsService courseRecordsService) {
+    public CourseChapterRecordController(CourseChapterService courseChapterService, TokenService tokenService,
+                                         CourseRecordsService courseRecordsService) {
         this.courseChapterService = courseChapterService;
         this.courseRecordsService = courseRecordsService;
+        this.tokenService = tokenService;
     }
 
     private void myAssertCourseChapter(String studentId, String courseId, String chapterId) {

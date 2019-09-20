@@ -65,9 +65,9 @@ public class TeachPlanCourse extends Entitys implements Serializable {
     @Column(name = "teacherName", columnDefinition = "VARCHAR(32) COMMENT '教师名称'")
     private String teacherName;
 
-    public TeachPlanCourse(String planId, String courseId, String courseName,
-                           String credit, Integer onLinePercentage, Integer linePercentage, String teacherId, String teacherName, String centerAreaId) {
-        super(centerAreaId);
+    public TeachPlanCourse(String planId, String courseId, String courseName, String credit, Integer onLinePercentage,
+                           Integer linePercentage, String teacherId, String teacherName, String centerAreaId, String userId) {
+        super(userId, userId, centerAreaId);
         this.planId = planId;
         this.courseId = courseId;
         this.courseName = courseName;

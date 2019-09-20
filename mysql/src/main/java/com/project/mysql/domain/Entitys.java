@@ -52,4 +52,15 @@ public abstract class Entitys{
     public Entitys(String centerAreaId) {
         this.centerAreaId = centerAreaId;
     }
+
+    public Entitys(String createUser, String centerAreaId) {
+        this.createUser = createUser;
+        this.centerAreaId = centerAreaId;
+    }
+
+    public Entitys(String createUser, String updateUser, String centerAreaId) {
+        this.createUser = createUser;
+        this.updateUser = updateUser;
+        this.centerAreaId = centerAreaId;
+    }
 }

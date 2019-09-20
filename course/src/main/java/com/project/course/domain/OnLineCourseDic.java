@@ -34,10 +34,9 @@ public class OnLineCourseDic extends Entitys implements Serializable {
     private String courseName;
 
 
-    public OnLineCourseDic(String courseId, String courseName,
-                           String centerId) {
-        this.courseId = courseId;
-        this.courseName = courseName;
-        super.centerAreaId=centerId;
-    }
+//    public OnLineCourseDic(String courseId, String courseName, String centerId) {
+//        this.courseId = courseId;
+//        this.courseName = courseName;
+//        super.centerAreaId=centerId;
+//    }
 }

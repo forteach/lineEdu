@@ -18,6 +18,7 @@ import com.project.schoolroll.service.StudentExpandService;
 import com.project.schoolroll.service.StudentService;
 import com.project.schoolroll.web.vo.FindStudentDtoPageAllVo;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,13 +49,15 @@ public class StudentController {
     private final StudentService studentService;
     private final StudentExpandService studentExpandService;
     private final StudentExpandDictionaryService studentExpandDictionaryService;
+    private final TokenService tokenService;
 
-    public StudentController(StudentService studentService,
+    public StudentController(StudentService studentService, TokenService tokenService,
                              StudentExpandService studentExpandService,
                              StudentExpandDictionaryService studentExpandDictionaryService) {
         this.studentService = studentService;
         this.studentExpandService = studentExpandService;
         this.studentExpandDictionaryService = studentExpandDictionaryService;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -91,12 +95,21 @@ public class StudentController {
             @ApiImplicitParam(name = "enrollmentDate", value = "入学时间(年/月)", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "remark", value = "备注", dataType = "string", paramType = "form"),
     })
-    public WebResult saveUpdate(@RequestBody StudentSaveUpdateRequest request) {
+    public WebResult saveUpdate(@RequestBody StudentSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String centerAreaId = tokenService.getCenterAreaId(token);
         MyAssert.isNull(request.getStudentId(), DefineCode.ERR0010, "学生id不为空");
         Student student = new Student();
         BeanUtil.copyProperties(request, student);
+        student.setCreateUser(userId);
+        student.setUpdateUser(userId);
+        student.setCenterAreaId(centerAreaId);
         StudentPeople studentPeople = new StudentPeople();
         BeanUtil.copyProperties(request, studentPeople);
+        studentPeople.setUpdateUser(userId);
+        studentPeople.setCreateUser(userId);
+        studentPeople.setCenterAreaId(centerAreaId);
         studentService.saveOrUpdate(student, studentPeople);
         return WebResult.okResult();
     }
@@ -176,9 +189,12 @@ public class StudentController {
             @ApiImplicitParam(name = "expandValues", value = "需要修改保存的值", dataTypeClass = StudentExpandValueRequest.class, dataType = "list", paramType = "form"),
     })
     @PostMapping("/saveUpdateStudentExpand")
-    public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request) {
+    public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getStudentId(), DefineCode.ERR0010, "学生id不为空");
         MyAssert.isNull(request.getExpandValues(), DefineCode.ERR0010, "需要修改或修改的扩展字段不为空");
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String centerAreaId = tokenService.getCenterAreaId(token);
         List<StudentExpand> voList = request.getExpandValues()
                 .stream().filter(Objects::nonNull)
                 .map(v -> {
@@ -186,6 +202,9 @@ public class StudentController {
                     BeanUtil.copyProperties(v, vo);
                     vo.setStudentId(request.getStudentId());
                     vo.setExpandId(IdUtil.fastSimpleUUID());
+                    vo.setUpdateUser(userId);
+                    vo.setCreateUser(userId);
+                    vo.setCenterAreaId(centerAreaId);
                     return vo;
                 }).collect(toList());
         studentExpandService.saveUpdateStudentExpand(voList, request.getStudentId());

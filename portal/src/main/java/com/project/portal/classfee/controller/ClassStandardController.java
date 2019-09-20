@@ -69,16 +69,18 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
 
         String staId=request.getStandardId();
         ClassStandard cls=null;
+        String token = httpServletRequest.getHeader("token");
+        String createUser = tokenService.getUserId(token);
         if(StrUtil.isBlank(staId)){
             //保存课时费标准
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
              cls=classStandardService.save(
                     request.getCreateYear(),
                     request.getSpecialtyIds(),
                     request.getStudentSum(),
                     request.getStudentSubsidies(),
                     request.getSubsidiesSum(),
-                    centerAreaId);
+                    centerAreaId, createUser);
         }else{
             //保存课时费标准
              cls=classStandardService.update(
@@ -87,7 +89,7 @@ public class ClassStandardController extends BaseController<ClassStandard,ClassS
                      request.getSpecialtyIds(),
                     request.getStudentSum(),
                     request.getStudentSubsidies(),
-                    request.getSubsidiesSum());
+                    request.getSubsidiesSum(), createUser);
         }
 
         MyAssert.isNull(cls, DefineCode.ERR0010,"操作课时费标准失败！");

@@ -66,8 +66,12 @@ public class TrainClassStuController {
     public WebResult saveOrUpdate(@RequestBody TrainClassStuSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         TrainClassStu trainClassStu = new TrainClassStu();
         BeanUtil.copyProperties(request, trainClassStu);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        trainClassStu.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getTrainStuId())) {
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            trainClassStu.setUpdateUser(userId);
             trainClassStu.setCenterAreaId(centerAreaId);
             return WebResult.okResult(trainClassStuService.save(trainClassStu));
         } else {

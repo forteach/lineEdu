@@ -36,6 +36,7 @@ import java.util.Objects;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @Auther: zhangyy
@@ -86,8 +87,11 @@ public class CourseController {
         //设置service数据
         Course course = new Course();
         UpdateUtil.copyNullProperties(req, course);
-        String userId = tokenService.getUserId(request.getHeader("token"));
+        String token = request.getHeader("token");
+        String userId = tokenService.getUserId(token);
         course.setCreateUser(userId);
+        course.setUpdateUser(userId);
+        course.setCenterAreaId(tokenService.getCenterAreaId(token));
         if (StrUtil.isNotBlank(req.getCourseNumber())) {
             OnLineCourseDic courseDic = onLineCourseDicService.findId(req.getCourseNumber());
             if (StrUtil.isNotBlank(courseDic.getCourseId())) {
@@ -243,10 +247,16 @@ public class CourseController {
             @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true),
             @ApiImplicitParam(name = "images", value = "图册信息数组", dataTypeClass = DataDatumVo.class, required = true)
     })
-    public WebResult saveCourseImages(@ApiParam(value = "课程ID和图片", name = "courseImagesReq") @RequestBody CourseImagesReq courseImagesReq) {
+    public WebResult saveCourseImages(@ApiParam(value = "课程ID和图片", name = "courseImagesReq") @RequestBody CourseImagesReq courseImagesReq,
+                                      HttpServletRequest httpServletRequest) {
         MyAssert.blank(courseImagesReq.getCourseId(), DefineCode.ERR0010, "科目ID不为空");
         com.project.course.web.req.CourseImagesReq imagesReq = new com.project.course.web.req.CourseImagesReq();
         BeanUtil.copyProperties(courseImagesReq, imagesReq);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        imagesReq.setCenterAreaId(centerAreaId);
+        imagesReq.setCreateUser(userId);
         courseService.saveCourseImages(imagesReq);
         return WebResult.okResult();
     }

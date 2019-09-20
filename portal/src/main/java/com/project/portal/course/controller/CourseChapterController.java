@@ -6,7 +6,6 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.CourseChapter;
 import com.project.course.service.CourseChapterService;
-import com.project.portal.course.request.CourseChapterEditReq;
 import com.project.portal.course.request.CourseChapterReq;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
@@ -55,11 +54,14 @@ public class CourseChapterController {
             @ApiImplicitParam(name = "videoTime", value = "需要观看视频长度(秒)", dataType = "int", paramType = "form")
     })
     public WebResult save(@ApiParam(name = "courseChapter", value = "科目章节对象", required = true) @RequestBody CourseChapterReq req, HttpServletRequest request) {
-        req.setCreateUser(tokenService.getUserId(request.getHeader("token")));
         CourseChapter cs = new CourseChapter();
         BeanUtil.copyProperties(req, cs);
-        cs.setCreateUser(req.getCreateUser());
-        cs.setCreateUser(req.getCreateUser());
+        String token = request.getHeader("token");
+        String createUser = tokenService.getUserId(token);
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        cs.setCreateUser(createUser);
+        cs.setUpdateUser(createUser);
+        cs.setCenterAreaId(centerAreaId);
         return WebResult.okResult(courseChapterService.save(cs));
     }
 

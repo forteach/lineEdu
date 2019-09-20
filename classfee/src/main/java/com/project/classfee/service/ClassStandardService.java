@@ -33,8 +33,8 @@ public class ClassStandardService extends BaseMySqlService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,String centerId){
-        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,centerId);
+    public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,String centerId, String createUser){
+        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,centerId, createUser);
         return classStandardRepository.save(classStandard);
     }
 
@@ -48,7 +48,7 @@ public class ClassStandardService extends BaseMySqlService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum){
+    public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum, String updateUser){
         ClassStandard obj= findId(standardId);
         ClassStandard classStandard=new ClassStandard();
         BeanUtil.copyProperties(obj,classStandard);
@@ -57,6 +57,7 @@ public class ClassStandardService extends BaseMySqlService {
         classStandard.setStudentSum(studentSum);
         classStandard.setStudentSubsidies(studentSubsidies);
         classStandard.setSubsidiesSum(subsidiesSum);
+        classStandard.setUpdateUser(updateUser);
         return classStandardRepository.save(classStandard);
     }
 

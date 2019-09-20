@@ -69,10 +69,14 @@ public class TeacherController {
     public WebResult saveUpdate(@RequestBody TeacherSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         Teacher teacher = new Teacher();
         BeanUtil.copyProperties(request, teacher);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        teacher.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getTeacherId())) {
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "联系电话不为空");
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
             teacher.setCenterAreaId(centerAreaId);
+            teacher.setCreateUser(userId);
             return WebResult.okResult(teacherService.save(teacher));
         } else {
             return WebResult.okResult(teacherService.update(teacher));

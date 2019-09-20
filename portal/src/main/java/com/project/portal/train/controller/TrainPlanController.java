@@ -65,8 +65,12 @@ public class TrainPlanController {
     public WebResult saveOrUpdate(@RequestBody TrainProjectPlanSaveRequest request, HttpServletRequest httpServletRequest) {
         TrainProjectPlan trainProjectPlan = new TrainProjectPlan();
         BeanUtil.copyProperties(request, trainProjectPlan);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        trainProjectPlan.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getPjPlanId())) {
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            trainProjectPlan.setCreateUser(userId);
             trainProjectPlan.setCenterAreaId(centerAreaId);
             return WebResult.okResult(trainPlanService.save(trainProjectPlan));
         } else {

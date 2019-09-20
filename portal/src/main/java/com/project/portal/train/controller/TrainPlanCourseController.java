@@ -62,13 +62,17 @@ public class TrainPlanCourseController {
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody TrainPlanCourseSaveUpateRequest request, HttpServletRequest httpServletRequest) {
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        String token = httpServletRequest.getHeader("token");
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        String userId = tokenService.getUserId(token);
         List<TrainPlanCourse> list = request.getList()
                 .stream()
                 .map(vo -> {
                     TrainPlanCourse trainPlanCourse = new TrainPlanCourse();
                     BeanUtil.copyProperties(vo, trainPlanCourse);
                     trainPlanCourse.setCenterAreaId(request.getCenterAreaId());
+                    trainPlanCourse.setUpdateUser(userId);
+                    trainPlanCourse.setCreateUser(userId);
                     if (StrUtil.isBlank(request.getCenterAreaId())){
                         trainPlanCourse.setCenterAreaId(centerAreaId);
                     }

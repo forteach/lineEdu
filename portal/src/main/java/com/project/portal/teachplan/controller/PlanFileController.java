@@ -58,11 +58,15 @@ public class PlanFileController {
     public WebResult saveOrUpdate(@RequestBody PlanFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         PlanFile planFile = new PlanFile();
         BeanUtil.copyProperties(request, planFile);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
         if (StrUtil.isBlank(request.getFileId())) {
-            String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+            String centerAreaId = tokenService.getCenterAreaId(token);
             planFile.setCenterAreaId(centerAreaId);
+            planFile.setCreateUser(userId);
             return WebResult.okResult(planFileService.save(planFile));
         } else {
+            planFile.setUpdateUser(userId);
             return WebResult.okResult(planFileService.update(planFile));
         }
     }

@@ -213,7 +213,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(rollbackForClassName = "Exception")
     public void saveCourseImages(CourseImagesReq courseImagesReq) {
-        courseImagesServiceImpl.saveCourseImages(courseImagesReq.getCourseId(), courseImagesReq.getImages());
+        courseImagesServiceImpl.saveCourseImages(courseImagesReq.getCourseId(), courseImagesReq.getImages(),
+                courseImagesReq.getCreateUser(), courseImagesReq.getCenterAreaId());
     }
 
 
@@ -270,7 +271,62 @@ public class CourseServiceImpl implements CourseService {
         if (!list.isEmpty()){
             return list.get(0);
         }else {
-            return null;
+            return new ICourseDto() {
+                @Override
+                public String getCourseId() {
+                    return null;
+                }
+
+                @Override
+                public String getCourseName() {
+                    return null;
+                }
+
+                @Override
+                public String getCourseNumber() {
+                    return null;
+                }
+
+                @Override
+                public String getAlias() {
+                    return null;
+                }
+
+                @Override
+                public String getTopPicSrc() {
+                    return null;
+                }
+
+                @Override
+                public String getCourseDescribe() {
+                    return null;
+                }
+
+                @Override
+                public String getLearningTime() {
+                    return null;
+                }
+
+                @Override
+                public String getVideoPercentage() {
+                    return null;
+                }
+
+                @Override
+                public String getJobsPercentage() {
+                    return null;
+                }
+
+                @Override
+                public String getCreateUser() {
+                    return null;
+                }
+
+                @Override
+                public String getCreateUserName() {
+                    return null;
+                }
+            };
         }
     }
 }

@@ -53,7 +53,8 @@ public class ClassFeeInfo extends Entitys implements Serializable {
     @Column(name = "class_count", columnDefinition = "VARCHAR(32) COMMENT '课时'")
     private int classCount;
 
-    public ClassFeeInfo(String serialId, String classFeeId, String fullName, String createYear, String createMonth, String specialtyIds, int classFee, int classCount,String centerId) {
+    public ClassFeeInfo(String serialId, String classFeeId, String fullName, String createYear, String createMonth, String specialtyIds, int classFee, int classCount,String centerId, String createUser) {
+        super(createUser, createUser, centerId);
         this.serialId = serialId;
         this.classFeeId = classFeeId;
         this.fullName = fullName;
@@ -62,6 +63,5 @@ public class ClassFeeInfo extends Entitys implements Serializable {
         this.specialtyIds = specialtyIds;
         this.classFee = classFee;
         this.classCount = classCount;
-        super.setCenterAreaId(centerId);
     }
 }

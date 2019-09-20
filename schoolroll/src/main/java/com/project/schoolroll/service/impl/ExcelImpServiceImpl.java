@@ -65,11 +65,11 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     }
 
 
-    public void studentsExcel07Reader(InputStream inputStream, Class obj, String centerAreaId) {
+    public void studentsExcel07Reader(InputStream inputStream, Class obj, String centerAreaId, String createUser) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
         List<StudentImport> list = reader.readAll(StudentImport.class);
-        saveStudent(list, centerAreaId);
+        saveStudent(list, centerAreaId, createUser);
 
         //导入成功删除对应键值
         deleteKey();
@@ -86,17 +86,18 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     }
 
 
-    public void studentsExcel03Reader(InputStream inputStream,Class obj, String centerAreaId) {
+    public void studentsExcel03Reader(InputStream inputStream,Class obj, String centerAreaId, String createUser) {
 //        List<StudentImport> list = ExcelReader(inputStream,obj);
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
         List<StudentImport> list = reader.readAll(StudentImport.class);
-        saveStudent(list, centerAreaId);
+        saveStudent(list, centerAreaId, createUser);
         deleteKey();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    void saveStudent(List<StudentImport> list, String centerAreaId) {
+    void saveStudent(List<StudentImport> list, String centerAreaId, String createUser) {
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "导入的数据为空");
         TimeInterval timer = DateUtil.timer();
         List<StudentPeople> studentPeopleList = CollUtil.newArrayList();
         List<Student> studentList = CollUtil.newArrayList();
@@ -129,15 +130,19 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
                         studentPeople.setPeopleId(peopleId);
                         setStuBirthDate(studentImport.getStuIDCard(), studentPeople);
                         studentPeople.setCenterAreaId(centerAreaId);
+                        studentPeople.setCreateUser(createUser);
+                        studentPeople.setUpdateUser(createUser);
                         studentPeopleList.add(studentPeople);
                         Student student = new Student();
                         BeanUtil.copyProperties(studentImport, student);
                         student.setPeopleId(peopleId);
                         student.setCenterAreaId(centerAreaId);
+                        student.setCreateUser(createUser);
+                        student.setUpdateUser(createUser);
                         studentList.add(student);
                     }
                     //将学生信息数据,列数据转换为行数据，设置为List集合列
-                    setStudentExpandData(studentImport, studentExpandList, centerAreaId);
+                    setStudentExpandData(studentImport, studentExpandList, centerAreaId, createUser);
                     //设置学生信息家庭成员信息
                     setFamilyData(studentImport, familyList, centerAreaId);
                     log.info("thread id : [{}] , thread name : [{}]", Thread.currentThread().getId(), Thread.currentThread().getName());
@@ -276,115 +281,115 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
         }
     }
 
-    private void setStudentExpandData(StudentImport studentImport, List<StudentExpand> studentExpandList, String centerAreaId){
+    private void setStudentExpandData(StudentImport studentImport, List<StudentExpand> studentExpandList, String centerAreaId, String createUser){
         //学生邮箱
         if (StrUtil.isNotBlank(studentImport.getStuEmail())) {
-            setStudentExpandValue(studentImport.getStudentId(), stuEmail.name(), studentImport.getStuEmail(), stuEmail.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), stuEmail.name(), studentImport.getStuEmail(), stuEmail.getName(), studentExpandList, centerAreaId, createUser);
         }
         //家庭地址
         if (StrUtil.isNotBlank(studentImport.getFamilyAddress())) {
-            setStudentExpandValue(studentImport.getStudentId(), familyAddress.name(), studentImport.getFamilyAddress(), familyAddress.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), familyAddress.name(), studentImport.getFamilyAddress(), familyAddress.getName(), studentExpandList, centerAreaId, createUser);
         }
         //乘火车区间
         if(StrUtil.isNotBlank(studentImport.getTrainSpace())){
-            setStudentExpandValue(studentImport.getStudentId(), trainSpace.name(), studentImport.getTrainSpace(), trainSpace.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), trainSpace.name(), studentImport.getTrainSpace(), trainSpace.getName(), studentExpandList, centerAreaId, createUser);
         }
         //考生特长
         if (StrUtil.isNotBlank(studentImport.getStudentSpeciality())) {
-            setStudentExpandValue(studentImport.getStudentId(), studentSpeciality.name(), studentImport.getStudentSpeciality(), studentSpeciality.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), studentSpeciality.name(), studentImport.getStudentSpeciality(), studentSpeciality.getName(), studentExpandList, centerAreaId, createUser);
         }
         //学生来源
         if (StrUtil.isNotBlank(studentImport.getStudentSource())) {
-            setStudentExpandValue(studentImport.getStudentId(), studentSource.name(), studentImport.getStudentSource(), studentSource.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), studentSource.name(), studentImport.getStudentSource(), studentSource.getName(), studentExpandList, centerAreaId, createUser);
         }
         //招生方式
         if(StrUtil.isNotBlank(studentImport.getStudentRecruitingWays())){
-            setStudentExpandValue(studentImport.getStudentId(), studentRecruitingWays.name(), studentImport.getStudentRecruitingWays(), studentRecruitingWays.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), studentRecruitingWays.name(), studentImport.getStudentRecruitingWays(), studentRecruitingWays.getName(), studentExpandList, centerAreaId, createUser);
         }
         //考生既往病史
         if (StrUtil.isNotBlank(studentImport.getStudentMedicalHistory())) {
-            setStudentExpandValue(studentImport.getStudentId(), studentMedicalHistory.name(), studentImport.getStudentMedicalHistory(), studentMedicalHistory.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), studentMedicalHistory.name(), studentImport.getStudentMedicalHistory(), studentMedicalHistory.getName(), studentExpandList, centerAreaId, createUser);
         }
         //学生居住地类型
         if (StrUtil.isNotBlank(studentImport.getStudentHabitationType())) {
-            setStudentExpandValue(studentImport.getStudentId(), studentHabitationType.name(), studentImport.getStudentHabitationType(), studentHabitationType.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), studentHabitationType.name(), studentImport.getStudentHabitationType(), studentHabitationType.getName(), studentExpandList, centerAreaId, createUser);
         }
         //生源地行政区划码
         if(StrUtil.isNotBlank(studentImport.getStudentFormAdministrativeCode())){
-            setStudentExpandValue(studentImport.getStudentId(), studentFormAdministrativeCode.name(), studentImport.getStudentFormAdministrativeCode(), studentFormAdministrativeCode.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), studentFormAdministrativeCode.name(), studentImport.getStudentFormAdministrativeCode(), studentFormAdministrativeCode.getName(), studentExpandList, centerAreaId, createUser);
         }
         //毕业学校
         if (StrUtil.isNotBlank(studentImport.getSchool())) {
-            setStudentExpandValue(studentImport.getStudentId(), school.name(), studentImport.getSchool(), school.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), school.name(), studentImport.getSchool(), school.getName(), studentExpandList, centerAreaId, createUser);
         }
         //招生对象
         if (StrUtil.isNotBlank(studentImport.getRecruit())) {
-            setStudentExpandValue(studentImport.getStudentId(), recruit.name(), studentImport.getRecruit(), recruit.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), recruit.name(), studentImport.getRecruit(), recruit.getName(), studentExpandList, centerAreaId, createUser);
         }
         //校外教学点
         if(StrUtil.isNotBlank(studentImport.getOffCampusTeachingAddress())){
-            setStudentExpandValue(studentImport.getStudentId(), offCampusTeachingAddress.name(), studentImport.getOffCampusTeachingAddress(), offCampusTeachingAddress.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), offCampusTeachingAddress.name(), studentImport.getOffCampusTeachingAddress(), offCampusTeachingAddress.getName(), studentExpandList, centerAreaId, createUser);
         }
         //籍贯行政区划码
         if (StrUtil.isNotBlank(studentImport.getNativePlaceFormAdministrativeCode())) {
-            setStudentExpandValue(studentImport.getStudentId(), nativePlaceFormAdministrativeCode.name(), studentImport.getNativePlaceFormAdministrativeCode(), nativePlaceFormAdministrativeCode.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), nativePlaceFormAdministrativeCode.name(), studentImport.getNativePlaceFormAdministrativeCode(), nativePlaceFormAdministrativeCode.getName(), studentExpandList, centerAreaId, createUser);
         }
         //所属派出所
         if (StrUtil.isNotBlank(studentImport.getLocalPoliceStation())) {
-            setStudentExpandValue(studentImport.getStudentId(), localPoliceStation.name(), studentImport.getLocalPoliceStation(), localPoliceStation.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), localPoliceStation.name(), studentImport.getLocalPoliceStation(), localPoliceStation.getName(), studentExpandList, centerAreaId, createUser);
         }
         //联招合作类型
         if(StrUtil.isNotBlank(studentImport.getJointRecruitmentCooperationType())){
-            setStudentExpandValue(studentImport.getStudentId(), jointRecruitmentCooperationType.name(), studentImport.getJointRecruitmentCooperationType(), jointRecruitmentCooperationType.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), jointRecruitmentCooperationType.name(), studentImport.getJointRecruitmentCooperationType(), jointRecruitmentCooperationType.getName(), studentExpandList, centerAreaId, createUser);
         }
         //联招合作办学形式
         if(StrUtil.isNotBlank(studentImport.getJointRecruitmentCooperationStyle())){
-            setStudentExpandValue(studentImport.getStudentId(), jointRecruitmentCooperationStyle.name(), studentImport.getJointRecruitmentCooperationStyle(), jointRecruitmentCooperationStyle.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), jointRecruitmentCooperationStyle.name(), studentImport.getJointRecruitmentCooperationStyle(), jointRecruitmentCooperationStyle.getName(), studentExpandList, centerAreaId, createUser);
         }
         //联招合作学校代码
         if(StrUtil.isNotBlank(studentImport.getJointRecruitmentCooperationSchoolCode())){
-            setStudentExpandValue(studentImport.getStudentId(), jointRecruitmentCooperationSchoolCode.name(), studentImport.getJointRecruitmentCooperationSchoolCode(), jointRecruitmentCooperationSchoolCode.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), jointRecruitmentCooperationSchoolCode.name(), studentImport.getJointRecruitmentCooperationSchoolCode(), jointRecruitmentCooperationSchoolCode.getName(), studentExpandList, centerAreaId, createUser);
         }
         //是否建档立卡贫困户
         if(StrUtil.isNotBlank(studentImport.getIsDestituteFamily())){
-            setStudentExpandValue(studentImport.getStudentId(), isDestituteFamily.name(), studentImport.getIsDestituteFamily(), isDestituteFamily.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), isDestituteFamily.name(), studentImport.getIsDestituteFamily(), isDestituteFamily.getName(), studentExpandList, centerAreaId, createUser);
         }
         //户口所在地行政区划码
         if(StrUtil.isNotBlank(studentImport.getHouseholdAdministrativeCode())){
-            setStudentExpandValue(studentImport.getStudentId(), householdAdministrativeCode.name(), studentImport.getHouseholdAdministrativeCode(), householdAdministrativeCode.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), householdAdministrativeCode.name(), studentImport.getHouseholdAdministrativeCode(), householdAdministrativeCode.getName(), studentExpandList, centerAreaId, createUser);
         }
         //户口所在地区县以下详细地址
         if(StrUtil.isNotBlank(studentImport.getHouseholdAddressDetails())){
-            setStudentExpandValue(studentImport.getStudentId(), householdAddressDetails.name(), studentImport.getHouseholdAddressDetails(), householdAddressDetails.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), householdAddressDetails.name(), studentImport.getHouseholdAddressDetails(), householdAddressDetails.getName(), studentExpandList, centerAreaId, createUser);
         }
         //体检结论
         if(StrUtil.isNotBlank(studentImport.getHealthReport())){
-            setStudentExpandValue(studentImport.getStudentId(), healthReport.name(), studentImport.getHealthReport(), healthReport.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), healthReport.name(), studentImport.getHealthReport(), healthReport.getName(), studentExpandList, centerAreaId, createUser);
         }
         //健康状态
         if(StrUtil.isNotBlank(studentImport.getHealthCondition())){
-            setStudentExpandValue(studentImport.getStudentId(), healthCondition.name(), studentImport.getHealthCondition(), healthCondition.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), healthCondition.name(), studentImport.getHealthCondition(), healthCondition.getName(), studentExpandList, centerAreaId, createUser);
         }
         //家庭邮政编码
         if(StrUtil.isNotBlank(studentImport.getFamilyPostalCode())){
-            setStudentExpandValue(studentImport.getStudentId(), familyPostalCode.name(), studentImport.getFamilyPostalCode(), familyPostalCode.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), familyPostalCode.name(), studentImport.getFamilyPostalCode(), familyPostalCode.getName(), studentExpandList, centerAreaId, createUser);
         }
         //家庭电话
         if(StrUtil.isNotBlank(studentImport.getFamilyPhone())){
-            setStudentExpandValue(studentImport.getStudentId(), familyPhone.name(), studentImport.getFamilyPhone(), familyPhone.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), familyPhone.name(), studentImport.getFamilyPhone(), familyPhone.getName(), studentExpandList, centerAreaId, createUser);
         }
         //英文姓名
         if(StrUtil.isNotBlank(studentImport.getEnglishName())){
-            setStudentExpandValue(studentImport.getStudentId(), englishName.name(), studentImport.getEnglishName(), englishName.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), englishName.name(), studentImport.getEnglishName(), englishName.getName(), studentExpandList, centerAreaId, createUser);
         }
         //出生地行政区划码
         if(StrUtil.isNotBlank(studentImport.getBirthplaceAdministrativeCode())){
-            setStudentExpandValue(studentImport.getStudentId(), birthplaceAdministrativeCode.name(), studentImport.getBirthplaceAdministrativeCode(), birthplaceAdministrativeCode.getName(), studentExpandList, centerAreaId);
+            setStudentExpandValue(studentImport.getStudentId(), birthplaceAdministrativeCode.name(), studentImport.getBirthplaceAdministrativeCode(), birthplaceAdministrativeCode.getName(), studentExpandList, centerAreaId, createUser);
         }
     }
 
     private void setStudentExpandValue(String studentId, String studentExpandName, String studentExpandValue, String expandExplain,
-                                       List<StudentExpand> studentExpandList, String centerAreaId) {
+                                       List<StudentExpand> studentExpandList, String centerAreaId, String createUser) {
         List<StudentExpand> expandList = studentExpandRepository.findAllByStudentIdAndExpandName(studentId, studentExpandName);
         StudentExpand studentExpand;
         if (!expandList.isEmpty()) {
@@ -396,6 +401,8 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
             studentExpand.setExpandName(studentExpandName);
             studentExpand.setExpandExplain(expandExplain);
             studentExpand.setCenterAreaId(centerAreaId);
+            studentExpand.setCreateUser(createUser);
+            studentExpand.setUpdateUser(createUser);
         }
         studentExpand.setExpandValue(studentExpandValue);
         studentExpandList.add(studentExpand);

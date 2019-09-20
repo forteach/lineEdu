@@ -40,7 +40,7 @@ public class ExportController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "导入学生需要信息模版")
+    @ApiOperation(value = "导出学生需要信息模版")
     @GetMapping(path = "/exportStudentTemplate")
     public WebResult leadingOutStudentTemplate(HttpServletResponse res, HttpServletRequest req) throws IOException {
         MyExcleUtil.getExcel(res, req, exportService.exportStudentTemplate(), "导入学生数据模版.xlsx");

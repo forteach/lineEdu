@@ -10,6 +10,7 @@ import com.project.portal.databank.request.ChapterDataRemoveReq;
 import com.project.portal.databank.vo.DataDatumVo;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
+import com.project.token.service.TokenService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +42,13 @@ public class ChapteDataController {
 
     private final ChapterDataVerify chapterDataVerify;
 
+    private final TokenService tokenService;
+
     @Autowired
-    public ChapteDataController(ChapteDataService chapteDataService, ChapterDataVerify chapterDataVerify) {
+    public ChapteDataController(ChapteDataService chapteDataService, ChapterDataVerify chapterDataVerify, TokenService tokenService) {
         this.chapteDataService = chapteDataService;
         this.chapterDataVerify = chapterDataVerify;
+        this.tokenService = tokenService;
     }
 
     @UserLoginToken
@@ -56,7 +61,7 @@ public class ChapteDataController {
             @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
             @ApiImplicitParam(name = "files", value = "文件对象", dataTypeClass = DataDatumVo.class, paramType = "form", required = true)
     })
-    public WebResult save(@ApiParam(value = "保存资料信息", name = "chapteData") @RequestBody ChapteDataReq chapteDataReq) {
+    public WebResult save(@ApiParam(value = "保存资料信息", name = "chapteData") @RequestBody ChapteDataReq chapteDataReq, HttpServletRequest httpServletRequest) {
         chapterDataVerify.saveVerify(chapteDataReq);
         //1、初始化参数
         String courseId = chapteDataReq.getCourseId();
@@ -65,7 +70,8 @@ public class ChapteDataController {
         List<com.project.databank.web.vo.DataDatumVo> files = new ArrayList<>();
         chapteDataReq.getFiles().forEach(c -> files.add(c));
         // 2、设置返回结果
-        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files));
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId));
     }
 
     @UserLoginToken

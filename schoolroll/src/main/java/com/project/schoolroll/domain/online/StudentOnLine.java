@@ -71,10 +71,15 @@ public class StudentOnLine extends Entitys implements Serializable {
      */
     @Column(name = "nation", columnDefinition = "VARCHAR(32) COMMENT '民族'")
     private String nation;
+    /**
+     * 学习形式全日制非全日制
+     */
+    @Column(name = "learning_modality", columnDefinition = "VARCHAR(32) COMMENT '学习形式(全日制、非全日制)'")
+    private String learningModality;
 
     /**
      * 学生信息 0 表格导入, 1 手动添加
      */
     @Column(name = "import_status", columnDefinition = "TINYINT(2) COMMENT '0 导入, 1 手动添加'")
-    private int importStatus;
+    private Integer importStatus;
 }

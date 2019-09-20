@@ -21,17 +21,13 @@ public class CourseImagesServiceImpl implements CourseImagesService {
 
     @Override
     @Transactional(rollbackForClassName = "Exception")
-    public void saveCourseImages(String courseId, List<DataDatumVo> dataList) {
+    public void saveCourseImages(String courseId, List<DataDatumVo> dataList, String createUser, String centerAreaId) {
         List<CourseImages> list = new ArrayList<>();
         List<DataDatumVo> dataDatumVos = dataList;
         for (int i = 0; i < dataDatumVos.size(); i++) {
             DataDatumVo dataDatumVo = dataDatumVos.get(i);
-            list.add(CourseImages.builder()
-                    .courseId(courseId)
-                    .indexNum(i + 1)
-                    .imageName(dataDatumVo.getFileName())
-                    .imageUrl(dataDatumVo.getFileUrl())
-                    .build());
+            list.add(new CourseImages(createUser, createUser, centerAreaId,
+                    dataDatumVo.getFileName(), dataDatumVo.getFileUrl(), courseId, i + 1));
         }
         courseImagesRepository.saveAll(list);
     }
