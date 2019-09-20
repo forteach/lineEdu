@@ -1,6 +1,8 @@
 package com.project.portal.user.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
@@ -44,6 +46,18 @@ public class TeacherController {
         this.tokenService = tokenService;
     }
 
+    private void validator(TeacherSaveUpdateRequest request) {
+        if (StrUtil.isNotBlank(request.getPhone())) {
+            MyAssert.isFalse(Validator.isMobile(request.getPhone()), DefineCode.ERR0002, "联系电话不是手机号码");
+        }
+        if (StrUtil.isNotBlank(request.getEmail())) {
+            MyAssert.isFalse(Validator.isEmail(request.getEmail()), DefineCode.ERR0002, "电子邮箱格式不正确");
+        }
+        if (StrUtil.isNotBlank(request.getIdCard())) {
+            MyAssert.isFalse(IdcardUtil.isValidCard(request.getIdCard()), DefineCode.ERR0002, "身份证格式不正确");
+        }
+    }
+
     @UserLoginToken
     @ApiOperation(value = "添加修改教师信息")
     @PostMapping("/saveOrUpdate")
@@ -74,11 +88,13 @@ public class TeacherController {
         teacher.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getTeacherId())) {
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "联系电话不为空");
+            validator(request);
             String centerAreaId = tokenService.getCenterAreaId(token);
             teacher.setCenterAreaId(centerAreaId);
             teacher.setCreateUser(userId);
             return WebResult.okResult(teacherService.save(teacher));
         } else {
+            validator(request);
             return WebResult.okResult(teacherService.update(teacher));
         }
     }
@@ -128,7 +144,7 @@ public class TeacherController {
     @ApiOperation(value = "根据教师代码删除教师信息")
     @DeleteMapping(path = "/teacherCode/{teacherCode}")
     @ApiImplicitParam(name = "teacherCode", value = "教师代码", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteByTeacherCode(@PathVariable String teacherCode){
+    public WebResult deleteByTeacherCode(@PathVariable String teacherCode) {
         MyAssert.isNull(teacherCode, DefineCode.ERR0010, "教师id不能为空");
         teacherService.deleteByTeacherCode(teacherCode);
         return WebResult.okResult();
@@ -141,7 +157,7 @@ public class TeacherController {
             @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form")
     })
-    public WebResult uploadFile(@RequestBody TeacherUploadFileRequest request){
+    public WebResult uploadFile(@RequestBody TeacherUploadFileRequest request) {
         MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");
         MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件不为空");
         teacherService.uploadFile(request.getTeacherId(), request.getFileUrl());

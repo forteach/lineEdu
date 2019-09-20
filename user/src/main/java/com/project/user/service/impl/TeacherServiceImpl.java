@@ -1,7 +1,6 @@
 package com.project.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -64,7 +63,7 @@ public class TeacherServiceImpl implements TeacherService {
             Teacher t = optionalTeacher.get();
             BeanUtil.copyProperties(teacher, t);
             if (StrUtil.isNotBlank(teacher.getPhone()) && !t.getPhone().equals(teacher.getPhone())) {
-                userService.updateTeacher(t.getPhone(), teacher.getPhone());
+                userService.updateTeacher(t.getPhone(), teacher.getPhone(), teacher.getUpdateUser());
             }
             return teacherRepository.save(teacher);
         }

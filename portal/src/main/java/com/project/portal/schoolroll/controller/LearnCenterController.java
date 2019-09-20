@@ -77,7 +77,7 @@ public class LearnCenterController {
                 BeanUtils.copyProperties(request, learnCenter);
                 learnCenter.setUpdateUser(userId);
                 learnCenterRepository.save(learnCenter);
-                userService.updateCenter(learnCenter.getCenterName(), request.getCenterName());
+                userService.updateCenter(learnCenter.getCenterName(), request.getCenterName(), userId);
             });
         } else {
             MyAssert.isNull(request.getCenterName(), DefineCode.ERR0010, "学习中心名称不为空");
@@ -96,7 +96,7 @@ public class LearnCenterController {
             learnCenter.setUpdateUser(userId);
             learnCenter.setUpdateUser(userId);
             learnCenterRepository.save(learnCenter);
-            userService.registerCenter(request.getCenterName(), centerAreaId);
+            userService.registerCenter(request.getCenterName(), centerAreaId, userId);
         }
         return WebResult.okResult();
     }

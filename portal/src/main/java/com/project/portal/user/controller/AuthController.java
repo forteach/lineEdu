@@ -78,18 +78,20 @@ public class AuthController {
     @PostMapping("/resetPassWord")
     @ApiImplicitParam(name = "teacherCode",value = "教师代码", required = true, dataType = "string",paramType = "from")
     @UserLoginToken
-    public WebResult resetPassWord(@RequestBody String teacherCode){
+    public WebResult resetPassWord(@RequestBody String teacherCode, HttpServletRequest httpServletRequest){
         MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
-        return WebResult.okResult(userService.resetPassWord(JSONObject.parseObject(teacherCode).getString("teacherCode")));
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(userService.resetPassWord(JSONObject.parseObject(teacherCode).getString("teacherCode"), userId));
     }
 
     @ApiOperation("添加教师用户信息用户账户")
     @PostMapping("/addSysTeacher")
     @ApiImplicitParam(name = "teacherCode",value = "教师代码", required = true, dataType = "string",paramType = "from")
     @UserLoginToken
-    public WebResult addSysTeacher(@RequestBody String teacherCode){
+    public WebResult addSysTeacher(@RequestBody String teacherCode, HttpServletRequest httpServletRequest){
         MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
-        return WebResult.okResult(userService.addSysTeacher(JSONObject.parseObject(teacherCode).getString("teacherCode")));
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(userService.addSysTeacher(JSONObject.parseObject(teacherCode).getString("teacherCode"), userId));
     }
     @UserLoginToken
     @ApiOperation("修改密码")
@@ -114,10 +116,11 @@ public class AuthController {
     @PutMapping("/updateState")
     @ApiImplicitParam(name = "teacherCode", value = "教师代码", required = true, dataType = "string", paramType = "from")
     @ApiResponse(code = 0, message = "OK")
-    public WebResult updateState(@RequestBody String teacherCode){
+    public WebResult updateState(@RequestBody String teacherCode, HttpServletRequest httpServletRequest){
         MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
         String teacherCodeStr = JSONObject.parseObject(teacherCode).getString("teacherCode");
-        userService.updateState(teacherCodeStr);
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        userService.updateState(teacherCodeStr, userId);
         return WebResult.okResult();
     }
 

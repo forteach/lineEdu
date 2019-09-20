@@ -37,14 +37,14 @@ public interface UserService {
      * @param teacherCode
      * @return
      */
-    boolean resetPassWord(String teacherCode);
+    boolean resetPassWord(String teacherCode, String userId);
 
     /**
      * 添加教师用户信息
      * @param teacherCode
      * @return
      */
-    boolean addSysTeacher(String teacherCode);
+    boolean addSysTeacher(String teacherCode, String userId);
 
     /**
      * 修改密码
@@ -59,13 +59,13 @@ public interface UserService {
      *
      * @param teacherCodeStr
      */
-    void updateState(String teacherCodeStr);
+    void updateState(String teacherCodeStr, String userId);
 
     void registerTeacher(RegisterTeacherVo vo);
 
-    void updateTeacher(String phone, String newPhone);
+    void updateTeacher(String phone, String newPhone, String userId);
 
-    void registerCenter(String centerName, String centerAreaId);
+    void registerCenter(String centerName, String centerAreaId, String userId);
 
-    void updateCenter(String center, String newCenter);
+    void updateCenter(String center, String newCenter, String userId);
 }
