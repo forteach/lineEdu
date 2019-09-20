@@ -4,6 +4,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.project.portal.config.interceptor.ReqInterceptor;
+import com.project.portal.config.interceptor.SysUserLoginInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -113,18 +114,18 @@ public class WebMvcConfg implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/v2/api-docs/");
     }
 
-//    @Bean
-//    SysUserLoginInterceptor sysUserLoginInterceptor() {
-//        return new SysUserLoginInterceptor();
-//    }
+    @Bean
+    SysUserLoginInterceptor sysUserLoginInterceptor() {
+        return new SysUserLoginInterceptor();
+    }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 //        // 判断是否有@LoginRequired需要进行拦截
-//        registry.addInterceptor(sysUserLoginInterceptor())
-//                .excludePathPatterns("*.css", "*.js").addPathPatterns("/**")
-//                .excludePathPatterns("*").addPathPatterns("/error")
-//                .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/swagger-ui.html/**")
-//                .excludePathPatterns("/actuator/**");
+        registry.addInterceptor(sysUserLoginInterceptor())
+                .excludePathPatterns("*.css", "*.js").addPathPatterns("/**")
+                .excludePathPatterns("*").addPathPatterns("/error")
+                .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/swagger-ui.html/**")
+                .excludePathPatterns("/actuator/**");
         registry.addInterceptor(new ReqInterceptor()).addPathPatterns("/**");
     }
 

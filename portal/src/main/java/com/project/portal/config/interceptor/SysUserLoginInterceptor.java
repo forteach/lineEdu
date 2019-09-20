@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
@@ -27,7 +28,7 @@ import static com.project.token.constant.TokenKey.USER_TOKEN_PREFIX;
  */
 @Slf4j
 @NoArgsConstructor
-public class SysUserLoginInterceptor{
+public class SysUserLoginInterceptor implements HandlerInterceptor {
 
     @Resource
     private TokenService tokenService;
