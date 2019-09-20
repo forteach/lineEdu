@@ -104,7 +104,7 @@ public class TeacherController {
     @GetMapping(path = "/")
     public WebResult findAll(HttpServletRequest httpServletRequest) {
         String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(teacherService.findAll(centerAreaId));
+        return WebResult.okResult(teacherService.findAllByCenterAreaId(centerAreaId));
     }
 
     @UserLoginToken
@@ -116,8 +116,12 @@ public class TeacherController {
     })
     public WebResult findAllPage(@RequestBody SortVo sortVo, HttpServletRequest httpServletRequest) {
         valideSort(sortVo.getPage(), sortVo.getSize());
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(teacherService.findAllPageByCenterAreaId(centerAreaId, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+        String token = httpServletRequest.getHeader("token");
+        if (!tokenService.isAdmin(token)) {
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(centerAreaId, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+        }
+        return WebResult.okResult(teacherService.findAllPageDto(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
 
     @UserLoginToken

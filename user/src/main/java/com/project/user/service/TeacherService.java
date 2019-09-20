@@ -1,10 +1,11 @@
 package com.project.user.service;
 
 import com.project.user.domain.Teacher;
+import com.project.user.repository.dto.TeacherDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -20,7 +21,7 @@ public interface TeacherService {
 
     public Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest);
 
-    public List<Teacher> findAll(String centerAreaId);
+    public List<Teacher> findAllByCenterAreaId(String centerAreaId);
 
     public void deleteByTeacherCode(String teacherCode);
 
@@ -31,4 +32,8 @@ public interface TeacherService {
     public void uploadFile(String teacherId, String fileUrl);
 
     public Teacher findById(String teacherId);
+
+    public Page<TeacherDto> findAllPageDto(PageRequest pageRequest);
+
+    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest);
 }

@@ -74,7 +74,12 @@ public class TokenServiceImpl implements TokenService {
         if (TOKEN_TEACHER.equals(getValue(token, 1))){
             return getValue(token, 3);
         }
-        return null;
+        return "";
+    }
+
+    @Override
+    public boolean isAdmin(String token) {
+        return USER_ROLE_CODE_ADMIN.equals(getRoleCode(token)) ? true : false;
     }
 
     /**

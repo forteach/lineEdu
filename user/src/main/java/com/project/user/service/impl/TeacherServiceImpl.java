@@ -7,6 +7,7 @@ import com.project.base.exception.MyAssert;
 import com.project.user.domain.Teacher;
 import com.project.user.repository.SysUsersRepository;
 import com.project.user.repository.TeacherRepository;
+import com.project.user.repository.dto.TeacherDto;
 import com.project.user.service.TeacherService;
 import com.project.user.service.UserService;
 import com.project.user.web.vo.RegisterTeacherVo;
@@ -77,7 +78,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Teacher> findAll(String centerAreaId) {
+    public List<Teacher> findAllByCenterAreaId(String centerAreaId) {
         return teacherRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId);
     }
 
@@ -120,5 +121,15 @@ public class TeacherServiceImpl implements TeacherService {
         }
         MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的教师信息");
         return null;
+    }
+
+    @Override
+    public Page<TeacherDto> findAllPageDto(PageRequest pageRequest) {
+        return teacherRepository.findAllByIsValidatedEqualsDto(pageRequest);
+    }
+
+    @Override
+    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest) {
+        return teacherRepository.findAllByIsValidatedEqualsAndCenterAreaIdDto(centerAreaId, pageRequest);
     }
 }

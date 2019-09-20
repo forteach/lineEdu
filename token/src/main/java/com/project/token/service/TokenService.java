@@ -25,6 +25,8 @@ public interface TokenService {
 
     String getRoleCode(String token);
 
+    boolean isAdmin(String token);
+
     /**
      * 获取JWT验证
      * @param openId

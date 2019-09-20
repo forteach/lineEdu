@@ -2,10 +2,12 @@ package com.project.user.repository;
 
 
 import com.project.user.domain.Teacher;
+import com.project.user.repository.dto.TeacherDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -36,4 +38,58 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
     @Modifying(clearAutomatically = true)
     int deleteTeacherByTeacherCode(String teacherCode);
 
+    @Query(value = "select " +
+            " t.teacherId as teacherId, " +
+            " t.teacherName as teacherName, " +
+            " t.teacherCode as teacherCode, " +
+            " t.fileUrl as fileUrl, " +
+            " t.gender as gender, " +
+            " t.birthDate as birthDate, " +
+            " t.idCard as idCard, " +
+            " t.professionalTitle as professionalTitle, " +
+            " t.professionalTitleDate as professionalTitleDate, " +
+            " t.position as position, " +
+            " t.industry as industry, " +
+            " t.email as email, " +
+            " t.phone as phone, " +
+            " t.specialty as specialty, " +
+            " t.isFullTime as isFullTime, " +
+            " t.academicDegree as academicDegree, " +
+            " t.bankCardAccount as bankCardAccount," +
+            " t.bankCardBank as bankCardBank, " +
+            " t.centerAreaId as centerAreaId, " +
+            " lc.centerName as centerName " +
+            " from Teacher as t " +
+            " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
+            " where t.isValidated = '0' order by t.createTime desc ")
+    @Transactional(readOnly = true)
+    Page<TeacherDto> findAllByIsValidatedEqualsDto(Pageable pageable);
+
+
+    @Query(value = "select " +
+            " t.teacherId as teacherId, " +
+            " t.teacherName as teacherName, " +
+            " t.teacherCode as teacherCode, " +
+            " t.fileUrl as fileUrl, " +
+            " t.gender as gender, " +
+            " t.birthDate as birthDate, " +
+            " t.idCard as idCard, " +
+            " t.professionalTitle as professionalTitle, " +
+            " t.professionalTitleDate as professionalTitleDate, " +
+            " t.position as position, " +
+            " t.industry as industry, " +
+            " t.email as email, " +
+            " t.phone as phone, " +
+            " t.specialty as specialty, " +
+            " t.isFullTime as isFullTime, " +
+            " t.academicDegree as academicDegree, " +
+            " t.bankCardAccount as bankCardAccount," +
+            " t.bankCardBank as bankCardBank, " +
+            " t.centerAreaId as centerAreaId, " +
+            " lc.centerName as centerName " +
+            " from Teacher as t " +
+            " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
+            " where t.isValidated = '0' and t.centerAreaId = ?1 order by t.createTime desc ")
+    @Transactional(readOnly = true)
+    Page<TeacherDto> findAllByIsValidatedEqualsAndCenterAreaIdDto(String centerAreaId, Pageable pageable);
 }
