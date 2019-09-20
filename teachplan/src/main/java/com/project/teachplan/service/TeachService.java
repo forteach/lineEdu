@@ -15,6 +15,7 @@ import com.project.teachplan.domain.online.TeachPlanClass;
 import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
+import com.project.teachplan.repository.dto.TeachPlanDto;
 import com.project.teachplan.vo.TeachPlanCourseVo;
 import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,5 +166,18 @@ public class TeachService {
 
     public List<TeachPlanClass> findAllClassByPlanId(String planId) {
         return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
+    }
+
+    public Page<TeachPlanDto> findAllPageDto(Pageable pageable){
+        return teachPlanRepository.findAllByIsValidatedEqualsDto(pageable);
+    }
+    public Page<TeachPlanDto> findAllPageByPlanIdDto(String planId, Pageable pageable){
+        return teachPlanRepository.findAllByIsValidatedEqualsAndPlanIdDto(planId, pageable);
+    }
+    public Page<TeachPlanDto> findAllPageDtoByCenterAreaId(String centerAreaId, Pageable pageable){
+        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdDto(centerAreaId, pageable);
+    }
+    public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, Pageable pageable){
+        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
     }
 }

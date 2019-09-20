@@ -78,8 +78,12 @@ public class StudentOnLineController {
     })
     public WebResult findPageAll(@RequestBody StudentOnLineFindAllPageRequest request, HttpServletRequest httpServletRequest){
         valideSort(request.getPage(), request.getSize());
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(studentOnLineService.findAllPageByCenterAreaId(centerAreaId, PageRequest.of(request.getPage(), request.getSize())));
+        String token = httpServletRequest.getHeader("token");
+        if (tokenService.isAdmin(token)){
+            return WebResult.okResult(studentOnLineService.findAllPageDto(PageRequest.of(request.getPage(), request.getSize())));
+        }
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        return WebResult.okResult(studentOnLineService.findAllPageDtoByCenterAreaId(centerAreaId, PageRequest.of(request.getPage(), request.getSize())));
     }
 
 //    @GetMapping("/import")

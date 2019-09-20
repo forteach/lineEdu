@@ -113,11 +113,20 @@ public class TeachPlanController {
     })
     public WebResult findByPlanIdPageAll(@RequestBody TeachPlanPageAllRequest request, HttpServletRequest httpServletRequest){
         valideSort(request.getPage(), request.getSize());
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-        if (StrUtil.isNotBlank(request.getPlanId())) {
-            return WebResult.okResult(teachService.findByPlanIdPageAll(centerAreaId, request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
+        String token = httpServletRequest.getHeader("token");
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
+        if (tokenService.isAdmin(token)) {
+            if (StrUtil.isNotBlank(request.getPlanId())){
+                return WebResult.okResult(teachService.findAllPageByPlanIdDto(request.getPlanId(), pageRequest));
+            }
+            return WebResult.okResult(teachService.findAllPageDto(pageRequest));
         }else {
-            return WebResult.okResult(teachService.findPageAll(centerAreaId, PageRequest.of(request.getPage(), request.getSize())));
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            if (StrUtil.isNotBlank(request.getPlanId())) {
+                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaIdAndPlanId(centerAreaId, request.getPlanId(), pageRequest));
+            } else {
+                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaId(centerAreaId, pageRequest));
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import com.project.schoolroll.domain.online.StudentOnLine;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,4 +30,44 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
     Page<StudentOnLine> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);
 
     List<StudentOnLine> findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(String isValidated, String stuIDCard, String studentName);
+
+    @Query(value = "select " +
+            " s.studentId as studentId," +
+            " s.studentName as studentName," +
+            " s.gender as gender," +
+            " s.stuIDCard as stuIDCard," +
+            " s.stuPhone as stuPhone," +
+            " s.classId as classId," +
+            " s.className as className," +
+            " s.enrollmentDate as enrollmentDate," +
+            " s.nation as nation, " +
+            " s.learningModality as learningModality, " +
+            " s.importStatus as importStatus," +
+            " s.centerAreaId as centerAreaId," +
+            " lc.centerName as centerName " +
+            " from StudentOnLine as s " +
+            " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
+            " where s.isValidated = '0' and s.centerAreaId = ?1 order by s.createTime desc ")
+    @Transactional(readOnly = true)
+    Page<StudentOnLineDto> findAllByIsValidatedEqualsAndCenterAreaIdDto(String centerAreaId, Pageable pageable);
+
+    @Query(value = "select " +
+            " s.studentId as studentId," +
+            " s.studentName as studentName," +
+            " s.gender as gender," +
+            " s.stuIDCard as stuIDCard," +
+            " s.stuPhone as stuPhone," +
+            " s.classId as classId," +
+            " s.className as className," +
+            " s.enrollmentDate as enrollmentDate," +
+            " s.nation as nation, " +
+            " s.learningModality as learningModality, " +
+            " s.importStatus as importStatus," +
+            " s.centerAreaId as centerAreaId," +
+            " lc.centerName as centerName " +
+            " from StudentOnLine as s " +
+            " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
+            " where s.isValidated = '0' order by s.createTime desc ")
+    @Transactional(readOnly = true)
+    Page<StudentOnLineDto> findAllByIsValidatedEqualsDto(Pageable pageable);
 }

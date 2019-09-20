@@ -9,6 +9,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.domain.online.TbClasses;
+import com.project.schoolroll.repository.online.StudentOnLineDto;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,8 +120,12 @@ public class StudentOnLineService {
         return studentOnLineRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, request);
     }
 
-    public Page<StudentOnLine> findAllPageByCenterAreaId(String centerAreaId, PageRequest request){
-        return studentOnLineRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, request);
+    public Page<StudentOnLineDto> findAllPageDtoByCenterAreaId(String centerAreaId, PageRequest request){
+        return studentOnLineRepository.findAllByIsValidatedEqualsAndCenterAreaIdDto(centerAreaId, request);
+    }
+
+    public Page<StudentOnLineDto> findAllPageDto(PageRequest request){
+        return studentOnLineRepository.findAllByIsValidatedEqualsDto(request);
     }
 
     public List<StudentOnLine> findByStuIDCardAndStudentName(String stuIDCard, String studentName){
