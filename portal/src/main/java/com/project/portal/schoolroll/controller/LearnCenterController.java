@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
+import com.project.portal.schoolroll.request.LearnCenterFileSaveUpdateRequest;
 import com.project.portal.schoolroll.request.LearnCenterSaveUpdateRequest;
 import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.LearnCenterRepository;
@@ -14,7 +15,6 @@ import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.user.service.UserService;
-import com.project.user.web.vo.RegisterCenterVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -67,7 +67,9 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "bankingAccount", value = "银行账户", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "accountHolder", value = "开户人", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "accountHolderPhone", value = "开户人电话", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "bankingAccountAddress", value = "开户行地址", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "bankingAccountAddress", value = "开户行地址", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "companyAddress", value = "公司地址", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "companyName", value = "企业名称", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
@@ -118,6 +120,7 @@ public class LearnCenterController {
         valideSort(sortVo.getPage(), sortVo.getSize());
         return WebResult.okResult(learnCenterRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
+
     @UserLoginToken
     @ApiOperation(value = "移除学习中心信息")
     @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
@@ -126,5 +129,40 @@ public class LearnCenterController {
         MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id");
         learnCenterService.removeById(JSONObject.parseObject(centerId).getString("centerId"));
         return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "保存学习中心资料")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "files", value = "文件集合", dataType = "list", paramType = "form")
+    })
+    @PostMapping("/saveFiles")
+    public WebResult saveFile(@RequestBody LearnCenterFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
+        MyAssert.isTrue(request.getFiles().isEmpty(), DefineCode.ERR0010, "文件列表不能为空");
+        MyAssert.isNull(request.getCenterId(), DefineCode.ERR0010, "学习中心不能为空");
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        learnCenterService.saveFile(request.getFiles(), request.getCenterId(), userId);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "通过资料Id删除学习中心资料")
+    @DeleteMapping("/file/{fileId}")
+    @ApiImplicitParam(name = "fileId", value = "文件id", dataType = "string", required = true, paramType = "form")
+    public WebResult deleteFile(@PathVariable String fileId) {
+        MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
+        learnCenterService.deleteByFileId(fileId);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @GetMapping(path = "/file/{centerId}")
+    @ApiOperation(value = "查询学习中心对应的资料信息")
+    @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
+    public WebResult findAllFiles(@PathVariable String centerId) {
+        MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id不能为空");
+        return WebResult.okResult(learnCenterService.findAll(centerId));
     }
 }

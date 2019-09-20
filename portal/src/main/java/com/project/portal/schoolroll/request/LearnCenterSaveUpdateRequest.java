@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -65,4 +66,10 @@ public class LearnCenterSaveUpdateRequest implements Serializable {
      */
     @ApiModelProperty(name = "bankingAccountAddress", value = "开户行地址", dataType = "string")
     private String bankingAccountAddress;
+
+    @ApiModelProperty(name = "companyAddress", value = "公司地址", dataType = "string")
+    private String companyAddress;
+
+    @ApiModelProperty(name = "companyName", value = "公司企业名称", dataType = "string")
+    private String companyName;
 }

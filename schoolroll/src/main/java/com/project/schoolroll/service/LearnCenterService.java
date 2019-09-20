@@ -1,5 +1,6 @@
 package com.project.schoolroll.service;
 
+import com.project.schoolroll.domain.CenterFile;
 import com.project.schoolroll.repository.dto.LearnCenterDto;
 
 import java.util.List;
@@ -21,4 +22,9 @@ public interface LearnCenterService {
 
     public void removeById(String centerId);
 
+    void saveFile(List<CenterFile> files, String centerId, String userId);
+
+    void deleteByFileId(String fileId);
+
+    List<CenterFile> findAll(String centerId);
 }
