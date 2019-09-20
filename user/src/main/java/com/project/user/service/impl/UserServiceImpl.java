@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         } else if (!user.getPassWord().equals(Md5Util.macMD5(userLoginReq.getPassWord().concat(salt)))) {
             MyAssert.isNull(null, DefineCode.ERR0016, "密码错误");
         }
-        String token = tokenService.createToken(user.getId(), user.getCenterAreaId());
+        String token = tokenService.createToken(user.getId(), user.getCenterAreaId(), user.getRoleCode());
         //保存token到redis
         Map<String, Object> map = BeanUtil.beanToMap(user);
         map.put("token", token);

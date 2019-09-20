@@ -44,9 +44,9 @@ public class TokenServiceImpl implements TokenService {
      * @return
      */
     @Override
-    public String createToken(String userId, String centerAreaId) {
+    public String createToken(String userId, String centerAreaId, String roleCode) {
         return JWT.create()
-                .withAudience(userId, TOKEN_TEACHER, centerAreaId)
+                .withAudience(userId, TOKEN_TEACHER, centerAreaId, roleCode)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_VALIDITY_TIME * 1000))
                 .sign(Algorithm.HMAC256(salt.concat(userId)));
@@ -69,6 +69,13 @@ public class TokenServiceImpl implements TokenService {
         return null;
     }
 
+    @Override
+    public String getRoleCode(String token) {
+        if (TOKEN_TEACHER.equals(getValue(token, 1))){
+            return getValue(token, 3);
+        }
+        return null;
+    }
 
     /**
      * 校验token

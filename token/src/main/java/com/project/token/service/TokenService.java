@@ -17,11 +17,13 @@ public interface TokenService {
      * @param userId
      * @return
      */
-    String createToken(String userId, String centerAreaId);
+    String createToken(String userId, String centerAreaId, String roleCode);
 
     String createToken(String userId);
 
     String getCenterAreaId(String token);
+
+    String getRoleCode(String token);
 
     /**
      * 获取JWT验证
