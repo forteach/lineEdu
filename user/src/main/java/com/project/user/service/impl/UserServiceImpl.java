@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.Md5Util;
 import com.project.token.service.TokenService;
+import com.project.user.domain.SysUserLog;
 import com.project.user.domain.SysUsers;
 import com.project.user.domain.Teacher;
 import com.project.user.domain.UserRole;
@@ -15,6 +16,7 @@ import com.project.user.repository.TeacherRepository;
 import com.project.user.repository.UserRepository;
 import com.project.user.repository.UserRoleRepository;
 import com.project.user.repository.dto.SysRoleDto;
+import com.project.user.service.SysUserLogService;
 import com.project.user.service.UserService;
 import com.project.user.web.req.RegisterUserReq;
 import com.project.user.web.req.UpdatePassWordReq;
@@ -73,6 +75,9 @@ public class UserServiceImpl implements UserService {
     @Resource
     private SysRoleRepository sysRoleRepository;
 
+    @Resource
+    private SysUserLogService sysUserLogService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(UserLoginReq userLoginReq) {
@@ -84,17 +89,19 @@ public class UserServiceImpl implements UserService {
         } else if (!user.getPassWord().equals(Md5Util.macMD5(userLoginReq.getPassWord().concat(salt)))) {
             MyAssert.isNull(null, DefineCode.ERR0016, "密码错误");
         }
-        String token = tokenService.createToken(user.getId(), user.getCenterAreaId(), user.getRoleCode());
+        String userId = user.getId();
+        String token = tokenService.createToken(userId, user.getCenterAreaId(), user.getRoleCode());
         //保存token到redis
         Map<String, Object> map = BeanUtil.beanToMap(user);
         map.put("token", token);
-        List<SysRoleDto> sysRoles = userRoleRepository.findByIsValidatedEqualsAndUserId(user.getId());
+        List<SysRoleDto> sysRoles = userRoleRepository.findByIsValidatedEqualsAndUserId(userId);
         LoginResponse loginResponse = LoginResponse.builder()
-                .userId(user.getId())
+                .userId(userId)
                 .token(token)
                 .roleCode(user.getRoleCode())
                 .userName(user.getUserName())
                 .teacherId(user.getTeacherId())
+                .centerAreaId(user.getCenterAreaId())
                 .build();
         if (!sysRoles.isEmpty()) {
             sysRoles.stream().findFirst().ifPresent(sysRole -> {
@@ -106,8 +113,21 @@ public class UserServiceImpl implements UserService {
                 map.put("roleName", sysRole.getRoleName());
             });
         }
-        tokenService.saveRedis(USER_TOKEN_PREFIX.concat(user.getId()), map);
+        tokenService.saveRedis(USER_TOKEN_PREFIX.concat(userId), map);
+
+        //添加登陆记录
+        saveSysUserLoginLog(userLoginReq.getIp(), userId, user.getCenterAreaId());
+
         return loginResponse;
+    }
+
+    private void saveSysUserLoginLog(String ip, String userId, String centerAreaId) {
+        SysUserLog sysUserLog = new SysUserLog();
+        sysUserLog.setIp(ip);
+        sysUserLog.setUpdateUser(userId);
+        sysUserLog.setCreateUser(userId);
+        sysUserLog.setCenterAreaId(centerAreaId);
+        sysUserLogService.addLog(sysUserLog);
     }
 
     @Override
@@ -197,9 +217,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(users);
         sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
             userRoleRepository.save(UserRole.builder()
-                .userId(users.getId())
-                .roleId(s.getRoleId())
-                .build());
+                    .userId(users.getId())
+                    .roleId(s.getRoleId())
+                    .build());
         });
     }
 
@@ -246,9 +266,10 @@ public class UserServiceImpl implements UserService {
             userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(s.getRoleId()).build());
         });
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateTeacher(String phone, String newPhone, String userId){
+    public void updateTeacher(String phone, String newPhone, String userId) {
         userRepository.findById(phone).ifPresent(u -> {
             u.setRegisterPhone(newPhone);
             u.setId(newPhone);
@@ -282,7 +303,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateCenter(String centerName, String newCenterName, String updateUser){
+    public void updateCenter(String centerName, String newCenterName, String updateUser) {
         userRepository.findById(centerName).ifPresent(s -> {
             s.setId(newCenterName);
             s.setTeacherId(newCenterName);

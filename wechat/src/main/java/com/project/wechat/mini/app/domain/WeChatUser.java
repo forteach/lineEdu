@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * @Auther: zhangyy
@@ -27,7 +28,7 @@ import javax.persistence.*;
 })
 @EqualsAndHashCode(callSuper = true)
 @org.hibernate.annotations.Table(appliesTo = "wx_user", comment = "微信用户信息")
-public class WeChatUser extends Entitys {
+public class WeChatUser extends Entitys implements Serializable {
 
     @Id
     @GenericGenerator(name = "system-uuid", strategy = "uuid")

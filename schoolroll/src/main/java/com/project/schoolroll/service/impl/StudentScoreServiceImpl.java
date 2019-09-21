@@ -7,8 +7,6 @@ import com.project.schoolroll.repository.StudentScoreRepository;
 import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
-import com.project.schoolroll.web.vo.StudentVo;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

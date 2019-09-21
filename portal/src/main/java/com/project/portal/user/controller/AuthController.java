@@ -55,11 +55,12 @@ public class AuthController {
             @ApiImplicitParam(name = "teacherCode", value = "用户代码", required = true, dataType = "string", paramType = "from"),
             @ApiImplicitParam(name = "passWord", value = "密码", required = true, dataType = "string", paramType = "from")
     })
-    public WebResult login(@RequestBody UserLoginRequest req){
+    public WebResult login(@RequestBody UserLoginRequest req, HttpServletRequest httpServletRequest){
         MyAssert.blank(req.getTeacherCode(), DefineCode.ERR0010, "教师代码不为空");
         MyAssert.blank(req.getPassWord(), DefineCode.ERR0010, "密码不为空");
         UserLoginReq userLoginReq = new UserLoginReq();
         BeanUtil.copyProperties(req, userLoginReq);
+        userLoginReq.setIp(httpServletRequest.getRemoteHost());
         return WebResult.okResult(userService.login(userLoginReq));
     }
 

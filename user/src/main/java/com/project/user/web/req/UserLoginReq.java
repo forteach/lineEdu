@@ -17,4 +17,6 @@ public class UserLoginReq implements Serializable {
     private String teacherCode;
 
     private String passWord;
+
+    private String ip;
 }

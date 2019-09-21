@@ -7,14 +7,11 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.wechat.req.BindingUserReq;
-import com.project.portal.wechat.req.WeChatUserReq;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.wechat.mini.app.config.WeChatMiniAppConfig;
 import com.project.wechat.mini.app.service.WeChatUserService;
 import com.project.wechat.mini.app.web.request.BindingUserRequest;
-import com.project.wechat.mini.app.web.request.WeChatUserRequest;
-import com.project.wechat.mini.app.web.vo.WxDataVo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -52,7 +49,7 @@ public class WeChatUserController {
             @ApiImplicitParam(name = "code", value = "微信登录凭证(code)", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "portrait", value = "用户头像url", dataType = "string", paramType = "form")
     })
-    public WebResult login(@ApiParam(name = "code", value = "微信登录code") String code, @ApiParam(value = "portrait") String portrait){
+    public WebResult login(@ApiParam(name = "code", value = "微信登录code") String code, @ApiParam(value = "portrait") String portrait, HttpServletRequest httpServletRequest){
         MyAssert.blank(code, DefineCode.ERR0010, "code is null");
         final WxMaService wxService = WeChatMiniAppConfig.getMaService();
         try {
@@ -60,7 +57,8 @@ public class WeChatUserController {
             log.info(session.getSessionKey());
             log.info(session.getOpenid());
             //TODO 可以增加自己的逻辑，关联业务相关数据
-            return WebResult.okResult(weChatUserService.bindingToken(session, portrait));
+            String ip = httpServletRequest.getRemoteHost();
+            return WebResult.okResult(weChatUserService.bindingToken(session, portrait, ip));
         } catch (WxErrorException e) {
             log.error(e.getMessage(), e);
             return WebResult.failException(e.getMessage());

@@ -57,8 +57,9 @@ public interface WeChatUserRepository extends JpaRepository<WeChatUser, String> 
             " s.studentName as studentName, " +
             " w.avatarUrl as portrait, " +
             " s.classId as classId, " +
-            " s.className as className " +
-            " from  WeChatUser as w " +
+            " s.className as className," +
+            " s.centerAreaId as centerAreaId " +
+            " from WeChatUser as w " +
             " left join StudentOnLine as s on s.studentId = w.studentId " +
             " where w.isValidated = '0' and s.isValidated = '0' and w.openId = ?1 ")
     @Transactional(readOnly = true)

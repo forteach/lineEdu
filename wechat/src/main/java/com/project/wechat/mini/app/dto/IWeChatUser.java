@@ -18,4 +18,6 @@ public interface IWeChatUser {
     public String getStudentName();
 
     public String getPortrait();
+
+    public String getCenterAreaId();
 }

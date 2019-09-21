@@ -73,3 +73,4 @@ hs_err_pid*
 /flow/.settings/
 /train/target/
 /train/.settings/
+/.idea/httpRequests/

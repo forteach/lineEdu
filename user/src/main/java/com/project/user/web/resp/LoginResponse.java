@@ -35,4 +35,6 @@ public class LoginResponse implements Serializable {
     private String roleName;
 
     private String roleActivity;
+
+    private String centerAreaId;
 }

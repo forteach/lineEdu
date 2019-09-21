@@ -53,4 +53,6 @@ public class LoginResponse implements Serializable {
      * 学生头像
      */
     private String portrait;
+
+    private String centerAreaId;
 }

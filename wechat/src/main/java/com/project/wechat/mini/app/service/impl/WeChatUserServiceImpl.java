@@ -15,9 +15,11 @@ import com.project.schoolroll.repository.dto.StuentWeChatDto;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.token.service.TokenService;
 import com.project.wechat.mini.app.config.WeChatMiniAppConfig;
+import com.project.wechat.mini.app.domain.WeChatLog;
 import com.project.wechat.mini.app.domain.WeChatUser;
 import com.project.wechat.mini.app.dto.IWeChatUser;
 import com.project.wechat.mini.app.repository.WeChatUserRepository;
+import com.project.wechat.mini.app.service.WeChatService;
 import com.project.wechat.mini.app.service.WeChatUserService;
 import com.project.wechat.mini.app.web.request.BindingUserRequest;
 import com.project.wechat.mini.app.web.request.WeChatUserRequest;
@@ -50,9 +52,9 @@ import static com.project.token.constant.TokenKey.*;
 @Service
 public class WeChatUserServiceImpl implements WeChatUserService {
 
-    private final StudentPeopleRepository studentPeopleRepository;
     private final StudentOnLineService studentOnLineService;
     private final WeChatUserRepository weChatUserRepository;
+    private final WeChatService weChatService;
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -60,13 +62,13 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
 
     @Autowired
-    public WeChatUserServiceImpl(StudentPeopleRepository studentPeopleRepository, StudentOnLineService studentOnLineService,
+    public WeChatUserServiceImpl(WeChatService weChatService, StudentOnLineService studentOnLineService,
                                  WeChatUserRepository weChatUserRepository, StringRedisTemplate stringRedisTemplate,
                                  TokenService tokenService) {
         this.weChatUserRepository = weChatUserRepository;
         this.stringRedisTemplate = stringRedisTemplate;
         this.tokenService = tokenService;
-        this.studentPeopleRepository = studentPeopleRepository;
+        this.weChatService = weChatService;
         this.studentOnLineService = studentOnLineService;
     }
 
@@ -117,7 +119,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public LoginResponse bindingToken(WxMaJscode2SessionResult session, String portrait) {
+    public LoginResponse bindingToken(WxMaJscode2SessionResult session, String portrait, String ip) {
         String openId = session.getOpenid();
         String token = tokenService.createToken(openId);
         String binding = WX_INFO_BINDIND_1;
@@ -160,10 +162,23 @@ public class WeChatUserServiceImpl implements WeChatUserService {
             loginResp.setPortrait(iWeChatUser.getPortrait());
             loginResp.setStudentId(iWeChatUser.getStudentId());
             loginResp.setStudentName(iWeChatUser.getStudentName());
+            loginResp.setCenterAreaId(iWeChatUser.getCenterAreaId());
+
+            //添加异步登陆日志
+            saveLoginLog(iWeChatUser, ip);
         }
         loginResp.setBinding(binding);
         loginResp.setToken(token);
         return loginResp;
+    }
+
+    private void saveLoginLog(IWeChatUser iWeChatUser, String ip){
+        WeChatLog weChatLog = new WeChatLog();
+        weChatLog.setIp(ip);
+        weChatLog.setCenterAreaId(iWeChatUser.getCenterAreaId());
+        weChatLog.setUpdateUser(iWeChatUser.getStudentId());
+        weChatLog.setCreateUser(iWeChatUser.getStudentId());
+        weChatService.addLog(weChatLog);
     }
 
     @Override
