@@ -153,4 +153,22 @@ public class PlanFileController {
         planFileService.removeByPlanId(JSONObject.parseObject(planId).getString(planId));
         return WebResult.okResult();
     }
+
+    @UserLoginToken
+    @ApiOperation(value = "通过资料Id删除计划资料")
+    @DeleteMapping("/file/{fileId}")
+    @ApiImplicitParam(name = "fileId", value = "文件id", dataType = "string", required = true, paramType = "form")
+    public WebResult deleteFile(@PathVariable String fileId) {
+        MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
+        planFileService.deleteByFileId(fileId);
+        return WebResult.okResult();
+    }
+
+//    @ApiOperation(value = "根据课程id查询对应的资料")
+//    @PostMapping(path = "/courseId/{courseId}")
+//    @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "query")
+//    public WebResult findByCourseId(@PathVariable String courseId){
+//        MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不能为空");
+//        return WebResult.okResult(planFileService.findAllByCourseId(courseId));
+//    }
 }

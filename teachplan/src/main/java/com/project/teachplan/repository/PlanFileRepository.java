@@ -46,13 +46,15 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     public int countClass(String planId);
 
     @Transactional(readOnly = true)
-    public List<PlanFile> findAllByIsValidatedEqualsAndClassId(String isValidated, String classId);
+    public List<PlanFile> findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(String isValidated, String classId);
 
     @Transactional(readOnly = true)
-    public List<PlanFile> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
+    public List<PlanFile> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId);
 
     @Transactional(readOnly = true)
-    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassId(String isValidated, String planId, String classId);
+    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(String isValidated, String planId, String classId);
+
+//    List<PlanFile> findAllByIsValidatedEqualsAndC
 
 //    public Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndCourseIdOrderByCreateTimeDesc(String isValidated, String planId, String courseId, Pageable pageable);
 

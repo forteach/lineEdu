@@ -115,7 +115,7 @@ public class PlanFileService extends BaseMySqlService {
     }
 
     public List<PlanFile> findAllPlanIdAndClassId(String planId, String classId){
-        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassId(TAKE_EFFECT_OPEN, planId, classId);
+        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId);
     }
 
 
@@ -152,7 +152,7 @@ public class PlanFileService extends BaseMySqlService {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByClassId(String classId) {
-        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId)
+        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId)
                 .stream()
                 .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))
                 .collect(toList());
@@ -161,7 +161,7 @@ public class PlanFileService extends BaseMySqlService {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByPlanId(String planId) {
-        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId)
+        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId)
                 .stream()
                 .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))
                 .collect(toList());
@@ -229,6 +229,16 @@ public class PlanFileService extends BaseMySqlService {
 //        long total = count.longValue();
 //        List<PlanFileDto> content2 = total > of.getOffset() ? dataQuery.getResultList() : Collections.emptyList();
 //        return new PageImpl<>(content2, of, total);
+        return null;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByFileId(String fileId){
+        planFileRepository.deleteById(fileId);
+    }
+
+    public List<PlanFile> findAllByCourseId(String courseId){
+//        planFileRepository.
         return null;
     }
 }
