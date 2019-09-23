@@ -164,11 +164,11 @@ public class PlanFileController {
         return WebResult.okResult();
     }
 
-//    @ApiOperation(value = "根据课程id查询对应的资料")
-//    @PostMapping(path = "/courseId/{courseId}")
-//    @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "query")
-//    public WebResult findByCourseId(@PathVariable String courseId){
-//        MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不能为空");
-//        return WebResult.okResult(planFileService.findAllByCourseId(courseId));
-//    }
+    @ApiOperation(value = "根据课程id查询对应的资料")
+    @PostMapping(path = "/courseId/{courseId}")
+    @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "query")
+    public WebResult findByCourseId(@PathVariable String courseId){
+        MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不能为空");
+        return WebResult.okResult(planFileService.findAllByCourseId(courseId));
+    }
 }

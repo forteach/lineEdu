@@ -2,35 +2,27 @@ package com.project.teachplan.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
-import com.project.schoolroll.domain.StudentScore;
-import com.project.schoolroll.repository.TbClassesRepository;
-import com.project.schoolroll.service.online.TbClassService;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.repository.PlanFileRepository;
 import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.dto.PlanFileDto;
+import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.math.BigInteger;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -132,11 +124,11 @@ public class PlanFileService extends BaseMySqlService {
 //    }
 
 
-    public Page<PlanFileDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable){
+    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable){
         return teachPlanClassRepository.findAllByCenterAreaIdDto(centerAreaId, pageable);
     }
 
-    public Page<PlanFileDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable){
+    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable){
         return teachPlanClassRepository.findAllByCenterAreaIdAndClassIdDto(centerAreaId, classId, pageable);
     }
 
@@ -168,7 +160,7 @@ public class PlanFileService extends BaseMySqlService {
         planFileRepository.saveAll(list);
     }
 
-    public Page<PlanFileDto> findAllPagePlanId(Pageable of){
+    public Page<TeachPlanClassDto> findAllPagePlanId(Pageable of){
 //        StringBuilder dateSql = new StringBuilder("select * from student_score ");
 //        StringBuilder whereSql = new StringBuilder("where is_validated = '0'");
 //        StringBuilder countSql = new StringBuilder("select count(1) from student_score ");
@@ -237,8 +229,7 @@ public class PlanFileService extends BaseMySqlService {
         planFileRepository.deleteById(fileId);
     }
 
-    public List<PlanFile> findAllByCourseId(String courseId){
-//        planFileRepository.
-        return null;
+    public List<PlanFileDto> findAllByCourseId(String courseId){
+        return planFileRepository.findAllByIsValidatedEqualsAndCourseIdDto(courseId);
     }
 }

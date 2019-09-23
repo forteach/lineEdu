@@ -1,7 +1,7 @@
 package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.online.TeachPlanClass;
-import com.project.teachplan.repository.dto.PlanFileDto;
+import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,7 +36,7 @@ public interface TeachPlanClassRepository extends JpaRepository<TeachPlanClass, 
             " on tpc.planId = tp.planId " +
             " where tpc.isValidated = '0' and tp.isValidated = '0' and tpc.centerAreaId = ?1")
     @Transactional(readOnly = true)
-    Page<PlanFileDto> findAllByCenterAreaIdDto(String centerAreaId, Pageable pageable);
+    Page<TeachPlanClassDto> findAllByCenterAreaIdDto(String centerAreaId, Pageable pageable);
 
     @Query(value = " select " +
             " tpc.classId as classId," +
@@ -51,5 +51,5 @@ public interface TeachPlanClassRepository extends JpaRepository<TeachPlanClass, 
             " on tpc.planId = tp.planId " +
             " where tpc.isValidated = '0' and tp.isValidated = '0' and tpc.centerAreaId = ?1 and tpc.classId = ?2")
     @Transactional(readOnly = true)
-    Page<PlanFileDto> findAllByCenterAreaIdAndClassIdDto(String centerAreaId, String classId, Pageable pageable);
+    Page<TeachPlanClassDto> findAllByCenterAreaIdAndClassIdDto(String centerAreaId, String classId, Pageable pageable);
 }
