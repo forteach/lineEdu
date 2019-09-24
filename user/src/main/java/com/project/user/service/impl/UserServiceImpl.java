@@ -80,9 +80,6 @@ public class UserServiceImpl implements UserService {
     @Resource
     private SysUserLogService sysUserLogService;
 
-    @Resource
-    private TeacherService teacherService;
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(UserLoginReq userLoginReq) {
@@ -235,10 +232,8 @@ public class UserServiceImpl implements UserService {
         if (users != null) {
             if (TAKE_EFFECT_CLOSE.equals(users.isValidated)) {
                 users.setIsValidated(TAKE_EFFECT_OPEN);
-                teacherService.updateState(teacherCode, TAKE_EFFECT_OPEN, userId);
             } else {
                 users.setIsValidated(TAKE_EFFECT_CLOSE);
-                teacherService.updateState(teacherCode, TAKE_EFFECT_CLOSE, userId);
             }
             users.setUpdateUser(userId);
             userRepository.save(users);
