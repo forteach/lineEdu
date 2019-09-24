@@ -17,9 +17,9 @@ public interface TokenService {
      * @param userId
      * @return
      */
-    String createToken(String userId, String centerAreaId, String roleCode);
-
     String createToken(String userId);
+
+    String createToken(String userId, String centerAreaId, String roleCode);
 
     String getCenterAreaId(String token);
 

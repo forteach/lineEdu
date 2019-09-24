@@ -42,7 +42,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             " t.teacherId as teacherId, " +
             " t.teacherName as teacherName, " +
             " t.teacherCode as teacherCode, " +
-            " t.fileUrl as fileUrl, " +
+//            " t.fileUrl as fileUrl, " +
             " t.gender as gender, " +
             " t.birthDate as birthDate, " +
             " t.idCard as idCard, " +
@@ -71,7 +71,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             " t.teacherId as teacherId, " +
             " t.teacherName as teacherName, " +
             " t.teacherCode as teacherCode, " +
-            " t.fileUrl as fileUrl, " +
+//            " t.fileUrl as fileUrl, " +
             " t.gender as gender, " +
             " t.birthDate as birthDate, " +
             " t.idCard as idCard, " +
