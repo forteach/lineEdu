@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.course.domain.OnLineCourseDic;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.portal.course.request.OnLineCourseDicSaveUpdateRequest;
+import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -15,13 +16,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
  * @Auther: zhangyy
@@ -96,5 +97,26 @@ public class OnLineCourseDicController {
         MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不为空");
         onLineCourseDicService.deleteByCourseId(JSONObject.parseObject(courseId).getString("courseId"));
         return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @PutMapping(path = "/status/{courseId}")
+    @ApiOperation(value = "修改课程字典状态")
+    public WebResult updateStatus(@PathVariable String courseId, HttpServletRequest httpServletRequest){
+        MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        onLineCourseDicService.updateStatus(courseId, userId);
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "分页查询全部课程字典")
+    @UserLoginToken
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+    })
+    public WebResult findAllPage(@RequestBody SortVo sortVo){
+        valideSort(sortVo.getPage(), sortVo.getSize());
+        return WebResult.okResult(onLineCourseDicService.findAllPage(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
 }

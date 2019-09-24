@@ -140,8 +140,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveFile(TeacherFile teacherFile) {
-        teacherFileRepository.save(teacherFile);
+    public TeacherFile saveFile(TeacherFile teacherFile) {
+        return teacherFileRepository.save(teacherFile);
     }
     @Override
     public List<TeacherFile> findTeacherFile(String teacherId){
@@ -169,7 +169,8 @@ public class TeacherServiceImpl implements TeacherService {
                 t.setUpdateUser(userId);
                 teacherRepository.save(t);
             });
+        }else {
+            MyAssert.isNull(null, DefineCode.ERR0013, "不存在要修改的教师信息");
         }
-        MyAssert.isNull(null, DefineCode.ERR0013, "不存在要修改的教师信息");
     }
 }

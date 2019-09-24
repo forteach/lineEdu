@@ -10,6 +10,8 @@ import com.project.course.repository.OnLineCourseDicRepository;
 import com.project.course.service.OnLineCourseDicService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,5 +113,30 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByCourseId(String courseId) {
         onLineCourseDicRepository.deleteById(courseId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(String courseId, String userId) {
+        Optional<OnLineCourseDic> optional = onLineCourseDicRepository.findById(courseId);
+        if (optional.isPresent()) {
+            optional.ifPresent(o -> {
+                String status = o.getIsValidated();
+                if (TAKE_EFFECT_CLOSE.equals(status)) {
+                    o.setIsValidated(TAKE_EFFECT_OPEN);
+                } else {
+                    o.setIsValidated(TAKE_EFFECT_CLOSE);
+                }
+                o.setUpdateUser(userId);
+                onLineCourseDicRepository.save(o);
+            });
+        } else {
+            MyAssert.isNull(null, DefineCode.ERR0014, "不存在要修改的信息");
+        }
+    }
+
+    @Override
+    public Page<OnLineCourseDic> findAllPage(PageRequest pageRequest) {
+        return onLineCourseDicRepository.findAll(pageRequest);
     }
 }

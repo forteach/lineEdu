@@ -1,5 +1,6 @@
 package com.project.portal.schoolroll.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -9,6 +10,7 @@ import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.LearnCenterFileSaveUpdateRequest;
 import com.project.portal.schoolroll.request.LearnCenterSaveUpdateRequest;
+import com.project.schoolroll.domain.CenterFile;
 import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.LearnCenterRepository;
 import com.project.schoolroll.service.LearnCenterService;
@@ -142,15 +144,23 @@ public class LearnCenterController {
     @ApiOperation(value = "保存学习中心资料")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "files", value = "文件集合", dataType = "list", paramType = "form")
+            @ApiImplicitParam(name = "fileName", value = "文件名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "fileType", value = "文件类型", dataType = "string", paramType = "form")
     })
     @PostMapping("/saveFiles")
     public WebResult saveFile(@RequestBody LearnCenterFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
-        MyAssert.isTrue(request.getFiles().isEmpty(), DefineCode.ERR0010, "文件列表不能为空");
+        MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件url不能为空");
         MyAssert.isNull(request.getCenterId(), DefineCode.ERR0010, "学习中心不能为空");
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
-        learnCenterService.saveFile(request.getFiles(), request.getCenterId(), userId);
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        CenterFile centerFile = new CenterFile();
+        BeanUtil.copyProperties(request, centerFile);
+        centerFile.setCenterAreaId(centerAreaId);
+        centerFile.setUpdateUser(userId);
+        centerFile.setCreateUser(userId);
+        learnCenterService.saveFile(centerFile);
         return WebResult.okResult();
     }
 

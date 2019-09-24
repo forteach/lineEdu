@@ -17,8 +17,10 @@ import java.util.Optional;
 public interface OnLineCourseDicRepository extends JpaRepository<OnLineCourseDic, String> {
     @Transactional(readOnly = true)
     List<OnLineCourseDic> findAllByIsValidatedEqualsAndCenterAreaId(String isValidated, String centerAreaId);
+
     @Transactional(readOnly = true)
     List<OnLineCourseDic> findAllByIsValidatedEquals(String isValidated);
+
     @Transactional(readOnly = true)
     Optional<OnLineCourseDic> findByCourseName(String courseName);
 }

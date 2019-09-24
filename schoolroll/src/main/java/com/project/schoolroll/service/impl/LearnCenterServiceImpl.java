@@ -1,8 +1,5 @@
 package com.project.schoolroll.service.impl;
 
-import cn.hutool.core.util.IdUtil;
-import com.project.base.common.keyword.DefineCode;
-import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.CenterFile;
 import com.project.schoolroll.repository.CenterFileRepository;
 import com.project.schoolroll.repository.LearnCenterRepository;
@@ -13,11 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -53,17 +48,8 @@ public class LearnCenterServiceImpl implements LearnCenterService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveFile(List<CenterFile> files, String centerId, String userId) {
-        List<CenterFile> fileList = files.stream()
-                .map(f -> {
-                    f.setCenterId(centerId);
-                    f.setFileId(IdUtil.fastSimpleUUID());
-                    f.setCreateUser(userId);
-                    f.setUpdateUser(userId);
-                    f.setCenterAreaId(centerId);
-                    return f;
-                }).collect(toList());
-        centerFileRepository.saveAll(fileList);
+    public void saveFile(CenterFile centerFile) {
+        centerFileRepository.save(centerFile);
     }
 
     @Override
@@ -73,25 +59,7 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public long deleteAllFilesByFileIds(List<String> fileIds){
-        return centerFileRepository.deleteAllByFileIdIn(fileIds);
-    }
-
-    @Override
     public List<CenterFile> findAll(String centerId) {
         return centerFileRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerId);
     }
-//
-//    @Override
-//    public void updateStatus(String centerId, String userId) {
-//        learnCenterRepository.findById(centerId).ifPresent(c -> {
-//            String centerName = c.getCenterName();
-//            String status = c.getIsValidated();
-//            if (TAKE_EFFECT_CLOSE.equals(status)){
-//
-//            }
-//        });
-//        MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的学习中心");
-//    }
 }

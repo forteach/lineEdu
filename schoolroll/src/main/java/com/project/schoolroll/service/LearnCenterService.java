@@ -22,13 +22,9 @@ public interface LearnCenterService {
 
     public void removeById(String centerId);
 
-    void saveFile(List<CenterFile> files, String centerId, String userId);
+    void saveFile(CenterFile centerFile);
 
     void deleteByFileId(String fileId);
 
-    long deleteAllFilesByFileIds(List<String> fileIds);
-
     List<CenterFile> findAll(String centerId);
-
-//    void updateStatus(String centerId, String userId);
 }

@@ -174,8 +174,7 @@ public class TeacherController {
         teacherFile.setCenterAreaId(centerAreaId);
         teacherFile.setUpdateUser(userId);
         teacherFile.setCreateUser(userId);
-        teacherService.saveFile(teacherFile);
-        return WebResult.okResult();
+        return WebResult.okResult(teacherService.saveFile(teacherFile));
     }
 
     @UserLoginToken

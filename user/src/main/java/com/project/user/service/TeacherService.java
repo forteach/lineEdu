@@ -38,7 +38,7 @@ public interface TeacherService {
 
     void updateState(String teacherId, String status, String userId);
 
-    void saveFile(TeacherFile teacherFile);
+    TeacherFile saveFile(TeacherFile teacherFile);
 
     List<TeacherFile> findTeacherFile(String teacherId);
 

@@ -1,12 +1,9 @@
 package com.project.portal.schoolroll.request;
 
-import com.project.schoolroll.domain.CenterFile;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author: zhangyy
@@ -18,8 +15,14 @@ import java.util.List;
 @Data
 public class LearnCenterFileSaveUpdateRequest implements Serializable {
 
-    @ApiModelProperty(name = "files", value = "文件集合", dataType = "list")
-    private List<CenterFile> files;
+    @ApiModelProperty(name = "fileName", value = "文件名称", dataType = "string")
+    private String fileName;
+
+    @ApiModelProperty(name = "fileUrl", value = "文件url", dataType = "string", required = true)
+    private String fileUrl;
+
+    @ApiModelProperty(name = "fileType", value = "文件类型", dataType = "string")
+    private String fileType;
 
     @ApiModelProperty(name = "centerId", value = "学习中心id", dataType = "string")
     private String centerId;

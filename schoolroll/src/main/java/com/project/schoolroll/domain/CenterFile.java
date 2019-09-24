@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -33,6 +34,8 @@ import java.io.Serializable;
 public class CenterFile extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "system-uuid")
     @Column(name = "file_id", columnDefinition = "VARCHAR(40) COMMENT '资料编号'")
     private String fileId;
 

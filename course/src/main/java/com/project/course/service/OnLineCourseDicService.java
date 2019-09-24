@@ -1,6 +1,8 @@
 package com.project.course.service;
 
 import com.project.course.domain.OnLineCourseDic;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -25,4 +27,8 @@ public interface OnLineCourseDicService {
     public void removeByCourseId(String courseId);
 
     public void deleteByCourseId(String courseId);
+
+    void updateStatus(String courseId, String userId);
+
+    Page<OnLineCourseDic> findAllPage(PageRequest pageRequest);
 }
