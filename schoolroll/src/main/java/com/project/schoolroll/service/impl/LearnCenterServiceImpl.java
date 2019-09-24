@@ -71,6 +71,12 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public long deleteAllFilesByFileIds(List<String> fileIds){
+        return centerFileRepository.deleteAllByFileIdIn(fileIds);
+    }
+
+    @Override
     public List<CenterFile> findAll(String centerId) {
         return centerFileRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerId);
     }

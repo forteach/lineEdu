@@ -2,6 +2,7 @@ package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.OnLineCourseDic;
@@ -40,8 +41,16 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OnLineCourseDic save(OnLineCourseDic onLineCourseDic) {
+        Optional<OnLineCourseDic> optional = findByCourseName(onLineCourseDic.getCourseName());
+        if (optional.isPresent()) {
+            MyAssert.isNull(null, DefineCode.ERR0013, "已经存同名的课程信息");
+        }
         onLineCourseDic.setCourseId(IdUtil.fastSimpleUUID());
         return onLineCourseDicRepository.save(onLineCourseDic);
+    }
+
+    private Optional<OnLineCourseDic> findByCourseName(String courseName) {
+        return onLineCourseDicRepository.findByCourseName(courseName);
     }
 
     /**
@@ -51,6 +60,12 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Transactional(rollbackFor = Exception.class)
     public OnLineCourseDic update(OnLineCourseDic onLineCourseDic) {
         OnLineCourseDic obj = findId(onLineCourseDic.getCourseId());
+        if (StrUtil.isNotBlank(onLineCourseDic.getCourseName()) && !obj.getCourseName().equals(onLineCourseDic.getCourseName())) {
+            Optional<OnLineCourseDic> optional = findByCourseName(onLineCourseDic.getCourseName());
+            if (optional.isPresent()) {
+                MyAssert.isNull(null, DefineCode.ERR0013, "已经存同名的课程信息");
+            }
+        }
         BeanUtil.copyProperties(onLineCourseDic, obj);
         return onLineCourseDicRepository.save(obj);
     }

@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.portal.request.BaseIdsReq;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.LearnCenterFileSaveUpdateRequest;
@@ -76,6 +77,12 @@ public class LearnCenterController {
         String userId = tokenService.getUserId(token);
         if (StrUtil.isNotBlank(request.getCenterId())) {
             learnCenterRepository.findById(request.getCenterId()).ifPresent(learnCenter -> {
+                if (StrUtil.isNotBlank(request.getCenterName()) && !learnCenter.getCenterName().equals(request.getCenterName())) {
+                    List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
+                    if (!learnCenters.isEmpty()) {
+                        MyAssert.isNull(null, DefineCode.ERR0011, "已经存在同名学习中心");
+                    }
+                }
                 BeanUtils.copyProperties(request, learnCenter);
                 learnCenter.setUpdateUser(userId);
                 learnCenterRepository.save(learnCenter);
@@ -154,6 +161,16 @@ public class LearnCenterController {
     public WebResult deleteFile(@PathVariable String fileId) {
         MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
         learnCenterService.deleteByFileId(fileId);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "通过资料Id集合删除学习中心资料")
+    @DeleteMapping("/deleteAllFilesByFileIds")
+    @ApiImplicitParam(name = "ids", value = "文件id", dataType = "string", required = true, paramType = "form")
+    public WebResult deleteAllFilesByFileIds(@PathVariable BaseIdsReq req) {
+        MyAssert.isTrue(req.getIds().isEmpty(), DefineCode.ERR0010, "文件id集合不能为空");
+        learnCenterService.deleteAllFilesByFileIds(req.getIds());
         return WebResult.okResult();
     }
 

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +54,9 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
 
     @Transactional(readOnly = true)
     List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(String isValidated, String planId, String classId);
+
+    @Modifying(flushAutomatically = true)
+    long deleteAllByFileIdIn(List<String> ids);
 
 
     @Query(value = "select " +

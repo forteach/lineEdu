@@ -3,6 +3,7 @@ package com.project.schoolroll.repository;
 import com.project.schoolroll.domain.CenterFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,7 +15,12 @@ import java.util.List;
  * @description:
  */
 public interface CenterFileRepository extends JpaRepository<CenterFile, String> {
+    @Transactional(readOnly = true)
     List<CenterFile> findAllByIsValidatedEqualsAndCenterAreaId(String isValidated, String centerAreaId);
+
     @Modifying(flushAutomatically = true)
     int deleteAllByCenterAreaId(String centerAreaId);
+
+    @Modifying(flushAutomatically = true)
+    long deleteAllByFileIdIn(List<String> fileIds);
 }

@@ -229,6 +229,11 @@ public class PlanFileService extends BaseMySqlService {
         planFileRepository.deleteById(fileId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public long deleteAllFilesByFileIds(List<String> fileId){
+        return planFileRepository.deleteAllByFileIdIn(fileId);
+    }
+    
     public List<PlanFileDto> findAllByCourseId(String courseId){
         return planFileRepository.findAllByIsValidatedEqualsAndCourseIdDto(courseId);
     }

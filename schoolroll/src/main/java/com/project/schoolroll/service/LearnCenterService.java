@@ -26,5 +26,7 @@ public interface LearnCenterService {
 
     void deleteByFileId(String fileId);
 
+    long deleteAllFilesByFileIds(List<String> fileIds);
+
     List<CenterFile> findAll(String centerId);
 }

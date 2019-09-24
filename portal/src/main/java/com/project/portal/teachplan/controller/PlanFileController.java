@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.portal.request.BaseIdsReq;
 import com.project.portal.response.WebResult;
 import com.project.portal.teachplan.request.FlanFileFindAllRequest;
 import com.project.portal.teachplan.request.PlanFileFindAllPage;
@@ -161,6 +162,16 @@ public class PlanFileController {
     public WebResult deleteFile(@PathVariable String fileId) {
         MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
         planFileService.deleteByFileId(fileId);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "通过资料Id集合删除计划资料")
+    @DeleteMapping("/deleteAllFilesByFileIds")
+    @ApiImplicitParam(name = "ids", value = "文件id集合数组", dataType = "string", required = true, paramType = "form")
+    public WebResult deleteAllFilesByFileIds(@RequestBody BaseIdsReq ids) {
+        MyAssert.isTrue(ids.getIds().isEmpty(), DefineCode.ERR0010, "文件id不能为空");
+        planFileService.deleteAllFilesByFileIds(ids.getIds());
         return WebResult.okResult();
     }
 
