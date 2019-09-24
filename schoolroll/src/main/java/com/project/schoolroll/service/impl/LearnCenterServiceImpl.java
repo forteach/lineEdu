@@ -1,6 +1,8 @@
 package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.CenterFile;
 import com.project.schoolroll.repository.CenterFileRepository;
 import com.project.schoolroll.repository.LearnCenterRepository;
@@ -80,4 +82,16 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     public List<CenterFile> findAll(String centerId) {
         return centerFileRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerId);
     }
+//
+//    @Override
+//    public void updateStatus(String centerId, String userId) {
+//        learnCenterRepository.findById(centerId).ifPresent(c -> {
+//            String centerName = c.getCenterName();
+//            String status = c.getIsValidated();
+//            if (TAKE_EFFECT_CLOSE.equals(status)){
+//
+//            }
+//        });
+//        MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的学习中心");
+//    }
 }

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -46,8 +47,7 @@ public class LearnCenterController {
     private final UserService userService;
     private final TokenService tokenService;
 
-    public LearnCenterController(LearnCenterService learnCenterService,
-                                 UserService userService, TokenService tokenService,
+    public LearnCenterController(LearnCenterService learnCenterService, UserService userService, TokenService tokenService,
                                  LearnCenterRepository learnCenterRepository) {
         this.learnCenterService = learnCenterService;
         this.learnCenterRepository = learnCenterRepository;
@@ -125,7 +125,7 @@ public class LearnCenterController {
     })
     public WebResult findAllPage(@RequestBody SortVo sortVo) {
         valideSort(sortVo.getPage(), sortVo.getSize());
-        return WebResult.okResult(learnCenterRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+        return WebResult.okResult(learnCenterRepository.findAll(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
 
     @UserLoginToken
@@ -179,7 +179,28 @@ public class LearnCenterController {
     @ApiOperation(value = "查询学习中心对应的资料信息")
     @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
     public WebResult findAllFiles(@PathVariable String centerId) {
-        MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id不能为空");
         return WebResult.okResult(learnCenterService.findAll(centerId));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "更新学习中心状态")
+    @PutMapping(path = "/status/{centerId}")
+    public WebResult updateStatus(@PathVariable String centerId, HttpServletRequest httpServletRequest){
+        MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id不能为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        learnCenterRepository.findById(centerId).ifPresent(c -> {
+            String status = c.getIsValidated();
+            String centerName = c.getCenterName();
+            if (TAKE_EFFECT_CLOSE.equals(status)){
+                c.setIsValidated(TAKE_EFFECT_OPEN);
+                userService.updateStatus(centerName, TAKE_EFFECT_OPEN, userId);
+            }else {
+                c.setIsValidated(TAKE_EFFECT_CLOSE);
+                userService.updateStatus(centerName, TAKE_EFFECT_OPEN, userId);
+            }
+            c.setUpdateUser(userId);
+            learnCenterRepository.save(c);
+        });
+        return WebResult.okResult();
     }
 }

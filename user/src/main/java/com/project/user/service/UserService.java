@@ -68,4 +68,6 @@ public interface UserService {
     void registerCenter(String centerName, String centerAreaId, String userId);
 
     void updateCenter(String center, String newCenter, String userId);
+
+    void updateStatus(String id, String status, String userId);
 }

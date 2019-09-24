@@ -19,8 +19,8 @@ import java.util.List;
  */
 public interface LearnCenterRepository extends JpaRepository<LearnCenter, String> {
 
-    @Transactional(readOnly = true)
-    public Page<LearnCenter> findAllByIsValidatedEquals(String isValidated, Pageable pageable);
+//    @Transactional(readOnly = true)
+//    public Page<LearnCenter> findAllByIsValidatedEquals(String isValidated, Pageable pageable);
 
     @Transactional(readOnly = true)
     @Query(value = "SELECT centerId AS centerId, centerName AS centerName, address as address, principal as principal, " +

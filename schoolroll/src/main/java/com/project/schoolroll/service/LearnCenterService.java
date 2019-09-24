@@ -29,4 +29,6 @@ public interface LearnCenterService {
     long deleteAllFilesByFileIds(List<String> fileIds);
 
     List<CenterFile> findAll(String centerId);
+
+//    void updateStatus(String centerId, String userId);
 }

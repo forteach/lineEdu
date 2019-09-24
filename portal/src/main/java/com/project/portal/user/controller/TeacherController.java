@@ -192,4 +192,14 @@ public class TeacherController {
         teacherService.deleteTeacherFile(fileId);
         return WebResult.okResult();
     }
+
+    @UserLoginToken
+    @ApiOperation(value = "修改教师用户信息状态")
+    @PutMapping(path = "/status/{teacherId}")
+    public WebResult updateStatus(@PathVariable String teacherId, HttpServletRequest httpServletRequest){
+        MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        teacherService.updateStatus(teacherId, userId);
+        return WebResult.okResult();
+    }
 }

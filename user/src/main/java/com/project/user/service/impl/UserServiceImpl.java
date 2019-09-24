@@ -26,11 +26,11 @@ import com.project.user.web.resp.LoginResponse;
 import com.project.user.web.vo.RegisterTeacherVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.xml.ws.RequestWrapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -318,6 +318,18 @@ public class UserServiceImpl implements UserService {
             s.setUserName(newCenterName);
             s.setUpdateUser(updateUser);
             userRepository.save(s);
+        });
+    }
+
+    @Async
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(String id, String status, String userId) {
+        userRepository.findById(id).ifPresent(u -> {
+            u.setIsValidated(status);
+            u.setUpdateUser(userId);
+            userRepository.save(u);
+            tokenService.removeToken(id);
         });
     }
 }

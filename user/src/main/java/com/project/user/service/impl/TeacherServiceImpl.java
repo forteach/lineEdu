@@ -152,4 +152,24 @@ public class TeacherServiceImpl implements TeacherService {
     public void deleteTeacherFile(String fileId){
         teacherFileRepository.deleteById(fileId);
     }
+
+    @Override
+    public void updateStatus(String teacherId, String userId) {
+        Optional<Teacher> optional = teacherRepository.findById(teacherId);
+        if (optional.isPresent()){
+            optional.ifPresent(t ->{
+                String status = t.getIsValidated();
+                if (TAKE_EFFECT_CLOSE.equals(status)){
+                    t.setIsValidated(TAKE_EFFECT_OPEN);
+                    userService.updateStatus(t.getTeacherId(), TAKE_EFFECT_OPEN, userId);
+                }else {
+                    t.setIsValidated(TAKE_EFFECT_CLOSE);
+                    userService.updateStatus(t.getTeacherId(), TAKE_EFFECT_CLOSE, userId);
+                }
+                t.setUpdateUser(userId);
+                teacherRepository.save(t);
+            });
+        }
+        MyAssert.isNull(null, DefineCode.ERR0013, "不存在要修改的教师信息");
+    }
 }

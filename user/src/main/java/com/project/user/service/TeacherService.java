@@ -43,4 +43,6 @@ public interface TeacherService {
     List<TeacherFile> findTeacherFile(String teacherId);
 
     void deleteTeacherFile(String fileId);
+
+    void updateStatus(String teacherId, String userId);
 }
