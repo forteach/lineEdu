@@ -205,10 +205,14 @@ public class LearnCenterController {
             String centerName = c.getCenterName();
             if (TAKE_EFFECT_CLOSE.equals(status)){
                 c.setIsValidated(TAKE_EFFECT_OPEN);
+                //更新用户表状态
                 userService.updateStatus(centerName, TAKE_EFFECT_OPEN, userId);
+                //更新学习中心资料状态
+                learnCenterService.updateFileStatus(centerId, TAKE_EFFECT_OPEN, userId);
             }else {
                 c.setIsValidated(TAKE_EFFECT_CLOSE);
-                userService.updateStatus(centerName, TAKE_EFFECT_OPEN, userId);
+                userService.updateStatus(centerName, TAKE_EFFECT_CLOSE, userId);
+                learnCenterService.updateFileStatus(centerId, TAKE_EFFECT_CLOSE, userId);
             }
             c.setUpdateUser(userId);
             learnCenterRepository.save(c);

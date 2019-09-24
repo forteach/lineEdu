@@ -44,7 +44,7 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.isValidated = '0' order by tp.createTime desc ")
     @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllByIsValidatedEqualsDto(Pageable pageable);
+    Page<TeachPlanDto> findAllPageDto(Pageable pageable);
 
     @Query(value = "select " +
             " tp.planId as planId, " +
@@ -56,12 +56,13 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.classNumber as classNumber, " +
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName " +
+            " lc.centerName as centerName, " +
+            " tp.isValidated as isValidated " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " where tp.isValidated = '0' and tp.planId = ?1 order by tp.createTime desc ")
+            " where tp.planId = ?1 order by tp.createTime desc ")
     @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllByIsValidatedEqualsAndPlanIdDto(String planId, Pageable pageable);
+    Page<TeachPlanDto> findAllPageByPlanIdDto(String planId, Pageable pageable);
 
     @Query(value = "select " +
             " tp.planId as planId, " +
@@ -73,12 +74,13 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.classNumber as classNumber, " +
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName " +
+            " lc.centerName as centerName, " +
+            " tp.isValidated as isValidated " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " where tp.isValidated = '0' and tp.centerAreaId = ?1 order by tp.createTime desc ")
+            " where tp.centerAreaId = ?1 order by tp.createTime desc ")
     @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllByIsValidatedEqualsAndCenterAreaIdDto(String centerAreaId, Pageable pageable);
+    Page<TeachPlanDto> findAllPageByCenterAreaIdDto(String centerAreaId, Pageable pageable);
 
     @Query(value = "select " +
             " tp.planId as planId, " +
@@ -90,10 +92,11 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.classNumber as classNumber, " +
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName " +
+            " lc.centerName as centerName," +
+            " tp.isValidated as isValidated " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " where tp.isValidated = '0' and tp.centerAreaId = ?1 and tp.planId = ?2 order by tp.createTime desc ")
+            " where tp.centerAreaId = ?1 and tp.planId = ?2 order by tp.createTime desc ")
     @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdDto(String centerAreaId, String planId, Pageable pageable);
+    Page<TeachPlanDto> findAllPageByCenterAreaIdAndPlanIdDto(String centerAreaId, String planId, Pageable pageable);
 }

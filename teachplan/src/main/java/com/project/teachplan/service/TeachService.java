@@ -5,7 +5,6 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.course.service.CourseService;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
@@ -21,6 +20,7 @@ import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,11 +48,13 @@ public class TeachService {
     private final TeachPlanCourseRepository teachPlanCourseRepository;
     private final OnLineCourseDicService onLineCourseDicService;
     private final TeacherService teacherService;
+    private final PlanFileService planFileService;
 
     @Autowired
     public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
                         TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
+                        PlanFileService planFileService,
                         TeachPlanCourseService teachPlanCourseService, OnLineCourseDicService onLineCourseDicService) {
         this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
@@ -62,6 +64,7 @@ public class TeachService {
         this.teachPlanCourseService = teachPlanCourseService;
         this.teachPlanCourseRepository = teachPlanCourseRepository;
         this.onLineCourseDicService = onLineCourseDicService;
+        this.planFileService = planFileService;
     }
 
 
@@ -168,34 +171,68 @@ public class TeachService {
         return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
     }
 
-    public Page<TeachPlanDto> findAllPageDto(Pageable pageable){
-        return teachPlanRepository.findAllByIsValidatedEqualsDto(pageable);
-    }
-    public Page<TeachPlanDto> findAllPageByPlanIdDto(String planId, Pageable pageable){
-        return teachPlanRepository.findAllByIsValidatedEqualsAndPlanIdDto(planId, pageable);
-    }
-    public Page<TeachPlanDto> findAllPageDtoByCenterAreaId(String centerAreaId, Pageable pageable){
-        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdDto(centerAreaId, pageable);
-    }
-    public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, Pageable pageable){
-        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
+    public Page<TeachPlanDto> findAllPageDto(Pageable pageable) {
+        return teachPlanRepository.findAllPageDto(pageable);
     }
 
-    public void updateStatus(String planId, String userId){
-       Optional<TeachPlan> optionalTeachPlan = teachPlanRepository.findById(planId);
-       if (optionalTeachPlan.isPresent()){
-           optionalTeachPlan.ifPresent(t -> {
-               String status = t.getIsValidated();
-               if (TAKE_EFFECT_CLOSE.equals(status)){
-                   t.setIsValidated(TAKE_EFFECT_OPEN);
-               }else {
-                   t.setIsValidated(TAKE_EFFECT_CLOSE);
-               }
-               t.setUpdateUser(userId);
-               teachPlanRepository.save(t);
-           });
-       }else {
-           MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的计划信息");
-       }
+    public Page<TeachPlanDto> findAllPageByPlanIdDto(String planId, Pageable pageable) {
+        return teachPlanRepository.findAllPageByPlanIdDto(planId, pageable);
+    }
+
+    public Page<TeachPlanDto> findAllPageDtoByCenterAreaId(String centerAreaId, Pageable pageable) {
+        return teachPlanRepository.findAllPageByCenterAreaIdDto(centerAreaId, pageable);
+    }
+
+    public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, Pageable pageable) {
+        return teachPlanRepository.findAllPageByCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    void updateClassByPlanId(String planId, String status, String userId) {
+        List<TeachPlanClass> list = teachPlanClassRepository.findAllByPlanId(planId).stream()
+                .peek(c -> {
+                    c.setIsValidated(status);
+                    c.setUpdateUser(userId);
+                }).collect(Collectors.toList());
+        teachPlanClassRepository.saveAll(list);
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    void updateCourseByPlanId(String planId, String status, String userId) {
+        List<TeachPlanCourse> list = teachPlanCourseRepository.findAllByPlanId(planId).stream()
+                .peek(c -> {
+                    c.setIsValidated(status);
+                    c.setUpdateUser(userId);
+                }).collect(Collectors.toList());
+        teachPlanCourseRepository.saveAll(list);
+    }
+
+    public void updateStatus(String planId, String userId) {
+        Optional<TeachPlan> optionalTeachPlan = teachPlanRepository.findById(planId);
+        if (optionalTeachPlan.isPresent()) {
+            optionalTeachPlan.ifPresent(t -> {
+                String status = t.getIsValidated();
+                if (TAKE_EFFECT_CLOSE.equals(status)) {
+                    t.setIsValidated(TAKE_EFFECT_OPEN);
+                    // 修改班级计划状态
+                    updateClassByPlanId(planId, TAKE_EFFECT_OPEN, userId);
+                    //修改课程计划状态
+                    updateCourseByPlanId(planId, TAKE_EFFECT_OPEN, userId);
+                    //修改计划文件状态
+                    planFileService.updateStatus(planId, TAKE_EFFECT_OPEN, userId);
+                } else {
+                    t.setIsValidated(TAKE_EFFECT_CLOSE);
+                    updateClassByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
+                    updateCourseByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
+                    planFileService.updateStatus(planId, TAKE_EFFECT_CLOSE, userId);
+                }
+                t.setUpdateUser(userId);
+                teachPlanRepository.save(t);
+            });
+        } else {
+            MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的计划信息");
+        }
     }
 }

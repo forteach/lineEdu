@@ -6,13 +6,16 @@ import com.project.schoolroll.repository.LearnCenterRepository;
 import com.project.schoolroll.repository.dto.LearnCenterDto;
 import com.project.schoolroll.service.LearnCenterService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -60,6 +63,18 @@ public class LearnCenterServiceImpl implements LearnCenterService {
 
     @Override
     public List<CenterFile> findAll(String centerId) {
-        return centerFileRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerId);
+        return centerFileRepository.findAllByIsValidatedEqualsAndCenterId(TAKE_EFFECT_OPEN, centerId);
+    }
+
+    @Async
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateFileStatus(String centerId, String status, String userId) {
+        List<CenterFile> centerFiles =centerFileRepository.findAllByCenterId(centerId).stream().filter(Objects::nonNull)
+                .peek(c -> {
+                    c.setUpdateUser(userId);
+                    c.setIsValidated(status);
+                }).collect(toList());
+        centerFileRepository.saveAll(centerFiles);
     }
 }

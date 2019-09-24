@@ -58,6 +58,8 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     @Modifying(flushAutomatically = true)
     long deleteAllByFileIdIn(List<String> ids);
 
+    @Transactional(readOnly = true)
+    List<PlanFile> findAllByPlanId(String planId);
 
     @Query(value = "select " +
             " fileId AS fileId, " +

@@ -16,11 +16,14 @@ import java.util.List;
  */
 public interface CenterFileRepository extends JpaRepository<CenterFile, String> {
     @Transactional(readOnly = true)
-    List<CenterFile> findAllByIsValidatedEqualsAndCenterAreaId(String isValidated, String centerAreaId);
+    List<CenterFile> findAllByIsValidatedEqualsAndCenterId(String isValidated, String centerId);
 
     @Modifying(flushAutomatically = true)
     int deleteAllByCenterAreaId(String centerAreaId);
 
     @Modifying(flushAutomatically = true)
     long deleteAllByFileIdIn(List<String> fileIds);
+
+    @Transactional(readOnly = true)
+    List<CenterFile> findAllByCenterId(String centerId);
 }

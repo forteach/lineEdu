@@ -29,4 +29,6 @@ public interface TeachPlanDto {
     public String getCenterAreaId();
 
     public String getCenterName();
+
+    public String getIsValidated();
 }

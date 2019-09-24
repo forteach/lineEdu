@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,8 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
-import static com.project.base.common.keyword.Dic.*;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -106,7 +108,7 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
     }
 
-    public List<PlanFile> findAllPlanIdAndClassId(String planId, String classId){
+    public List<PlanFile> findAllPlanIdAndClassId(String planId, String classId) {
         return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId);
     }
 
@@ -124,11 +126,11 @@ public class PlanFileService extends BaseMySqlService {
 //    }
 
 
-    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable){
+    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable) {
         return teachPlanClassRepository.findAllByCenterAreaIdDto(centerAreaId, pageable);
     }
 
-    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable){
+    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable) {
         return teachPlanClassRepository.findAllByCenterAreaIdAndClassIdDto(centerAreaId, classId, pageable);
     }
 
@@ -160,7 +162,7 @@ public class PlanFileService extends BaseMySqlService {
         planFileRepository.saveAll(list);
     }
 
-    public Page<TeachPlanClassDto> findAllPagePlanId(Pageable of){
+    public Page<TeachPlanClassDto> findAllPagePlanId(Pageable of) {
 //        StringBuilder dateSql = new StringBuilder("select * from student_score ");
 //        StringBuilder whereSql = new StringBuilder("where is_validated = '0'");
 //        StringBuilder countSql = new StringBuilder("select count(1) from student_score ");
@@ -225,16 +227,27 @@ public class PlanFileService extends BaseMySqlService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByFileId(String fileId){
+    public void deleteByFileId(String fileId) {
         planFileRepository.deleteById(fileId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public long deleteAllFilesByFileIds(List<String> fileId){
+    public long deleteAllFilesByFileIds(List<String> fileId) {
         return planFileRepository.deleteAllByFileIdIn(fileId);
     }
-    
-    public List<PlanFileDto> findAllByCourseId(String courseId){
+
+    public List<PlanFileDto> findAllByCourseId(String courseId) {
         return planFileRepository.findAllByIsValidatedEqualsAndCourseIdDto(courseId);
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(String planId, String status, String userId) {
+        List<PlanFile> fileList = planFileRepository.findAllByPlanId(planId).stream()
+                .peek(p -> {
+                    p.setUpdateUser(userId);
+                    p.setIsValidated(status);
+                }).collect(toList());
+        planFileRepository.saveAll(fileList);
     }
 }
