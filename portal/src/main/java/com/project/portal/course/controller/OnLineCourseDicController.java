@@ -115,6 +115,7 @@ public class OnLineCourseDicController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
+    @PostMapping(path = "/findAllPage")
     public WebResult findAllPage(@RequestBody SortVo sortVo){
         valideSort(sortVo.getPage(), sortVo.getSize());
         return WebResult.okResult(onLineCourseDicService.findAllPage(PageRequest.of(sortVo.getPage(), sortVo.getSize())));

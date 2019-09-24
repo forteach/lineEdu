@@ -180,4 +180,22 @@ public class TeachService {
     public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, Pageable pageable){
         return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
     }
+
+    public void updateStatus(String planId, String userId){
+       Optional<TeachPlan> optionalTeachPlan = teachPlanRepository.findById(planId);
+       if (optionalTeachPlan.isPresent()){
+           optionalTeachPlan.ifPresent(t -> {
+               String status = t.getIsValidated();
+               if (TAKE_EFFECT_CLOSE.equals(status)){
+                   t.setIsValidated(TAKE_EFFECT_OPEN);
+               }else {
+                   t.setIsValidated(TAKE_EFFECT_CLOSE);
+               }
+               t.setUpdateUser(userId);
+               teachPlanRepository.save(t);
+           });
+       }else {
+           MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的计划信息");
+       }
+    }
 }

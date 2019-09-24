@@ -187,14 +187,16 @@ public class LearnCenterController {
     @UserLoginToken
     @GetMapping(path = "/file/{centerId}")
     @ApiOperation(value = "查询学习中心对应的资料信息")
-    @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
+    @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "query")
     public WebResult findAllFiles(@PathVariable String centerId) {
+        MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id不能为空");
         return WebResult.okResult(learnCenterService.findAll(centerId));
     }
 
     @UserLoginToken
     @ApiOperation(value = "更新学习中心状态")
     @PutMapping(path = "/status/{centerId}")
+    @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
     public WebResult updateStatus(@PathVariable String centerId, HttpServletRequest httpServletRequest){
         MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id不能为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));

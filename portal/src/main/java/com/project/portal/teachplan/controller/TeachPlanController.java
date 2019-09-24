@@ -166,4 +166,12 @@ public class TeachPlanController {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         return WebResult.okResult(teachService.findAllClassByPlanId(planId));
     }
+    @ApiOperation(value = "更新教学计划状态")
+    @PutMapping(path = "/status/{planId}")
+    public WebResult updateStatus(@PathVariable String planId, HttpServletRequest httpServletRequest){
+        MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        teachService.updateStatus(planId, userId);
+        return WebResult.okResult();
+    }
 }
