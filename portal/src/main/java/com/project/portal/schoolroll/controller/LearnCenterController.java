@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.portal.request.BaseIdsReq;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.LearnCenterFileSaveUpdateRequest;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -164,15 +164,15 @@ public class LearnCenterController {
         return WebResult.okResult();
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "通过资料Id集合删除学习中心资料")
-    @DeleteMapping("/deleteAllFilesByFileIds")
-    @ApiImplicitParam(name = "ids", value = "文件id", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteAllFilesByFileIds(@PathVariable BaseIdsReq req) {
-        MyAssert.isTrue(req.getIds().isEmpty(), DefineCode.ERR0010, "文件id集合不能为空");
-        learnCenterService.deleteAllFilesByFileIds(req.getIds());
-        return WebResult.okResult();
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "通过资料Id集合删除学习中心资料")
+//    @DeleteMapping("/deleteAllFilesByFileIds")
+//    @ApiImplicitParam(name = "ids", value = "文件id", dataType = "string", required = true, paramType = "form")
+//    public WebResult deleteAllFilesByFileIds(@PathVariable BaseIdsReq req) {
+//        MyAssert.isTrue(req.getIds().isEmpty(), DefineCode.ERR0010, "文件id集合不能为空");
+//        learnCenterService.deleteAllFilesByFileIds(req.getIds());
+//        return WebResult.okResult();
+//    }
 
     @UserLoginToken
     @GetMapping(path = "/file/{centerId}")

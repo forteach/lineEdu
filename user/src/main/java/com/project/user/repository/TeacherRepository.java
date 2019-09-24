@@ -56,14 +56,15 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             " t.isFullTime as isFullTime, " +
             " t.academicDegree as academicDegree, " +
             " t.bankCardAccount as bankCardAccount," +
-            " t.bankCardBank as bankCardBank, " +
+            " t.bankCardBank as bankCardBank," +
+            " t.isValidated as isValidated, " +
             " t.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName " +
             " from Teacher as t " +
             " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
-            " where t.isValidated = '0' order by t.createTime desc ")
+            " order by t.createTime desc ")
     @Transactional(readOnly = true)
-    Page<TeacherDto> findAllByIsValidatedEqualsDto(Pageable pageable);
+    Page<TeacherDto> findAllDto(Pageable pageable);
 
 
     @Query(value = "select " +
@@ -85,11 +86,12 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             " t.academicDegree as academicDegree, " +
             " t.bankCardAccount as bankCardAccount," +
             " t.bankCardBank as bankCardBank, " +
+            " t.isValidated as isValidated, " +
             " t.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName " +
             " from Teacher as t " +
             " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
-            " where t.isValidated = '0' and t.centerAreaId = ?1 order by t.createTime desc ")
+            " where t.centerAreaId = ?1 order by t.createTime desc ")
     @Transactional(readOnly = true)
-    Page<TeacherDto> findAllByIsValidatedEqualsAndCenterAreaIdDto(String centerAreaId, Pageable pageable);
+    Page<TeacherDto> findAllByCenterAreaIdDto(String centerAreaId, Pageable pageable);
 }

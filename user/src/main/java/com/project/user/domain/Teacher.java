@@ -33,8 +33,8 @@ public class Teacher extends Entitys implements Serializable {
     @Column(name = "teacher_code", columnDefinition = "VARCHAR(32) COMMENT '教师代码'")
     private String teacherCode;
 
-    @Column(name = "fileUrl", columnDefinition = "VARCHAR(256) COMMENT '上传的文件路径'")
-    private String fileUrl;
+//    @Column(name = "fileUrl", columnDefinition = "VARCHAR(256) COMMENT '上传的文件路径'")
+//    private String fileUrl;
 
     @Column(name = "gender", columnDefinition = "VARCHAR(32) COMMENT '性别'")
     private String gender;

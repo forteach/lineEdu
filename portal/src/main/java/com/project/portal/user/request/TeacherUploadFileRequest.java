@@ -17,6 +17,8 @@ import java.io.Serializable;
 public class TeacherUploadFileRequest implements Serializable {
     @ApiModelProperty(name = "teacherId", value = "教师id", dataType = "string")
     private String teacherId;
-    @ApiModelProperty(name = "file_url", value = "文件路径", dataType = "string")
+    @ApiModelProperty(name = "fileUrl", value = "文件路径", dataType = "string", required = true)
     private String fileUrl;
+    @ApiModelProperty(name = "fileName", value = "文件名称", dataType = "string")
+    private String fileName;
 }

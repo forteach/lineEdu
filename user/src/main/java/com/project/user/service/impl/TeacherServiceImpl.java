@@ -5,7 +5,9 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.user.domain.Teacher;
+import com.project.user.domain.TeacherFile;
 import com.project.user.repository.SysUsersRepository;
+import com.project.user.repository.TeacherFileRepository;
 import com.project.user.repository.TeacherRepository;
 import com.project.user.repository.dto.TeacherDto;
 import com.project.user.service.TeacherService;
@@ -14,6 +16,7 @@ import com.project.user.web.vo.RegisterTeacherVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,13 +39,15 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
     private final SysUsersRepository sysUsersRepository;
     private final UserService userService;
+    private final TeacherFileRepository teacherFileRepository;
 
     public TeacherServiceImpl(TeacherRepository teacherRepository,
-                              UserService userService,
+                              UserService userService, TeacherFileRepository teacherFileRepository,
                               SysUsersRepository sysUsersRepository) {
         this.teacherRepository = teacherRepository;
         this.sysUsersRepository = sysUsersRepository;
         this.userService = userService;
+        this.teacherFileRepository = teacherFileRepository;
     }
 
     @Override
@@ -103,16 +108,6 @@ public class TeacherServiceImpl implements TeacherService {
         teacherRepository.deleteById(teacherId);
     }
 
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void uploadFile(String teacherId, String fileUrl) {
-        teacherRepository.findById(teacherId).ifPresent(t -> {
-            t.setFileUrl(fileUrl);
-            teacherRepository.save(t);
-        });
-    }
-
     @Override
     public Teacher findById(String teacherId) {
         Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
@@ -125,11 +120,36 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Page<TeacherDto> findAllPageDto(PageRequest pageRequest) {
-        return teacherRepository.findAllByIsValidatedEqualsDto(pageRequest);
+        return teacherRepository.findAllDto(pageRequest);
     }
 
     @Override
     public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest) {
-        return teacherRepository.findAllByIsValidatedEqualsAndCenterAreaIdDto(centerAreaId, pageRequest);
+        return teacherRepository.findAllByCenterAreaIdDto(centerAreaId, pageRequest);
+    }
+
+    @Async
+    @Override
+    public void updateState(String teacherId, String status, String userId) {
+        teacherRepository.findById(teacherId).ifPresent(t -> {
+            t.setIsValidated(status);
+            t.setUpdateUser(userId);
+            teacherRepository.save(t);
+        });
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveFile(TeacherFile teacherFile) {
+        teacherFileRepository.save(teacherFile);
+    }
+    @Override
+    public List<TeacherFile> findTeacherFile(String teacherId){
+        return teacherFileRepository.findAllByIsValidatedEqualsAndTeacherId(TAKE_EFFECT_OPEN, teacherId);
+    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTeacherFile(String fileId){
+        teacherFileRepository.deleteById(fileId);
     }
 }

@@ -17,6 +17,7 @@ import com.project.user.repository.UserRepository;
 import com.project.user.repository.UserRoleRepository;
 import com.project.user.repository.dto.SysRoleDto;
 import com.project.user.service.SysUserLogService;
+import com.project.user.service.TeacherService;
 import com.project.user.service.UserService;
 import com.project.user.web.req.RegisterUserReq;
 import com.project.user.web.req.UpdatePassWordReq;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.xml.ws.RequestWrapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,6 +79,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private SysUserLogService sysUserLogService;
+
+    @Resource
+    private TeacherService teacherService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -230,8 +235,10 @@ public class UserServiceImpl implements UserService {
         if (users != null) {
             if (TAKE_EFFECT_CLOSE.equals(users.isValidated)) {
                 users.setIsValidated(TAKE_EFFECT_OPEN);
+                teacherService.updateState(teacherCode, TAKE_EFFECT_OPEN, userId);
             } else {
                 users.setIsValidated(TAKE_EFFECT_CLOSE);
+                teacherService.updateState(teacherCode, TAKE_EFFECT_CLOSE, userId);
             }
             users.setUpdateUser(userId);
             userRepository.save(users);

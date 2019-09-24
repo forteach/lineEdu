@@ -26,6 +26,7 @@ public interface TeacherDto {
     public String getAcademicDegree();
     public String getBankCardAccount();
     public String getBankCardBank();
+    public String getIsValidated();
     public String getCenterAreaId();
     public String getCenterName();
 }

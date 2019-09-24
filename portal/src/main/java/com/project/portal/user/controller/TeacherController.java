@@ -14,6 +14,7 @@ import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.user.domain.Teacher;
+import com.project.user.domain.TeacherFile;
 import com.project.user.service.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -125,7 +126,7 @@ public class TeacherController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "移除教师信息")
+    @ApiOperation(value = "移除教师信息(逻辑删除)")
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/removeById")
     public WebResult removeById(@RequestBody String teacherId) {
@@ -135,7 +136,7 @@ public class TeacherController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "删除教师信息")
+    @ApiOperation(value = "删除教师信息(物理删除)")
     @DeleteMapping(path = "/teacherId/{teacherId}")
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
     public WebResult deleteByTeacherId(@PathVariable String teacherId) {
@@ -159,12 +160,36 @@ public class TeacherController {
     @PostMapping("/uploadFile")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form")
+            @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "fileName", value = "文件名称", dataType = "string", required = true, paramType = "form")
     })
-    public WebResult uploadFile(@RequestBody TeacherUploadFileRequest request) {
+    public WebResult uploadFile(@RequestBody TeacherUploadFileRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");
         MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件不为空");
-        teacherService.uploadFile(request.getTeacherId(), request.getFileUrl());
+        String token = httpServletRequest.getHeader("token");
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        String userId = tokenService.getUserId(token);
+        TeacherFile teacherFile = new TeacherFile();
+        BeanUtil.copyProperties(request, teacherFile);
+        teacherFile.setCenterAreaId(centerAreaId);
+        teacherFile.setUpdateUser(userId);
+        teacherFile.setCreateUser(userId);
+        teacherService.saveFile(teacherFile);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @GetMapping(path = "/files/{teacherId}")
+    @ApiOperation(value = "查询教师信息的文件资料信息")
+    public WebResult findAllTeacherFile(@PathVariable String teacherId){
+        MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不为空");
+        return WebResult.okResult(teacherService.findTeacherFile(teacherId));
+    }
+    @UserLoginToken
+    @DeleteMapping(path = "/file/{fileId}")
+    public WebResult deleteFile(@PathVariable String fileId){
+        MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不为空");
+        teacherService.deleteTeacherFile(fileId);
         return WebResult.okResult();
     }
 }
