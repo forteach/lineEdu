@@ -9,9 +9,6 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.online.StudentOnLine;
-import com.project.schoolroll.repository.StudentPeopleRepository;
-import com.project.schoolroll.repository.StudentRepository;
-import com.project.schoolroll.repository.dto.StuentWeChatDto;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.token.service.TokenService;
 import com.project.wechat.mini.app.config.WeChatMiniAppConfig;
@@ -29,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +37,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.base.common.keyword.Dic.*;
-import static com.project.token.constant.TokenKey.*;
+import static com.project.token.constant.TokenKey.TOKEN_STUDENT;
+import static com.project.token.constant.TokenKey.TOKEN_VALIDITY_TIME;
 
 /**
  * @Auther: zhangyy
@@ -126,7 +125,9 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
         Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(openId).stream().findFirst();
         if (weChatUserInfoOptional.isPresent()) {
-            binding = weChatUserInfoOptional.get().getBinding();
+            WeChatUser weChatUser = weChatUserInfoOptional.get();
+            MyAssert.isTrue(TAKE_EFFECT_CLOSE.equals(weChatUser.getIsValidated()), DefineCode.ERR0010, "您的信息已经失效请联系管理员");
+            binding = weChatUser.getBinding();
         }
 
         Map<String, Object> map = BeanUtil.beanToMap(weChatUserInfoOptional.orElse(new WeChatUser()));
@@ -172,7 +173,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         return loginResp;
     }
 
-    private void saveLoginLog(IWeChatUser iWeChatUser, String ip){
+    private void saveLoginLog(IWeChatUser iWeChatUser, String ip) {
         WeChatLog weChatLog = new WeChatLog();
         weChatLog.setIp(ip);
         weChatLog.setCenterAreaId(iWeChatUser.getCenterAreaId());
@@ -249,5 +250,16 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                     bindingUserInfoReq.getRawData(), bindingUserInfoReq.getSignature());
         }
         return false;
+    }
+    @Async
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(String studentId, String status, String userId) {
+        weChatUserRepository.findByStudentId(studentId)
+                .forEach(w -> {
+                    w.setIsValidated(status);
+                    w.setUpdateUser(userId);
+                    weChatUserRepository.save(w);
+                });
     }
 }

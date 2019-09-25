@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
-import static com.project.base.common.keyword.Dic.USER_PREFIX;
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS_ONLINE;
 import static com.project.schoolroll.domain.excel.Dic.STUDENT_ON_LINE_IMPORT_STATUS_IMPORT;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
@@ -47,18 +46,20 @@ public class StudentOnLineService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void deleteKey(){
+    public void deleteKey() {
         redisTemplate.delete(IMPORT_STUDENTS_ONLINE);
     }
-    public void checkoutKey(){
+
+    public void checkoutKey() {
         MyAssert.isTrue(redisTemplate.hasKey(IMPORT_STUDENTS_ONLINE), DefineCode.ERR0013, "有人操作，请稍后再试!");
     }
-    private void setStudentKey(){
+
+    private void setStudentKey() {
         redisTemplate.opsForValue().set(IMPORT_STUDENTS_ONLINE, DateUtil.now(), 30L, TimeUnit.MINUTES);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void importStudent(InputStream inputStream, String centerAreaId, String userId){
+    public void importStudent(InputStream inputStream, String centerAreaId, String userId) {
         //设置键操作
         setStudentKey();
         ExcelReader reader = ExcelUtil.getReader(inputStream);
@@ -79,17 +80,19 @@ public class StudentOnLineService {
         //删除键值操作
         deleteKey();
     }
-    private Map<String, String> getClass(Set<String> set, String centerAreaId, String userId){
+
+    private Map<String, String> getClass(Set<String> set, String centerAreaId, String userId) {
         return set.stream()
                 .filter(Objects::nonNull)
                 .map(className -> tbClassService.getClassIdByClassName(className, centerAreaId, userId))
                 .collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
     }
-    private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId, String userId){
+
+    private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId, String userId) {
         return list.stream().map(s -> setStudentOnLine(s, classIds, centerAreaId, userId)).collect(Collectors.toList());
     }
 
-    private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId, String userId){
+    private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId, String userId) {
         studentOnLine.setClassId(classIds.get(studentOnLine.getClassName()));
         studentOnLine.setCenterAreaId(centerAreaId);
         studentOnLine.setCreateUser(userId);
@@ -111,24 +114,24 @@ public class StudentOnLineService {
         reader.addHeaderAlias(learningModality.getName(), learningModality.name());
     }
 
-    public int countByClassId(String classId){
+    public int countByClassId(String classId) {
         return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
     }
 
     /* 查询*/
-    public Page<StudentOnLine> findAllPage(PageRequest request){
+    public Page<StudentOnLine> findAllPage(PageRequest request) {
         return studentOnLineRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, request);
     }
 
-    public Page<StudentOnLineDto> findAllPageDtoByCenterAreaId(String centerAreaId, PageRequest request){
-        return studentOnLineRepository.findAllByIsValidatedEqualsAndCenterAreaIdDto(centerAreaId, request);
+    public Page<StudentOnLineDto> findAllPageDtoByCenterAreaId(String centerAreaId, PageRequest request) {
+        return studentOnLineRepository.findAllByCenterAreaIdDto(centerAreaId, request);
     }
 
-    public Page<StudentOnLineDto> findAllPageDto(PageRequest request){
-        return studentOnLineRepository.findAllByIsValidatedEqualsDto(request);
+    public Page<StudentOnLineDto> findAllPageDto(PageRequest request) {
+        return studentOnLineRepository.findAllDto(request);
     }
 
-    public List<StudentOnLine> findByStuIDCardAndStudentName(String stuIDCard, String studentName){
+    public List<StudentOnLine> findByStuIDCardAndStudentName(String stuIDCard, String studentName) {
         return studentOnLineRepository.findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, stuIDCard, studentName);
     }
 }

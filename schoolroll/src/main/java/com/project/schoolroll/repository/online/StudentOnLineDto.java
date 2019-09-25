@@ -67,4 +67,8 @@ public interface StudentOnLineDto {
     public String getCenterAreaId();
 
     public String getCenterName();
+
+    public String getCreateTime();
+
+    public String getIsValidated();
 }
