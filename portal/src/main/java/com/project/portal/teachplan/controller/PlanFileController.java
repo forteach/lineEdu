@@ -99,8 +99,8 @@ public class PlanFileController {
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllPage(@RequestBody PlanFileFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
@@ -117,8 +117,8 @@ public class PlanFileController {
     @PostMapping(path = "/findByPlanId")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", value = "项目计划编号", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findById(@RequestBody PlanFileFindByPlanIdRequest request) {
         valideSort(request.getPage(), request.getPage());

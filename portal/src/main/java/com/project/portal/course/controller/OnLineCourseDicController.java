@@ -59,6 +59,7 @@ public class OnLineCourseDicController {
         onLineCourseDic.setCreateUser(userId);
         onLineCourseDic.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getCourseId())) {
+            MyAssert.isNull(request.getCourseName(), DefineCode.ERR0010, "课程名称不为空");
             String centerAreaId = tokenService.getCenterAreaId(token);
             onLineCourseDic.setCenterAreaId(centerAreaId);
             return WebResult.okResult(onLineCourseDicService.save(onLineCourseDic));
@@ -70,7 +71,7 @@ public class OnLineCourseDicController {
     @UserLoginToken
     @ApiOperation(value = "在线项目课程字典列表")
     @PostMapping(path = "/findAll")
-    @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", example = "没有此参数查询全部", paramType = "query")
+    @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, example = "没有此参数查询全部", paramType = "query")
     public WebResult findAll(@RequestBody String centerAreaId) {
         String centerId = JSONObject.parseObject(centerAreaId).getString("centerAreaId");
         if (StrUtil.isBlank(centerId)) {
@@ -102,6 +103,7 @@ public class OnLineCourseDicController {
     @UserLoginToken
     @PutMapping(path = "/status/{courseId}")
     @ApiOperation(value = "修改课程字典状态")
+    @ApiImplicitParam(name = "courseId", dataType = "string", required = true, paramType = "form")
     public WebResult updateStatus(@PathVariable String courseId, HttpServletRequest httpServletRequest){
         MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
@@ -112,8 +114,8 @@ public class OnLineCourseDicController {
     @ApiOperation(value = "分页查询全部课程字典")
     @UserLoginToken
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", required = true, example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", required = true, example = "15", paramType = "query")
     })
     @PostMapping(path = "/findAllPage")
     public WebResult findAllPage(@RequestBody SortVo sortVo){

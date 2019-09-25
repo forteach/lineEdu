@@ -84,8 +84,8 @@ public class StudentOnLineController {
     @ApiOperation(value = "分页查询在线学生信息(暂无查询条件)")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
     public WebResult findPageAll(@RequestBody StudentOnLineFindAllPageRequest request, HttpServletRequest httpServletRequest) {
         valideSort(request.getPage(), request.getSize());
@@ -99,6 +99,7 @@ public class StudentOnLineController {
 
     @ApiOperation(value = "更改学生状态")
     @PutMapping("/status/{studentId}")
+    @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
     public WebResult updateStatus(@PathVariable String studentId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(studentId, DefineCode.ERR0010, "学生id不能为空");
         Optional<StudentOnLine> onLine = studentOnLineRepository.findById(studentId);

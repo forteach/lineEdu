@@ -108,8 +108,8 @@ public class TeachPlanController {
     @PostMapping(path = "/findByPlanIdPageAll")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query"),
-            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
     public WebResult findByPlanIdPageAll(@RequestBody TeachPlanPageAllRequest request, HttpServletRequest httpServletRequest){
         valideSort(request.getPage(), request.getSize());
@@ -133,7 +133,7 @@ public class TeachPlanController {
     @UserLoginToken
     @ApiOperation(value = "移除(逻辑)对应计划的信息")
     @PostMapping(path = "/removeByPlanId")
-    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form")
+    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form")
     public WebResult removeByPlanId(@RequestBody String planId){
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         teachService.removeByPlanId(JSONObject.parseObject(planId).getString("planId"));
@@ -143,7 +143,7 @@ public class TeachPlanController {
     @UserLoginToken
     @ApiOperation(value = "删除(物理)对应计划的信息")
     @DeleteMapping(path = "/{planId}")
-    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form")
+    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form")
     public WebResult deleteByPlanId(@PathVariable String planId){
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         teachService.deleteByPlanId(planId);
@@ -152,7 +152,7 @@ public class TeachPlanController {
     @UserLoginToken
     @ApiOperation(value = "查询计划对应课程信息")
     @PostMapping(path = "/course/{planId}")
-    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query")
+    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "query")
     public WebResult findAllCourseByPlanId(@PathVariable String planId){
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         return WebResult.okResult(teachPlanCourseService.findAllCourseByPlanId(planId));
@@ -161,13 +161,14 @@ public class TeachPlanController {
     @UserLoginToken
     @ApiOperation(value = "查询计划对应班级信息")
     @PostMapping(path = "/class/{planId}")
-    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query")
+    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "query")
     public WebResult findAllClassByPlanId(@PathVariable String planId){
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         return WebResult.okResult(teachService.findAllClassByPlanId(planId));
     }
     @ApiOperation(value = "更新教学计划状态")
     @PutMapping(path = "/status/{planId}")
+    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form")
     public WebResult updateStatus(@PathVariable String planId, HttpServletRequest httpServletRequest){
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));

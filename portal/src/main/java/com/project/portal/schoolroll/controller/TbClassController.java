@@ -46,8 +46,8 @@ public class TbClassController {
     @GetMapping(path = "/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllPage(@RequestBody TbClassFindAllPageRequest request){
         valideSort(request.getPage(), request.getSize());

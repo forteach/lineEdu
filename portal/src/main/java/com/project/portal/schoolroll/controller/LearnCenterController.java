@@ -122,8 +122,8 @@ public class LearnCenterController {
     @ApiOperation(value = "分页查询学习中心")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", required = true, example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", required = true, example = "15", paramType = "query")
     })
     public WebResult findAllPage(@RequestBody SortVo sortVo) {
         valideSort(sortVo.getPage(), sortVo.getSize());

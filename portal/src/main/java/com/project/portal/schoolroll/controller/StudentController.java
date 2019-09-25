@@ -185,8 +185,8 @@ public class StudentController {
     @UserLoginToken
     @ApiOperation(value = "保存修改学生扩展字段")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "expandValues", value = "需要修改保存的值", dataTypeClass = StudentExpandValueRequest.class, dataType = "list", paramType = "form"),
+            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "expandValues", value = "需要修改保存的值", required = true, dataTypeClass = StudentExpandValueRequest.class, dataType = "list", paramType = "form"),
     })
     @PostMapping("/saveUpdateStudentExpand")
     public WebResult saveUpdateStudentExpand(@RequestBody StudentExpandRequest request, HttpServletRequest httpServletRequest) {

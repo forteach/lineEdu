@@ -112,8 +112,8 @@ public class TeacherController {
     @ApiOperation(value = "分页查询教师信息")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllPage(@RequestBody SortVo sortVo, HttpServletRequest httpServletRequest) {
         valideSort(sortVo.getPage(), sortVo.getSize());
@@ -180,12 +180,15 @@ public class TeacherController {
     @UserLoginToken
     @GetMapping(path = "/files/{teacherId}")
     @ApiOperation(value = "查询教师信息的文件资料信息")
+    @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
     public WebResult findAllTeacherFile(@PathVariable String teacherId){
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不为空");
         return WebResult.okResult(teacherService.findTeacherFile(teacherId));
     }
     @UserLoginToken
+    @ApiOperation(value = "删除教师的文件")
     @DeleteMapping(path = "/file/{fileId}")
+    @ApiImplicitParam(name = "fileId", value = "文件id", dataType = "string", required = true, paramType = "form")
     public WebResult deleteFile(@PathVariable String fileId){
         MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不为空");
         teacherService.deleteTeacherFile(fileId);
@@ -195,6 +198,7 @@ public class TeacherController {
     @UserLoginToken
     @ApiOperation(value = "修改教师用户信息状态")
     @PutMapping(path = "/status/{teacherId}")
+    @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
     public WebResult updateStatus(@PathVariable String teacherId, HttpServletRequest httpServletRequest){
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));

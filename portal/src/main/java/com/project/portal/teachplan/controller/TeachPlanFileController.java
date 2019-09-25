@@ -43,10 +43,10 @@ public class TeachPlanFileController {
     @ApiOperation(value = "计划资料保存修改")
     @PostMapping("/save")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "资料名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileType", value = "资料类型", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", required = true, paramType = "form")
     })
     public WebResult save(@RequestBody TeachPlanFileSaveRequest request, HttpServletRequest httpServletRequest){
         MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件地址不能为空");

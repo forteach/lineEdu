@@ -66,7 +66,7 @@ public class StudentScoreController {
     @UserLoginToken
     @ApiOperation(value = "删除无效的学生成绩信息")
     @DeleteMapping(path = "/deleteByScoreId")
-    @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", paramType = "form")
+    @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", required = true, paramType = "form")
     public WebResult deleteStudentScoreById(@RequestBody String scoreId){
         MyAssert.isNull(scoreId, DefineCode.ERR0010, "成绩id信息不为空");
         studentScoreService.deleteStudentScoreById(JSONObject.parseObject(scoreId).getString("scoreId"));
@@ -84,8 +84,8 @@ public class StudentScoreController {
             @ApiImplicitParam(name = "schoolYear", value = "学年", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "startDate", value = "开始日期", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "endDate", value = "结束日期", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", paramType = "query")
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
     public WebResult findStudentScorePageAll(@RequestBody StudentScoreRequest request){
         valideSort(request.getPage(), request.getSize());
@@ -98,8 +98,8 @@ public class StudentScoreController {
     @ApiOperation(value = "更新线下成绩录入")
     @PostMapping(path = "/updateOfflineScore")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "offLineScore", value = "线下成绩", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "offLineScore", value = "线下成绩", dataType = "string", required = true, paramType = "form")
     })
     public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request, HttpServletRequest httpServletRequest){
         MyAssert.isNull(request.getScoreId(), DefineCode.ERR0010, "成绩id信息不为空");
