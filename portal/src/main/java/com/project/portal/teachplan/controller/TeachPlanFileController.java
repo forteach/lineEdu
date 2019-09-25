@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * @description:
  */
 @RestController
-@Api(value = "教学计划资料管理", tags = {"教学计划资料管理"})
+@Api(value = "在线教学计划资料管理", tags = {"在线教学计划资料管理"})
 @RequestMapping(path = "/TeachPlanFile", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class TeachPlanFileController {
     private final TeachPlanFileService teachPlanFileService;
@@ -40,7 +40,7 @@ public class TeachPlanFileController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "班级资料保存修改")
+    @ApiOperation(value = "计划资料保存修改")
     @PostMapping("/save")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),

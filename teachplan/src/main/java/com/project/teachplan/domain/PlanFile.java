@@ -41,12 +41,15 @@ public class PlanFile extends Entitys implements Serializable {
     @Column(name = "class_id", columnDefinition = "VARCHAR(60) COMMENT '班级编号'")
     private String classId;
 
-//    @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '课程id'")
-//    private String courseId;
+    @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '课程id'")
+    private String courseId;
 
     @Column(name = "file_type", columnDefinition = "VARCHAR(32) COMMENT '文件类型'")
     private String fileType;
 
     @Column(name = "plan_id", columnDefinition = "VARCHAR(40) COMMENT '在线项目计划编号'")
     private String planId;
+
+    @Column(name = "create_date", columnDefinition = "VARCHAR(32) COMMENT '上课日期'")
+    private String createDate;
 }
