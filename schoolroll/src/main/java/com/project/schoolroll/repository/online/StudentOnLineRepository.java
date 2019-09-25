@@ -44,12 +44,14 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.learningModality as learningModality, " +
             " s.importStatus as importStatus," +
             " s.centerAreaId as centerAreaId," +
-            " lc.centerName as centerName " +
+            " lc.centerName as centerName, " +
+            " s.createTime as createTime, " +
+            " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " where s.isValidated = '0' and s.centerAreaId = ?1 order by s.createTime desc ")
+            " where s.centerAreaId = ?1 order by s.createTime desc ")
     @Transactional(readOnly = true)
-    Page<StudentOnLineDto> findAllByIsValidatedEqualsAndCenterAreaIdDto(String centerAreaId, Pageable pageable);
+    Page<StudentOnLineDto> findAllByCenterAreaIdDto(String centerAreaId, Pageable pageable);
 
     @Query(value = "select " +
             " s.studentId as studentId," +
@@ -62,12 +64,14 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.enrollmentDate as enrollmentDate," +
             " s.nation as nation, " +
             " s.learningModality as learningModality, " +
-            " s.importStatus as importStatus," +
-            " s.centerAreaId as centerAreaId," +
-            " lc.centerName as centerName " +
+            " s.importStatus as importStatus, " +
+            " s.centerAreaId as centerAreaId, " +
+            " lc.centerName as centerName," +
+            " s.createTime as createTime, " +
+            " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " where s.isValidated = '0' order by s.createTime desc ")
+            " order by s.createTime desc ")
     @Transactional(readOnly = true)
-    Page<StudentOnLineDto> findAllByIsValidatedEqualsDto(Pageable pageable);
+    Page<StudentOnLineDto> findAllDto(Pageable pageable);
 }

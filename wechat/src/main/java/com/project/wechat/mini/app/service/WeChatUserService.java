@@ -41,4 +41,6 @@ public interface WeChatUserService {
     void restart(String string);
 
     Object saveWeChatUser(WeChatUserRequest weChatUserReq);
+
+    void updateStatus(String studentId, String status, String userId);
 }
