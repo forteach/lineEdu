@@ -52,6 +52,7 @@ public class PlanFileController {
             @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileId", value = "资料编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "资料名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "fileType", value = "资料类型", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级编号", dataType = "string", paramType = "form"),
     })

@@ -140,9 +140,9 @@ public class PlanFileService extends BaseMySqlService {
      * @param planId
      * @return
      */
-    public int countClass(String planId) {
-        return planFileRepository.countClass(planId);
-    }
+//    public int countClass(String planId) {
+//        return planFileRepository.countClass(planId);
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByClassId(String classId) {
@@ -162,7 +162,7 @@ public class PlanFileService extends BaseMySqlService {
         planFileRepository.saveAll(list);
     }
 
-    public Page<TeachPlanClassDto> findAllPagePlanId(Pageable of) {
+//    public Page<TeachPlanClassDto> findAllPagePlanId(Pageable of) {
 //        StringBuilder dateSql = new StringBuilder("select * from student_score ");
 //        StringBuilder whereSql = new StringBuilder("where is_validated = '0'");
 //        StringBuilder countSql = new StringBuilder("select count(1) from student_score ");
@@ -223,8 +223,8 @@ public class PlanFileService extends BaseMySqlService {
 //        long total = count.longValue();
 //        List<PlanFileDto> content2 = total > of.getOffset() ? dataQuery.getResultList() : Collections.emptyList();
 //        return new PageImpl<>(content2, of, total);
-        return null;
-    }
+//        return null;
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteByFileId(String fileId) {

@@ -66,7 +66,8 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
             " fileName AS fileName," +
             " fileUrl AS fileUrl," +
             " classId AS classId," +
-            " planId AS planId " +
+            " planId AS planId," +
+            " fileType AS fileType " +
             " from PlanFile where isValidated = '0' and " +
             " planId in (select distinct planId from TeachPlanCourse where isValidated = '0' and courseId = ?1)")
     @Transactional(readOnly = true)

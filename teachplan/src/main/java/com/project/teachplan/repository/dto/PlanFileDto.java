@@ -18,4 +18,6 @@ public interface PlanFileDto {
     public String getClassId();
 
     public String getPlanId();
+
+    public String getFileType();
 }
