@@ -40,7 +40,8 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
-            " tp.isValidated as isValidated " +
+            " tp.isValidated as isValidated, " +
+            " tp.createTime as createTime " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " order by tp.createTime desc ")
@@ -58,7 +59,8 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
-            " tp.isValidated as isValidated " +
+            " tp.isValidated as isValidated, " +
+            " tp.createTime as createTime " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.planId = ?1 order by tp.createTime desc ")
@@ -76,7 +78,8 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
-            " tp.isValidated as isValidated " +
+            " tp.isValidated as isValidated, " +
+            " tp.createTime as createTime " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.centerAreaId = ?1 order by tp.createTime desc ")
@@ -94,7 +97,8 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName," +
-            " tp.isValidated as isValidated " +
+            " tp.isValidated as isValidated," +
+            " tp.createTime as createTime " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.centerAreaId = ?1 and tp.planId = ?2 order by tp.createTime desc ")

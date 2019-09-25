@@ -31,4 +31,6 @@ public interface TeachPlanDto {
     public String getCenterName();
 
     public String getIsValidated();
+
+    public String getCreateTime();
 }

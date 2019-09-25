@@ -152,7 +152,7 @@ public class PlanFileController {
     @DeleteMapping(path = "/removeByPlanId")
     @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true)
     public WebResult removeByPlanId(@RequestBody String planId) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "班级id不为空");
+        MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         planFileService.removeByPlanId(JSONObject.parseObject(planId).getString(planId));
         return WebResult.okResult();
     }
