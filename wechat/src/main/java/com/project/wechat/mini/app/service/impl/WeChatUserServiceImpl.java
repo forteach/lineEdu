@@ -260,6 +260,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                     w.setIsValidated(status);
                     w.setUpdateUser(userId);
                     weChatUserRepository.save(w);
+                    tokenService.removeToken(w.getOpenId());
                 });
     }
 }

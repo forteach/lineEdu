@@ -12,7 +12,6 @@ import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.user.service.RoleService;
 import com.project.user.service.UserService;
-import com.project.user.web.req.RegisterUserReq;
 import com.project.user.web.req.UpdatePassWordReq;
 import com.project.user.web.req.UserLoginReq;
 import io.swagger.annotations.*;
@@ -64,36 +63,37 @@ public class AuthController {
         return WebResult.okResult(userService.login(userLoginReq));
     }
 
-    @ApiOperation(value = "用户注册", notes = "用户只能是本校教职工才能注册")
-    @PostMapping("/registerUser")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "string", paramType = "from"),
-            @ApiImplicitParam(name = "passWord", value = "密码", dataType = "string", required = true, paramType = "from"),
-            @ApiImplicitParam(name = "teacherCode", value = "教师代码", dataType = "string", required = true, paramType = "from")
-    })
-    public WebResult registerUser(@Valid @RequestBody RegisterUserReq registerUserReq){
-        return WebResult.okResult(userService.registerUser(registerUserReq));
-    }
+//    @ApiOperation(value = "用户注册", notes = "用户只能是本校教职工才能注册")
+//    @PostMapping("/registerUser")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "string", paramType = "from"),
+//            @ApiImplicitParam(name = "passWord", value = "密码", dataType = "string", required = true, paramType = "from"),
+//            @ApiImplicitParam(name = "teacherCode", value = "教师代码", dataType = "string", required = true, paramType = "from")
+//    })
+//    public WebResult registerUser(@Valid @RequestBody RegisterUserReq registerUserReq){
+//        return WebResult.okResult(userService.registerUser(registerUserReq));
+//    }
 
-    @ApiOperation("重置教师账户密码为初始化密码")
+    @ApiOperation("重置管理端账户密码为初始化密码")
     @PostMapping("/resetPassWord")
-    @ApiImplicitParam(name = "teacherCode",value = "教师代码", required = true, dataType = "string",paramType = "from")
+    @ApiImplicitParam(name = "id",value = "教师代码", required = true, dataType = "string",paramType = "from")
     @UserLoginToken
-    public WebResult resetPassWord(@RequestBody String teacherCode, HttpServletRequest httpServletRequest){
-        MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
+    public WebResult resetPassWord(@RequestBody String id, HttpServletRequest httpServletRequest){
+        MyAssert.blank(id, DefineCode.ERR0010, "id不为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(userService.resetPassWord(JSONObject.parseObject(teacherCode).getString("teacherCode"), userId));
+        return WebResult.okResult(userService.resetPassWord(JSONObject.parseObject(id).getString("id"), userId));
     }
 
-    @ApiOperation("添加教师用户信息用户账户")
-    @PostMapping("/addSysTeacher")
-    @ApiImplicitParam(name = "teacherCode",value = "教师代码", required = true, dataType = "string",paramType = "from")
-    @UserLoginToken
-    public WebResult addSysTeacher(@RequestBody String teacherCode, HttpServletRequest httpServletRequest){
-        MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
-        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(userService.addSysTeacher(JSONObject.parseObject(teacherCode).getString("teacherCode"), userId));
-    }
+//    @ApiOperation("添加教师用户信息用户账户")
+//    @PostMapping("/addSysTeacher")
+//    @ApiImplicitParam(name = "teacherCode",value = "教师代码", required = true, dataType = "string",paramType = "from")
+//    @UserLoginToken
+//    public WebResult addSysTeacher(@RequestBody String teacherCode, HttpServletRequest httpServletRequest){
+//        MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
+//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+//        return WebResult.okResult(userService.addSysTeacher(JSONObject.parseObject(teacherCode).getString("teacherCode"), userId));
+//    }
+
     @UserLoginToken
     @ApiOperation("修改密码")
     @PostMapping("/updatePassWord")
@@ -105,6 +105,7 @@ public class AuthController {
     public WebResult updatePassWord(@RequestBody UpdatePassWordRequest passWordRequest, HttpServletRequest request){
         MyAssert.blank(passWordRequest.getOldPassWord(), DefineCode.ERR0010, "旧密码不能为空");
         MyAssert.blank(passWordRequest.getNewPassWord(), DefineCode.ERR0010, "新密码不能为空");
+        MyAssert.isTrue(passWordRequest.getOldPassWord().equals(passWordRequest.getNewPassWord()), DefineCode.ERR0010, "新密码和原密码不能相同");
         UpdatePassWordReq updatePassWordReq = new UpdatePassWordReq();
         BeanUtil.copyProperties(passWordRequest, updatePassWordReq);
         updatePassWordReq.setTeacherCode(tokenService.getUserId(request.getHeader("token")));

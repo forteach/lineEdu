@@ -20,17 +20,27 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     /**
      * 所有的文件列表
      */
+    @Transactional(readOnly = true)
     public Page<PlanFile> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerId, Pageable pageable);
 
+    @Transactional(readOnly = true)
     public Page<PlanFile> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
 
     /**
      * 班级所有的文件列表
      */
+    @Transactional(readOnly = true)
     public Page<PlanFile> findAllByIsValidatedEqualsAndCenterAreaIdAndClassIdOrderByCreateTimeDesc(String isValidated, String centerId, String classId, Pageable pageable);
 
+    @Transactional(readOnly = true)
     public Page<PlanFile> findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(String isValidated, String classId, Pageable pageable);
 
+    @Transactional(readOnly = true)
+    Page<PlanFile> findAllByIsValidatedEqualsAndClassIdAndPlanIdOrderByCreateTimeDesc(String isValidated, String classId, String planId, Pageable pageable);
+
+
+    @Transactional(rollbackFor = Exception.class)
+    Page<PlanFile> findAllByIsValidatedEqualsAndClassIdAndPlanIdAndCreateDateOrderByCreateTimeDesc(String isValidated, String classId, String planId, String createDate, Pageable pageable);
     /**
      * 根据计划编号查询对应的班级资料分页信息
      *
@@ -38,6 +48,7 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
      * @param pageable
      * @return
      */
+    @Transactional(readOnly = true)
     public Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId, Pageable pageable);
 
     /**

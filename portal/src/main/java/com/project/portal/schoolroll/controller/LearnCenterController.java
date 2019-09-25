@@ -1,6 +1,7 @@
 package com.project.portal.schoolroll.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -88,7 +89,14 @@ public class LearnCenterController {
                 BeanUtils.copyProperties(request, learnCenter);
                 learnCenter.setUpdateUser(userId);
                 learnCenterRepository.save(learnCenter);
-                userService.updateCenter(learnCenter.getCenterName(), request.getCenterName(), userId);
+                if (StrUtil.isNotBlank(request.getCenterName()) && !learnCenter.getCenterName().equals(request.getCenterName())) {
+                    //修改学习中心名称并且名字不同
+                    userService.updateCenter(learnCenter.getCenterName(), request.getCenterName(), userId);
+                }
+                if (StrUtil.isNotBlank(request.getPhone()) && !learnCenter.getPhone().equals(request.getPhone())){
+                    //修改注册手机号码
+                    userService.updateCenterPhone(learnCenter.getCenterName(), request.getPhone(), userId);
+                }
             });
         } else {
             MyAssert.isNull(request.getCenterName(), DefineCode.ERR0010, "学习中心名称不为空");
@@ -99,6 +107,7 @@ public class LearnCenterController {
             if (!learnCenters.isEmpty()) {
                 MyAssert.isNull(null, DefineCode.ERR0011, "已经存在同名学习中心");
             }
+            MyAssert.isFalse(Validator.isMobile(request.getPhone()), DefineCode.ERR0002, "联系电话不是手机号码");
             LearnCenter learnCenter = new LearnCenter();
             BeanUtils.copyProperties(request, learnCenter);
             String centerAreaId = IdUtil.fastSimpleUUID();
@@ -107,7 +116,7 @@ public class LearnCenterController {
             learnCenter.setUpdateUser(userId);
             learnCenter.setUpdateUser(userId);
             learnCenterRepository.save(learnCenter);
-            userService.registerCenter(request.getCenterName(), centerAreaId, userId);
+            userService.registerCenter(request.getCenterName(), request.getPhone(), centerAreaId, userId);
         }
         return WebResult.okResult();
     }

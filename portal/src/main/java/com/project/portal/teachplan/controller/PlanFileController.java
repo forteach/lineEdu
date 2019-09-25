@@ -2,7 +2,6 @@ package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
@@ -98,18 +97,23 @@ public class PlanFileController {
     @ApiOperation(value = "班级资料明细列表分页查询")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "createDate", value = "创建日期", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllPage(@RequestBody PlanFileFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
+        MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级Id不能为空");
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        if (StrUtil.isNotBlank(request.getClassId())) {
-            return WebResult.okResult(planFileService.findByClassIdPageAll(request.getClassId(), pageRequest));
-        } else {
-            return WebResult.okResult(planFileService.findAllPage(pageRequest));
-        }
+        return WebResult.okResult(planFileService.findAllPageFile(request.getClassId(), request.getPlanId(), request.getCreateDate(), pageRequest));
+//        if (StrUtil.isNotBlank(request.getCreateDate())) {
+//            return WebResult.okResult(planFileService.findByClassIdPageAll(request.getClassId(), pageRequest));
+//        } else {
+//            return WebResult.okResult(planFileService.findAllPage(pageRequest));
+//        }
     }
 
     @UserLoginToken

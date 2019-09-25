@@ -2,6 +2,7 @@ package com.project.teachplan.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
@@ -253,5 +255,20 @@ public class PlanFileService extends BaseMySqlService {
 
     public List<PlanFile> findAllFileByDate(String date){
         return planFileRepository.findAllByIsValidatedEqualsAndCreateTime(date);
+    }
+
+    public Page<PlanFile> findAllPageFile(String classId, String planId, String createDate, Pageable pageable){
+        Page<PlanFile> planFilePage = null;
+        if (StrUtil.isNotBlank(createDate)){
+            planFilePage = planFileRepository.findAllByIsValidatedEqualsAndClassIdAndPlanIdAndCreateDateOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId, planId, createDate, pageable);
+        }else {
+            planFilePage = planFileRepository.findAllByIsValidatedEqualsAndClassIdAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId, planId, pageable);
+        }
+//        planFilePage.stream().filter(Objects::nonNull).map(p -> {
+//            String planId1 = p.getPlanId();
+//            String classId1 = p.getClassId();
+//
+//        })
+        return planFilePage;
     }
 }

@@ -44,7 +44,7 @@ public interface UserService {
      * @param teacherCode
      * @return
      */
-    boolean addSysTeacher(String teacherCode, String userId);
+//    boolean addSysTeacher(String teacherCode, String userId);
 
     /**
      * 修改密码
@@ -65,9 +65,11 @@ public interface UserService {
 
     void updateTeacher(String phone, String newPhone, String userId);
 
-    void registerCenter(String centerName, String centerAreaId, String userId);
+    void registerCenter(String centerName, String phone, String centerAreaId, String userId);
 
     void updateCenter(String center, String newCenter, String userId);
 
     void updateStatus(String id, String status, String userId);
+
+    void updateCenterPhone(String centerName, String phone, String userId);
 }
