@@ -50,24 +50,25 @@ public class PlanFileController {
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "fileId", value = "资料编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "资料名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileType", value = "资料类型", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级编号", dataType = "string", paramType = "form"),
     })
     public WebResult saveOrUpdate(@RequestBody PlanFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
+        MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件地址不能为空");
         PlanFile planFile = new PlanFile();
         BeanUtil.copyProperties(request, planFile);
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
+        planFile.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getFileId())) {
+            MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不能为空");
             String centerAreaId = tokenService.getCenterAreaId(token);
             planFile.setCenterAreaId(centerAreaId);
             planFile.setCreateUser(userId);
             return WebResult.okResult(planFileService.save(planFile));
         } else {
-            planFile.setUpdateUser(userId);
             return WebResult.okResult(planFileService.update(planFile));
         }
     }
@@ -123,6 +124,7 @@ public class PlanFileController {
         return WebResult.okResult(planFileService.findByPlanIdPageAll(request.getPlanId(), PageRequest.of(request.getPage(), request.getSize())));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "根据计划id和班级id查询对应的文件列表信息")
     @PostMapping(path = "/findAllByPlanIdAndClassId")
     @ApiImplicitParams({
@@ -175,11 +177,21 @@ public class PlanFileController {
 //        return WebResult.okResult();
 //    }
 
+    @UserLoginToken
     @ApiOperation(value = "根据课程id查询对应的资料")
     @PostMapping(path = "/courseId/{courseId}")
     @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "query")
     public WebResult findByCourseId(@PathVariable String courseId){
         MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不能为空");
         return WebResult.okResult(planFileService.findAllByCourseId(courseId));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "根据日期查询对应计划资料信息")
+    @GetMapping(path = "/PlanFile/{date}")
+    @ApiImplicitParam(name = "date", value = "日期字符串", example = "2019-09-16", dataType = "string", paramType = "query")
+    public WebResult findAllByDate(@PathVariable String date){
+        MyAssert.isNull(date, DefineCode.ERR0010, "日期不能为空");
+        return WebResult.okResult(planFileService.findAllFileByDate(date));
     }
 }

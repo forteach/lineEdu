@@ -61,6 +61,10 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     @Transactional(readOnly = true)
     List<PlanFile> findAllByPlanId(String planId);
 
+    @Query(value = "select * from plan_file where is_validated = '0' and DATE(c_time) = ?1 ", nativeQuery = true)
+    @Transactional(readOnly = true)
+    List<PlanFile> findAllByIsValidatedEqualsAndCreateTime(String dateStr);
+
     @Query(value = "select " +
             " fileId AS fileId, " +
             " fileName AS fileName," +

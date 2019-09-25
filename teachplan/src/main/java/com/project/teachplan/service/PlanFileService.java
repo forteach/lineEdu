@@ -137,8 +137,8 @@ public class PlanFileService extends BaseMySqlService {
     /**
      * 返回计划下的班级文件资料数量
      *
-     * @param planId
-     * @return
+//     * @param planId
+//     * @return
      */
 //    public int countClass(String planId) {
 //        return planFileRepository.countClass(planId);
@@ -148,7 +148,7 @@ public class PlanFileService extends BaseMySqlService {
     public void removeByClassId(String classId) {
         List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId)
                 .stream()
-                .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))
+                .peek(p -> p.setIsValidated(TAKE_EFFECT_CLOSE))
                 .collect(toList());
         planFileRepository.saveAll(list);
     }
@@ -157,7 +157,7 @@ public class PlanFileService extends BaseMySqlService {
     public void removeByPlanId(String planId) {
         List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId)
                 .stream()
-                .peek(classFile -> classFile.setIsValidated(TAKE_EFFECT_CLOSE))
+                .peek(p -> p.setIsValidated(TAKE_EFFECT_CLOSE))
                 .collect(toList());
         planFileRepository.saveAll(list);
     }
@@ -249,5 +249,9 @@ public class PlanFileService extends BaseMySqlService {
                     p.setIsValidated(status);
                 }).collect(toList());
         planFileRepository.saveAll(fileList);
+    }
+
+    public List<PlanFile> findAllFileByDate(String date){
+        return planFileRepository.findAllByIsValidatedEqualsAndCreateTime(date);
     }
 }

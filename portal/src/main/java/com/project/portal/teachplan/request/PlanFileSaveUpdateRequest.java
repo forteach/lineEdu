@@ -17,7 +17,6 @@ import java.io.Serializable;
 @ApiModel(value = "在线计划班级资料信息保存修改")
 public class PlanFileSaveUpdateRequest implements Serializable {
 
-    @ApiModelProperty(name = "fileId", value = "资料编号", dataType = "string")
     private String fileId;
 
     @ApiModelProperty(name = "fileName", value = "资料名称", dataType = "string")
