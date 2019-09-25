@@ -39,10 +39,11 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " tp.classNumber as classNumber, " +
             " tp.sumNumber as sumNumber, " +
             " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName " +
+            " lc.centerName as centerName, " +
+            " tp.isValidated as isValidated " +
             " from TeachPlan as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " where tp.isValidated = '0' order by tp.createTime desc ")
+            " order by tp.createTime desc ")
     @Transactional(readOnly = true)
     Page<TeachPlanDto> findAllPageDto(Pageable pageable);
 
