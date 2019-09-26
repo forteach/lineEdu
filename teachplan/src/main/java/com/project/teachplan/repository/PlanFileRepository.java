@@ -1,12 +1,10 @@
 package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.PlanFile;
-import com.project.teachplan.repository.dto.PlanFileDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,30 +15,9 @@ import java.util.List;
  */
 public interface PlanFileRepository extends JpaRepository<PlanFile, String>, JpaSpecificationExecutor<PlanFile> {
 
-    /**
-     * 所有的文件列表
-     */
     @Transactional(readOnly = true)
-    public Page<PlanFile> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerId, Pageable pageable);
+    Page<PlanFile> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
 
-    @Transactional(readOnly = true)
-    public Page<PlanFile> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
-
-    /**
-     * 班级所有的文件列表
-     */
-    @Transactional(readOnly = true)
-    public Page<PlanFile> findAllByIsValidatedEqualsAndCenterAreaIdAndClassIdOrderByCreateTimeDesc(String isValidated, String centerId, String classId, Pageable pageable);
-
-    @Transactional(readOnly = true)
-    public Page<PlanFile> findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(String isValidated, String classId, Pageable pageable);
-
-    @Transactional(readOnly = true)
-    Page<PlanFile> findAllByIsValidatedEqualsAndClassIdAndPlanIdOrderByCreateTimeDesc(String isValidated, String classId, String planId, Pageable pageable);
-
-
-    @Transactional(rollbackFor = Exception.class)
-    Page<PlanFile> findAllByIsValidatedEqualsAndClassIdAndPlanIdAndCreateDateOrderByCreateTimeDesc(String isValidated, String classId, String planId, String createDate, Pageable pageable);
     /**
      * 根据计划编号查询对应的班级资料分页信息
      *
@@ -49,25 +26,16 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId, Pageable pageable);
-
-    /**
-     * 获得计划下面的班级数量
-     */
-    @Query(value = "SELECT COUNT(*) FROM (SELECT DISTINCT class_id from plan_file WHERE is_validated = '0' AND plan_id=?1) as t", nativeQuery = true)
-    public int countClass(String planId);
+    Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId, Pageable pageable);
 
     @Transactional(readOnly = true)
-    public List<PlanFile> findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(String isValidated, String classId);
+    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(String isValidated, String planId, String classId, String courseId, String createDate);
 
-    @Transactional(readOnly = true)
-    public List<PlanFile> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId);
+
 
     @Transactional(readOnly = true)
     List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(String isValidated, String planId, String classId);
 
-    @Modifying(flushAutomatically = true)
-    long deleteAllByFileIdIn(List<String> ids);
 
     @Transactional(readOnly = true)
     List<PlanFile> findAllByPlanId(String planId);
@@ -76,25 +44,7 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     @Transactional(readOnly = true)
     List<PlanFile> findAllByIsValidatedEqualsAndCreateTime(String dateStr);
 
-    @Query(value = "select " +
-            " fileId AS fileId, " +
-            " fileName AS fileName," +
-            " fileUrl AS fileUrl," +
-            " classId AS classId," +
-            " planId AS planId," +
-            " fileType AS fileType " +
-            " from PlanFile where isValidated = '0' and " +
-            " planId in (select distinct planId from TeachPlanCourse where isValidated = '0' and courseId = ?1)")
-    @Transactional(readOnly = true)
-    List<PlanFileDto> findAllByIsValidatedEqualsAndCourseIdDto(String courseId);
-
-//    List<PlanFile> findAllByIsValidatedEqualsAndC
-
-//    public Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndCourseIdOrderByCreateTimeDesc(String isValidated, String planId, String courseId, Pageable pageable);
-
-//    public Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(String isValidated, String planId, String classId, Pageable pageable);
-
-    // FileId FileName FileUrl ClassId ClassName PlanId PlanName StartDate EndDate PlanAdmin
+    List<PlanFile> findAllByPlanIdAndClassIdAndCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate);
 
 //    @Query(value = "select " +
 //            " pf.file_id as fileId," +

@@ -5,10 +5,13 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.service.OnLineCourseDicService;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.teachplan.domain.PlanFile;
+import com.project.teachplan.domain.TeachPlanFileList;
 import com.project.teachplan.repository.PlanFileRepository;
 import com.project.teachplan.repository.TeachPlanClassRepository;
+import com.project.teachplan.repository.TeachPlanFileListRepository;
 import com.project.teachplan.repository.dto.PlanFileDto;
 import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -41,11 +43,16 @@ public class PlanFileService extends BaseMySqlService {
     private EntityManager entityManager;
     private final PlanFileRepository planFileRepository;
     private final TeachPlanClassRepository teachPlanClassRepository;
+    private final OnLineCourseDicService onLineCourseDicService;
+    private final TeachPlanFileListRepository teachPlanFileListRepository;
 
     @Autowired
-    public PlanFileService(PlanFileRepository planFileRepository, TeachPlanClassRepository teachPlanClassRepository) {
+    public PlanFileService(PlanFileRepository planFileRepository,OnLineCourseDicService onLineCourseDicService,
+                           TeachPlanClassRepository teachPlanClassRepository, TeachPlanFileListRepository teachPlanFileListRepository) {
         this.planFileRepository = planFileRepository;
         this.teachPlanClassRepository = teachPlanClassRepository;
+        this.onLineCourseDicService = onLineCourseDicService;
+        this.teachPlanFileListRepository = teachPlanFileListRepository;
     }
 
 
@@ -55,7 +62,19 @@ public class PlanFileService extends BaseMySqlService {
     @Transactional(rollbackFor = Exception.class)
     public PlanFile save(PlanFile classFile) {
         classFile.setFileId(IdUtil.fastSimpleUUID());
+        //异步保存计划资料列表
+        saveTeachPlanFileList(classFile);
         return planFileRepository.save(classFile);
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    void saveTeachPlanFileList(PlanFile classFile){
+        TeachPlanFileList teachPlanFileList = new TeachPlanFileList();
+        BeanUtil.copyProperties(classFile, teachPlanFileList);
+        String courseName = onLineCourseDicService.findId(teachPlanFileList.getCourseId()).getCourseName();
+        teachPlanFileList.setCourseName(courseName);
+        teachPlanFileListRepository.save(teachPlanFileList);
     }
 
     /**
@@ -81,26 +100,6 @@ public class PlanFileService extends BaseMySqlService {
         return obj.orElse(new PlanFile());
     }
 
-    /**
-     * @param centerAreaId 获取文件列表
-     * @param classId
-     * @param pageable
-     * @return Page<ClassFile>
-     */
-    public Page<PlanFile> findByCenterAreaIdAndClassIdAllPage(String centerAreaId, String classId, Pageable pageable) {
-        return planFileRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, classId, pageable);
-    }
-
-
-    /**
-     * @param centerAreaId 获取文件列表
-     * @param pageable
-     * @return Page<ClassFile>
-     */
-    public Page<PlanFile> findByCenterAreaIdAllPage(String centerAreaId, Pageable pageable) {
-        return planFileRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageable);
-    }
-
 
     public Page<PlanFile> findByPlanIdPageAll(String planId, Pageable pageable) {
         return planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, pageable);
@@ -115,53 +114,12 @@ public class PlanFileService extends BaseMySqlService {
     }
 
 
-    public Page<PlanFile> findByClassIdPageAll(String classId, Pageable pageable) {
-        return planFileRepository.findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId, pageable);
-    }
-
-//    public Page<PlanFile> findByPlanIdAndCourseIdPageAll(String planId, String courseId, Pageable pageable){
-//        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndCourseIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, courseId, pageable);
-//    }
-
-//    public Page<PlanFile> findByPlanIdAndClassIdPageAll(String planId, String classId, Pageable pageable){
-//        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, pageable);
-//    }
-
-
     public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable) {
         return teachPlanClassRepository.findAllByCenterAreaIdDto(centerAreaId, pageable);
     }
 
     public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable) {
         return teachPlanClassRepository.findAllByCenterAreaIdAndClassIdDto(centerAreaId, classId, pageable);
-    }
-
-    /**
-     * 返回计划下的班级文件资料数量
-     *
-//     * @param planId
-//     * @return
-     */
-//    public int countClass(String planId) {
-//        return planFileRepository.countClass(planId);
-//    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void removeByClassId(String classId) {
-        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId)
-                .stream()
-                .peek(p -> p.setIsValidated(TAKE_EFFECT_CLOSE))
-                .collect(toList());
-        planFileRepository.saveAll(list);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void removeByPlanId(String planId) {
-        List<PlanFile> list = planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId)
-                .stream()
-                .peek(p -> p.setIsValidated(TAKE_EFFECT_CLOSE))
-                .collect(toList());
-        planFileRepository.saveAll(list);
     }
 
 //    public Page<TeachPlanClassDto> findAllPagePlanId(Pageable of) {
@@ -230,16 +188,15 @@ public class PlanFileService extends BaseMySqlService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteByFileId(String fileId) {
-        planFileRepository.deleteById(fileId);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public long deleteAllFilesByFileIds(List<String> fileId) {
-        return planFileRepository.deleteAllByFileIdIn(fileId);
-    }
-
-    public List<PlanFileDto> findAllByCourseId(String courseId) {
-        return planFileRepository.findAllByIsValidatedEqualsAndCourseIdDto(courseId);
+        Optional<PlanFile> optionalPlanFile = planFileRepository.findById(fileId);
+        MyAssert.isFalse(optionalPlanFile.isPresent(), DefineCode.ERR0010, "不存在要删除的文件");
+        optionalPlanFile.ifPresent(p -> {
+            List<PlanFile> list = planFileRepository.findAllByPlanIdAndClassIdAndCourseIdAndCreateDate(p.getPlanId(), p.getClassId(), p.getCourseId(), p.getCreateDate());
+            if (1 == list.size()){
+                teachPlanFileListRepository.deleteAllByPlanIdAndClassIdAndCourseIdAndCreateDate(p.getPlanId(), p.getClassId(), p.getCourseId(), p.getCreateDate());
+            }
+            planFileRepository.deleteById(fileId);
+        });
     }
 
     @Async
@@ -257,18 +214,14 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.findAllByIsValidatedEqualsAndCreateTime(date);
     }
 
-    public Page<PlanFile> findAllPageFile(String classId, String planId, String createDate, Pageable pageable){
-        Page<PlanFile> planFilePage = null;
-        if (StrUtil.isNotBlank(createDate)){
-            planFilePage = planFileRepository.findAllByIsValidatedEqualsAndClassIdAndPlanIdAndCreateDateOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId, planId, createDate, pageable);
-        }else {
-            planFilePage = planFileRepository.findAllByIsValidatedEqualsAndClassIdAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, classId, planId, pageable);
-        }
-//        planFilePage.stream().filter(Objects::nonNull).map(p -> {
-//            String planId1 = p.getPlanId();
-//            String classId1 = p.getClassId();
-//
-//        })
-        return planFilePage;
+    public Page<TeachPlanFileList> findAllPageFileListByCreateDate(String planId, String classId, String createDate, Pageable pageable){
+        return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCreateDateOrderByCreateDateDesc(TAKE_EFFECT_OPEN, planId, classId, createDate, pageable);
+    }
+    public Page<TeachPlanFileList> findAllPageFileList(String planId, String classId, Pageable pageable){
+        return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateDateDesc(TAKE_EFFECT_OPEN, planId, classId, pageable);
+    }
+
+    public List<PlanFile> findAllByCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate){
+        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate);
     }
 }

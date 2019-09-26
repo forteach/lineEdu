@@ -5,10 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
-import com.project.portal.teachplan.request.FlanFileFindAllRequest;
-import com.project.portal.teachplan.request.PlanFileFindAllPage;
-import com.project.portal.teachplan.request.PlanFileFindByPlanIdRequest;
-import com.project.portal.teachplan.request.PlanFileSaveUpdateRequest;
+import com.project.portal.teachplan.request.*;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.service.PlanFileService;
 import com.project.token.annotation.UserLoginToken;
@@ -65,6 +62,9 @@ public class PlanFileController {
         planFile.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getFileId())) {
             MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不能为空");
+            MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级id不为空");
+            MyAssert.isNull(request.getCourseId(), DefineCode.ERR0010, "课程id不为空");
+            MyAssert.isNull(request.getCreateDate(), DefineCode.ERR0010, "上课日期不为空");
             String centerAreaId = tokenService.getCenterAreaId(token);
             planFile.setCenterAreaId(centerAreaId);
             planFile.setCreateUser(userId);
@@ -74,24 +74,24 @@ public class PlanFileController {
         }
     }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
-//    @PostMapping(path = "/findByCenterAreaIdAllPage")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
-//            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-//            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
-//    })
-//    public WebResult findByCenterAreaIdAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
-//        valideSort(request.getPage(), request.getPage());
-//        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-//        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-//        if (StrUtil.isNotBlank(request.getClassId())) {
-//            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
-//        } else {
-//            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaId(centerAreaId, pageRequest));
-//        }
-//    }
+    @UserLoginToken
+    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
+    @PostMapping(path = "/findByCenterAreaIdAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+    })
+    public WebResult findByCenterAreaIdAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
+        valideSort(request.getPage(), request.getPage());
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        if (StrUtil.isNotBlank(request.getClassId())) {
+            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
+        } else {
+            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaId(centerAreaId, pageRequest));
+        }
+    }
 
     @UserLoginToken
     @ApiOperation(value = "班级资料明细列表分页查询")
@@ -108,12 +108,28 @@ public class PlanFileController {
         MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级Id不能为空");
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        return WebResult.okResult(planFileService.findAllPageFile(request.getClassId(), request.getPlanId(), request.getCreateDate(), pageRequest));
-//        if (StrUtil.isNotBlank(request.getCreateDate())) {
-//            return WebResult.okResult(planFileService.findByClassIdPageAll(request.getClassId(), pageRequest));
-//        } else {
-//            return WebResult.okResult(planFileService.findAllPage(pageRequest));
-//        }
+        if (StrUtil.isNotBlank(request.getCreateDate())) {
+            return WebResult.okResult(planFileService.findAllPageFileListByCreateDate(request.getPlanId(), request.getClassId(), request.getCreateDate(), pageRequest));
+        } else {
+            return WebResult.okResult(planFileService.findAllPageFileList(request.getPlanId(), request.getClassId(), pageRequest));
+        }
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "查询计划课程详细资料信息")
+    @PostMapping(path = "/findAllByCourseIdAndCreateDate")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "courseId", value = "课程Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "createDate", value = "创建日期", dataType = "string", paramType = "query"),
+    })
+    public WebResult findAllByCourseIdAndCreateDate(@RequestBody PlanFileFindAllRequest request){
+        MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级Id不能为空");
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
+        MyAssert.isNull(request.getCourseId(), DefineCode.ERR0010, "课程Id不能为空");
+        MyAssert.isNull(request.getCreateDate(), DefineCode.ERR0010, "日期Id不能为空");
+        return WebResult.okResult(planFileService.findAllByCourseIdAndCreateDate(request.getPlanId(), request.getClassId(), request.getCourseId(), request.getCreateDate()));
     }
 
     @UserLoginToken
@@ -143,25 +159,6 @@ public class PlanFileController {
         return WebResult.okResult(planFileService.findAllPlanIdAndClassId(request.getPlanId(), request.getClassId()));
     }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "根据班级id移除对应资料")
-//    @DeleteMapping(path = "/removeByClassId")
-//    @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "form", required = true)
-//    public WebResult removeByClassId(@RequestBody String classId) {
-//        MyAssert.isNull(classId, DefineCode.ERR0010, "班级id不为空");
-//        planFileService.removeByClassId(JSONObject.parseObject(classId).getString(classId));
-//        return WebResult.okResult();
-//    }
-
-//    @UserLoginToken
-//    @ApiOperation(value = "根据计划id移除对应资料")
-//    @DeleteMapping(path = "/removeByPlanId")
-//    @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true)
-//    public WebResult removeByPlanId(@RequestBody String planId) {
-//        MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
-//        planFileService.removeByPlanId(JSONObject.parseObject(planId).getString(planId));
-//        return WebResult.okResult();
-//    }
 
     @UserLoginToken
     @ApiOperation(value = "通过资料Id删除计划资料")
@@ -172,32 +169,4 @@ public class PlanFileController {
         planFileService.deleteByFileId(fileId);
         return WebResult.okResult();
     }
-
-//    @UserLoginToken
-//    @ApiOperation(value = "通过资料Id集合删除计划资料")
-//    @DeleteMapping("/deleteAllFilesByFileIds")
-//    @ApiImplicitParam(name = "ids", value = "文件id集合数组", dataType = "string", required = true, paramType = "form")
-//    public WebResult deleteAllFilesByFileIds(@RequestBody BaseIdsReq ids) {
-//        MyAssert.isTrue(ids.getIds().isEmpty(), DefineCode.ERR0010, "文件id不能为空");
-//        planFileService.deleteAllFilesByFileIds(ids.getIds());
-//        return WebResult.okResult();
-//    }
-
-//    @UserLoginToken
-//    @ApiOperation(value = "根据课程id查询对应的资料")
-//    @PostMapping(path = "/courseId/{courseId}")
-//    @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "query")
-//    public WebResult findByCourseId(@PathVariable String courseId){
-//        MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不能为空");
-//        return WebResult.okResult(planFileService.findAllByCourseId(courseId));
-//    }
-
-//    @UserLoginToken
-//    @ApiOperation(value = "根据日期查询对应计划资料信息")
-//    @GetMapping(path = "/PlanFile/{date}")
-//    @ApiImplicitParam(name = "date", value = "日期字符串", example = "2019-09-16", dataType = "string", paramType = "query")
-//    public WebResult findAllByDate(@PathVariable String date){
-//        MyAssert.isNull(date, DefineCode.ERR0010, "日期不能为空");
-//        return WebResult.okResult(planFileService.findAllFileByDate(date));
-//    }
 }

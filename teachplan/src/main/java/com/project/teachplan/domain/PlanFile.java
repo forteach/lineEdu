@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Entity
 @DynamicUpdate
 @DynamicInsert
-@org.hibernate.annotations.Table(appliesTo = "plan_file", comment = "在线计划资料管理")
+@org.hibernate.annotations.Table(appliesTo = "plan_file", comment = "在线计划资料详情表")
 @Table(name = "plan_file", indexes = {
         @Index(columnList = "file_id", name = "file_id_index"),
         @Index(columnList = "plan_id", name = "plan_id_index")
