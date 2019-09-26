@@ -118,14 +118,14 @@ public class TeacherController {
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllPage(@RequestBody TeacherFindAllPageRequest request, HttpServletRequest httpServletRequest) {
-        MyAssert.isTrue(StrUtil.isBlank(request.getIsValidated()), DefineCode.ERR0010, "教师信息申请状态不能是空");
         valideSort(request.getPage(), request.getSize());
         String token = httpServletRequest.getHeader("token");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (!tokenService.isAdmin(token)) {
             String centerAreaId = tokenService.getCenterAreaId(token);
-            return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(request.getIsValidated(), centerAreaId, pageRequest));
+            return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(centerAreaId, pageRequest));
         }
+        MyAssert.isTrue(StrUtil.isBlank(request.getIsValidated()), DefineCode.ERR0010, "教师信息申请状态不能是空");
         return WebResult.okResult(teacherService.findAllPageDto(request.getIsValidated(), pageRequest));
     }
 

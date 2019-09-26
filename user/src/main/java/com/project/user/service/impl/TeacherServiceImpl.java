@@ -167,14 +167,26 @@ public class TeacherServiceImpl implements TeacherService {
         return null;
     }
 
+    /**
+     * 管理端通过状态查询的教师信息
+     * @param isValidated
+     * @param pageRequest
+     * @return
+     */
     @Override
     public Page<TeacherDto> findAllPageDto(String isValidated, PageRequest pageRequest) {
         return teacherVerifyRepository.findAllByIsValidatedEqualsDto(isValidated, pageRequest);
     }
 
+    /**
+     * 学习中心查询的教师信息
+     * @param centerAreaId
+     * @param pageRequest
+     * @return
+     */
     @Override
-    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String isValidated, String centerAreaId, PageRequest pageRequest) {
-        return teacherVerifyRepository.findAllByIsValidatedAndCenterAreaIdDto(isValidated, centerAreaId, pageRequest);
+    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest) {
+        return teacherRepository.findAllByCenterAreaIdDto(centerAreaId, pageRequest);
     }
 
     @Async

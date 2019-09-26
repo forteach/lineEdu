@@ -36,9 +36,9 @@ public interface TeacherService {
 
     public Teacher findById(String teacherId);
 
-    public Page<TeacherDto> findAllPageDto(String isValidated, PageRequest pageRequest);
+    Page<TeacherDto> findAllPageDto(String isValidated, PageRequest pageRequest);
 
-    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String isValidated, String centerAreaId, PageRequest pageRequest);
+    Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest);
 
     void updateState(String teacherId, String status, String userId);
 
