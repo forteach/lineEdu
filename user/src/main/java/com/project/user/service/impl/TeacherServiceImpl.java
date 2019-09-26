@@ -6,13 +6,16 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.user.domain.Teacher;
 import com.project.user.domain.TeacherFile;
+import com.project.user.domain.TeacherVerify;
 import com.project.user.repository.SysUsersRepository;
 import com.project.user.repository.TeacherFileRepository;
 import com.project.user.repository.TeacherRepository;
+import com.project.user.repository.TeacherVerifyRepository;
 import com.project.user.repository.dto.TeacherDto;
 import com.project.user.service.TeacherService;
 import com.project.user.service.UserService;
 import com.project.user.web.vo.RegisterTeacherVo;
+import com.project.user.web.vo.TeacherVerifyVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,9 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -40,41 +45,85 @@ public class TeacherServiceImpl implements TeacherService {
     private final SysUsersRepository sysUsersRepository;
     private final UserService userService;
     private final TeacherFileRepository teacherFileRepository;
+    private final TeacherVerifyRepository teacherVerifyRepository;
 
-    public TeacherServiceImpl(TeacherRepository teacherRepository,
+    public TeacherServiceImpl(TeacherRepository teacherRepository, TeacherVerifyRepository teacherVerifyRepository,
                               UserService userService, TeacherFileRepository teacherFileRepository,
                               SysUsersRepository sysUsersRepository) {
         this.teacherRepository = teacherRepository;
         this.sysUsersRepository = sysUsersRepository;
         this.userService = userService;
         this.teacherFileRepository = teacherFileRepository;
+        this.teacherVerifyRepository = teacherVerifyRepository;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Teacher save(Teacher teacher) {
-        teacher.setTeacherId(teacher.getPhone());
+    public TeacherVerify save(TeacherVerify teacherVerify) {
+        teacherVerify.setTeacherId(teacherVerify.getPhone());
+        teacherVerify.setIsValidated(TAKE_EFFECT_CLOSE);
+        return teacherVerifyRepository.save(teacherVerify);
         // 添加到用户保存用户
-        RegisterTeacherVo vo = new RegisterTeacherVo();
-        BeanUtil.copyProperties(teacher, vo);
-        userService.registerTeacher(vo);
-        return teacherRepository.save(teacher);
+//        RegisterTeacherVo vo = new RegisterTeacherVo();
+//        BeanUtil.copyProperties(teacher, vo);
+//        userService.registerTeacher(vo);
+//        return teacherRepository.save(teacher);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Teacher update(Teacher teacher) {
-        Optional<Teacher> optionalTeacher = teacherRepository.findById(teacher.getTeacherId());
-        if (optionalTeacher.isPresent()) {
-            Teacher t = optionalTeacher.get();
-            BeanUtil.copyProperties(teacher, t);
-            if (StrUtil.isNotBlank(teacher.getPhone()) && !t.getPhone().equals(teacher.getPhone())) {
-                userService.updateTeacher(t.getPhone(), teacher.getPhone(), teacher.getUpdateUser());
+    public TeacherVerify update(TeacherVerify teacherVerify) {
+        Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(teacherVerify.getTeacherId());
+        MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "没有要修改的数据");
+        TeacherVerify t = optionalTeacher.get();
+        BeanUtil.copyProperties(teacherVerify, t);
+        t.setIsValidated(TAKE_EFFECT_CLOSE);
+
+//        if (StrUtil.isNotBlank(teacherVerify.getPhone()) && !t.getPhone().equals(teacherVerify.getPhone())) {
+//            userService.updateTeacher(t.getPhone(), teacherVerify.getPhone(), teacherVerify.getUpdateUser());
+//        }
+
+        return teacherVerifyRepository.save(t);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void verifyTeacher(TeacherVerifyVo vo) {
+        Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(vo.getTeacherId());
+        MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "没有要修改的数据");
+        TeacherVerify teacherVerify = optionalTeacher.get();
+        if (TAKE_EFFECT_OPEN.equals(vo.getIsValidated())) {
+            teacherVerify.setIsValidated(TAKE_EFFECT_OPEN);
+            Teacher teacher = new Teacher();
+            Optional<Teacher> teacherOptional = teacherRepository.findById(vo.getTeacherId());
+            if (teacherOptional.isPresent()) {
+                teacher = teacherOptional.get();
+                if (!teacher.getPhone().equals(teacherVerify.getPhone())) {
+                    userService.updateTeacher(teacher.getPhone(), teacherVerify.getPhone(), teacherVerify.getUpdateUser());
+                }
+            } else {
+//              添加到用户保存用户
+                RegisterTeacherVo registerTeacherVo = new RegisterTeacherVo();
+                BeanUtil.copyProperties(teacherVerify, registerTeacherVo);
+                userService.registerTeacher(registerTeacherVo);
             }
-            return teacherRepository.save(teacher);
+            BeanUtil.copyProperties(teacherVerify, teacher);
+            teacherRepository.save(teacher);
         }
-        MyAssert.isNull(null, DefineCode.ERR0014, "没有要修改的数据");
-        return null;
+        if (StrUtil.isNotBlank(vo.getRemark())) {
+            teacherVerify.setRemark(vo.getRemark());
+        }
+        teacherVerify.setIsValidated(vo.getIsValidated());
+        teacherVerifyRepository.save(teacherVerify);
+        //修改教师信息对应的资料信息
+        updateTeacherFileIsValidated(vo.getTeacherId(), vo.getIsValidated());
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    void updateTeacherFileIsValidated(String teacherId, String isValidated) {
+        List<TeacherFile> list = teacherFileRepository.findAllTeacherId(teacherId).stream().peek(t -> t.setIsValidated(isValidated)).collect(toList());
+        teacherFileRepository.saveAll(list);
     }
 
     @Override
@@ -119,13 +168,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Page<TeacherDto> findAllPageDto(PageRequest pageRequest) {
-        return teacherRepository.findAllDto(pageRequest);
+    public Page<TeacherDto> findAllPageDto(String isValidated, PageRequest pageRequest) {
+        return teacherVerifyRepository.findAllByIsValidatedEqualsDto(isValidated, pageRequest);
     }
 
     @Override
-    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest) {
-        return teacherRepository.findAllByCenterAreaIdDto(centerAreaId, pageRequest);
+    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String isValidated, String centerAreaId, PageRequest pageRequest) {
+        return teacherVerifyRepository.findAllByIsValidatedAndCenterAreaIdDto(isValidated, centerAreaId, pageRequest);
     }
 
     @Async
@@ -141,35 +190,38 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public TeacherFile saveFile(TeacherFile teacherFile) {
+        teacherFile.setIsValidated(TAKE_EFFECT_CLOSE);
         return teacherFileRepository.save(teacherFile);
     }
+
     @Override
-    public List<TeacherFile> findTeacherFile(String teacherId){
-        return teacherFileRepository.findAllByIsValidatedEqualsAndTeacherId(TAKE_EFFECT_OPEN, teacherId);
+    public List<TeacherFile> findTeacherFile(String teacherId) {
+        return teacherFileRepository.findAllTeacherId(teacherId);
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTeacherFile(String fileId){
+    public void deleteTeacherFile(String fileId) {
         teacherFileRepository.deleteById(fileId);
     }
 
     @Override
     public void updateStatus(String teacherId, String userId) {
         Optional<Teacher> optional = teacherRepository.findById(teacherId);
-        if (optional.isPresent()){
-            optional.ifPresent(t ->{
+        if (optional.isPresent()) {
+            optional.ifPresent(t -> {
                 String status = t.getIsValidated();
-                if (TAKE_EFFECT_CLOSE.equals(status)){
+                if (TAKE_EFFECT_CLOSE.equals(status)) {
                     t.setIsValidated(TAKE_EFFECT_OPEN);
                     userService.updateStatus(t.getTeacherId(), TAKE_EFFECT_OPEN, userId);
-                }else {
+                } else {
                     t.setIsValidated(TAKE_EFFECT_CLOSE);
                     userService.updateStatus(t.getTeacherId(), TAKE_EFFECT_CLOSE, userId);
                 }
                 t.setUpdateUser(userId);
                 teacherRepository.save(t);
             });
-        }else {
+        } else {
             MyAssert.isNull(null, DefineCode.ERR0013, "不存在要修改的教师信息");
         }
     }

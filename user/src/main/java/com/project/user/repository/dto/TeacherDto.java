@@ -11,7 +11,6 @@ public interface TeacherDto {
     public String getTeacherId();
     public String getTeacherName();
     public String getTeacherCode();
-//    public String getFileUrl();
     public String getGender();
     public String getBirthDate();
     public String getIdCard();
@@ -29,4 +28,5 @@ public interface TeacherDto {
     public String getIsValidated();
     public String getCenterAreaId();
     public String getCenterName();
+    public String getRemark();
 }

@@ -7,15 +7,16 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
+import com.project.portal.user.request.TeacherFindAllPageRequest;
 import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
-import com.project.user.domain.Teacher;
 import com.project.user.domain.TeacherFile;
+import com.project.user.domain.TeacherVerify;
 import com.project.user.service.TeacherService;
+import com.project.user.web.vo.TeacherVerifyVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -82,7 +83,7 @@ public class TeacherController {
             @ApiImplicitParam(name = "bankCardBank", value = "银行卡开户行", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody TeacherSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
-        Teacher teacher = new Teacher();
+        TeacherVerify teacher = new TeacherVerify();
         BeanUtil.copyProperties(request, teacher);
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
@@ -112,17 +113,20 @@ public class TeacherController {
     @ApiOperation(value = "分页查询教师信息")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
+            @ApiImplicitParam(value = "教师状态 0 (已经审核) 1 (未提交) 2 (已经拒绝)", dataType = "string", name = "isValidated", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody SortVo sortVo, HttpServletRequest httpServletRequest) {
-        valideSort(sortVo.getPage(), sortVo.getSize());
+    public WebResult findAllPage(@RequestBody TeacherFindAllPageRequest request, HttpServletRequest httpServletRequest) {
+        MyAssert.isTrue(StrUtil.isBlank(request.getIsValidated()), DefineCode.ERR0010, "教师信息申请状态不能是空");
+        valideSort(request.getPage(), request.getSize());
         String token = httpServletRequest.getHeader("token");
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (!tokenService.isAdmin(token)) {
             String centerAreaId = tokenService.getCenterAreaId(token);
-            return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(centerAreaId, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+            return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(request.getIsValidated(), centerAreaId, pageRequest));
         }
-        return WebResult.okResult(teacherService.findAllPageDto(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+        return WebResult.okResult(teacherService.findAllPageDto(request.getIsValidated(), pageRequest));
     }
 
     @UserLoginToken
@@ -203,6 +207,21 @@ public class TeacherController {
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
         teacherService.updateStatus(teacherId, userId);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "审核教师信息")
+    @PostMapping(path = "/verifyTeacher")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "isValidated", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "remark", value = "备注", dataType = "string", paramType = "form")
+    })
+    public WebResult verifyTeacher(@RequestBody TeacherVerifyVo teacherVerifyVo){
+        MyAssert.isNull(teacherVerifyVo.getTeacherId(), DefineCode.ERR0010, "教师Id不能为空");
+        MyAssert.isTrue(StrUtil.isBlank(teacherVerifyVo.getIsValidated()), DefineCode.ERR0010, "状态不能为空");
+        teacherService.verifyTeacher(teacherVerifyVo);
         return WebResult.okResult();
     }
 }

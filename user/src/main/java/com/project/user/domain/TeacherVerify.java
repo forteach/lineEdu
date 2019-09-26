@@ -18,12 +18,13 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@org.hibernate.annotations.Table(appliesTo = "teacher", comment = "教师信息")
-@Table(name = "teacher", indexes = {
+@org.hibernate.annotations.Table(appliesTo = "teacher_verify", comment = "教师审核信息")
+@Table(name = "teacher_verify", indexes = {
         @Index(columnList = "teacher_id", name = "teacher_id_index"),
         @Index(columnList = "teacher_code", name = "teacher_code_index"),
         @Index(columnList = "phone", name = "phone_index")
 })
-public class Teacher extends BaseTeacher implements Serializable {
-
+public class TeacherVerify extends BaseTeacher implements Serializable {
+    @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
+    private String remark;
 }

@@ -2,7 +2,9 @@ package com.project.user.service;
 
 import com.project.user.domain.Teacher;
 import com.project.user.domain.TeacherFile;
+import com.project.user.domain.TeacherVerify;
 import com.project.user.repository.dto.TeacherDto;
+import com.project.user.web.vo.TeacherVerifyVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -16,15 +18,17 @@ import java.util.List;
  * @description:
  */
 public interface TeacherService {
-    public Teacher save(Teacher teacher);
+    TeacherVerify save(TeacherVerify teacher);
 
-    public Teacher update(Teacher teacher);
+    TeacherVerify update(TeacherVerify teacher);
 
-    public Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest);
+    void verifyTeacher(TeacherVerifyVo vo);
 
-    public List<Teacher> findAllByCenterAreaId(String centerAreaId);
+    Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest);
 
-    public void deleteByTeacherCode(String teacherCode);
+    List<Teacher> findAllByCenterAreaId(String centerAreaId);
+
+    void deleteByTeacherCode(String teacherCode);
 
     public void removeByTeacherId(String teacherId);
 
@@ -32,9 +36,9 @@ public interface TeacherService {
 
     public Teacher findById(String teacherId);
 
-    public Page<TeacherDto> findAllPageDto(PageRequest pageRequest);
+    public Page<TeacherDto> findAllPageDto(String isValidated, PageRequest pageRequest);
 
-    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest);
+    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String isValidated, String centerAreaId, PageRequest pageRequest);
 
     void updateState(String teacherId, String status, String userId);
 

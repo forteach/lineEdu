@@ -122,7 +122,7 @@ public class PlanFileController {
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "courseId", value = "课程Id", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "createDate", value = "创建日期", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "createDate", value = "创建日期", dataType = "string", required = true, paramType = "query"),
     })
     public WebResult findAllByCourseIdAndCreateDate(@RequestBody PlanFileFindAllRequest request){
         MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级Id不能为空");
