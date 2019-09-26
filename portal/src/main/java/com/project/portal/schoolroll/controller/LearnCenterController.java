@@ -136,7 +136,7 @@ public class LearnCenterController {
     })
     public WebResult findAllPage(@RequestBody SortVo sortVo) {
         valideSort(sortVo.getPage(), sortVo.getSize());
-        return WebResult.okResult(learnCenterRepository.findAllByCenterAreaIdIsNull(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+        return WebResult.okResult(learnCenterRepository.findAllByCenterAreaIdIsNotNull(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
 
     @UserLoginToken

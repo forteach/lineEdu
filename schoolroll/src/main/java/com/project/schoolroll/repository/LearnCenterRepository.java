@@ -32,5 +32,5 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
     @Transactional(readOnly = true)
     public List<LearnCenter> findByCenterName(String centerName);
 
-    Page<LearnCenter> findAllByCenterAreaIdIsNull(Pageable pageable);
+    Page<LearnCenter> findAllByCenterAreaIdIsNotNull(Pageable pageable);
 }
