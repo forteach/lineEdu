@@ -122,7 +122,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Async
     @Transactional(rollbackFor = Exception.class)
     void updateTeacherFileIsValidated(String teacherId, String isValidated) {
-        List<TeacherFile> list = teacherFileRepository.findAllTeacherId(teacherId).stream().peek(t -> t.setIsValidated(isValidated)).collect(toList());
+        List<TeacherFile> list = teacherFileRepository.findAllByTeacherId(teacherId).stream().peek(t -> t.setIsValidated(isValidated)).collect(toList());
         teacherFileRepository.saveAll(list);
     }
 
@@ -196,7 +196,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<TeacherFile> findTeacherFile(String teacherId) {
-        return teacherFileRepository.findAllTeacherId(teacherId);
+        return teacherFileRepository.findAllByTeacherId(teacherId);
     }
 
     @Override

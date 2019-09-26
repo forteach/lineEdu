@@ -18,6 +18,6 @@ public interface TeacherFileRepository extends JpaRepository<TeacherFile, String
     List<TeacherFile> findAllByIsValidatedEqualsAndTeacherId(String isValidated, String teacherId);
 
     @Transactional(readOnly = true)
-    List<TeacherFile> findAllTeacherId(String teacherId);
+    List<TeacherFile> findAllByTeacherId(String teacherId);
 
 }

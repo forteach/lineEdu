@@ -67,12 +67,13 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.save(classFile);
     }
 
-    @Async
+//    @Async
     @Transactional(rollbackFor = Exception.class)
     void saveTeachPlanFileList(PlanFile classFile){
         TeachPlanFileList teachPlanFileList = new TeachPlanFileList();
         BeanUtil.copyProperties(classFile, teachPlanFileList);
         String courseName = onLineCourseDicService.findId(teachPlanFileList.getCourseId()).getCourseName();
+        MyAssert.isTrue(StrUtil.isBlank(courseName), DefineCode.ERR0014, "课程名称为空");
         teachPlanFileList.setCourseName(courseName);
         teachPlanFileListRepository.save(teachPlanFileList);
     }
