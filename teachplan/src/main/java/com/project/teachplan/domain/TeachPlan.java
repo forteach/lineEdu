@@ -1,4 +1,4 @@
-package com.project.teachplan.domain.online;
+package com.project.teachplan.domain;
 
 import com.project.mysql.domain.Entitys;
 import com.project.teachplan.domain.base.BaseTeachPlan;

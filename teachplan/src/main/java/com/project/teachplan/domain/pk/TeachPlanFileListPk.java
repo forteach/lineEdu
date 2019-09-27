@@ -1,4 +1,4 @@
-package com.project.teachplan.domain;
+package com.project.teachplan.domain.pk;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Embeddable
-class TeachPlanFileListPk implements Serializable {
+public class TeachPlanFileListPk implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "course_id", columnDefinition = "VARCHAR(40) COMMENT '课程id编号'", insertable = false, updatable = false)

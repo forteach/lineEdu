@@ -1,6 +1,6 @@
-package com.project.teachplan.repository;
+package com.project.teachplan.repository.verify;
 
-import com.project.teachplan.domain.TeachPlanVerify;
+import com.project.teachplan.domain.verify.TeachPlanVerify;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

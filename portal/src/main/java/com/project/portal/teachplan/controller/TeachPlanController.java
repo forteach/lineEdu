@@ -10,7 +10,7 @@ import com.project.portal.teachplan.request.TeachPlanClassSaveUpdateRequest;
 import com.project.portal.teachplan.request.TeachPlanCourseSaveUpdateRequest;
 import com.project.portal.teachplan.request.TeachPlanPageAllRequest;
 import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
-import com.project.teachplan.domain.online.TeachPlan;
+import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.teachplan.service.TeachService;
 import com.project.token.annotation.UserLoginToken;

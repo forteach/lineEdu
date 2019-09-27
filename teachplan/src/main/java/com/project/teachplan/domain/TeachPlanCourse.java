@@ -1,10 +1,8 @@
 package com.project.teachplan.domain;
 
 
-import com.project.mysql.domain.Entitys;
-import com.project.teachplan.domain.online.TeachPlanClassPk;
-import com.project.teachplan.domain.online.TeachPlanCoursePk;
-import lombok.AllArgsConstructor;
+import com.project.teachplan.domain.base.BaseTeachPlanCourse;
+import com.project.teachplan.domain.pk.TeachPlanCoursePk;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -29,52 +27,15 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @IdClass(TeachPlanCoursePk.class)
-public class TeachPlanCourse extends Entitys implements Serializable {
+public class TeachPlanCourse extends BaseTeachPlanCourse implements Serializable  {
 
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private TeachPlanCoursePk teachPlanCoursePk;
 
-    private String planId;
-
-    private String courseId;
-
-    @Column(name = "course_name", columnDefinition = "VARCHAR(32) COMMENT '课程名称'")
-    private String courseName;
-
-    /**
-     * 学分
-     */
-    @Column(name = "credit", columnDefinition = "VARCHAR(32) COMMENT '学分'")
-    private String credit;
-    /**
-     * 线上占比
-     */
-    @Column(name = "on_line_percentage", columnDefinition = "TINYINT(4) COMMENT '线上占比'")
-    private Integer onLinePercentage;
-    /**
-     * 线下占比
-     */
-    @Column(name = "line_percentage", columnDefinition = "TINYINT(4) COMMENT '线下占比'")
-    private Integer linePercentage;
-
-    @Column(name = "teacher_Id", columnDefinition = "VARCHAR(32) COMMENT '创建教师id'")
-    private String teacherId;
-
-    @Column(name = "teacherName", columnDefinition = "VARCHAR(32) COMMENT '教师名称'")
-    private String teacherName;
-
     public TeachPlanCourse(String planId, String courseId, String courseName, String credit, Integer onLinePercentage,
                            Integer linePercentage, String teacherId, String teacherName, String centerAreaId, String userId) {
-        super(userId, userId, centerAreaId);
-        this.planId = planId;
-        this.courseId = courseId;
-        this.courseName = courseName;
-        this.credit = credit;
-        this.onLinePercentage = onLinePercentage;
-        this.linePercentage = linePercentage;
-        this.teacherId = teacherId;
-        this.teacherName = teacherName;
+        super(planId, courseId, courseName, credit, onLinePercentage, linePercentage, teacherId, teacherName, centerAreaId, userId);
     }
 }
