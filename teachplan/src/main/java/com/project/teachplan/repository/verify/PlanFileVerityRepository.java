@@ -2,6 +2,9 @@ package com.project.teachplan.repository.verify;
 
 import com.project.teachplan.domain.verify.PlanFileVerity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -12,4 +15,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface PlanFileVerityRepository extends JpaRepository<PlanFileVerity, String> {
 
+    @Transactional(readOnly = true)
+    List<PlanFileVerity> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
 }

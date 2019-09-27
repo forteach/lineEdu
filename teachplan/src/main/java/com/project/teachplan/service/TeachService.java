@@ -8,13 +8,19 @@ import com.project.base.exception.MyAssert;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
-import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.domain.TeachPlanClass;
+import com.project.teachplan.domain.TeachPlanCourse;
+import com.project.teachplan.domain.verify.TeachPlanClassVerify;
+import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.repository.dto.TeachPlanDto;
+import com.project.teachplan.repository.verify.PlanFileVerityRepository;
+import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
+import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
+import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import com.project.teachplan.vo.TeachPlanCourseVo;
 import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +56,19 @@ public class TeachService {
     private final TeacherService teacherService;
     private final PlanFileService planFileService;
 
+    private final PlanFileVerityRepository planFileVerityRepository;
+    private final TeachPlanVerifyRepository teachPlanVerifyRepository;
+    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
+    private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
+
     @Autowired
     public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
                         TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
-                        PlanFileService planFileService,
-                        TeachPlanCourseService teachPlanCourseService, OnLineCourseDicService onLineCourseDicService) {
+                        PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService,
+                        OnLineCourseDicService onLineCourseDicService, PlanFileVerityRepository planFileVerityRepository,
+                        TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository,
+                        TeachPlanClassVerifyRepository teachPlanClassVerifyRepository) {
         this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
@@ -65,6 +78,10 @@ public class TeachService {
         this.teachPlanCourseRepository = teachPlanCourseRepository;
         this.onLineCourseDicService = onLineCourseDicService;
         this.planFileService = planFileService;
+        this.teachPlanVerifyRepository = teachPlanVerifyRepository;
+        this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
+        this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
+        this.planFileVerityRepository = planFileVerityRepository;
     }
 
 
@@ -233,6 +250,73 @@ public class TeachService {
             });
         } else {
             MyAssert.isNull(null, DefineCode.ERR0014, "不存在对应的计划信息");
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void verifyTeachPlan(String planId, String isValidated, String remark, String userId) {
+        updateVerifyTeachPlan(planId, isValidated, remark, userId);
+
+        updateVerifyPlanClass(planId, isValidated, remark, userId);
+
+        teachPlanCourseService.updateVerifyPlanCourse(planId, isValidated, remark, userId);
+    }
+
+
+    void updateVerifyPlanClass(String planId, String isValidated, String remark, String userId) {
+        List<TeachPlanClass> teachPlanClassList = new ArrayList<>();
+        List<TeachPlanClassVerify> teachPlanClassVerifyList = teachPlanClassVerifyRepository
+                .findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_CLOSE, planId)
+                .stream()
+                .filter(Objects::nonNull)
+                .peek(t -> {
+                    t.setRemark(remark);
+                    t.setIsValidated(isValidated);
+                    t.setUpdateUser(userId);
+                    if (TAKE_EFFECT_OPEN.equals(isValidated)) {
+                        teachPlanClassRepository.findById(t.getPlanId()).ifPresent(p -> {
+                            p.setIsValidated(TAKE_EFFECT_OPEN);
+                            p.setUpdateUser(userId);
+                            BeanUtil.copyProperties(t, p);
+                            teachPlanClassList.add(p);
+                        });
+                    }
+                }).collect(Collectors.toList());
+        if (!teachPlanClassVerifyList.isEmpty()) {
+            teachPlanClassVerifyRepository.saveAll(teachPlanClassVerifyList);
+        }
+        if (!teachPlanClassList.isEmpty()) {
+            teachPlanClassRepository.saveAll(teachPlanClassList);
+        }
+    }
+
+    /**
+     * 修改计划信息
+     */
+    void updateVerifyTeachPlan(String planId, String isValidated, String remark, String userId) {
+        List<TeachPlan> teachPlanList = new ArrayList<>();
+        List<TeachPlanVerify> teachPlanVerifies = teachPlanVerifyRepository
+                .findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_CLOSE, planId)
+                .stream()
+                .filter(Objects::nonNull)
+                .peek(t -> {
+                    t.setRemark(remark);
+                    t.setIsValidated(isValidated);
+                    t.setUpdateUser(userId);
+                    if (TAKE_EFFECT_OPEN.equals(isValidated)) {
+                        teachPlanRepository.findById(t.getPlanId()).ifPresent(p -> {
+                            p.setIsValidated(TAKE_EFFECT_OPEN);
+                            p.setUpdateUser(userId);
+                            BeanUtil.copyProperties(t, p);
+                            teachPlanList.add(p);
+                        });
+                    }
+                }).collect(Collectors.toList());
+        if (!teachPlanVerifies.isEmpty()) {
+            teachPlanVerifyRepository.saveAll(teachPlanVerifies);
+        }
+        if (!teachPlanList.isEmpty()) {
+            teachPlanRepository.saveAll(teachPlanList);
         }
     }
 }

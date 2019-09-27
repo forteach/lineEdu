@@ -6,10 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
-import com.project.portal.teachplan.request.TeachPlanClassSaveUpdateRequest;
-import com.project.portal.teachplan.request.TeachPlanCourseSaveUpdateRequest;
-import com.project.portal.teachplan.request.TeachPlanPageAllRequest;
-import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
+import com.project.portal.teachplan.request.*;
 import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.teachplan.service.TeachService;
@@ -173,6 +170,21 @@ public class TeachPlanController {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
         teachService.updateStatus(planId, userId);
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "审核教学计划")
+    @PostMapping(path = "/verifyTeachPlan")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "isValidated", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "remark", value = "备注信息", dataType = "string", paramType = "form")
+    })
+    public WebResult verifyTeachPlan(TeachPlanVerifyRequest request, HttpServletRequest httpServletRequest){
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+        MyAssert.isNull(request.getIsValidated(), DefineCode.ERR0010, "计划状态不能为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        teachService.verifyTeachPlan(request.getPlanId(), request.getIsValidated(), request.getRemark(), userId);
         return WebResult.okResult();
     }
 }
