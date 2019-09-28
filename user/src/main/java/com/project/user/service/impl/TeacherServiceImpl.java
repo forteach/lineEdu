@@ -7,7 +7,6 @@ import com.project.base.exception.MyAssert;
 import com.project.user.domain.Teacher;
 import com.project.user.domain.TeacherFile;
 import com.project.user.domain.TeacherVerify;
-import com.project.user.repository.SysUsersRepository;
 import com.project.user.repository.TeacherFileRepository;
 import com.project.user.repository.TeacherRepository;
 import com.project.user.repository.TeacherVerifyRepository;
@@ -162,12 +161,12 @@ public class TeacherServiceImpl implements TeacherService {
 
     /**
      * 管理端通过状态查询的教师信息
-     * @param verifyStatus
+     *
      * @param pageRequest
      * @return
      */
     @Override
-    public Page<TeacherDto> findAllPageDto(String verifyStatus, PageRequest pageRequest) {
+    public Page<TeacherDto> findAllPageDto(PageRequest pageRequest) {
         return teacherVerifyRepository.findAllByDto(pageRequest);
     }
 
@@ -175,13 +174,15 @@ public class TeacherServiceImpl implements TeacherService {
     public Page<TeacherDto> findAllPageDtoByVerifyStatus(String verifyStatus, PageRequest pageRequest) {
         return teacherVerifyRepository.findAllByVerifyStatusEqualsDto(verifyStatus, pageRequest);
     }
+
     @Override
-    public Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest){
+    public Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest) {
         return teacherVerifyRepository.findAllByVerifyStatusEqualsAndCenterAreaIdDto(verifyStatus, centerAreaId, pageRequest);
     }
 
     /**
      * 学习中心查询的教师信息
+     *
      * @param centerAreaId
      * @param pageRequest
      * @return

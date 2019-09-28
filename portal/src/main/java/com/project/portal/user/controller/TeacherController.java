@@ -130,9 +130,9 @@ public class TeacherController {
             return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(centerAreaId, pageRequest));
         }else {
             if (StrUtil.isBlank(request.getVerifyStatus())) {
-                return WebResult.okResult(teacherService.findAllPageDto(request.getVerifyStatus(), pageRequest));
+                return WebResult.okResult(teacherService.findAllPageDto(pageRequest));
             }
-            return WebResult.okResult(teacherService.findAllPageDto(request.getVerifyStatus(), pageRequest));
+            return WebResult.okResult(teacherService.findAllPageDtoByVerifyStatus(request.getVerifyStatus(), pageRequest));
         }
     }
 
