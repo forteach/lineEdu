@@ -2,6 +2,7 @@ package com.project.teachplan.domain.verify;
 
 import com.project.teachplan.domain.base.BaseTeachPlanClass;
 import com.project.teachplan.domain.pk.TeachPlanClassPk;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @IdClass(TeachPlanClassPk.class)
 @NoArgsConstructor
+@AllArgsConstructor
 public class TeachPlanClassVerify extends BaseTeachPlanClass implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -39,9 +41,13 @@ public class TeachPlanClassVerify extends BaseTeachPlanClass implements Serializ
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
+    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus;
+
     public TeachPlanClassVerify(String classId, String planId, String className, String planName,
-                                int classNumber, String centerAreaId, String remark, String userId) {
+                                int classNumber, String centerAreaId, String remark, String userId, String verifyStatus) {
         super(classId, planId, className, planName, classNumber, centerAreaId, userId);
         this.remark = remark;
+        this.verifyStatus = verifyStatus;
     }
 }

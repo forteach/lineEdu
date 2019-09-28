@@ -46,4 +46,10 @@ public class TeachPlanFile extends Entitys implements Serializable {
 
     @Column(name = "plan_id", columnDefinition = "VARCHAR(40) COMMENT '在线项目计划编号'")
     private String planId;
+
+    @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
+    private String remark;
+
+    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus;
 }

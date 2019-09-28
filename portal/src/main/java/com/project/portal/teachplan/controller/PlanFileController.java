@@ -8,6 +8,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.teachplan.request.*;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.service.PlanFileService;
+import com.project.teachplan.vo.TeachFileVerifyVo;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
@@ -123,13 +124,20 @@ public class PlanFileController {
             @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "courseId", value = "课程Id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "createDate", value = "创建日期", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", paramType = "query")
     })
-    public WebResult findAllByCourseIdAndCreateDate(@RequestBody PlanFileFindAllRequest request){
+    public WebResult findAllByCourseIdAndCreateDate(@RequestBody PlanFileFindAllRequest request) {
         MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级Id不能为空");
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
         MyAssert.isNull(request.getCourseId(), DefineCode.ERR0010, "课程Id不能为空");
         MyAssert.isNull(request.getCreateDate(), DefineCode.ERR0010, "日期Id不能为空");
-        return WebResult.okResult(planFileService.findAllByCourseIdAndCreateDate(request.getPlanId(), request.getClassId(), request.getCourseId(), request.getCreateDate()));
+        if (StrUtil.isBlank(request.getVerifyStatus())) {
+            return WebResult.okResult(planFileService.findAllByCourseIdAndCreateDate(request.getPlanId(),
+                    request.getClassId(), request.getCourseId(), request.getCreateDate()));
+        }
+        //根据状态查询对应的课程章节资料
+        return WebResult.okResult(planFileService.findAllByCourseIdAndCreateDateAndVerifyStatus(request.getPlanId(),
+                request.getClassId(), request.getCourseId(), request.getCreateDate(), request.getVerifyStatus()));
     }
 
     @UserLoginToken
@@ -153,7 +161,7 @@ public class PlanFileController {
             @ApiImplicitParam(name = "planId", value = "项目计划编号", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "form", required = true)
     })
-    public WebResult findAllByPlanIdAndClassId(@RequestBody FlanFileFindAllRequest request){
+    public WebResult findAllByPlanIdAndClassId(@RequestBody FlanFileFindAllRequest request) {
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "项目计划编号id不为空");
         MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级id不为空");
         return WebResult.okResult(planFileService.findAllPlanIdAndClassId(request.getPlanId(), request.getClassId()));
@@ -167,6 +175,30 @@ public class PlanFileController {
     public WebResult deleteFile(@PathVariable String fileId) {
         MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
         planFileService.deleteByFileId(fileId);
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "审核班级资料信息")
+    @PostMapping(path = "/verifyTeachPlan")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "remark", value = "备注信息", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "classId", value = "班级编号", required = true, dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "courseId", value = "课程id", required = true, dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "createDate", value = "上课日期", required = true, dataType = "string", paramType = "form")
+
+    })
+    public WebResult verifyPlanFile(TeachFileVerifyRequest request, HttpServletRequest httpServletRequest) {
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+        MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "计划状态不能为空");
+        MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级不能为空");
+        MyAssert.isNull(request.getCourseId(), DefineCode.ERR0010, "课程不能为空");
+        MyAssert.isNull(request.getCreateDate(), DefineCode.ERR0010, "上课时间不能为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        TeachFileVerifyVo verifyVo = new TeachFileVerifyVo();
+        BeanUtil.copyProperties(request, verifyVo);
+        planFileService.verifyTeachFile(verifyVo, userId);
         return WebResult.okResult();
     }
 }

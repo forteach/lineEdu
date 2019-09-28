@@ -13,11 +13,17 @@ import java.io.Serializable;
  * @description:
  */
 @Data
-public class TeachPlanVerifyRequest implements Serializable {
+public class TeachFileVerifyRequest implements Serializable {
     @ApiModelProperty(name = "planId", value = "计划Id", dataType = "string", required = true)
     private String planId;
     @ApiModelProperty(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", required = true)
     private String verifyStatus;
     @ApiModelProperty(name = "remark", value = "备注信息", dataType = "string")
     private String remark;
+    @ApiModelProperty(name = "classId", value = "班级Id", dataType = "string", required = true)
+    private String classId;
+    @ApiModelProperty(name = "courseId", value = "课程Id", dataType = "string", required = true)
+    private String courseId;
+    @ApiModelProperty(name = "createDate", value = "创建日期", dataType = "string", required = true)
+    private String createDate;
 }

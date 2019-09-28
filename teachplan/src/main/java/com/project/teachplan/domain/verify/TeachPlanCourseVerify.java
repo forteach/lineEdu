@@ -2,6 +2,7 @@ package com.project.teachplan.domain.verify;
 
 import com.project.teachplan.domain.base.BaseTeachPlanCourse;
 import com.project.teachplan.domain.pk.TeachPlanCoursePk;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @IdClass(TeachPlanCoursePk.class)
 @NoArgsConstructor
+@AllArgsConstructor
 public class TeachPlanCourseVerify extends BaseTeachPlanCourse implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,9 +42,13 @@ public class TeachPlanCourseVerify extends BaseTeachPlanCourse implements Serial
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
+    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus;
+
     public TeachPlanCourseVerify(String planId, String courseId, String courseName, String credit, Integer onLinePercentage,
-                                 Integer linePercentage, String teacherId, String teacherName, String centerAreaId, String remark, String userId) {
+                                 Integer linePercentage, String teacherId, String teacherName, String centerAreaId, String remark, String userId, String verifyStatus) {
         super(planId, courseId, courseName, credit, onLinePercentage, linePercentage, teacherId, teacherName, centerAreaId, userId);
         this.remark = remark;
+        this.verifyStatus = verifyStatus;
     }
 }

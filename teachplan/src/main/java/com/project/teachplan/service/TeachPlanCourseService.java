@@ -18,8 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 
 @Service
 public class TeachPlanCourseService {
@@ -63,22 +62,21 @@ public class TeachPlanCourseService {
     }
 
     void updateVerifyPlanCourse(String planId, String isValidated, String remark, String userId) {
+        //删除原来课程信息
+        teachPlanCourseRepository.deleteAllByPlanId(planId);
         List<TeachPlanCourse> teachPlanCourseList = new ArrayList<>();
         List<TeachPlanCourseVerify> teachPlanCourseVerifyList = teachPlanCourseVerifyRepository
-                .findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_CLOSE, planId)
+                .findAllByVerifyStatusEqualsAndPlanId(VERIFY_STATUS_APPLY, planId)
                 .stream()
                 .filter(Objects::nonNull)
                 .peek(t -> {
                     t.setRemark(remark);
-                    t.setIsValidated(isValidated);
+                    t.setVerifyStatus(isValidated);
                     t.setUpdateUser(userId);
-                    if (TAKE_EFFECT_OPEN.equals(isValidated)) {
-                        teachPlanCourseRepository.findById(t.getPlanId()).ifPresent(p -> {
-                            p.setIsValidated(TAKE_EFFECT_OPEN);
-                            p.setUpdateUser(userId);
-                            BeanUtil.copyProperties(t, p);
-                            teachPlanCourseList.add(p);
-                        });
+                    if (VERIFY_STATUS_AGREE.equals(isValidated)) {
+                        TeachPlanCourse p = new TeachPlanCourse();
+                        BeanUtil.copyProperties(t, p);
+                        teachPlanCourseList.add(p);
                     }
                 }).collect(Collectors.toList());
         if (!teachPlanCourseVerifyList.isEmpty()) {

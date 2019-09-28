@@ -33,4 +33,6 @@ public interface TeachPlanDto {
     public String getIsValidated();
 
     public String getCreateTime();
+    //审核状态
+    public String getVerifyStatus();
 }

@@ -1,6 +1,7 @@
 package com.project.teachplan.domain.base;
 
 import com.project.mysql.domain.Entitys;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
+@AllArgsConstructor
 public abstract class BaseTeachPlan extends Entitys {
     @Id
     @Column(name = "plan_id", columnDefinition = "VARCHAR(32) COMMENT '计划编号'")

@@ -107,7 +107,7 @@ public class TeachPlanController {
     @PostMapping(path = "/findByPlanIdPageAll")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query"),
-            @ApiImplicitParam(name = "isValidated", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", paramType = "form"),
+            @ApiImplicitParam(name = "verifyStatus", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", paramType = "form"),
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
@@ -116,16 +116,13 @@ public class TeachPlanController {
         String token = httpServletRequest.getHeader("token");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (tokenService.isAdmin(token)) {
-            if (StrUtil.isNotBlank(request.getPlanId())) {
-                return WebResult.okResult(teachService.findAllPageByPlanIdDto(request.getPlanId(), pageRequest));
-            }
-            return WebResult.okResult(teachService.findAllPageDto(pageRequest));
+            return WebResult.okResult(teachService.findAllPageByPlanIdAndVerifyStatus(request.getPlanId(), request.getVerifyStatus(), pageRequest));
         } else {
             String centerAreaId = tokenService.getCenterAreaId(token);
             if (StrUtil.isNotBlank(request.getPlanId())) {
-                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaIdAndPlanId(centerAreaId, request.getPlanId(), pageRequest));
+                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaIdAndPlanId(centerAreaId, request.getPlanId(), request.getVerifyStatus(), pageRequest));
             } else {
-                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaId(centerAreaId, pageRequest));
+                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaId(centerAreaId, request.getVerifyStatus(), pageRequest));
             }
         }
     }
@@ -182,14 +179,14 @@ public class TeachPlanController {
     @PostMapping(path = "/verifyTeachPlan")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "isValidated", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "remark", value = "备注信息", dataType = "string", paramType = "form")
     })
     public WebResult verifyTeachPlan(TeachPlanVerifyRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
-        MyAssert.isNull(request.getIsValidated(), DefineCode.ERR0010, "计划状态不能为空");
+        MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "计划状态不能为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-        teachService.verifyTeachPlan(request.getPlanId(), request.getIsValidated(), request.getRemark(), userId);
+        teachService.verifyTeachPlan(request.getPlanId(), request.getVerifyStatus(), request.getRemark(), userId);
         return WebResult.okResult();
     }
 }

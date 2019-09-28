@@ -14,6 +14,6 @@ public class TeachPlanPageAllRequest extends SortVo implements Serializable {
     private String planId;
     @ApiModelProperty(name = "centerAreaId", dataType = "string", hidden = true)
     private String centerAreaId;
-    @ApiModelProperty(name = "isValidated", dataType = "string", value = "0 (同意) 1 (已经提交) 2 (不同意)")
-    private String isValidated;
+    @ApiModelProperty(name = "verifyStatus", dataType = "string", value = "0 (同意) 1 (已经提交) 2 (不同意)")
+    private String verifyStatus;
 }

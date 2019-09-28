@@ -17,7 +17,7 @@ import java.util.List;
 public interface TeachPlanClassVerifyRepository extends JpaRepository<TeachPlanClassVerify, String> {
 
     @Transactional(readOnly = true)
-    List<TeachPlanClassVerify> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
+    List<TeachPlanClassVerify> findAllByVerifyStatusAndPlanId(String verifyStatus, String planId);
 
     @Modifying(flushAutomatically = true)
     int deleteAllByPlanId(String planId);

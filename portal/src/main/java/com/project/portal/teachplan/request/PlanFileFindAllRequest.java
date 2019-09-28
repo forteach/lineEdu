@@ -22,4 +22,6 @@ public class PlanFileFindAllRequest implements Serializable {
     private String courseId;
     @ApiModelProperty(name = "createDate", value = "创建时间", dataType = "string", required = true)
     private String createDate;
+    @ApiModelProperty(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", dataType = "string")
+    private String verifyStatus;
 }

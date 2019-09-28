@@ -31,6 +31,8 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     @Transactional(readOnly = true)
     List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(String isValidated, String planId, String classId, String courseId, String createDate);
 
+    @Transactional(readOnly = true)
+    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String planId, String classId, String courseId, String createDate, String verifyStatus);
 
 
     @Transactional(readOnly = true)
@@ -45,25 +47,4 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     List<PlanFile> findAllByIsValidatedEqualsAndCreateTime(String dateStr);
 
     List<PlanFile> findAllByPlanIdAndClassIdAndCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate);
-
-//    @Query(value = "select " +
-//            " pf.file_id as fileId," +
-//            " pf.file_name as fileName," +
-//            " pf.file_url as fileUrl," +
-//            " tpc.class_id as classId," +
-//            " tpc.class_name as className," +
-//            " tp.plan_id as planId, " +
-//            " tp.plan_name as planName, " +
-//            " tp.start_date as startDate, " +
-//            " tp.end_date as endDate, " +
-//            " tp.plan_admin as planAdmin " +
-//            " from plan_file as pf " +
-//            " left join teach_plan as tp on tp.plan_id = pf.plan_id " +
-//            " left join teach_plan_class as tpc on tpc.plan_id = pf.plan_id " +
-//            " where pf.is_validated = '0' and tp.is_validated = '0' and tpc.is_validated = '0' " +
-//            " and order by ?#{#pageable}",
-//            countQuery = " select count (1) form plan_file " +
-//                    " where is_validated = '0' order by ?#{#pageable}", nativeQuery = true)
-//    @Transactional(readOnly = true)
-//    Page<PlanFileDto> findAllByIsValidatedEqualsPageAll(Pageable pageable);
 }

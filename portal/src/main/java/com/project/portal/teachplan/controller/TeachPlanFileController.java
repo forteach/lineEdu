@@ -1,10 +1,12 @@
 package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.teachplan.request.TeachPlanFileSaveRequest;
+import com.project.portal.teachplan.request.TeachPlanVerifyRequest;
 import com.project.teachplan.domain.TeachPlanFile;
 import com.project.teachplan.service.TeachPlanFileService;
 import com.project.token.annotation.UserLoginToken;
@@ -62,11 +64,14 @@ public class TeachPlanFileController {
 
     @UserLoginToken
     @ApiOperation(value = "根据计划id查询对应资料信息")
-    @GetMapping(path = "/findAll/{planId}")
+    @GetMapping(path = "/findAll/{planId}/{verifyStatus}")
     @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true)
-    public WebResult findAllByPlanId(@PathVariable String planId) {
+    public WebResult findAllByPlanId(@PathVariable String planId, @PathVariable String verifyStatus) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
-        return WebResult.okResult(teachPlanFileService.findAllByPlan(planId));
+        if (StrUtil.isBlank(verifyStatus)) {
+            return WebResult.okResult(teachPlanFileService.findAllByPlanId(planId));
+        }
+        return WebResult.okResult(teachPlanFileService.findAllByPlanIdAndVerifyStatus(planId, verifyStatus));
     }
 
     @UserLoginToken
@@ -86,6 +91,21 @@ public class TeachPlanFileController {
     public WebResult deleteAllByPlanId(@PathVariable String planId) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         teachPlanFileService.deleteByPlanId(planId);
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "审核教学计划")
+    @PostMapping(path = "/verifyTeachPlanFile")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "remark", value = "备注信息", dataType = "string", paramType = "form")
+    })
+    public WebResult verifyTeachPlan(TeachPlanVerifyRequest request, HttpServletRequest httpServletRequest) {
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+        MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "计划状态不能为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        teachPlanFileService.verifyTeachPlan(request.getPlanId(), request.getVerifyStatus(), request.getRemark(), userId);
         return WebResult.okResult();
     }
 }

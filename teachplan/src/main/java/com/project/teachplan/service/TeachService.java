@@ -18,7 +18,6 @@ import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.repository.dto.TeachPlanDto;
-import com.project.teachplan.repository.verify.PlanFileVerityRepository;
 import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
@@ -37,8 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -57,7 +55,6 @@ public class TeachService {
     private final TeacherService teacherService;
     private final PlanFileService planFileService;
 
-    private final PlanFileVerityRepository planFileVerityRepository;
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
     private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
@@ -67,7 +64,7 @@ public class TeachService {
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
                         TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
                         PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService,
-                        OnLineCourseDicService onLineCourseDicService, PlanFileVerityRepository planFileVerityRepository,
+                        OnLineCourseDicService onLineCourseDicService,
                         TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository,
                         TeachPlanClassVerifyRepository teachPlanClassVerifyRepository) {
         this.studentOnLineService = studentOnLineService;
@@ -82,12 +79,12 @@ public class TeachService {
         this.teachPlanVerifyRepository = teachPlanVerifyRepository;
         this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
         this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
-        this.planFileVerityRepository = planFileVerityRepository;
     }
 
 
     @Transactional(rollbackFor = Exception.class)
     public TeachPlanVerify saveUpdatePlan(TeachPlanVerify teachPlan) {
+        teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
         if (StrUtil.isBlank(teachPlan.getPlanId())) {
             String planId = IdUtil.fastSimpleUUID();
             teachPlan.setPlanId(planId);
@@ -111,12 +108,12 @@ public class TeachService {
     private TeachPlanCourseVerify createTeachPlanCourse(String planId, TeachPlanCourseVo vo, String remark, String centerAreaId, String userId) {
         String teacherName = teacherService.findById(vo.getTeacherId()).getTeacherName();
         return new TeachPlanCourseVerify(planId, vo.getCourseId(), onLineCourseDicService.findId(vo.getCourseId()).getCourseName(),
-                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), teacherName, centerAreaId, remark, userId);
+                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), teacherName, centerAreaId, remark, userId, VERIFY_STATUS_APPLY);
     }
 
     private void saveTeachPlanClass(String planId, TeachPlanVerify teachPlan, List<String> classIds, String remark, String centerAreaId, String userId) {
         List<TeachPlanClassVerify> planClassList = classIds.parallelStream().filter(Objects::nonNull)
-                .map(c -> new TeachPlanClassVerify(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c), centerAreaId, remark, userId))
+                .map(c -> new TeachPlanClassVerify(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c), centerAreaId, remark, userId, VERIFY_STATUS_APPLY))
                 .collect(toList());
         teachPlanClassVerifyRepository.saveAll(planClassList);
         int sumNumber = planClassList.stream().mapToInt(TeachPlanClassVerify::getClassNumber).sum();
@@ -173,20 +170,33 @@ public class TeachService {
         return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
     }
 
-    public Page<TeachPlanDto> findAllPageDto(Pageable pageable) {
-        return teachPlanRepository.findAllPageDto(pageable);
+    public Page<TeachPlanDto> findAllPageByPlanIdAndVerifyStatus(String planId, String verifyStatus, Pageable pageable) {
+        if (StrUtil.isNotBlank(planId) && StrUtil.isNotBlank(verifyStatus)) {
+            return teachPlanVerifyRepository.findAllPageByPlanIdAndVerifyStatusDto(planId, verifyStatus, pageable);
+        } else if (StrUtil.isNotBlank(planId) && StrUtil.isBlank(verifyStatus)) {
+            return teachPlanVerifyRepository.findAllPageByPlanIdDto(planId, pageable);
+        } else if (StrUtil.isNotBlank(verifyStatus) && StrUtil.isBlank(planId)) {
+            return teachPlanVerifyRepository.findAllPageByVerifyStatusDto(verifyStatus, pageable);
+        } else {
+            return teachPlanVerifyRepository.findAllPageDto(pageable);
+        }
     }
 
-    public Page<TeachPlanDto> findAllPageByPlanIdDto(String planId, Pageable pageable) {
-        return teachPlanRepository.findAllPageByPlanIdDto(planId, pageable);
+
+    public Page<TeachPlanDto> findAllPageDtoByCenterAreaId(String centerAreaId, String verifyStatus, Pageable pageable) {
+        if (StrUtil.isBlank(verifyStatus)) {
+            return teachPlanVerifyRepository.findAllPageByCenterAreaIdDto(centerAreaId, pageable);
+        } else {
+            return teachPlanVerifyRepository.findAllPageByVerifyStatusAndCenterAreaIdDto(verifyStatus, centerAreaId, pageable);
+        }
     }
 
-    public Page<TeachPlanDto> findAllPageDtoByCenterAreaId(String centerAreaId, Pageable pageable) {
-        return teachPlanRepository.findAllPageByCenterAreaIdDto(centerAreaId, pageable);
-    }
-
-    public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, Pageable pageable) {
-        return teachPlanRepository.findAllPageByCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
+    public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, String verifyStatus, Pageable pageable) {
+        if (StrUtil.isBlank(verifyStatus)) {
+            return teachPlanVerifyRepository.findAllPageByCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
+        } else {
+            return teachPlanVerifyRepository.findAllPageByPlanIdAndCenterAreaIdDto(planId, verifyStatus, centerAreaId, pageable);
+        }
     }
 
     @Async
@@ -234,33 +244,33 @@ public class TeachService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void verifyTeachPlan(String planId, String isValidated, String remark, String userId) {
+    public void verifyTeachPlan(String planId, String verifyStatus, String remark, String userId) {
         //修改对应的计划信息
-        updateVerifyTeachPlan(planId, isValidated, remark, userId);
+        updateVerifyTeachPlan(planId, verifyStatus, remark, userId);
         //修改对应的班级信息
-        updateVerifyPlanClass(planId, isValidated, remark, userId);
+        updateVerifyPlanClass(planId, verifyStatus, remark, userId);
         //修改对应的课程信息
-        teachPlanCourseService.updateVerifyPlanCourse(planId, isValidated, remark, userId);
+        teachPlanCourseService.updateVerifyPlanCourse(planId, verifyStatus, remark, userId);
     }
 
 
-    void updateVerifyPlanClass(String planId, String isValidated, String remark, String userId) {
+    void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
+        // 删除原来的班级
+        teachPlanClassRepository.deleteAllByPlanId(planId);
         List<TeachPlanClass> teachPlanClassList = new ArrayList<>();
         List<TeachPlanClassVerify> teachPlanClassVerifyList = teachPlanClassVerifyRepository
-                .findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_CLOSE, planId)
+                .findAllByVerifyStatusAndPlanId(VERIFY_STATUS_APPLY, planId)
                 .stream()
                 .filter(Objects::nonNull)
                 .peek(t -> {
                     t.setRemark(remark);
-                    t.setIsValidated(isValidated);
+                    t.setVerifyStatus(verifyStatus);
                     t.setUpdateUser(userId);
-                    if (TAKE_EFFECT_OPEN.equals(isValidated)) {
-                        teachPlanClassRepository.findById(t.getPlanId()).ifPresent(p -> {
-                            p.setIsValidated(TAKE_EFFECT_OPEN);
-                            p.setUpdateUser(userId);
-                            BeanUtil.copyProperties(t, p);
-                            teachPlanClassList.add(p);
-                        });
+                    if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
+                        TeachPlanClass p = new TeachPlanClass();
+                        BeanUtil.copyProperties(t, p);
+                        p.setUpdateUser(userId);
+                        teachPlanClassList.add(p);
                     }
                 }).collect(Collectors.toList());
         if (!teachPlanClassVerifyList.isEmpty()) {
@@ -274,30 +284,21 @@ public class TeachService {
     /**
      * 修改计划信息
      */
-    void updateVerifyTeachPlan(String planId, String isValidated, String remark, String userId) {
-        List<TeachPlan> teachPlanList = new ArrayList<>();
-        List<TeachPlanVerify> teachPlanVerifies = teachPlanVerifyRepository
-                .findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_CLOSE, planId)
-                .stream()
-                .filter(Objects::nonNull)
-                .peek(t -> {
-                    t.setRemark(remark);
-                    t.setIsValidated(isValidated);
-                    t.setUpdateUser(userId);
-                    if (TAKE_EFFECT_OPEN.equals(isValidated)) {
-                        teachPlanRepository.findById(t.getPlanId()).ifPresent(p -> {
-                            p.setIsValidated(TAKE_EFFECT_OPEN);
-                            p.setUpdateUser(userId);
-                            BeanUtil.copyProperties(t, p);
-                            teachPlanList.add(p);
-                        });
-                    }
-                }).collect(Collectors.toList());
-        if (!teachPlanVerifies.isEmpty()) {
-            teachPlanVerifyRepository.saveAll(teachPlanVerifies);
+    void updateVerifyTeachPlan(String planId, String verifyStatus, String remark, String userId) {
+        Optional<TeachPlanVerify> optional = teachPlanVerifyRepository.findById(planId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在对应的计划信息");
+        TeachPlanVerify t = optional.get();
+        t.setUpdateUser(userId);
+        t.setVerifyStatus(verifyStatus);
+        if (StrUtil.isNotBlank(remark)) {
+            t.setRemark(remark);
         }
-        if (!teachPlanList.isEmpty()) {
-            teachPlanRepository.saveAll(teachPlanList);
+        //审核通过
+        if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
+            TeachPlan p = new TeachPlan();
+            BeanUtil.copyProperties(t, p);
+            teachPlanRepository.save(p);
         }
+        teachPlanVerifyRepository.save(t);
     }
 }
