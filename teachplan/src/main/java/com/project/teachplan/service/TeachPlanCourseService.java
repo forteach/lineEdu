@@ -46,6 +46,10 @@ public class TeachPlanCourseService {
         teachPlanCourseRepository.saveAll(list);
     }
 
+    public void saveAllVerify(List<TeachPlanCourseVerify> list){
+        teachPlanCourseVerifyRepository.saveAll(list);
+    }
+
     public List<TeachPlanCourse> findAllCourseByPlanId(String planId) {
         return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId);
     }

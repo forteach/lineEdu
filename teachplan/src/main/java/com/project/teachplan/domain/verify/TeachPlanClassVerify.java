@@ -39,7 +39,8 @@ public class TeachPlanClassVerify extends BaseTeachPlanClass implements Serializ
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
-    public TeachPlanClassVerify(String classId, String planId, String className, String planName, int classNumber, String centerAreaId, String remark, String userId) {
+    public TeachPlanClassVerify(String classId, String planId, String className, String planName,
+                                int classNumber, String centerAreaId, String remark, String userId) {
         super(classId, planId, className, planName, classNumber, centerAreaId, userId);
         this.remark = remark;
     }

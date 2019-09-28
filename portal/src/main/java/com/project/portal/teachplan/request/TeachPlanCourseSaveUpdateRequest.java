@@ -20,5 +20,6 @@ import java.util.List;
 public class TeachPlanCourseSaveUpdateRequest extends BaseTeachPlanSaveUpdateRequest {
     @ApiModelProperty(name = "courses", dataType = "list", value = "课程集合")
     private List<TeachPlanCourseVo> courses;
-
+    @ApiModelProperty(name = "remark", value = "备注说明", dataType = "string")
+    private String remark;
 }
