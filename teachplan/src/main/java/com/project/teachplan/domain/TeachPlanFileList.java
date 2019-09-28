@@ -1,6 +1,7 @@
 package com.project.teachplan.domain;
 
 import com.project.mysql.domain.Entitys;
+import com.project.teachplan.domain.pk.TeachPlanFileListPk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,6 +1,6 @@
 package com.project.teachplan.repository;
 
-import com.project.teachplan.domain.online.TeachPlanClass;
+import com.project.teachplan.domain.TeachPlanClass;
 import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

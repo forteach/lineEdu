@@ -1,10 +1,9 @@
-package com.project.teachplan.domain;
+package com.project.teachplan.domain.verify;
 
 import com.project.teachplan.domain.base.BasePlanFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 

@@ -1,4 +1,4 @@
-package com.project.teachplan.domain.online;
+package com.project.teachplan.domain.pk;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

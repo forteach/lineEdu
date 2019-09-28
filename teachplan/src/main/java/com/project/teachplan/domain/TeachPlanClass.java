@@ -1,7 +1,7 @@
-package com.project.teachplan.domain.online;
+package com.project.teachplan.domain;
 
-import com.project.mysql.domain.Entitys;
-import lombok.AllArgsConstructor;
+import com.project.teachplan.domain.base.BaseTeachPlanClass;
+import com.project.teachplan.domain.pk.TeachPlanClassPk;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicInsert;
@@ -24,34 +24,17 @@ import java.io.Serializable;
 @org.hibernate.annotations.Table(appliesTo = "teach_plan_class", comment = "在线教学计划班级管理")
 @EqualsAndHashCode(callSuper = true)
 @IdClass(TeachPlanClassPk.class)
-public class TeachPlanClass extends Entitys implements Serializable {
+public class TeachPlanClass extends BaseTeachPlanClass implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @EmbeddedId
     private TeachPlanClassPk teachPlanClassPk;
-
-    private String classId;
-
-    private String planId;
-
-    @Column(name = "class_name", columnDefinition = "VARCHAR(60) COMMENT '班级名称'")
-    private String className;
-
-    @Column(name = "plan_name", columnDefinition = "VARCHAR(100) COMMENT '计划名称'")
-    private String planName;
-
-    @Column(name = "classNumber", columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '班级人数'")
-    private Integer classNumber;
 
 
     public TeachPlanClass() {
     }
 
     public TeachPlanClass(String classId, String planId, String className, String planName, int classNumber, String centerAreaId, String userId) {
-        super(userId, userId, centerAreaId);
-        this.classId = classId;
-        this.planId = planId;
-        this.className = className;
-        this.planName = planName;
-        this.classNumber = classNumber;
+        super(classId, planId, className, planName, classNumber, centerAreaId, userId);
     }
 }

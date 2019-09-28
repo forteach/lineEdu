@@ -1,4 +1,4 @@
-package com.project.teachplan.domain;
+package com.project.teachplan.domain.verify;
 
 import com.project.teachplan.domain.base.BaseTeachPlan;
 import lombok.AllArgsConstructor;
