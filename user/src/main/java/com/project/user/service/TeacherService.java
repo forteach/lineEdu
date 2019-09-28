@@ -36,7 +36,11 @@ public interface TeacherService {
 
     public Teacher findById(String teacherId);
 
-    Page<TeacherDto> findAllPageDto(String isValidated, PageRequest pageRequest);
+    Page<TeacherDto> findAllPageDto(String verifyStatus, PageRequest pageRequest);
+
+    Page<TeacherDto> findAllPageDtoByVerifyStatus(String verifyStatus, PageRequest pageRequest);
+
+    Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest);
 
     Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest);
 

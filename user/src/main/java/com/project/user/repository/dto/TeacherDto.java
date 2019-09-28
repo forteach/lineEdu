@@ -29,4 +29,5 @@ public interface TeacherDto {
     public String getCenterAreaId();
     public String getCenterName();
     public String getRemark();
+    public String getVerifyStatus();
 }

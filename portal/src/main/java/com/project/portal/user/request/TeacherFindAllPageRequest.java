@@ -1,6 +1,7 @@
 package com.project.portal.user.request;
 
 import com.project.portal.request.SortVo;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,5 +17,6 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class TeacherFindAllPageRequest extends SortVo implements Serializable {
-    private String isValidated;
+    @ApiModelProperty(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", dataType = "string")
+    private String verifyStatus;
 }
