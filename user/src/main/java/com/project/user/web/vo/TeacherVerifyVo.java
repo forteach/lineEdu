@@ -12,6 +12,6 @@ import lombok.Data;
 @Data
 public class TeacherVerifyVo {
     private String teacherId;
-    private String isValidated;
+    private String verifyStatus;
     private String remark;
 }

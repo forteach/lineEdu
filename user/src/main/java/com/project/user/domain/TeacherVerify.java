@@ -27,4 +27,6 @@ import java.io.Serializable;
 public class TeacherVerify extends BaseTeacher implements Serializable {
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
+    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus;
 }

@@ -14,18 +14,10 @@ public class Dic {
 
     public static final String TAKE_EFFECT_CLOSE = "1";
 
-//    /**
-//     * 私有
-//     */
-//    public static final int COURSE_SHARE_TYPE_PRIVATE = 1;
-//    /**
-//     * 协作
-//     */
-//    public static final int COURSE_SHARE_TYPE_COOPERATION = 2;
-//    /**
-//     * 公开
-//     */
-//    public static final int COURSE_SHARE_TYPE_PUBLIC = 3;
+    /**申请审核状态 0 同意，1 申请 2 拒绝*/
+    public static final String VERIFY_STATUS_AGREE = "0";
+    public static final String VERIFY_STATUS_APPLY = "1";
+    public static final String VERIFY_STATUS_REFUSE = "2";
 
     /**
      * 课程章节发布
@@ -48,24 +40,6 @@ public class Dic {
      */
     public static final String COURSE_CHAPTER_LEVERL = "2";
 
-//    /**
-//     * 个人备课
-//     */
-//    public static final String LESSON_PREPARATION_TYPE_PRIVATE = "1";
-//    /**
-//     * 集体备课
-//     */
-//    public static final String LESSON_PREPARATION_TYPE_GROUP = "2";
-//
-//    /**
-//     * 课程分享范围-全部
-//     */
-//    public static final String COURSE_SHARE_AREA_ALL = "1";
-//
-//    /**
-//     * 课程分享范围-章节
-//     */
-//    public static final String COURSE_SHARE_AREA_CHAPTER = "2";
 
     /**
      * 1文档　2图册　3视频　4音频　5链接
