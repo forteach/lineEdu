@@ -15,5 +15,5 @@ public interface AudioDatumRepository extends IDatumRepoitory<AudioDatum, String
 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE AudioDatum set isValidated = :isValidated WHERE courseId = :courseId and chapterId = :chapterId")
-    public int updateIsValidated(String isValidated, String courseId, String chapterId);
+    int updateIsValidated(String isValidated, String courseId, String chapterId);
 }

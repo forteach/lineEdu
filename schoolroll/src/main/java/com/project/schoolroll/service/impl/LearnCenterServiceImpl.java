@@ -1,6 +1,9 @@
 package com.project.schoolroll.service.impl;
 
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.CenterFile;
+import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.CenterFileRepository;
 import com.project.schoolroll.repository.LearnCenterRepository;
 import com.project.schoolroll.repository.dto.LearnCenterDto;
@@ -12,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -64,6 +68,13 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     @Override
     public List<CenterFile> findAll(String centerId) {
         return centerFileRepository.findAllByIsValidatedEqualsAndCenterId(TAKE_EFFECT_OPEN, centerId);
+    }
+
+    @Override
+    public LearnCenter findByCenterId(String centerId) {
+        Optional<LearnCenter> optional = learnCenterRepository.findById(centerId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在对应的学习中心信息");
+        return optional.get();
     }
 
     @Async

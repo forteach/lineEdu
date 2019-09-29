@@ -7,10 +7,14 @@ import com.project.databank.service.ChapteDataService;
 import com.project.portal.databank.request.ChapteDataListReq;
 import com.project.portal.databank.request.ChapteDataReq;
 import com.project.portal.databank.request.ChapterDataRemoveReq;
+import com.project.portal.databank.request.FindDatumVerifyRequest;
 import com.project.portal.databank.vo.DataDatumVo;
 import com.project.portal.response.WebResult;
+import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
+import com.project.user.domain.TeacherVerify;
+import com.project.user.service.TeacherService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -43,12 +47,16 @@ public class ChapteDataController {
     private final ChapterDataVerify chapterDataVerify;
 
     private final TokenService tokenService;
+    private final TeacherService teacherService;
+    private final LearnCenterService learnCenterService;
 
     @Autowired
-    public ChapteDataController(ChapteDataService chapteDataService, ChapterDataVerify chapterDataVerify, TokenService tokenService) {
+    public ChapteDataController(ChapteDataService chapteDataService, ChapterDataVerify chapterDataVerify, TokenService tokenService, TeacherService teacherService, LearnCenterService learnCenterService) {
         this.chapteDataService = chapteDataService;
         this.chapterDataVerify = chapterDataVerify;
         this.tokenService = tokenService;
+        this.teacherService = teacherService;
+        this.learnCenterService = learnCenterService;
     }
 
     @UserLoginToken
@@ -70,8 +78,12 @@ public class ChapteDataController {
         List<com.project.databank.web.vo.DataDatumVo> files = new ArrayList<>();
         chapteDataReq.getFiles().forEach(c -> files.add(c));
         // 2、设置返回结果
-        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId));
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        String centerName = learnCenterService.findByCenterId(centerAreaId).getCenterName();
+        String teacherName = teacherService.findById(userId).getTeacherName();
+        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId, centerAreaId, centerName, teacherName));
     }
 
     @UserLoginToken
@@ -91,6 +103,23 @@ public class ChapteDataController {
             return WebResult.okResult(chapteDataService.findDatumList(req.getChapterId(), pageReq));
         }
     }
+
+//    @UserLoginToken
+//    @ApiOperation(value = "教师端/管理员 查询资料信息列表")
+//    @PostMapping("/findAllDatumList")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
+//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", dataType = "string", paramType = "form", example = "1")
+//    })
+//    public WebResult findAllDatumList(@ApiParam(value = "资料信息列表", name = "chapteData") @RequestBody ChapteDataListReq req) {
+//        //判断是否按资源领域查询列表，并设置返回结果
+//        if (StrUtil.isNotBlank(req.getVerifyStatus())) {
+//            return WebResult.okResult(chapteDataService.findAllDatumByChapterId(req.getChapterId(), req.getDatumType()));
+//        } else {
+//            return WebResult.okResult(chapteDataService.findAllDatumByChapterIdAndVerifyStatus(req.getChapterId(), req.getDatumType(), req.getVerifyStatus()));
+//        }
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "删除单个文件")

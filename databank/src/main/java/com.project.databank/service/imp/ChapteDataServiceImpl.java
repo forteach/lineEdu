@@ -10,11 +10,14 @@ import com.project.base.common.keyword.Dic;
 import com.project.base.exception.AssertErrorException;
 import com.project.base.exception.MyAssert;
 import com.project.databank.domain.CourseChapter;
+import com.project.databank.domain.verify.CourseVerifyVo;
 import com.project.databank.domain.ziliao.*;
 import com.project.databank.repository.CourseChapter2Repository;
 import com.project.databank.repository.ziliao.*;
 import com.project.databank.service.ChapteDataService;
+import com.project.databank.service.CourseVerifyVoService;
 import com.project.databank.web.res.DatumResp;
+import com.project.databank.web.vo.CourseVerifyRequest;
 import com.project.databank.web.vo.DataDatumVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -56,6 +59,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     private ViewDatumRepository viewDatumRepository;
     @Resource
     private CourseChapter2Repository courseChapter2Repository;
+    @Resource
+    private CourseVerifyVoService courseVerifyVoService;
 
 
     /**
@@ -66,26 +71,26 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser) {
+    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser, String centerAreaId, String centerName, String teacherName) {
         //根据文件类型，对应保存信息
         //1文档　3视频　4音频　5链接
         String size = "";
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
-                size = saveT(courseId, chapterId, datumType, files, fileDatumRepository, new FileDatum(), createUser);
+                size = saveT(courseId, chapterId, datumType, files, fileDatumRepository, new FileDatum(), createUser, centerAreaId, centerName, teacherName);
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
-                size = saveT(courseId, chapterId, datumType, files, viewDatumRepository, new ViewDatum(), createUser);
+                size = saveT(courseId, chapterId, datumType, files, viewDatumRepository, new ViewDatum(), createUser, centerAreaId, centerName, teacherName);
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
-                size = saveT(courseId, chapterId, datumType, files, audioDatumRepository, new AudioDatum(), createUser);
+                size = saveT(courseId, chapterId, datumType, files, audioDatumRepository, new AudioDatum(), createUser, centerAreaId, centerName, teacherName);
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
-                size = saveT(courseId, chapterId, datumType, files, linkDatumRepository, new LinkDatum(), createUser);
+                size = saveT(courseId, chapterId, datumType, files, linkDatumRepository, new LinkDatum(), createUser, centerAreaId, centerName, teacherName);
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
@@ -131,6 +136,75 @@ public class ChapteDataServiceImpl implements ChapteDataService {
                     BeanUtil.copyProperties(item, dr);
                     return dr;
                 }).collect(toList());
+    }
+    @Override
+    public List<? extends AbsDatum> findAllDatumByChapterId(String chapterId, String datumType){
+        //文件
+        if (datumType.equals(Dic.COURSE_ZILIAO_FILE)) {
+            return findAllFileDatum(chapterId, null);
+        }
+        //音频
+        if (datumType.equals(Dic.COURSE_ZILIAO_AUDIO)) {
+            return findAllAudioDatum(chapterId, null);
+        }
+        //视频
+        if (datumType.equals(Dic.COURSE_ZILIAO_VIEW)) {
+            return findAllViewDatum(chapterId, null);
+        }
+        //链接
+        if (datumType.equals(Dic.COURSE_ZILIAO_LINK)) {
+            return findAllLinkDatum(chapterId, null);
+        }
+        MyAssert.isNull(null, DefineCode.ERR0002, "文件类型错误");
+        return null;
+    }
+
+    @Override
+    public List<? extends AbsDatum> findAllDatumByChapterIdAndVerifyStatus(String chapterId, String datumType, String verifyStatus){
+        //文件
+        if (datumType.equals(Dic.COURSE_ZILIAO_FILE)) {
+            return findAllFileDatum(chapterId, verifyStatus);
+        }
+        //音频
+        if (datumType.equals(Dic.COURSE_ZILIAO_AUDIO)) {
+            return findAllAudioDatum(chapterId, verifyStatus);
+        }
+        //视频
+        if (datumType.equals(Dic.COURSE_ZILIAO_VIEW)) {
+            return findAllViewDatum(chapterId, verifyStatus);
+        }
+        //链接
+        if (datumType.equals(Dic.COURSE_ZILIAO_LINK)) {
+            return findAllLinkDatum(chapterId, verifyStatus);
+        }
+        MyAssert.isNull(null, DefineCode.ERR0002, "文件类型错误");
+        return null;
+    }
+
+    private List<FileDatum> findAllFileDatum(String chapterId, String verifyStatus){
+        if (StrUtil.isNotBlank(verifyStatus)){
+            return fileDatumRepository.findAllByChapterIdAndVerifyStatusOrderByCreateTimeDesc(chapterId, verifyStatus);
+        }
+        return fileDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
+    }
+
+    private List<ViewDatum> findAllViewDatum(String chapterId, String verifyStatus){
+        if (StrUtil.isNotBlank(verifyStatus)){
+            return viewDatumRepository.findAllByChapterIdAndVerifyStatusOrderByCreateTimeDesc(chapterId, verifyStatus);
+        }
+        return viewDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
+    }
+    private List<LinkDatum> findAllLinkDatum(String chapterId, String verifyStatus){
+        if (StrUtil.isNotBlank(verifyStatus)){
+            return linkDatumRepository.findAllByChapterIdAndVerifyStatusOrderByCreateTimeDesc(chapterId, verifyStatus);
+        }
+        return linkDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
+    }
+    private List<AudioDatum> findAllAudioDatum(String chapterId, String verifyStatus){
+        if (StrUtil.isNotBlank(verifyStatus)){
+            return audioDatumRepository.findAllByChapterIdAndVerifyStatusOrderByCreateTimeDesc(chapterId, verifyStatus);
+        }
+        return audioDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
     }
 
 
@@ -223,8 +297,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
                 }).collect(toList());
     }
 
-    private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd, String createUser) {
-
+    private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd, String createUser, String centerAreaId, String centerName, String teacherName) {
+        List<CourseVerifyVo> verifyVos = new ArrayList<>();
         //1、添加资料文件列表明细
         List<AbsDatum> fileDatumList = new ArrayList<>();
         Integer videoTime = 0;
@@ -243,6 +317,20 @@ public class ChapteDataServiceImpl implements ChapteDataService {
                 videoTime = dataDatumVo.getVideoDuration();
             }
             fd.setCourseId(courseId);
+            fd.setIsValidated(TAKE_EFFECT_CLOSE);
+            fd.setVerifyStatus(VERIFY_STATUS_APPLY);
+            CourseVerifyVo verifyVo = new CourseVerifyVo();
+            BeanUtil.copyProperties(fd, verifyVo);
+            verifyVo.setIsValidated(TAKE_EFFECT_OPEN);
+            verifyVo.setVerifyStatus(VERIFY_STATUS_APPLY);
+            verifyVo.setSubmitType("添加章节资料");
+            verifyVo.setCenterName(centerName);
+            verifyVo.setTeacherId(createUser);
+            verifyVo.setTeacherName(teacherName);
+            verifyVo.setCreateUser(createUser);
+            verifyVo.setUpdateTime(createUser);
+            verifyVo.setCourseType(datumType);
+            verifyVos.add(verifyVo);
             fileDatumList.add(fd);
         }
         rep.saveAll(fileDatumList);
@@ -257,6 +345,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             }
         }
 
+        //异步更新记录信息
+        courseVerifyVoService.saveAll(verifyVos);
         //返回资料文件数量
         return String.valueOf(fileDatumList.size());
     }
@@ -338,5 +428,98 @@ public class ChapteDataServiceImpl implements ChapteDataService {
 
     private void removeOne(String fileId, IDatumRepoitory rep) {
         rep.deleteById(fileId);
+    }
+
+//    @Override
+//    public void verifyChapter(String chapterId, String userId, String verifyStatus) {
+//        //更改文件
+//        verifyFileDatum(chapterId, userId, verifyStatus);
+//        //修改音频
+//        verifyAudioDatum(chapterId, userId, verifyStatus);
+//        //修改链接
+//        verifyLinkDatum(chapterId, userId, verifyStatus);
+//        //修改视频
+//        verifyViewDatum(chapterId, userId, verifyStatus);
+//    }
+//    @Transactional(rollbackFor = Exception.class)
+//    void verifyFileDatum(String chapterId, String userId, String verifyStatus){
+//        List<FileDatum> fileDatumList = fileDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_CLOSE).stream()
+//                .peek(f -> {
+//                    f.setIsValidated(TAKE_EFFECT_OPEN);
+//                    f.setUpdateUser(userId);
+//                    f.setVerifyStatus(verifyStatus);
+//                }).collect(toList());
+//        fileDatumRepository.saveAll(fileDatumList);
+//    }
+//    @Transactional(rollbackFor = Exception.class)
+//    void verifyAudioDatum(String chapterId, String userId, String verifyStatus){
+//        List<AudioDatum> audioDatumList = audioDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_CLOSE).stream()
+//                .peek(a -> {
+//                    a.setIsValidated(TAKE_EFFECT_OPEN);
+//                    a.setUpdateUser(userId);
+//                    a.setVerifyStatus(verifyStatus);
+//                }).collect(toList());
+//        audioDatumRepository.saveAll(audioDatumList);
+//    }
+//    @Transactional(rollbackFor = Exception.class)
+//    void verifyLinkDatum(String chapterId, String userId, String verifyStatus){
+//        List<LinkDatum> linkDatumList = linkDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_CLOSE).stream()
+//                .peek(l -> {
+//                    l.setIsValidated(TAKE_EFFECT_OPEN);
+//                    l.setUpdateUser(userId);
+//                    l.setVerifyStatus(verifyStatus);
+//                }).collect(toList());
+//        linkDatumRepository.saveAll(linkDatumList);
+//    }
+//    @Transactional(rollbackFor = Exception.class)
+//    void verifyViewDatum(String chapterId, String userId, String verifyStatus){
+//        List<ViewDatum> viewDatumList = viewDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_CLOSE).stream()
+//                .peek(v -> {
+//                    v.setIsValidated(TAKE_EFFECT_OPEN);
+//                    v.setUpdateUser(userId);
+//                    v.setVerifyStatus(verifyStatus);
+//                }).collect(toList());
+//        viewDatumRepository.saveAll(viewDatumList);
+//    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void verifyData(CourseVerifyRequest request, String datumType) {
+        //删除文件列表
+        switch (datumType) {
+            //文档
+            case Dic.COURSE_ZILIAO_FILE:
+                fileDatumRepository.findById(request.getId()).ifPresent(fileDatum -> {
+                    updateChapterData(request, fileDatumRepository, fileDatum);
+                });
+                break;
+            //视频
+            case Dic.COURSE_ZILIAO_VIEW:
+                viewDatumRepository.findById(request.getId()).ifPresent(viewDatum -> {
+                    updateChapterData(request, fileDatumRepository, viewDatum);
+                });
+                break;
+            //音频
+            case Dic.COURSE_ZILIAO_AUDIO:
+                audioDatumRepository.findById(request.getId()).ifPresent(audioDatum -> {
+                    updateChapterData(request, fileDatumRepository, audioDatum);
+                });
+                break;
+            //链接
+            case Dic.COURSE_ZILIAO_LINK:
+                linkDatumRepository.findById(request.getId()).ifPresent(linkDatum -> {
+                    updateChapterData(request, fileDatumRepository, linkDatum);
+                });
+                break;
+            default:
+                MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
+        }
+    }
+
+    private void updateChapterData(CourseVerifyRequest request, IDatumRepoitory rep, AbsDatum fd){
+        fd.setUpdateUser(request.getUserId());
+        fd.setIsValidated(TAKE_EFFECT_OPEN);
+        fd.setVerifyStatus(request.getVerifyStatus());
+        rep.save(fd);
     }
 }

@@ -1,6 +1,8 @@
 package com.project.databank.repository.ziliao;
 
 import com.project.databank.domain.ziliao.LinkDatum;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * @Auther: zhangyy
@@ -11,4 +13,7 @@ import com.project.databank.domain.ziliao.LinkDatum;
  */
 public interface LinkDatumRepository extends IDatumRepoitory<LinkDatum, String> {
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE LinkDatum set isValidated = :isValidated WHERE courseId = :courseId and chapterId = :chapterId")
+    int updateIsValidated(String isValidated, String courseId, String chapterId);
 }

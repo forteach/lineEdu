@@ -33,4 +33,7 @@ public class ChapteDataListReq extends SortVo implements Serializable {
 
     @ApiModelProperty(name = "datumType", dataType = "string", value = "资料类型", example = "1", notes = "资料类型 1文档　2图册　3视频　4音频　5链接")
     private String datumType;
+
+    @ApiModelProperty(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", dataType = "string")
+    private String verifyStatus;
 }

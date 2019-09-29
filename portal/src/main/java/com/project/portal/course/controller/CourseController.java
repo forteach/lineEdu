@@ -36,7 +36,6 @@ import java.util.Objects;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * @Auther: zhangyy
@@ -181,12 +180,12 @@ public class CourseController {
         return WebResult.okResult(courseService.myCourseList(classId));
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "查询课程信息", notes = "查询同步的外部课程信息")
-    @GetMapping("/findCourseList")
-    public WebResult findCourseList() {
-        return WebResult.okResult(courseService.findCourseList());
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "查询课程信息", notes = "查询同步的外部课程信息")
+//    @GetMapping("/findCourseList")
+//    public WebResult findCourseList() {
+//        return WebResult.okResult(courseService.findCourseList());
+//    }
 
 
     //******************************************************************************************************一下内容未修改

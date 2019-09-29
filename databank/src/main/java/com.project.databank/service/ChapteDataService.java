@@ -1,6 +1,8 @@
 package com.project.databank.service;
 
+import com.project.databank.domain.ziliao.AbsDatum;
 import com.project.databank.web.res.DatumResp;
+import com.project.databank.web.vo.CourseVerifyRequest;
 import com.project.databank.web.vo.DataDatumVo;
 import org.springframework.data.domain.Pageable;
 
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public interface ChapteDataService {
 
-    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser);
+    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser, String centerAreaId, String centerName, String teacherName);
     /**
      * 课程资料详细列表
      *
@@ -28,7 +30,15 @@ public interface ChapteDataService {
 
     public List<DatumResp> findDatumList(String chapterId, Pageable pageable);
 
+    List<? extends AbsDatum> findAllDatumByChapterId(String chapterId, String datumType);
+
+    List<? extends AbsDatum> findAllDatumByChapterIdAndVerifyStatus(String chapterId, String datumType, String verifyStatus);
+
     void removeChapteDataList(String courseId, String chapterId, String datumType);
 
     void removeOne(String fileId, String datumType);
+
+//    void verifyChapter(String chapterId, String userId, String verifyStatus);
+
+    void verifyData(CourseVerifyRequest request, String datumType);
 }

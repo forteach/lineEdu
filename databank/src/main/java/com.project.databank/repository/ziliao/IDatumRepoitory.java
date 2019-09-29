@@ -24,8 +24,27 @@ public interface IDatumRepoitory<T, ID> extends JpaRepository<T, ID> {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<T> findByChapterIdAndIsValidated(String chapterId, String isValidated);
+    List<T> findByChapterIdAndIsValidated(String chapterId, String isValidated);
 
+    /**
+     * 通过章节Id和状态查询资料信息
+     * @param chapterId
+     * @param verifyStatus
+     * @return
+     */
+    @Transactional(readOnly = true)
+    List<T> findAllByChapterIdAndVerifyStatusOrderByCreateTimeDesc(String chapterId, String verifyStatus);
+
+    @Transactional(readOnly = true)
+    List<T> findAllByVerifyStatusOrderByCreateTimeDesc(String verifyStatus);
+
+    /**
+     * 查询chapterId
+     * @param chapterId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    List<T> findAllByChapterIdOrderByCreateTimeDesc(String chapterId);
     /**
      * 分页查询科目课程文件信息
      *
@@ -34,7 +53,7 @@ public interface IDatumRepoitory<T, ID> extends JpaRepository<T, ID> {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<T> findByChapterIdAndIsValidated(String chapterId, String isValidated, Pageable pageable);
+    Page<T> findByChapterIdAndIsValidated(String chapterId, String isValidated, Pageable pageable);
 
 
     /**
@@ -45,7 +64,7 @@ public interface IDatumRepoitory<T, ID> extends JpaRepository<T, ID> {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<T> findByChapterIdAndDatumTypeAndIsValidated(String chapterId, String datumType, String isValidated, Pageable pageable);
+    Page<T> findByChapterIdAndDatumTypeAndIsValidated(String chapterId, String datumType, String isValidated, Pageable pageable);
 
     /**
      * 多条件查询课程科目文件挂载
@@ -55,7 +74,7 @@ public interface IDatumRepoitory<T, ID> extends JpaRepository<T, ID> {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<T> findAll(Specification<T> specification, Pageable pageable);
+    Page<T> findAll(Specification<T> specification, Pageable pageable);
 
     /**
      * 通过章节和课程id查询
@@ -64,7 +83,7 @@ public interface IDatumRepoitory<T, ID> extends JpaRepository<T, ID> {
      * @return
      */
     @Transactional(rollbackFor = Exception.class, readOnly = true)
-    public List<T> findByChapterIdAndCourseId(String chapterId, String courseId);
+    List<T> findByChapterIdAndCourseId(String chapterId, String courseId);
 
     /**
      * 删除对应资料信息
@@ -74,5 +93,5 @@ public interface IDatumRepoitory<T, ID> extends JpaRepository<T, ID> {
      */
     @Modifying(clearAutomatically = true)
     @Transactional(rollbackFor = Exception.class)
-    public int deleteAllByCourseIdAndChapterId(String courseId, String chapterId);
+    int deleteAllByCourseIdAndChapterId(String courseId, String chapterId);
 }

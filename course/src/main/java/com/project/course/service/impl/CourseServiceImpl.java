@@ -7,9 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
-import com.project.course.domain.CourseEntity;
 import com.project.course.domain.CourseImages;
-import com.project.course.repository.CourseEntrityRepository;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseDto;
@@ -53,8 +51,8 @@ public class CourseServiceImpl implements CourseService {
     @Resource
     private CourseImagesServiceImpl courseImagesServiceImpl;
 
-    @Resource
-    private CourseEntrityRepository courseEntrityRepository;
+//    @Resource
+//    private CourseEntrityRepository courseEntrityRepository;
 
     @Resource
     private CourseStudyRepository courseStudyRepository;
@@ -247,11 +245,11 @@ public class CourseServiceImpl implements CourseService {
      *
      * @return
      */
-    @Override
-    @Cacheable(value = "allCourseEntity", key = "#root.targetClass", unless = "#result eq null ")
-    public List<CourseEntity> findCourseList() {
-        return courseEntrityRepository.findByIsValidated(TAKE_EFFECT_OPEN);
-    }
+//    @Override
+//    @Cacheable(value = "allCourseEntity", key = "#root.targetClass", unless = "#result eq null ")
+//    public List<CourseEntity> findCourseList() {
+//        return courseEntrityRepository.findByIsValidated(TAKE_EFFECT_OPEN);
+//    }
 
     @Override
     public List<ICourseStudyDto> findCourseStudyList(String studentId, Integer studyStatus) {
