@@ -19,11 +19,10 @@ import java.io.Serializable;
 @Entity
 @Table(name = "course_verify_vo", indexes = {
         @Index(columnList = "vo_id", name = "vo_id_index"),
-        @Index(columnList = "course_id", name = "course_id_index"),
-        @Index(columnList = "verify_status", name = "verify_status_index")
+        @Index(columnList = "course_id", name = "course_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
-@org.hibernate.annotations.Table(appliesTo = "course_verify_vo", comment = "音频资料库")
+@org.hibernate.annotations.Table(appliesTo = "course_verify_vo", comment = "课程修改记录")
 @GenericGenerator(name = "system-uuid", strategy = "uuid")
 public class CourseVerifyVo extends Entitys implements Serializable {
     @Id

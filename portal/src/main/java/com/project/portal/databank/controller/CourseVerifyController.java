@@ -74,6 +74,7 @@ public class CourseVerifyController {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         request.setUserId(userId);
-        return WebResult.okResult(courseVerifyVoService.);
+        courseVerifyVoService.saveUpdateVerify(request);
+        return WebResult.okResult();
     }
 }
