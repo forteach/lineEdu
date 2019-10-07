@@ -1,6 +1,7 @@
 package com.project.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -89,6 +90,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (VERIFY_STATUS_AGREE.equals(vo.getVerifyStatus())) {
             //同意修改的内容去覆盖原来的
             teacherVerify.setVerifyStatus(VERIFY_STATUS_AGREE);
+            teacherVerify.setIsValidated(TAKE_EFFECT_OPEN);
             Teacher teacher = new Teacher();
             Optional<Teacher> teacherOptional = teacherRepository.findById(vo.getTeacherId());
             if (teacherOptional.isPresent()) {
@@ -103,12 +105,14 @@ public class TeacherServiceImpl implements TeacherService {
                 userService.registerTeacher(registerTeacherVo);
             }
             BeanUtil.copyProperties(teacherVerify, teacher);
+            teacher.setUpdateTime(DateUtil.now());
             teacherRepository.save(teacher);
         }
         if (StrUtil.isNotBlank(vo.getRemark())) {
             teacherVerify.setRemark(vo.getRemark());
         }
         teacherVerify.setVerifyStatus(vo.getVerifyStatus());
+        teacherVerify.setUpdateTime(DateUtil.now());
         teacherVerifyRepository.save(teacherVerify);
         //修改教师信息对应的资料信息
         updateTeacherFileIsValidated(vo.getTeacherId(), vo.getVerifyStatus());
