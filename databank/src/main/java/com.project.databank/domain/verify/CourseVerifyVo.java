@@ -27,10 +27,10 @@ import java.io.Serializable;
 public class CourseVerifyVo extends Entitys implements Serializable {
     @Id
     @GeneratedValue(generator = "system-uuid")
-    @Column(name = "vo_id", columnDefinition = "COMMENT(32) '修改的课程id'")
+    @Column(name = "vo_id", columnDefinition = "VARCHAR(32) COMMENT '修改的课程id'")
     private String voId;
 
-    @Column(name = "submit_type", columnDefinition = "COMMENT(32) '提交审核的类型'")
+    @Column(name = "submit_type", columnDefinition = "VARCHAR(32) COMMENT '提交审核的类型'")
     private String submitType;
 
     @Column(name = "course_name", columnDefinition = "VARCHAR(40) COMMENT '科目名称'")
