@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
+import com.project.portal.teachplan.request.TeachPlanFileFinaAllRequest;
 import com.project.portal.teachplan.request.TeachPlanFileSaveRequest;
 import com.project.portal.teachplan.request.TeachPlanVerifyRequest;
 import com.project.teachplan.domain.TeachPlanFile;
@@ -64,14 +65,17 @@ public class TeachPlanFileController {
 
     @UserLoginToken
     @ApiOperation(value = "根据计划id查询对应资料信息")
-    @GetMapping(path = "/findAll/{planId}/{verifyStatus}")
-    @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true)
-    public WebResult findAllByPlanId(@PathVariable String planId, @PathVariable String verifyStatus) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
-        if (StrUtil.isBlank(verifyStatus)) {
-            return WebResult.okResult(teachPlanFileService.findAllByPlanId(planId));
+    @PostMapping(path = "/findAll")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", dataType = "string", paramType = "form")
+    })
+    public WebResult findAllByPlanId(@RequestBody TeachPlanFileFinaAllRequest request) {
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+        if (StrUtil.isBlank(request.getVerifyStatus())) {
+            return WebResult.okResult(teachPlanFileService.findAllByPlanId(request.getPlanId()));
         }
-        return WebResult.okResult(teachPlanFileService.findAllByPlanIdAndVerifyStatus(planId, verifyStatus));
+        return WebResult.okResult(teachPlanFileService.findAllByPlanIdAndVerifyStatus(request.getPlanId(), request.getVerifyStatus()));
     }
 
     @UserLoginToken
