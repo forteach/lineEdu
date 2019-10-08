@@ -1,6 +1,7 @@
 package com.project.portal.databank.request;
 
 import com.project.portal.request.SortVo;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,9 +17,12 @@ import java.io.Serializable;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@ApiModel(value = "查询需要审核的课程信息分页对象")
 public class FindDatumVerifyRequest extends SortVo implements Serializable {
+
 //    @ApiModelProperty(name = "verify", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝")
 //    private String verify;
+
     @ApiModelProperty(name = "courseId", value = "课程Id", dataType = "string")
     private String courseId;
 }

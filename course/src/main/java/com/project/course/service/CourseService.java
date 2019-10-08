@@ -60,5 +60,5 @@ public interface CourseService {
 
     void verifyCourse(CourseVerifyVo verifyVo);
 
-    void verifyCourseImage(CourseVerifyVo verifyVo);
+//    void verifyCourseImage(CourseVerifyVo verifyVo);
 }

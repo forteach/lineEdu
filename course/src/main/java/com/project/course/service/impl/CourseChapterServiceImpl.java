@@ -21,7 +21,6 @@ import com.project.course.web.vo.CourseChapterVo;
 import com.project.databank.domain.verify.CourseVerifyVo;
 import com.project.databank.service.CourseVerifyVoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,7 +86,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             CourseChapterSaveResp resp = new CourseChapterSaveResp();
             BeanUtil.copyProperties(courseChapter, resp);
             return resp;
-        }else {
+        } else {
             CourseChapterEditReq chapterEditReq = new CourseChapterEditReq();
             BeanUtil.copyProperties(courseChapter, chapterEditReq);
             return edit(chapterEditReq);
@@ -245,7 +244,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         courseChapterVerify.setUpdateUser(verifyVo.getUserId());
         courseChapterVerify.setVerifyStatus(verifyVo.getVerifyStatus());
         courseChapterVerify.setRemark(verifyVo.getRemark());
-        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())){
+        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
             CourseChapter courseChapter = new CourseChapter();
             BeanUtil.copyProperties(courseChapterVerify, courseChapter);
             courseChapterRepository.save(courseChapter);

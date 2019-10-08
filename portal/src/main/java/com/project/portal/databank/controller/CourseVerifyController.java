@@ -9,7 +9,7 @@ import com.project.course.web.vo.CourseChapterVerifyVo;
 import com.project.databank.domain.verify.CourseVerifyVo;
 import com.project.databank.service.ChapteDataService;
 import com.project.databank.service.CourseVerifyVoService;
-import com.project.databank.web.vo.CourseVerifyRequest;
+import com.project.portal.databank.request.CourseVerifyRequest;
 import com.project.portal.databank.request.FindDatumVerifyRequest;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
@@ -43,7 +43,7 @@ import static com.project.portal.request.ValideSortVo.valideSort;
  */
 @RestController
 @RequestMapping(path = "/courseVerify", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-@Api(value = "课程章节资料审核", tags = {"章节资料操作信息"})
+@Api(value = "课程章节信息审核", tags = {"分页查询课程章节信息、审核"})
 public class CourseVerifyController {
     @Resource
     private TokenService tokenService;
@@ -86,7 +86,6 @@ public class CourseVerifyController {
         MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
-        request.setUserId(userId);
 
         Optional<CourseVerifyVo> optionalCourseVerifyVo = courseVerifyVoService.findById(request.getId());
         MyAssert.isFalse(optionalCourseVerifyVo.isPresent(), DefineCode.ERR0014, "不存在要修改的审核信息");
@@ -96,7 +95,8 @@ public class CourseVerifyController {
 
         if (StrUtil.isNotBlank(verifyVo.getFileId())
                 && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-            chapteDataService.verifyData(request, verifyVo.getDatumType());
+            chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(request.getId(),
+                    request.getVerifyStatus(), request.getRemark(), userId), verifyVo.getDatumType());
         }
         if (COURSE_DATA.getValue().equals(type)
                 && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
@@ -109,13 +109,17 @@ public class CourseVerifyController {
             courseChapterService.verifyCourse(new CourseChapterVerifyVo(verifyVo.getChapterId(),
                     request.getVerifyStatus(), request.getRemark(), userId));
         }
-        if (COURSE_IMAGE_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-            //课程图片轮播图
-            courseService.verifyCourseImage(new com.project.course.web.vo.CourseVerifyVo(verifyVo.getCourseId(),
-                    request.getVerifyStatus(), request.getRemark(), userId));
+//        if (COURSE_IMAGE_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+//            //课程图片轮播图
+//            courseService.verifyCourseImage(new com.project.course.web.vo.CourseVerifyVo(verifyVo.getCourseId(),
+//                    request.getVerifyStatus(), request.getRemark(), userId));
+//        }
+        if (COURSE_CHAPTER_QUESTION.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+            // 是习题需要审核 TODO
+
         }
         //修改数据
-        verifyVo.setUpdateUser(request.getUserId());
+        verifyVo.setUpdateUser(userId);
         verifyVo.setVerifyStatus(request.getVerifyStatus());
         verifyVo.setRemark(request.getRemark());
         courseVerifyVoService.save(verifyVo);

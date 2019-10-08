@@ -16,7 +16,8 @@ public enum CourseVerifyEnum {
     LINK_DATUM("5"),
     COURSE_DATA("6"),
     CHAPTER_DATE("7"),
-    COURSE_IMAGE_DATE("8")
+    COURSE_IMAGE_DATE("8"),
+    COURSE_CHAPTER_QUESTION("9")
     ;
     private String value;
 

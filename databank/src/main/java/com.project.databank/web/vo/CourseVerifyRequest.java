@@ -1,9 +1,7 @@
 package com.project.databank.web.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -16,11 +14,19 @@ import java.io.Serializable;
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class CourseVerifyRequest implements Serializable {
     private String id;
     private String verifyStatus;
     private String remark;
     private String userId;
+
+    public CourseVerifyRequest() {
+    }
+
+    public CourseVerifyRequest(String id, String verifyStatus, String remark, String userId) {
+        this.id = id;
+        this.verifyStatus = verifyStatus;
+        this.remark = remark;
+        this.userId = userId;
+    }
 }
