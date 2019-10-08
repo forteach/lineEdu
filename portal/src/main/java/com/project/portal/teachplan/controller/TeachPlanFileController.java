@@ -98,6 +98,7 @@ public class TeachPlanFileController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "审核教学计划")
     @PostMapping(path = "/verifyTeachPlanFile")
     @ApiImplicitParams({

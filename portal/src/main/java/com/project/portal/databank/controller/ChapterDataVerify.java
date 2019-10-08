@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChapterDataVerify {
 
-    public void saveVerify(ChapteDataReq chapteDataReq) {
+    void saveVerify(ChapteDataReq chapteDataReq) {
         MyAssert.elt(0, chapteDataReq.getFiles().size(), DefineCode.ERR0010, "文件对象不为空");
         verify(chapteDataReq);
     }

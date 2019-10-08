@@ -165,6 +165,7 @@ public class TeachPlanController {
         return WebResult.okResult(teachService.findAllClassByPlanId(planId));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "更新教学计划状态")
     @PutMapping(path = "/status/{planId}")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form")
@@ -175,6 +176,7 @@ public class TeachPlanController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "审核教学计划")
     @PostMapping(path = "/verifyTeachPlan")
     @ApiImplicitParams({

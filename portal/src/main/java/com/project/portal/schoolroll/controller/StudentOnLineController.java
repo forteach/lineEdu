@@ -97,6 +97,7 @@ public class StudentOnLineController {
         return WebResult.okResult(studentOnLineService.findAllPageDtoByCenterAreaId(centerAreaId, PageRequest.of(request.getPage(), request.getSize())));
     }
 
+    @UserLoginToken
     @ApiOperation(value = "更改学生状态")
     @PutMapping("/status/{studentId}")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")

@@ -128,6 +128,7 @@ public class LearnCenterController {
         return WebResult.okResult(learnCenterService.findAllDto());
     }
 
+    @UserLoginToken
     @ApiOperation(value = "分页查询学习中心")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
