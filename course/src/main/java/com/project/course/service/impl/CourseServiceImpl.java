@@ -1,5 +1,6 @@
 package com.project.course.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -8,14 +9,18 @@ import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseImages;
+import com.project.course.domain.verify.CourseVerify;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
+import com.project.course.repository.verify.CourseVerifyRepository;
 import com.project.course.service.CourseService;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
+import com.project.course.web.vo.CourseVerifyVo;
+import com.project.databank.service.CourseVerifyVoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
+import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_DATA;
+import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_IMAGE_DATE;
 
 /**
  * @Auther: zhangyy
@@ -45,14 +52,17 @@ public class CourseServiceImpl implements CourseService {
     @Resource
     private CourseRepository courseRepository;
 
+    @Resource
+    private CourseVerifyRepository courseVerifyRepository;
+
+    @Resource
+    private CourseVerifyVoService courseVerifyVoService;
+
     /**
      * 课程轮播图
      */
     @Resource
     private CourseImagesServiceImpl courseImagesServiceImpl;
-
-//    @Resource
-//    private CourseEntrityRepository courseEntrityRepository;
 
     @Resource
     private CourseStudyRepository courseStudyRepository;
@@ -66,17 +76,29 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     @Transactional(rollbackForClassName = "Exception")
-    public String saveUpdate(Course course) {
+    public String saveUpdate(CourseVerify course) {
         //1、保存课程基本信息
+        com.project.databank.domain.verify.CourseVerifyVo verifyVo = new com.project.databank.domain.verify.CourseVerifyVo();
+        verifyVo.setCourseType(COURSE_DATA.getValue());
         if (StrUtil.isBlank(course.getCourseId())) {
             course.setCourseId(IdUtil.fastSimpleUUID());
             course.setUpdateUser(course.getCreateUser());
-            return courseRepository.save(course).getCourseId();
+
+            BeanUtil.copyProperties(course, verifyVo);
+            verifyVo.setSubmitType("添加课程");
+            courseVerifyVoService.save(verifyVo);
+
+            return courseVerifyRepository.save(course).getCourseId();
         } else {
-            courseRepository.findById(course.getCourseId()).ifPresent(c -> {
+            courseVerifyRepository.findById(course.getCourseId()).ifPresent(c -> {
                 UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
-                courseRepository.save(c);
+
+                BeanUtil.copyProperties(course, verifyVo);
+                verifyVo.setSubmitType("修改课程");
+                courseVerifyVoService.save(verifyVo);
+
+                courseVerifyRepository.save(c);
             });
         }
         return course.getCourseId();
@@ -141,7 +163,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course getById(String id) {
         Optional<Course> optionalCourse = courseRepository.findById(id);
-        if (optionalCourse.isPresent()){
+        if (optionalCourse.isPresent()) {
             return optionalCourse.get();
         }
         MyAssert.isNull(null, DefineCode.ERR0010, "编号对应的课程信息不存在");
@@ -151,6 +173,7 @@ public class CourseServiceImpl implements CourseService {
 
     /**
      * 学生端查询我的课程信息
+     *
      * @param classId
      * @return
      */
@@ -198,6 +221,7 @@ public class CourseServiceImpl implements CourseService {
         });
         return result;
     }
+
     @Override
     @Transactional(rollbackForClassName = "Exception")
     public void deleteIsValidById(String courseId) {
@@ -213,6 +237,12 @@ public class CourseServiceImpl implements CourseService {
     public void saveCourseImages(CourseImagesReq courseImagesReq) {
         courseImagesServiceImpl.saveCourseImages(courseImagesReq.getCourseId(), courseImagesReq.getImages(),
                 courseImagesReq.getCreateUser(), courseImagesReq.getCenterAreaId());
+        //保存修改记录审核表
+        com.project.databank.domain.verify.CourseVerifyVo verifyVo = new com.project.databank.domain.verify.CourseVerifyVo();
+        BeanUtil.copyProperties(courseImagesReq, verifyVo);
+        verifyVo.setSubmitType("添加课程轮播图");
+        verifyVo.setCourseType(COURSE_IMAGE_DATE.getValue());
+        courseVerifyVoService.save(verifyVo);
     }
 
 
@@ -235,8 +265,8 @@ public class CourseServiceImpl implements CourseService {
      * @return
      */
     @Override
-    public List<CourseImages> findImagesByCourseId(String courseId) {
-        return courseImagesServiceImpl.findImagesByCourseId(courseId);
+    public List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus) {
+        return courseImagesServiceImpl.findImagesByCourseId(courseId, verifyStatus);
     }
 
 
@@ -250,7 +280,6 @@ public class CourseServiceImpl implements CourseService {
 //    public List<CourseEntity> findCourseList() {
 //        return courseEntrityRepository.findByIsValidated(TAKE_EFFECT_OPEN);
 //    }
-
     @Override
     public List<ICourseStudyDto> findCourseStudyList(String studentId, Integer studyStatus) {
         return courseStudyRepository.findByIsValidatedEqualsAndStudentId(studentId, studyStatus);
@@ -264,11 +293,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public ICourseDto findByCourseNumberAndTeacherId(String courseNumber, String teacherId){
+    public ICourseDto findByCourseNumberAndTeacherId(String courseNumber, String teacherId) {
         List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(courseNumber, teacherId);
-        if (!list.isEmpty()){
+        if (!list.isEmpty()) {
             return list.get(0);
-        }else {
+        } else {
             return new ICourseDto() {
                 @Override
                 public String getCourseId() {
@@ -326,5 +355,33 @@ public class CourseServiceImpl implements CourseService {
                 }
             };
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void verifyCourse(CourseVerifyVo verifyVo) {
+        Optional<CourseVerify> optional = courseVerifyRepository.findById(verifyVo.getCourseId());
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在对应的课程信息");
+        CourseVerify courseVerify = optional.get();
+        courseVerify.setRemark(verifyVo.getRemark());
+        courseVerify.setVerifyStatus(verifyVo.getVerifyStatus());
+        courseVerify.setUpdateUser(verifyVo.getUserId());
+        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
+            Course course = new Course();
+            BeanUtil.copyProperties(courseVerify, course);
+            courseRepository.save(course);
+        }
+        courseVerifyRepository.save(courseVerify);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void verifyCourseImage(CourseVerifyVo verifyVo) {
+        List<CourseImages> list = courseImagesServiceImpl.findImagesByCourseId(verifyVo.getCourseId(), VERIFY_STATUS_APPLY);
+        List<CourseImages> courseImagesList = list.stream().peek(c -> {
+            c.setVerifyStatus(verifyVo.getVerifyStatus());
+            c.setUpdateUser(verifyVo.getUserId());
+        }).collect(Collectors.toList());
+        courseImagesServiceImpl.saveAll(courseImagesList);
     }
 }

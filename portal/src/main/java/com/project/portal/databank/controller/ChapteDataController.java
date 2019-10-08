@@ -7,16 +7,13 @@ import com.project.databank.service.ChapteDataService;
 import com.project.portal.databank.request.ChapteDataListReq;
 import com.project.portal.databank.request.ChapteDataReq;
 import com.project.portal.databank.request.ChapterDataRemoveReq;
-import com.project.portal.databank.request.FindDatumVerifyRequest;
 import com.project.portal.databank.vo.DataDatumVo;
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
-import com.project.user.domain.TeacherVerify;
 import com.project.user.service.TeacherService;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,22 +40,17 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @Api(value = "章节资料", tags = {"章节资料操作信息"})
 public class ChapteDataController {
 
-    private final ChapteDataService chapteDataService;
+    @Resource
+    private ChapteDataService chapteDataService;
+    @Resource
+    private ChapterDataVerify chapterDataVerify;
+    @Resource
+    private TokenService tokenService;
+    @Resource
+    private TeacherService teacherService;
+    @Resource
+    private LearnCenterService learnCenterService;
 
-    private final ChapterDataVerify chapterDataVerify;
-
-    private final TokenService tokenService;
-    private final TeacherService teacherService;
-    private final LearnCenterService learnCenterService;
-
-    @Autowired
-    public ChapteDataController(ChapteDataService chapteDataService, ChapterDataVerify chapterDataVerify, TokenService tokenService, TeacherService teacherService, LearnCenterService learnCenterService) {
-        this.chapteDataService = chapteDataService;
-        this.chapterDataVerify = chapterDataVerify;
-        this.tokenService = tokenService;
-        this.teacherService = teacherService;
-        this.learnCenterService = learnCenterService;
-    }
 
     @UserLoginToken
     @ApiOperation(value = "保存资料信息", notes = "{\"chapterId\":\"2c9180c067ee2be40167eeb29a7f0004\",\"courseId\":\"40288d5c67ed87b80167ed9569ed0000\",\"datumArea\":\"1\",\"datumType\":\"1\",\"files\":[{\"fileName\":\"工作汇报.docx\",\"fileUrl\":\"http://118.24.120.43:8080/group1/M00/00/02/rBsADFwF5TuAKbfUAAKjQx3o88406.docx\"}]}")

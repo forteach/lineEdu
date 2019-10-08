@@ -3,6 +3,11 @@ package com.project.portal.databank.controller;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.service.CourseChapterService;
+import com.project.course.service.CourseService;
+import com.project.course.web.vo.CourseChapterVerifyVo;
+import com.project.databank.domain.verify.CourseVerifyVo;
+import com.project.databank.service.ChapteDataService;
 import com.project.databank.service.CourseVerifyVoService;
 import com.project.databank.web.vo.CourseVerifyRequest;
 import com.project.portal.databank.request.FindDatumVerifyRequest;
@@ -20,8 +25,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
+import static com.project.databank.domain.verify.CourseVerifyEnum.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
@@ -35,13 +45,16 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @RequestMapping(path = "/courseVerify", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Api(value = "课程章节资料审核", tags = {"章节资料操作信息"})
 public class CourseVerifyController {
-    private final TokenService tokenService;
-    private final CourseVerifyVoService courseVerifyVoService;
-
-    public CourseVerifyController(TokenService tokenService, CourseVerifyVoService courseVerifyVoService) {
-        this.tokenService = tokenService;
-        this.courseVerifyVoService = courseVerifyVoService;
-    }
+    @Resource
+    private TokenService tokenService;
+    @Resource
+    private CourseVerifyVoService courseVerifyVoService;
+    @Resource
+    private ChapteDataService chapteDataService;
+    @Resource
+    private CourseService courseService;
+    @Resource
+    private CourseChapterService courseChapterService;
 
     @ApiOperation(value = "查询需要审核的课程信息")
     @UserLoginToken
@@ -74,7 +87,39 @@ public class CourseVerifyController {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         request.setUserId(userId);
-        courseVerifyVoService.saveUpdateVerify(request);
+
+        Optional<CourseVerifyVo> optionalCourseVerifyVo = courseVerifyVoService.findById(request.getId());
+        MyAssert.isFalse(optionalCourseVerifyVo.isPresent(), DefineCode.ERR0014, "不存在要修改的审核信息");
+        CourseVerifyVo verifyVo = optionalCourseVerifyVo.get();
+        //是文件资料信息
+        String type = verifyVo.getCourseType();
+
+        if (StrUtil.isNotBlank(verifyVo.getFileId())
+                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+            chapteDataService.verifyData(request, verifyVo.getDatumType());
+        }
+        if (COURSE_DATA.getValue().equals(type)
+                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+            //是课程
+            courseService.verifyCourse(new com.project.course.web.vo.CourseVerifyVo(verifyVo.courseId,
+                    request.getVerifyStatus(), request.getRemark(), userId));
+        }
+        if (CHAPTER_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+            //章节
+            courseChapterService.verifyCourse(new CourseChapterVerifyVo(verifyVo.getChapterId(),
+                    request.getVerifyStatus(), request.getRemark(), userId));
+        }
+        if (COURSE_IMAGE_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+            //课程图片轮播图
+            courseService.verifyCourseImage(new com.project.course.web.vo.CourseVerifyVo(verifyVo.getCourseId(),
+                    request.getVerifyStatus(), request.getRemark(), userId));
+        }
+        //修改数据
+        verifyVo.setUpdateUser(request.getUserId());
+        verifyVo.setVerifyStatus(request.getVerifyStatus());
+        verifyVo.setRemark(request.getRemark());
+        courseVerifyVoService.save(verifyVo);
+
         return WebResult.okResult();
     }
 }

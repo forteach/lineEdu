@@ -33,13 +33,19 @@ public class CourseImagesServiceImpl implements CourseImagesService {
     }
 
     @Override
-    public List<CourseImages> findImagesByCourseId(String courseId) {
-        return courseImagesRepository.findByIsValidatedEqualsAndCourseIdOrderByIndexNumAsc(TAKE_EFFECT_OPEN, courseId);
+    public List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus) {
+        return courseImagesRepository.findByIsValidatedEqualsAndCourseIdAndVerifyStatusOrderByIndexNumAsc(TAKE_EFFECT_OPEN, courseId, verifyStatus);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteImagesByCourseId(String courseId) {
         return courseImagesRepository.deleteAllByCourseId(courseId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveAll(List<CourseImages> courseImages){
+        courseImagesRepository.saveAll(courseImages);
     }
 }

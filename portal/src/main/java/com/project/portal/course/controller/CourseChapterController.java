@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.course.domain.CourseChapter;
+import com.project.course.domain.verify.CourseChapterVerify;
 import com.project.course.service.CourseChapterService;
 import com.project.portal.course.request.CourseChapterReq;
 import com.project.portal.response.WebResult;
@@ -54,7 +54,7 @@ public class CourseChapterController {
             @ApiImplicitParam(name = "videoTime", value = "需要观看视频长度(秒)", dataType = "int", paramType = "form")
     })
     public WebResult save(@ApiParam(name = "courseChapter", value = "科目章节对象", required = true) @RequestBody CourseChapterReq req, HttpServletRequest request) {
-        CourseChapter cs = new CourseChapter();
+        CourseChapterVerify cs = new CourseChapterVerify();
         BeanUtil.copyProperties(req, cs);
         String token = request.getHeader("token");
         String createUser = tokenService.getUserId(token);
@@ -163,6 +163,25 @@ public class CourseChapterController {
 //    @ApiOperation(value = "批量保存资料信息")
 //    public WebResult saveFilesDatum(@Valid @ApiParam(value = "保存章节资料文件信息") @RequestBody CourseDataDatumReq courseDataDatumReq){
 //        fileDatumService.saveCourseDataDatum(courseDataDatumReq);
+//        return WebResult.okResult();
+//    }
+//
+//    @UserLoginToken
+//    @ApiOperation(value = "审批课程信息")
+//    @PostMapping(path = "/verifyCourse")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "chapterId", value = "课程Id", required = true, dataType = "string"),
+//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", required = true, dataType = "string"),
+//            @ApiImplicitParam(name = "remark", value = "备注", dataType = "string")
+//    })
+//    public WebResult verifyCourse(@RequestBody CourseChapterVerifyReq req, HttpServletRequest httpServletRequest){
+//        MyAssert.isNull(req.getChapterId(), DefineCode.ERR0010, "章节Id不能为空");
+//        MyAssert.isNull(req.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
+//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+//        CourseChapterVerifyVo verifyVo = new CourseChapterVerifyVo();
+//        BeanUtil.copyProperties(req, verifyVo);
+//        verifyVo.setUserId(userId);
+//        courseChapterService.verifyCourse(verifyVo);
 //        return WebResult.okResult();
 //    }
 }

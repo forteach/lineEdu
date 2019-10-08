@@ -8,12 +8,14 @@ import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
 import com.project.course.domain.OnLineCourseDic;
+import com.project.course.domain.verify.CourseVerify;
 import com.project.course.service.CourseService;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.course.web.resp.CourseSaveResp;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
 import com.project.portal.course.request.CourseFindAllReq;
+import com.project.portal.course.request.CourseImageFindReq;
 import com.project.portal.course.request.CourseImagesReq;
 import com.project.portal.course.request.CourseStudyReq;
 import com.project.portal.course.response.CourseListResp;
@@ -34,6 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
 
@@ -84,7 +88,7 @@ public class CourseController {
         //验证请求信息
         CourseVer.saveValide(req);
         //设置service数据
-        Course course = new Course();
+        CourseVerify course = new CourseVerify();
         UpdateUtil.copyNullProperties(req, course);
         String token = request.getHeader("token");
         String userId = tokenService.getUserId(token);
@@ -263,18 +267,23 @@ public class CourseController {
     /**
      * 查询轮播图信息
      *
-     * @param courseId
+     * @param req
      * @return
      */
     @UserLoginToken
     @PostMapping("/findImagesByCourseId")
     @ApiOperation(value = "查询课程轮播图", notes = "根据课程科目ID查询对应的轮播图")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, paramType = "query", example = "ff808181677d238701677d26fdae0002")
+            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, paramType = "query")
     })
-    public WebResult findImagesByCourseId(@ApiParam(name = "courseId", value = "查询对应的", type = "string", required = true) @RequestBody String courseId) {
-        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
-        return WebResult.okResult(courseService.findImagesByCourseId(String.valueOf(JSONObject.parseObject(courseId).getString("courseId"))));
+    public WebResult findImagesByCourseId(@RequestBody CourseImageFindReq req, HttpServletRequest httpServletRequest) {
+        MyAssert.blank(req.getCourseId(), DefineCode.ERR0010, "科目ID不为空");
+        String token = httpServletRequest.getHeader("token");
+        if (tokenService.isAdmin(token)) {
+            return WebResult.okResult(courseService.findImagesByCourseId(req.getCourseId(), VERIFY_STATUS_APPLY));
+        }else {
+            return WebResult.okResult(courseService.findImagesByCourseId(req.getCourseId(), VERIFY_STATUS_AGREE));
+        }
     }
 
     /**
@@ -311,4 +320,42 @@ public class CourseController {
         List<CourseTeacherDto> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId);
         return WebResult.okResult(courseIds.parallelStream().filter(Objects::nonNull).map(d -> courseService.findByCourseNumberAndTeacherId(d.getCourseId(), d.getTeacherId())).collect(toList()));
     }
+//
+//    @UserLoginToken
+//    @ApiOperation(value = "审批课程信息")
+//    @PostMapping(path = "/verifyCourse")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "courseId", value = "课程Id", required = true, dataType = "string"),
+//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", required = true, dataType = "string"),
+//            @ApiImplicitParam(name = "remark", value = "备注", dataType = "string")
+//    })
+//    public WebResult verifyCourse(@RequestBody CourseVerifyReq req, HttpServletRequest httpServletRequest){
+//        MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不能为空");
+//        MyAssert.isNull(req.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
+//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+//        CourseVerifyVo verifyVo = new CourseVerifyVo();
+//        BeanUtil.copyProperties(req, verifyVo);
+//        verifyVo.setUserId(userId);
+//        courseService.verifyCourse(verifyVo);
+//        return WebResult.okResult();
+//    }
+//
+//    @UserLoginToken
+//    @ApiOperation(value = "审批课程轮播图")
+//    @PostMapping(path = "/verifyCourseImage")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "courseId", value = "课程Id", required = true, dataType = "string"),
+//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", required = true, dataType = "string"),
+//            @ApiImplicitParam(name = "remark", value = "备注", dataType = "string")
+//    })
+//    public WebResult verifyCourseImage(@RequestBody CourseVerifyReq req, HttpServletRequest httpServletRequest){
+//        MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不能为空");
+//        MyAssert.isNull(req.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
+//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+//        CourseVerifyVo verifyVo = new CourseVerifyVo();
+//        BeanUtil.copyProperties(req, verifyVo);
+//        verifyVo.setUserId(userId);
+//        courseService.verifyCourseImage(verifyVo);
+//        return WebResult.okResult();
+//    }
 }

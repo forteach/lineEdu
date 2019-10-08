@@ -41,6 +41,9 @@ public class CourseImages extends Entitys implements Serializable {
     @Column(name = "index_num", columnDefinition = "INT(11) COMMENT '顺序ID'")
     private Integer indexNum;
 
+    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus;
+
     public CourseImages(String createUser, String updateUser, String centerAreaId,
                         String imageName, String imageUrl, String courseId, Integer indexNum) {
         super(createUser, updateUser, centerAreaId);

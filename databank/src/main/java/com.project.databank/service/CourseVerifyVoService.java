@@ -1,11 +1,11 @@
 package com.project.databank.service;
 
 import com.project.databank.domain.verify.CourseVerifyVo;
-import com.project.databank.web.vo.CourseVerifyRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -15,10 +15,18 @@ import java.util.List;
  * @description:
  */
 public interface CourseVerifyVoService {
+
     void save(CourseVerifyVo verifyVo);
+
     void update(CourseVerifyVo verifyVo);
+
     Page<CourseVerifyVo> findAllPage(String courseId, PageRequest pageRequest);
+
     Page<CourseVerifyVo> findAllPage(PageRequest pageRequest);
+
     void saveAll(List<CourseVerifyVo> verifyVoList);
-    void saveUpdateVerify(CourseVerifyRequest courseVerifyRequest);
+
+    Optional<CourseVerifyVo> findById(String id);
+
+//    void saveUpdateVerify(CourseVerifyRequest courseVerifyRequest);
 }

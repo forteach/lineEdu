@@ -23,7 +23,7 @@ public interface CourseImagesRepository extends JpaRepository<CourseImages, Stri
      * @return
      */
     @Transactional(readOnly = true)
-    List<CourseImages> findByIsValidatedEqualsAndCourseIdOrderByIndexNumAsc(String isValidated, String courseId);
+    List<CourseImages> findByIsValidatedEqualsAndCourseIdAndVerifyStatusOrderByIndexNumAsc(String isValidated, String courseId, String verifyStatus);
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying(clearAutomatically = true)

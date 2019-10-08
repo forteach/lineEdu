@@ -16,7 +16,9 @@ public interface CourseImagesService {
 
     public void saveCourseImages(String courseId, List<DataDatumVo> dataList, String createUser, String centerAreaId);
 
-    public List<CourseImages> findImagesByCourseId(String courseId);
+    public List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus);
 
     public int deleteImagesByCourseId(String courseId);
+
+    void saveAll(List<CourseImages> courseImages);
 }
