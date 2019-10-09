@@ -50,15 +50,6 @@ public abstract class Entitys{
     @Column(name = "center_area_id", columnDefinition = "VARCHAR(40) COMMENT '归属的学习中心编号'")
     public String centerAreaId;
 
-    public Entitys(String centerAreaId) {
-        this.centerAreaId = centerAreaId;
-    }
-
-    public Entitys(String createUser, String centerAreaId) {
-        this.createUser = createUser;
-        this.centerAreaId = centerAreaId;
-    }
-
     public Entitys(String createUser, String updateUser, String centerAreaId) {
         this.createUser = createUser;
         this.updateUser = updateUser;

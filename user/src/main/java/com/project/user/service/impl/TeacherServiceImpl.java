@@ -71,8 +71,10 @@ public class TeacherServiceImpl implements TeacherService {
         Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(teacherVerify.getTeacherId());
         MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "没有要修改的数据");
         TeacherVerify t = optionalTeacher.get();
+        String centerId = t.getCenterAreaId();
         BeanUtil.copyProperties(teacherVerify, t);
         t.setVerifyStatus(VERIFY_STATUS_APPLY);
+        t.setCenterAreaId(centerId);
 
 //        if (StrUtil.isNotBlank(teacherVerify.getPhone()) && !t.getPhone().equals(teacherVerify.getPhone())) {
 //            userService.updateTeacher(t.getPhone(), teacherVerify.getPhone(), teacherVerify.getUpdateUser());
