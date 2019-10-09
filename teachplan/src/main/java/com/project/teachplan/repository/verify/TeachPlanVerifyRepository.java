@@ -22,6 +22,9 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
     @Transactional(readOnly = true)
     List<TeachPlanVerify> findAllByVerifyStatusEqualsAndPlanId(String verifyStatus, String planId);
 
+    @Transactional(readOnly = true)
+    List<TeachPlanVerify> findAllByPlanId(String planId);
+
     @Query(value = "select " +
             " tp.planId as planId, " +
             " tp.planName as planName," +

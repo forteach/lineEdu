@@ -184,7 +184,7 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "remark", value = "备注信息", dataType = "string", paramType = "form")
     })
-    public WebResult verifyTeachPlan(TeachPlanVerifyRequest request, HttpServletRequest httpServletRequest) {
+    public WebResult verifyTeachPlan(@RequestBody TeachPlanVerifyRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
         MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "计划状态不能为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));

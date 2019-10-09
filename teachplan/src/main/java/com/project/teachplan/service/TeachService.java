@@ -158,6 +158,7 @@ public class TeachService {
     public void removeByPlanId(String planId) {
         teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
         teachPlanRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
+        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -232,15 +233,58 @@ public class TeachService {
                 updateCourseByPlanId(planId, TAKE_EFFECT_OPEN, userId);
                 //修改计划文件状态
                 planFileService.updateStatus(planId, TAKE_EFFECT_OPEN, userId);
+                //修改审核的计划信息
+                setVerifyStatus(planId, TAKE_EFFECT_OPEN, userId);
             } else {
                 t.setIsValidated(TAKE_EFFECT_CLOSE);
                 updateClassByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
                 updateCourseByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
                 planFileService.updateStatus(planId, TAKE_EFFECT_CLOSE, userId);
+                //修改审核的计划信息
+                setVerifyStatus(planId, TAKE_EFFECT_CLOSE, userId);
             }
             t.setUpdateUser(userId);
             teachPlanRepository.save(t);
         });
+    }
+
+    private void setVerifyStatus(String planId, String status, String userId){
+        //修改教学计划
+        updateTeachPlanVerify(planId, status, userId);
+        //修改教学计划班级
+        updateClassVerifyByPlanId(planId, status, userId);
+        //修改教学计划课程
+        updateVerfyCourseByPlanId(planId, status, userId);
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    void updateTeachPlanVerify(String planId, String status, String userId){
+        List<TeachPlanVerify> collect = teachPlanVerifyRepository.findAllByPlanId(planId).stream().peek(t -> {
+            t.setIsValidated(status);
+            t.setUpdateUser(userId);
+        }).collect(toList());
+        teachPlanVerifyRepository.saveAll(collect);
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    void updateVerfyCourseByPlanId(String planId, String status, String userId) {
+        List<TeachPlanCourseVerify> list = teachPlanCourseVerifyRepository.findAllByPlanId(planId).stream().peek(c -> {
+            c.setIsValidated(status);
+            c.setUpdateUser(userId);
+        }).collect(Collectors.toList());
+        teachPlanCourseVerifyRepository.saveAll(list);
+    }
+
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    void updateClassVerifyByPlanId(String planId, String status, String userId) {
+        List<TeachPlanClassVerify> list = teachPlanClassVerifyRepository.findAllByPlanId(planId).stream().peek(c -> {
+            c.setIsValidated(status);
+            c.setUpdateUser(userId);
+        }).collect(Collectors.toList());
+        teachPlanClassVerifyRepository.saveAll(list);
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -21,4 +21,7 @@ public interface TeachPlanCourseVerifyRepository extends JpaRepository<TeachPlan
 
     @Modifying(clearAutomatically = true)
     int deleteAllByPlanId(String planId);
+
+    @Transactional(readOnly = true)
+    List<TeachPlanCourseVerify> findAllByPlanId(String planId);
 }
