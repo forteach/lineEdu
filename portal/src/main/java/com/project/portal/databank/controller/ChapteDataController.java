@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
@@ -86,14 +87,24 @@ public class ChapteDataController {
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
     })
-    public WebResult findDatumList(@ApiParam(value = "资料信息列表", name = "chapteData") @RequestBody ChapteDataListReq req) {
+    public WebResult findDatumList(@ApiParam(value = "资料信息列表", name = "chapteData") @RequestBody ChapteDataListReq req, HttpServletRequest httpServletRequest) {
         valideSort(req.getPage(), req.getSize());
         PageRequest pageReq = PageRequest.of(req.getPage(), req.getSize());
         //判断是否按资源领域查询列表，并设置返回结果
-        if (StrUtil.isNotBlank(req.getDatumType())) {
-            return WebResult.okResult(chapteDataService.findDatumList(req.getChapterId(), req.getDatumType(), pageReq));
-        } else {
-            return WebResult.okResult(chapteDataService.findDatumList(req.getChapterId(), pageReq));
+        String token = httpServletRequest.getHeader("token");
+        if (tokenService.isStudent(token)) {
+            if (StrUtil.isNotBlank(req.getDatumType())) {
+                return WebResult.okResult(chapteDataService.findDatumList(req.getChapterId(), req.getDatumType(), pageReq, TAKE_EFFECT_OPEN));
+            } else {
+                return WebResult.okResult(chapteDataService.findDatumList(req.getChapterId(), pageReq, TAKE_EFFECT_OPEN));
+            }
+        }else {
+            //不是学生查询对应的资料信息
+            if (StrUtil.isNotBlank(req.getDatumType())) {
+                return WebResult.okResult(chapteDataService.findDatumList(req.getChapterId(), req.getDatumType(), pageReq, ""));
+            }else {
+                return WebResult.okResult(chapteDataService.findDatumList(req.getChapterId(), pageReq, ""));
+            }
         }
     }
 

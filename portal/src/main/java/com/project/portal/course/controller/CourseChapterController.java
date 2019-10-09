@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.course.domain.verify.CourseChapterVerify;
+import com.project.course.domain.CourseChapter;
 import com.project.course.service.CourseChapterService;
 import com.project.portal.course.request.CourseChapterReq;
 import com.project.portal.response.WebResult;
@@ -54,7 +54,7 @@ public class CourseChapterController {
             @ApiImplicitParam(name = "videoTime", value = "需要观看视频长度(秒)", dataType = "int", paramType = "form")
     })
     public WebResult save(@ApiParam(name = "courseChapter", value = "科目章节对象", required = true) @RequestBody CourseChapterReq req, HttpServletRequest request) {
-        CourseChapterVerify cs = new CourseChapterVerify();
+        CourseChapter cs = new CourseChapter();
         BeanUtil.copyProperties(req, cs);
         String token = request.getHeader("token");
         String createUser = tokenService.getUserId(token);

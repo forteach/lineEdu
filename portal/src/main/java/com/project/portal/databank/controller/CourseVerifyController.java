@@ -3,9 +3,7 @@ package com.project.portal.databank.controller;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.course.service.CourseChapterService;
 import com.project.course.service.CourseService;
-import com.project.course.web.vo.CourseChapterVerifyVo;
 import com.project.databank.domain.verify.CourseVerifyVo;
 import com.project.databank.service.ChapteDataService;
 import com.project.databank.service.CourseVerifyVoService;
@@ -27,11 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
-import static com.project.databank.domain.verify.CourseVerifyEnum.*;
+import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_CHAPTER_QUESTION;
+import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_DATA;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
@@ -53,8 +51,6 @@ public class CourseVerifyController {
     private ChapteDataService chapteDataService;
     @Resource
     private CourseService courseService;
-    @Resource
-    private CourseChapterService courseChapterService;
 
     @ApiOperation(value = "查询需要审核的课程信息")
     @UserLoginToken
@@ -93,8 +89,7 @@ public class CourseVerifyController {
         //是文件资料信息
         String type = verifyVo.getCourseType();
 
-        if (StrUtil.isNotBlank(verifyVo.getFileId())
-                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+        if (StrUtil.isNotBlank(verifyVo.getFileId())){
             chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(request.getId(),
                     request.getVerifyStatus(), request.getRemark(), userId), verifyVo.getDatumType());
         }
@@ -104,11 +99,11 @@ public class CourseVerifyController {
             courseService.verifyCourse(new com.project.course.web.vo.CourseVerifyVo(verifyVo.courseId,
                     request.getVerifyStatus(), request.getRemark(), userId));
         }
-        if (CHAPTER_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-            //章节
-            courseChapterService.verifyCourse(new CourseChapterVerifyVo(verifyVo.getChapterId(),
-                    request.getVerifyStatus(), request.getRemark(), userId));
-        }
+//        if (CHAPTER_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+//            //章节
+//            courseChapterService.verifyCourse(new CourseChapterVerifyVo(verifyVo.getChapterId(),
+//                    request.getVerifyStatus(), request.getRemark(), userId));
+//        }
 //        if (COURSE_IMAGE_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
 //            //课程图片轮播图
 //            courseService.verifyCourseImage(new com.project.course.web.vo.CourseVerifyVo(verifyVo.getCourseId(),

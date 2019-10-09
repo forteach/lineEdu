@@ -148,7 +148,7 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     public List<ICourseListDto> findMyCourse(String userId, PageRequest page) {
-        return courseRepository.findByCreateUserAndIsValidatedOrderByCreateTimeDesc(userId, TAKE_EFFECT_OPEN, page)
+        return courseVerifyRepository.findByCreateUserAndIsValidatedOrderByCreateTimeDesc(userId, TAKE_EFFECT_OPEN, page)
                 .getContent();
     }
 

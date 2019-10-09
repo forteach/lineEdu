@@ -47,6 +47,12 @@ public abstract class AbsDatum extends Entitys {
     @Column(name = "datum_type", columnDefinition = "VARCHAR(32) COMMENT '资料类型 1文档　2图册　3视频　4音频　5链接'")
     private String datumType;
 
+
+
+
+    @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
+    private String remark;
+
     @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
     private String verifyStatus;
 }
