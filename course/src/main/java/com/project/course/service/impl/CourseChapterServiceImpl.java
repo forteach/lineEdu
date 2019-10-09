@@ -3,23 +3,16 @@ package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import com.project.base.common.keyword.DefineCode;
-import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.CourseChapter;
-import com.project.course.domain.verify.CourseChapterVerify;
 import com.project.course.repository.CourseChapterRepository;
 import com.project.course.repository.dto.ICourseChapterDto;
-import com.project.course.repository.verify.CourseChapterVerifyRepository;
 import com.project.course.service.CourseChapterService;
 import com.project.course.web.req.CourseChapterEditReq;
 import com.project.course.web.req.State;
 import com.project.course.web.resp.CourseChapterSaveResp;
 import com.project.course.web.resp.CourseTreeResp;
-import com.project.course.web.vo.CourseChapterVerifyVo;
 import com.project.course.web.vo.CourseChapterVo;
-import com.project.databank.domain.verify.CourseVerifyVo;
-import com.project.databank.service.CourseVerifyVoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
-import static com.project.databank.domain.verify.CourseVerifyEnum.CHAPTER_DATE;
 
 /**
  * @Auther: zhangyy
@@ -48,14 +39,11 @@ public class CourseChapterServiceImpl implements CourseChapterService {
 
     @Resource
     private CourseChapterRepository courseChapterRepository;
-    @Resource
-    private CourseChapterVerifyRepository courseChapterVerifyRepository;
-    @Resource
-    private CourseVerifyVoService courseVerifyVoService;
+
 
     @Override
     @Transactional(rollbackForClassName = "Exception")
-    public CourseChapterSaveResp save(CourseChapterVerify courseChapter) {
+    public CourseChapterSaveResp save(CourseChapter courseChapter) {
         if (StrUtil.isBlank(courseChapter.getChapterId())) {
             //1、判断是顶层章节，设置目录层级为1
             if (COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId())) {
@@ -63,24 +51,18 @@ public class CourseChapterServiceImpl implements CourseChapterService {
 
             } else {
                 //获得当前层级+1
-                courseChapterVerifyRepository.findById(courseChapter.getChapterParentId())
+                courseChapterRepository.findById(courseChapter.getChapterParentId())
                         .ifPresent(c -> {
                             courseChapter.setChapterLevel(String.valueOf(Integer.parseInt(1 + c.getChapterLevel())));
                         });
             }
             //2、查询当前科目章节有多少条数据
-            int count = courseChapterVerifyRepository.countByIsValidatedEqualsAndCourseIdAndChapterParentId(TAKE_EFFECT_OPEN, courseChapter.getCourseId(), courseChapter.getChapterParentId());
+            int count = courseChapterRepository.countByIsValidatedEqualsAndCourseIdAndChapterParentId(TAKE_EFFECT_OPEN, courseChapter.getCourseId(), courseChapter.getChapterParentId());
 
             //3、设置当前章节下的最大序号
             courseChapter.setSort(String.valueOf(count + 1));
-            CourseChapterVerify chapterVerify = courseChapterVerifyRepository.save(courseChapter);
+            courseChapterRepository.save(courseChapter);
 
-            // 添加审批记录
-            CourseVerifyVo verifyVo = new CourseVerifyVo();
-            BeanUtil.copyProperties(chapterVerify, verifyVo);
-            verifyVo.setSubmitType("添加课程章节");
-            verifyVo.setCourseType(CHAPTER_DATE.getValue());
-            courseVerifyVoService.save(verifyVo);
 
             //4、创建输出对象
             CourseChapterSaveResp resp = new CourseChapterSaveResp();
@@ -98,17 +80,10 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     public CourseChapterSaveResp edit(CourseChapterEditReq courseChapterEditReq) {
         //1、获得当前数据库对象
         CourseChapterSaveResp resp = new CourseChapterSaveResp();
-        courseChapterVerifyRepository.findById(courseChapterEditReq.getChapterId())
+        courseChapterRepository.findById(courseChapterEditReq.getChapterId())
                 .ifPresent(source -> {
                     UpdateUtil.copyProperties(courseChapterEditReq, source);
-                    CourseChapterVerify chapterVerify = courseChapterVerifyRepository.save(source);
-
-                    //保存修改审批记录列表
-                    CourseVerifyVo verifyVo = new CourseVerifyVo();
-                    BeanUtil.copyProperties(chapterVerify, verifyVo);
-                    verifyVo.setSubmitType("修改课程章节");
-                    verifyVo.setCourseType(CHAPTER_DATE.getValue());
-                    courseVerifyVoService.save(verifyVo);
+                    courseChapterRepository.save(source);
 
                     //3、创建输出对象
                     BeanUtil.copyProperties(source, resp);
@@ -235,20 +210,20 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         return courseChapterRepository.findCourseId(vo.getIsValidated(), vo.getCourseId());
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void verifyCourse(CourseChapterVerifyVo verifyVo) {
-        Optional<CourseChapterVerify> verifyOptional = courseChapterVerifyRepository.findById(verifyVo.getChapterId());
-        MyAssert.isFalse(verifyOptional.isPresent(), DefineCode.ERR0014, "不存在对应的章节信息");
-        CourseChapterVerify courseChapterVerify = verifyOptional.get();
-        courseChapterVerify.setUpdateUser(verifyVo.getUserId());
-        courseChapterVerify.setVerifyStatus(verifyVo.getVerifyStatus());
-        courseChapterVerify.setRemark(verifyVo.getRemark());
-        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
-            CourseChapter courseChapter = new CourseChapter();
-            BeanUtil.copyProperties(courseChapterVerify, courseChapter);
-            courseChapterRepository.save(courseChapter);
-        }
-        courseChapterVerifyRepository.save(courseChapterVerify);
-    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void verifyCourse(CourseChapterVerifyVo verifyVo) {
+//        Optional<CourseChapterVerify> verifyOptional = courseChapterVerifyRepository.findById(verifyVo.getChapterId());
+//        MyAssert.isFalse(verifyOptional.isPresent(), DefineCode.ERR0014, "不存在对应的章节信息");
+//        CourseChapterVerify courseChapterVerify = verifyOptional.get();
+//        courseChapterVerify.setUpdateUser(verifyVo.getUserId());
+//        courseChapterVerify.setVerifyStatus(verifyVo.getVerifyStatus());
+//        courseChapterVerify.setRemark(verifyVo.getRemark());
+//        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
+//            CourseChapter courseChapter = new CourseChapter();
+//            BeanUtil.copyProperties(courseChapterVerify, courseChapter);
+//            courseChapterRepository.save(courseChapter);
+//        }
+//        courseChapterVerifyRepository.save(courseChapterVerify);
+//    }
 }

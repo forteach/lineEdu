@@ -2,12 +2,10 @@ package com.project.course.service;
 
 
 import com.project.course.domain.CourseChapter;
-import com.project.course.domain.verify.CourseChapterVerify;
 import com.project.course.repository.dto.ICourseChapterDto;
 import com.project.course.web.req.CourseChapterEditReq;
 import com.project.course.web.resp.CourseChapterSaveResp;
 import com.project.course.web.resp.CourseTreeResp;
-import com.project.course.web.vo.CourseChapterVerifyVo;
 import com.project.course.web.vo.CourseChapterVo;
 
 import java.util.List;
@@ -21,7 +19,7 @@ import java.util.List;
  */
 public interface CourseChapterService {
 
-    public CourseChapterSaveResp save(CourseChapterVerify courseChapter);
+    public CourseChapterSaveResp save(CourseChapter courseChapter);
 
     public CourseChapterSaveResp edit(CourseChapterEditReq courseChapterEditReq);
 
@@ -39,5 +37,5 @@ public interface CourseChapterService {
 
     public List<ICourseChapterDto> findAllCourseChapter(CourseChapterVo vo);
 
-    void verifyCourse(CourseChapterVerifyVo verifyVo);
+//    void verifyCourse(CourseChapterVerifyVo verifyVo);
 }

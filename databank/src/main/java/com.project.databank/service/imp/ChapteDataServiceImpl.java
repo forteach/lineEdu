@@ -108,24 +108,24 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      * @return 资料文件列表
      */
     @Override
-    public List<DatumResp> findDatumList(String chapterId, String datumType, Pageable pageable) {
+    public List<DatumResp> findDatumList(String chapterId, String datumType, Pageable pageable, String isValidated) {
         //1、根据分拣类型，获得资料列表
         Page<? extends AbsDatum> plist = null;
         //文件
         if (datumType.equals(Dic.COURSE_ZILIAO_FILE)) {
-            plist = findFileDatumPage(chapterId, datumType, pageable);
+            plist = findFileDatumPage(chapterId, datumType, pageable, isValidated);
         }
         //音频
         if (datumType.equals(Dic.COURSE_ZILIAO_AUDIO)) {
-            plist = findAudioDatumPage(chapterId, datumType, pageable);
+            plist = findAudioDatumPage(chapterId, datumType, pageable, isValidated);
         }
         //视频
         if (datumType.equals(Dic.COURSE_ZILIAO_VIEW)) {
-            plist = findViewDatumPage(chapterId, datumType, pageable);
+            plist = findViewDatumPage(chapterId, datumType, pageable, isValidated);
         }
         //链接
         if (datumType.equals(Dic.COURSE_ZILIAO_LINK)) {
-            plist = findLinkDatumPage(chapterId, datumType, pageable);
+            plist = findLinkDatumPage(chapterId, datumType, pageable, isValidated);
         }
 
         //2、转换LIST对象
@@ -208,27 +208,27 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     }
 
 
-    public Page<FileDatum> findFileDatumPage(String chapterId, String datumType, Pageable pageable) {
+    public Page<FileDatum> findFileDatumPage(String chapterId, String datumType, Pageable pageable, String isValidated) {
         return fileDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType, isValidated);
         }, pageable);
     }
 
-    public Page<ViewDatum> findViewDatumPage(String chapterId, String datumType, Pageable pageable) {
+    public Page<ViewDatum> findViewDatumPage(String chapterId, String datumType, Pageable pageable, String isValidated) {
         return viewDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType, isValidated);
         }, pageable);
     }
 
-    public Page<AudioDatum> findAudioDatumPage(String chapterId, String datumType, Pageable pageable) {
+    public Page<AudioDatum> findAudioDatumPage(String chapterId, String datumType, Pageable pageable, String isValidated) {
         return audioDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType, isValidated);
         }, pageable);
     }
 
-    public Page<LinkDatum> findLinkDatumPage(String chapterId, String datumType, Pageable pageable) {
+    public Page<LinkDatum> findLinkDatumPage(String chapterId, String datumType, Pageable pageable, String isValidated) {
         return linkDatumRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType);
+            return setSpecification(root, criteriaQuery, criteriaBuilder, chapterId, datumType, isValidated);
         }, pageable);
     }
 
@@ -242,10 +242,12 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      * @param datumType
      * @return
      */
-    private Predicate setSpecification(Root<?> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder, String chapterId, String datumType) {
+    private Predicate setSpecification(Root<?> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder, String chapterId, String datumType, String isValidated) {
         List<Predicate> predicatesList = new ArrayList<Predicate>();
 
-        predicatesList.add(criteriaBuilder.equal(root.get("isValidated"), TAKE_EFFECT_OPEN));
+        if (StrUtil.isNotBlank(isValidated)) {
+            predicatesList.add(criteriaBuilder.equal(root.get("isValidated"), isValidated));
+        }
 
         if (StrUtil.isNotBlank(chapterId)) {
             predicatesList.add(criteriaBuilder.equal(root.get("chapterId"), chapterId));
@@ -264,8 +266,26 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      * @return
      */
     @Override
-    public List<DatumResp> findDatumList(String chapterId, Pageable pageable) {
+    public List<DatumResp> findDatumList(String chapterId, Pageable pageable, String isValidated) {
         List<AbsDatum> fileList = CollUtil.newArrayList();
+        //查询全部类型资源数据
+        if (StrUtil.isNotBlank(isValidated)){
+            findfileListIsValidatedOpen(fileList, chapterId);
+        }else {
+            findfileList(fileList, chapterId);
+        }
+
+        //转换LIST对象
+        return fileList.stream()
+                .filter(Objects::nonNull)
+                .map((AbsDatum item) -> {
+                    DatumResp dr = new DatumResp();
+                    BeanUtil.copyProperties(item, dr);
+                    return dr;
+                }).collect(toList());
+    }
+
+    private void findfileListIsValidatedOpen(List<AbsDatum> fileList, String chapterId){
         //查询全部类型资源数据
         List<FileDatum> fileDatums = fileDatumRepository.findByChapterIdAndIsValidated(chapterId, TAKE_EFFECT_OPEN);
         if (fileDatums != null && fileDatums.size() > 0) {
@@ -286,15 +306,29 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         if (linkDatas != null && linkDatas.size() > 0) {
             fileList.addAll(linkDatas);
         }
+    }
 
-        //转换LIST对象
-        return fileList.stream()
-                .filter(Objects::nonNull)
-                .map((AbsDatum item) -> {
-                    DatumResp dr = new DatumResp();
-                    BeanUtil.copyProperties(item, dr);
-                    return dr;
-                }).collect(toList());
+    private void findfileList(List<AbsDatum> fileList, String chapterId){
+        //查询全部类型资源数据
+        List<FileDatum> fileDatums = fileDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
+        if (fileDatums != null && fileDatums.size() > 0) {
+            fileList.addAll(fileDatums);
+        }
+
+        List<AudioDatum> audioDatas = audioDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
+        if (audioDatas != null && audioDatas.size() > 0) {
+            fileList.addAll(audioDatas);
+        }
+
+        List<ViewDatum> viewDatas = viewDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
+        if (viewDatas != null && viewDatas.size() > 0) {
+            fileList.addAll(viewDatas);
+        }
+
+        List<LinkDatum> linkDatas = linkDatumRepository.findAllByChapterIdOrderByCreateTimeDesc(chapterId);
+        if (linkDatas != null && linkDatas.size() > 0) {
+            fileList.addAll(linkDatas);
+        }
     }
 
     private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd, String createUser, String centerAreaId, String centerName, String teacherName) {
@@ -496,19 +530,19 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
                 viewDatumRepository.findById(request.getId()).ifPresent(viewDatum -> {
-                    updateChapterData(request, fileDatumRepository, viewDatum);
+                    updateChapterData(request, viewDatumRepository, viewDatum);
                 });
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
                 audioDatumRepository.findById(request.getId()).ifPresent(audioDatum -> {
-                    updateChapterData(request, fileDatumRepository, audioDatum);
+                    updateChapterData(request, audioDatumRepository, audioDatum);
                 });
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
                 linkDatumRepository.findById(request.getId()).ifPresent(linkDatum -> {
-                    updateChapterData(request, fileDatumRepository, linkDatum);
+                    updateChapterData(request, linkDatumRepository, linkDatum);
                 });
                 break;
             default:
@@ -517,8 +551,12 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     }
 
     private void updateChapterData(CourseVerifyRequest request, IDatumRepoitory rep, AbsDatum fd){
+        if (VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+            //审核通过
+            fd.setIsValidated(TAKE_EFFECT_OPEN);
+        }
         fd.setUpdateUser(request.getUserId());
-        fd.setIsValidated(TAKE_EFFECT_OPEN);
+        fd.setRemark(request.getRemark());
         fd.setVerifyStatus(request.getVerifyStatus());
         rep.save(fd);
     }

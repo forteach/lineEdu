@@ -82,6 +82,11 @@ public class TokenServiceImpl implements TokenService {
         return USER_ROLE_CODE_ADMIN.equals(getRoleCode(token)) ? true : false;
     }
 
+    @Override
+    public boolean isStudent(String token) {
+        return TOKEN_STUDENT.equals(getValue(token, 1)) ? true : false;
+    }
+
     /**
      * 校验token
      * @param userId

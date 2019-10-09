@@ -26,9 +26,9 @@ public interface ChapteDataService {
      * @param pageable
      * @return
      */
-    public List<DatumResp> findDatumList(String chapterId, String datumType, Pageable pageable);
+    public List<DatumResp> findDatumList(String chapterId, String datumType, Pageable pageable, String isValidated);
 
-    public List<DatumResp> findDatumList(String chapterId, Pageable pageable);
+    public List<DatumResp> findDatumList(String chapterId, Pageable pageable, String isValidated);
 
     List<? extends AbsDatum> findAllDatumByChapterId(String chapterId, String datumType);
 
