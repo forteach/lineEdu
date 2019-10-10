@@ -44,4 +44,8 @@ public class DatumResp implements Serializable {
      * 文件类型（音频、视频....）
      */
     private String datumType;
+
+    private String remark;
+
+    private String verifyStatus;
 }

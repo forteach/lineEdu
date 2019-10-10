@@ -3,6 +3,7 @@ package com.project.portal.databank.controller;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.service.CourseService;
 import com.project.databank.service.ChapteDataService;
 import com.project.portal.databank.request.ChapteDataListReq;
 import com.project.portal.databank.request.ChapteDataReq;
@@ -51,6 +52,8 @@ public class ChapteDataController {
     private TeacherService teacherService;
     @Resource
     private LearnCenterService learnCenterService;
+    @Resource
+    private CourseService courseService;
 
 
     @UserLoginToken
@@ -77,7 +80,8 @@ public class ChapteDataController {
         String centerAreaId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerAreaId).getCenterName();
         String teacherName = teacherService.findById(userId).getTeacherName();
-        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId, centerAreaId, centerName, teacherName));
+        String courseName = courseService.getCourseVerifyByCourseId(courseId).getCourseName();
+        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId, centerAreaId, centerName, teacherName, courseName));
     }
 
     @UserLoginToken

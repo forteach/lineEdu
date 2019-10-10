@@ -90,7 +90,7 @@ public class CourseVerifyController {
         String type = verifyVo.getCourseType();
 
         if (StrUtil.isNotBlank(verifyVo.getFileId())){
-            chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(request.getId(),
+            chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getFileId(),
                     request.getVerifyStatus(), request.getRemark(), userId), verifyVo.getDatumType());
         }
         if (COURSE_DATA.getValue().equals(type)
