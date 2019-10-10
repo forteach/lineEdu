@@ -1,6 +1,7 @@
 package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.repository.dto.StudentScoreDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,6 +38,23 @@ public interface StudentScoreRepository extends JpaRepository<StudentScore, Stri
           + " WHERE (first_name = ?3 OR ?3 IS NULL)"
           + " ORDER BY ?#{#pageable}",
      */
+
+    @Query(value = " select " +
+            " ss.studentId as studentId," +
+            " s.studentName as studentName," +
+            " s.gender as gender, " +
+            " ss.schoolYear as schoolYear," +
+            " ss.term as term, " +
+            " ss.courseScore as courseScore, " +
+            " ss.onLineScore as onLineScore, " +
+            " ss.offLineScore as offLineScore, " +
+            " ss.courseType as courseType " +
+            " from StudentScore as ss " +
+            " left join StudentOnLine as s on s.studentId = ss.studentId" +
+            " where ss.isValidated = '0' " +
+            " and ss.centerAreaId = ?1 order by ss.createTime desc ")
+    @Transactional(readOnly = true)
+    List<StudentScoreDto> findAllByIsValidatedEqualsAndCenterAreaId(String centerAreaId);
 
 
 

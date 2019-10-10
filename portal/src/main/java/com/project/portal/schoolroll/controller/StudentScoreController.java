@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.OffLineScoreUpdateRequest;
 import com.project.portal.schoolroll.request.StudentScoreRequest;
+import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
@@ -17,11 +18,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -32,6 +36,7 @@ import static com.project.portal.request.ValideSortVo.valideSort;
  * @version: 1.0
  * @description: 学生成绩controller
  */
+@Slf4j
 @RestController
 @RequestMapping(path = "/studentScore", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Api(value = "学生成绩管理", tags = {"学生成绩管理"})
@@ -54,11 +59,11 @@ public class StudentScoreController {
             @ApiImplicitParam(name = "courseType", value = "课程类别", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "schoolYear", value = "学年", dataType = "string", paramType = "query"),
     })
-    public WebResult findStudentScore(@RequestBody StudentScoreRequest request){
+    public WebResult findStudentScore(@RequestBody StudentScoreRequest request) {
         MyAssert.isNull(request.getStudentId(), DefineCode.ERR0010, "学生id不为空");
-        if (StrUtil.isBlank(request.getCourseId())){
+        if (StrUtil.isBlank(request.getCourseId())) {
             return WebResult.okResult(studentScoreService.findByStudentId(request.getStudentId()));
-        }else {
+        } else {
             return WebResult.okResult(studentScoreService.findByStudentIdAndCourseId(request.getStudentId(), request.getCourseId()));
         }
     }
@@ -67,7 +72,7 @@ public class StudentScoreController {
     @ApiOperation(value = "删除无效的学生成绩信息")
     @DeleteMapping(path = "/deleteByScoreId")
     @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteStudentScoreById(@RequestBody String scoreId){
+    public WebResult deleteStudentScoreById(@RequestBody String scoreId) {
         MyAssert.isNull(scoreId, DefineCode.ERR0010, "成绩id信息不为空");
         studentScoreService.deleteStudentScoreById(JSONObject.parseObject(scoreId).getString("scoreId"));
         return WebResult.okResult();
@@ -87,7 +92,7 @@ public class StudentScoreController {
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
-    public WebResult findStudentScorePageAll(@RequestBody StudentScoreRequest request){
+    public WebResult findStudentScorePageAll(@RequestBody StudentScoreRequest request) {
         valideSort(request.getPage(), request.getSize());
         StudentScorePageAllVo pageAllVo = new StudentScorePageAllVo();
         BeanUtil.copyProperties(request, pageAllVo);
@@ -101,12 +106,29 @@ public class StudentScoreController {
             @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "offLineScore", value = "线下成绩", dataType = "string", required = true, paramType = "form")
     })
-    public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request, HttpServletRequest httpServletRequest){
+    public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getScoreId(), DefineCode.ERR0010, "成绩id信息不为空");
         MyAssert.isNull(request.getOffLineScore(), DefineCode.ERR0010, "成绩不为空");
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         studentScoreService.updateOffLineScore(new OffLineScoreUpdateVo(request.getScoreId(), request.getOffLineScore(), userId));
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "导出学生成绩")
+    @GetMapping(path = "/exportScore")
+    public WebResult exportScore(HttpServletRequest request, HttpServletResponse response) {
+        String token = request.getHeader("token");
+        String centerId = tokenService.getCenterAreaId(token);
+//        String centerId = "1f184d63f76644e3bb0889d7e43d9309";
+        try {
+            MyExcleUtil.getExcel(response, request, studentScoreService.exportScore(centerId), "学生成绩.xlsx");
+        } catch (IOException e) {
+            log.error("export student score error, ERROR MESSAGE [{}], ERROR toString [{}]", e.getMessage(), e.toString());
+            e.printStackTrace();
+            MyAssert.isNull(null, DefineCode.ERR0014, "导出错误");
+        }
         return WebResult.okResult();
     }
 }

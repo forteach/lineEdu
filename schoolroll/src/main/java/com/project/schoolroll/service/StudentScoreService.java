@@ -42,4 +42,6 @@ public interface StudentScoreService {
     public boolean save();
 
     public void updateOffLineScore(OffLineScoreUpdateVo vo);
+
+    List<List<String>> exportScore(String centerId);
 }

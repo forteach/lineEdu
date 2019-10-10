@@ -82,9 +82,7 @@ public class LearnCenterController {
             learnCenterRepository.findById(request.getCenterId()).ifPresent(learnCenter -> {
                 if (StrUtil.isNotBlank(request.getCenterName()) && !learnCenter.getCenterName().equals(request.getCenterName())) {
                     List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
-                    if (!learnCenters.isEmpty()) {
-                        MyAssert.isNull(null, DefineCode.ERR0011, "已经存在同名学习中心");
-                    }
+                    MyAssert.isFalse(learnCenters.isEmpty(), DefineCode.ERR0011, "已经存在同名学习中心");
                 }
                 BeanUtils.copyProperties(request, learnCenter);
                 learnCenter.setUpdateUser(userId);
@@ -103,11 +101,11 @@ public class LearnCenterController {
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "学习中心联系人电话不为空");
             MyAssert.isNull(request.getPrincipal(), DefineCode.ERR0010, "学习中心负责人不为空");
             MyAssert.isNull(request.getAddress(), DefineCode.ERR0010, "学习中心地址不为空");
-            List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
-            if (!learnCenters.isEmpty()) {
-                MyAssert.isNull(null, DefineCode.ERR0011, "已经存在同名学习中心");
-            }
             MyAssert.isFalse(Validator.isMobile(request.getPhone()), DefineCode.ERR0002, "联系电话不是手机号码");
+
+            List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
+            MyAssert.isFalse(learnCenters.isEmpty(), DefineCode.ERR0011, "已经存在同名学习中心");
+
             LearnCenter learnCenter = new LearnCenter();
             BeanUtils.copyProperties(request, learnCenter);
             String centerAreaId = IdUtil.fastSimpleUUID();

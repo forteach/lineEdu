@@ -1,5 +1,6 @@
 package com.project.schoolroll.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.schoolroll.domain.StudentScore;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -140,5 +142,34 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
             s.setUpdateUser(vo.getUpdateUser());
             studentScoreRepository.save(s);
         });
+    }
+
+    @Override
+    public List<List<String>> exportScore(String centerId) {
+        List<String> head = setExportHead();
+        List<List<String>> list = findStudentScoreLists(centerId);
+        list.add(0, head);
+        return list;
+    }
+
+    private List<List<String>> findStudentScoreLists(String centerId){
+        return studentScoreRepository.findAllByIsValidatedEqualsAndCenterAreaId(centerId)
+                .stream()
+                .map(o -> CollUtil.newArrayList(o.getStudentId(), o.getStudentName(), o.getGender(), o.getCourseName(), o.getSchoolYear(), o.getTerm(),
+                        String.valueOf(o.getCourseScore()), o.getOnLineScore(), o.getOffLineScore(), o.getCourseType()))
+                .collect(toList());
+    }
+
+    private List<String> setExportHead(){
+        return CollUtil.newLinkedList("学号",
+                "姓名",
+                "性别",
+                "课程",
+                "学年",
+                "学期",
+                "课程分数",
+                "线上成绩",
+                "线下成绩",
+                "课程类别(必修(bx)、选修(xx)、实践(sj)");
     }
 }
