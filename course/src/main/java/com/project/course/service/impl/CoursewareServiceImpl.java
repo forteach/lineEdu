@@ -2,21 +2,29 @@ package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.course.domain.ziliao.ImportantCourseware;
-import com.project.course.repository.ziliao.CourseArlitsRepository;
 import com.project.course.repository.ziliao.ImpCoursewareRepoitory;
-import com.project.course.repository.ziliao.PhotosRepository;
 import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
+import com.project.databank.domain.verify.CourseVerifyVo;
+import com.project.databank.domain.ziliao.AbsDatum;
+import com.project.databank.repository.ziliao.IDatumRepoitory;
+import com.project.databank.service.CourseVerifyVoService;
+import com.project.databank.web.vo.CourseVerifyRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
+import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_FILE_DATA;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -29,17 +37,8 @@ public class CoursewareServiceImpl implements CoursewareService {
     @Resource
     private ImpCoursewareRepoitory impCoursewareRepoitory;
 
-    /**
-     * 图集信息
-     */
-//    @Resource
-//    private CourseArlitsRepository courseArlitsRepository;
-
-    /**
-     * 图集图片操作
-     */
-//    @Resource
-//    private PhotosRepository photoDatumRepository;
+    @Resource
+    private CourseVerifyVoService courseVerifyVoService;
 
 
     /**
@@ -50,16 +49,23 @@ public class CoursewareServiceImpl implements CoursewareService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveFile(ImpCoursewareAll obj) {
+    public void saveFile(ImpCoursewareAll obj, String centerId) {
         //删除原来视频信息
         impCoursewareRepoitory.deleteAllByChapterId(obj.getChapterId());
         //保存新的视频信息
-        ImportantCourseware importantCourseware = new ImportantCourseware();
-        BeanUtil.copyProperties(obj, importantCourseware);
-        importantCourseware.setId(IdUtil.fastSimpleUUID());
-        importantCourseware.setImportantType("2");
-        importantCourseware.setDatumType("3");
-        impCoursewareRepoitory.save(importantCourseware);
+        ImportantCourseware important = new ImportantCourseware();
+        BeanUtil.copyProperties(obj, important);
+        important.setFileId(IdUtil.fastSimpleUUID());
+        important.setImportantType("2");
+        important.setDatumType("3");
+        important.setCenterAreaId(centerId);
+        ImportantCourseware importantCourseware = impCoursewareRepoitory.save(important);
+        CourseVerifyVo courseVerifyVo = new CourseVerifyVo();
+        BeanUtil.copyProperties(importantCourseware, courseVerifyVo);
+        courseVerifyVo.setSubmitType("添加课件");
+        courseVerifyVo.setCenterAreaId(centerId);
+        courseVerifyVo.setCourseType(COURSE_FILE_DATA.getValue());
+        courseVerifyVoService.save(courseVerifyVo);
     }
 
     /**
@@ -201,15 +207,38 @@ public class CoursewareServiceImpl implements CoursewareService {
 
     @Override
     public List<CoursewareAll> findByChapterId(String chapterId) {
-        return impCoursewareRepoitory.findByIsValidatedEqualsAndChapterId(TAKE_EFFECT_OPEN, chapterId).stream()
-                .map(i -> {
-                    CoursewareAll coursewareAll = new CoursewareAll();
-                    coursewareAll.setFileName(i.getFileName());
-                    coursewareAll.setFileUrl(i.getFileUrl());
-                    coursewareAll.setVideoTime(i.getVideoTime());
-                    coursewareAll.setId(i.getId());
-                    return coursewareAll;
-                }).collect(toList());
+        return findCoursewareAll(impCoursewareRepoitory.findByIsValidatedEqualsAndChapterId(TAKE_EFFECT_OPEN, chapterId));
+    }
+
+    @Override
+    public List<CoursewareAll> findByChapterIdAndVerifyStatus(String chapterId) {
+        return findCoursewareAll(impCoursewareRepoitory.findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(TAKE_EFFECT_OPEN, chapterId, VERIFY_STATUS_AGREE));
+    }
+
+    private List<CoursewareAll> findCoursewareAll(List<ImportantCourseware> list){
+        return list.stream().map(i -> {
+            CoursewareAll coursewareAll = new CoursewareAll();
+            coursewareAll.setFileName(i.getFileName());
+            coursewareAll.setFileUrl(i.getFileUrl());
+            coursewareAll.setVideoTime(i.getVideoTime());
+            coursewareAll.setFileId(i.getFileId());
+            return coursewareAll;
+        }).collect(toList());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateVerifyCourseware(CourseVerifyRequest request){
+        Optional<ImportantCourseware> coursewareOptional = impCoursewareRepoitory.findById(request.getId());
+        MyAssert.isFalse(coursewareOptional.isPresent(), DefineCode.ERR0010, "资料Id不存在");
+        ImportantCourseware importantCourseware = coursewareOptional.get();
+        if (VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())) {
+            //审核通过
+            importantCourseware.setIsValidated(TAKE_EFFECT_OPEN);
+        }
+        importantCourseware.setUpdateUser(request.getUserId());
+        importantCourseware.setRemark(request.getRemark());
+        importantCourseware.setVerifyStatus(request.getVerifyStatus());
+        impCoursewareRepoitory.save(importantCourseware);
     }
 }
 

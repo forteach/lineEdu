@@ -1,5 +1,6 @@
 package com.project.teachplan.domain.verify;
 
+import cn.hutool.core.util.StrUtil;
 import com.project.teachplan.domain.base.BaseTeachPlanClass;
 import com.project.teachplan.domain.pk.TeachPlanClassPk;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
 
 /**
  * @author: zhangyy
@@ -41,8 +44,8 @@ public class TeachPlanClassVerify extends BaseTeachPlanClass implements Serializ
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
-    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
-    private String verifyStatus;
+    @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 
     public TeachPlanClassVerify(String classId, String planId, String className, String planName,
                                 int classNumber, String centerAreaId, String remark, String userId, String verifyStatus) {

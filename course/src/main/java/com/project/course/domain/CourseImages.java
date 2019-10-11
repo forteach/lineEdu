@@ -1,11 +1,14 @@
 package com.project.course.domain;
 
+import cn.hutool.core.util.StrUtil;
 import com.project.mysql.domain.Entitys;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
 
 /**
  * @Auther: zhangyy
@@ -41,8 +44,8 @@ public class CourseImages extends Entitys implements Serializable {
     @Column(name = "index_num", columnDefinition = "INT(11) COMMENT '顺序ID'")
     private Integer indexNum;
 
-    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
-    private String verifyStatus;
+    @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 
     public CourseImages(String createUser, String updateUser, String centerAreaId,
                         String imageName, String imageUrl, String courseId, Integer indexNum) {

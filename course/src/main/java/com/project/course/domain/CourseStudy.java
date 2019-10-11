@@ -51,9 +51,9 @@ public class CourseStudy extends Entitys implements Serializable {
     @Column(name = "exam_grade", columnDefinition = "VARCHAR(32) COMMENT '考试成绩'")
     private String examGrade;
 
-    @Column(name = "examResults", columnDefinition = "INT(2) DEFAULT 1 COMMENT '考试结果状态 0 已经通过 1 未通过'")
-    private Integer examResults;
+    @Column(name = "examResults", nullable = false, columnDefinition = "INT(2) DEFAULT 1 COMMENT '考试结果状态 0 已经通过 1 未通过'")
+    private Integer examResults = this.examResults == null ? 0 : this.examResults;
 
     @Column(name = "make_up_examination", columnDefinition = "INT(2) COMMENT '是否需要补考 0 需要补考 1 不需要补考'")
-    private Integer makeUpExamination;
+    private Integer makeUpExamination = this.makeUpExamination == null ? 0 : this.makeUpExamination;
 }

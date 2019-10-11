@@ -95,4 +95,8 @@ public abstract class AbstractExam extends BaseEntity {
      * 选项集
      */
     private List<ChoiceQstOption> optChildren;
+
+    private String remark;
+
+    private String verifyStatus;
 }

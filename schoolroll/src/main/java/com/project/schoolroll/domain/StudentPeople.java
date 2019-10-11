@@ -61,7 +61,7 @@ public class StudentPeople extends Entitys implements Serializable {
      * 护照
      * 其他
      */
-    @Column(name = "stu_card_type", columnDefinition = "VARCHAR(32) DEFAULT '身份证' COMMENT '身份证件类型'")
+    @Column(name = "stu_card_type", nullable = false, columnDefinition = "VARCHAR(32) DEFAULT '身份证' COMMENT '身份证件类型'")
     private String stuCardType;
     /**
      * 身份证号

@@ -6,6 +6,8 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.Md5Util;
+import com.project.schoolroll.repository.LearnCenterRepository;
+import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.service.TokenService;
 import com.project.user.domain.SysUserLog;
 import com.project.user.domain.SysUsers;
@@ -73,12 +75,11 @@ public class UserServiceImpl implements UserService {
     @Resource
     private TeacherRepository teacherRepository;
 
-//    @Resource
-//    private SysRoleRepository sysRoleRepository;
-
     @Resource
     private SysUserLogService sysUserLogService;
 
+    @Resource
+    private LearnCenterService learnCenterService;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(UserLoginReq userLoginReq) {
@@ -96,6 +97,7 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> map = BeanUtil.beanToMap(user);
         map.put("token", token);
         List<SysRoleDto> sysRoles = userRoleRepository.findByIsValidatedEqualsAndUserId(userId);
+        String centerName = learnCenterService.findByCenterId(user.getCenterAreaId()).getCenterName();
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(userId)
                 .token(token)
@@ -103,6 +105,7 @@ public class UserServiceImpl implements UserService {
                 .userName(user.getUserName())
                 .teacherId(user.getTeacherId())
                 .centerAreaId(user.getCenterAreaId())
+                .centerName(centerName)
                 .build();
         if (!sysRoles.isEmpty()) {
             sysRoles.stream().findFirst().ifPresent(sysRole -> {
@@ -253,7 +256,7 @@ public class UserServiceImpl implements UserService {
         //取手机号码后6位是初始密码
         user.setPassWord(Md5Util.macMD5(StrUtil.sub(phone, phone.length() - 6, phone.length()).concat(salt)));
         user.setTeacherId(phone);
-        user.setUserName(vo.getUserName());
+        user.setUserName(vo.getTeacherName());
         user.setRegisterPhone(phone);
         user.setCenterAreaId(vo.getCenterAreaId());
         user.setUpdateUser(vo.getCreateUser());

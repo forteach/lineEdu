@@ -45,6 +45,4 @@ public class ExerciseBook extends Entitys implements Serializable {
 
     @Column(name = "exe_book_name", columnDefinition = "varchar(255) COMMENT '练习册名称'")
     private String exeBookName;
-
-
 }

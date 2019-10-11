@@ -37,8 +37,8 @@ public abstract class BaseTeachPlanClass extends Entitys {
     @Column(name = "plan_name", columnDefinition = "VARCHAR(100) COMMENT '计划名称'")
     private String planName;
 
-    @Column(name = "classNumber", columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '班级人数'")
-    private Integer classNumber;
+    @Column(name = "classNumber", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '班级人数'")
+    private Integer classNumber = this.classNumber == null ? 0 : this.classNumber;
 
     public BaseTeachPlanClass(String classId, String planId, String className, String planName, int classNumber, String centerAreaId, String userId) {
         super(userId, userId, centerAreaId);

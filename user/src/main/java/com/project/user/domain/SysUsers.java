@@ -29,23 +29,23 @@ public class SysUsers extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(columnDefinition = "varchar(32) COMMENT '主键 uuid'")
+    @Column(columnDefinition = "VARCHAR(32) COMMENT '主键 UUID'")
     private String id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Column(name = "pass_word", columnDefinition = "varchar(255) COMMENT '用户密码'")
+    @Column(name = "pass_word", columnDefinition = "VARCHAR(255) COMMENT '用户密码'")
     private String passWord;
 
-    @Column(name = "user_name", columnDefinition = "varchar(40) COMMENT '用户名称'")
+    @Column(name = "user_name", columnDefinition = "VARCHAR(40) COMMENT '用户名称'")
     private String userName;
 
-    @Column(name = "account", unique = true, columnDefinition = "varchar(40) COMMENT '用户账号'")
+    @Column(name = "account", unique = true, columnDefinition = "VARCHAR(40) COMMENT '用户账号'")
     private String account;
 
-    @Column(name = "register_phone", unique = true, columnDefinition = "varchar(20) COMMENT '注册手机号'")
+    @Column(name = "register_phone", unique = true, columnDefinition = "VARCHAR(20) COMMENT '注册手机号'")
     private String registerPhone;
 
-    @Column(name = "email", columnDefinition = "varchar(255) COMMENT '邮箱地址'")
+    @Column(name = "email", columnDefinition = "VARCHAR(255) COMMENT '邮箱地址'")
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

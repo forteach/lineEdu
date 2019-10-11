@@ -17,10 +17,7 @@ import com.project.user.service.TeacherService;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +77,7 @@ public class ChapteDataController {
         String centerAreaId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerAreaId).getCenterName();
         String teacherName = teacherService.findById(userId).getTeacherName();
-        String courseName = courseService.getCourseVerifyByCourseId(courseId).getCourseName();
+        String courseName = courseService.getById(courseId).getCourseName();
         return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId, centerAreaId, centerName, teacherName, courseName));
     }
 
@@ -136,10 +133,11 @@ public class ChapteDataController {
             @ApiImplicitParam(name = "fileId", value = "资料id", dataType = "string", paramType = "form")
     })
     @ApiResponse(code = 0, message = "OK")
-    @PostMapping(path = "/removeOne")
-    public WebResult removeOne(@RequestBody ChapterDataRemoveReq chapterDataRemoveReq) {
+    @PostMapping(path = "/deleteById")
+    public WebResult deleteById(@RequestBody ChapterDataRemoveReq chapterDataRemoveReq) {
         MyAssert.isNull(chapterDataRemoveReq.getFileId(), DefineCode.ERR0010, "资料id不为空");
-        chapteDataService.removeOne(chapterDataRemoveReq.getFileId(), chapterDataRemoveReq.getDatumType());
+        MyAssert.isNull(chapterDataRemoveReq.getDatumType(), DefineCode.ERR0010, "文件类型不能为空");
+        chapteDataService.deleteById(chapterDataRemoveReq.getFileId(), chapterDataRemoveReq.getDatumType());
         return WebResult.okResult();
     }
 

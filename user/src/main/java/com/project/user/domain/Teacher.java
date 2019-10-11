@@ -40,7 +40,7 @@ public class Teacher extends Entitys implements Serializable {
     private String gender;
     @Column(name = "birth_date", columnDefinition = "VARCHAR(32) COMMENT '出生年月'")
     private String birthDate;
-    @Column(name = "id_card", columnDefinition = "VARCHAR(32) COMMENT '身份证号'")
+    @Column(name = "id_card", unique = true, columnDefinition = "VARCHAR(32) COMMENT '身份证号'")
     private String idCard;
     @Column(name = "professional_title", columnDefinition = "VARCHAR(60) COMMENT '现任专业技术职务'")
     private String professionalTitle;
@@ -52,7 +52,7 @@ public class Teacher extends Entitys implements Serializable {
     private String industry;
     @Column(name = "email", columnDefinition = "VARCHAR(32) COMMENT '邮箱地址'")
     private String email;
-    @Column(name = "phone", columnDefinition = "VARCHAR(32) COMMENT '联系电话'")
+    @Column(name = "phone", unique = true, columnDefinition = "VARCHAR(32) COMMENT '联系电话'")
     private String phone;
     @Column(name = "specialty", columnDefinition = "VARCHAR(32) COMMENT '专业'")
     private String specialty;

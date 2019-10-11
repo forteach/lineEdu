@@ -36,9 +36,7 @@ public interface ChapteDataService {
 
     void removeChapteDataList(String courseId, String chapterId, String datumType);
 
-    void removeOne(String fileId, String datumType);
-
-//    void verifyChapter(String chapterId, String userId, String verifyStatus);
+    void deleteById(String fileId, String datumType);
 
     void verifyData(CourseVerifyRequest request, String datumType);
 }

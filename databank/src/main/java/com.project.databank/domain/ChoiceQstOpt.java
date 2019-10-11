@@ -41,6 +41,4 @@ public class ChoiceQstOpt extends Entitys implements Serializable {
 
     @Column(name = "opt_value", columnDefinition = "varchar(2) COMMENT '选项值'")
     private String optValue;
-
-
 }

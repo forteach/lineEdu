@@ -44,6 +44,4 @@ public class ChoiceQst extends Entitys implements Serializable {
 
     @Column(name = "choice_type", columnDefinition = "VARCHAR(10) COMMENT '选择题类型'")
     private String choiceType;
-
-
 }

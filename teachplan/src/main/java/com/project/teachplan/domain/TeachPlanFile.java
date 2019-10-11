@@ -1,5 +1,6 @@
 package com.project.teachplan.domain;
 
+import cn.hutool.core.util.StrUtil;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
 
 /**
  * 培训班级资料管理
@@ -50,6 +53,6 @@ public class TeachPlanFile extends Entitys implements Serializable {
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
-    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
-    private String verifyStatus;
+    @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus  = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 }

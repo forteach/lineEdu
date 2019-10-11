@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
+import static com.project.databank.domain.verify.CourseVerifyEnum.CHAPTER_QUESTION;
 import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_CHAPTER_QUESTION;
 
 /**
@@ -84,6 +85,7 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void taskRedis() {
         Set<String> set = redisTemplate.opsForSet().members(QUESTIONS_VERIFY);
         List<CourseVerifyVo> list = set.parallelStream()
@@ -96,6 +98,9 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
                         verifyVo.setCourseType(COURSE_CHAPTER_QUESTION.getValue());
                         verifyVo.setUpdateUser(verifyVo.getTeacherId());
                         verifyVo.setCreateUser(verifyVo.getTeacherId());
+                        verifyVo.setVerifyStatus(VERIFY_STATUS_APPLY);
+                        verifyVo.setDatumType(CHAPTER_QUESTION.getValue());
+                        verifyVo.setFileName(map.get("choiceQstTxt"));
                         //删除对应的键值信息
                         redisTemplate.opsForSet().remove(QUESTIONS_VERIFY, questionId);
                         redisTemplate.delete(QUESTION_CHAPTER.concat(questionId));
@@ -114,9 +119,10 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
 
     @Override
     public void verifyQuestion(CourseVerifyRequest request) {
-        Object object = redisTemplate.opsForValue().get(QUESTION_ID.concat(request.getId()));
-        MyAssert.isNull(object, DefineCode.ERR0014, "不存在要审核的题目信息");
-        BigQuestion bigQuestion = JSONUtil.toBean(JSONUtil.parseObj(object), BigQuestion.class);
+        BigQuestion bigQuestion = mongoTemplate.findById(request.getId(), BigQuestion.class);
+        MyAssert.isNull(bigQuestion, DefineCode.ERR0014, "不存在要审核的题目信息");
+        bigQuestion.setVerifyStatus(request.getVerifyStatus());
+        bigQuestion.setRemark(request.getRemark());
         BigQuestion result = mongoTemplate.save(bigQuestion);
         MyAssert.isNull(result, DefineCode.ERR0013, "操作失败");
     }

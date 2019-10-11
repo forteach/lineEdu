@@ -26,5 +26,5 @@ import java.io.Serializable;
 public class ViewDatum extends AbsDatum implements Serializable {
 
     @Column(name = "video_duration", columnDefinition = "INT(32) COMMENT '视频时长(单位秒)'")
-    private long videoDuration;
+    private Integer videoDuration = this.videoDuration == null ? 0 : this.videoDuration;
 }

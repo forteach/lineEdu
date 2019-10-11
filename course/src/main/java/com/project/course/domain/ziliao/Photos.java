@@ -19,7 +19,11 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Builder
-@Table(name = "photos", indexes = {@Index(columnList = "chapter_id", name = "chapter_id_index"), @Index(columnList = "arlits_id", name = "arlits_id_index")})
+@Table(name = "photos", indexes = {
+        @Index(columnList = "chapter_id", name = "chapter_id_index"),
+        @Index(columnList = "arlits_id", name = "arlits_id_index"),
+        @Index(name = "file_id_index", columnList = "file_id")
+})
 @org.hibernate.annotations.Table(appliesTo = "photos", comment = "图片")
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor

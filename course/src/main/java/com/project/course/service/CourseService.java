@@ -48,13 +48,9 @@ public interface CourseService {
 
     public List<ICourseListDto> findMyCourse(String userId, PageRequest page);
 
-    public Course getById(String id);
-
-    public CourseVerify getCourseVerifyByCourseId(String courseId);
+    public CourseVerify getById(String id);
 
     public List<CourseListResp> myCourseList(String classId);
-
-//    public List<CourseEntity> findCourseList();
 
     public List<ICourseStudyDto> findCourseStudyList(String studentId, Integer studyStatus);
 

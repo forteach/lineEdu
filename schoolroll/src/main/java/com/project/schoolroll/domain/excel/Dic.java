@@ -29,6 +29,7 @@ public class Dic {
     /** 学生数据状态 学生信息 0 表格导入, 1 手动添加*/
     public final static int STUDENT_ON_LINE_IMPORT_STATUS_IMPORT = 0;
     public final static int STUDENT_ON_LINE_IMPORT_STATUS_SAVE = 1;
+
     private final static Map<Object, Object> EXPORT_STUDENT_MAP = MapUtil.builder()
             .put(studentName.name(), studentName.getName())
             .put(gender.name(), gender.getName())

@@ -114,10 +114,9 @@ public class CourseController {
     @PostMapping("/getCourse")
     @ApiOperation(value = "获取科目课程信息", notes = "根据科目课程ID查询科目信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
+            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
     })
-    public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true, example = "{\"courseId\":\"2c918099676317d0016763e051f50000\"}")
-                                         @RequestBody String courseId) {
+    public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true) @RequestBody String courseId) {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
         return WebResult.okResult(courseService.getById(JSONObject.parseObject(courseId).getString("courseId")));
     }

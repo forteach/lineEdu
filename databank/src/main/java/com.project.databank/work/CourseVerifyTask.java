@@ -28,7 +28,7 @@ public class CourseVerifyTask {
         log.info("start course question async ==> ");
         // 定时查询习题信息
         if (log.isDebugEnabled()){
-            log.debug("执行线程 : {}", Thread.currentThread().getName());
+            log.debug("task thread name : {}", Thread.currentThread().getName());
         }
         courseVerifyVoService.taskRedis();
         log.info(" <== end course question async ");

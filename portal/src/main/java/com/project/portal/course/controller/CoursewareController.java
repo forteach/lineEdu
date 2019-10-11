@@ -53,9 +53,11 @@ public class CoursewareController {
         MyAssert.blank(req.getFileUrl(), DefineCode.ERR0010, "视频URL不为空");
         MyAssert.blank(req.getFileName(), DefineCode.ERR0010, "视频名称不为空");
         MyAssert.blank(req.getVideoTime(), DefineCode.ERR0010, "视频时长不为空");
-        String userId = tokenService.getUserId(request.getHeader("token"));
+        String token = request.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String centerId = tokenService.getCenterAreaId(token);
         req.setCreateUser(userId);
-        coursewareService.saveFile(req);
+        coursewareService.saveFile(req, centerId);
         return WebResult.okResult();
     }
 
@@ -168,8 +170,13 @@ public class CoursewareController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
     })
-    public WebResult findByChapterId(@RequestBody String chapterId) {
+    public WebResult findByChapterId(@RequestBody String chapterId, HttpServletRequest httpServletRequest) {
         MyAssert.blank(chapterId, DefineCode.ERR0010, "章节编号不为空");
-        return WebResult.okResult(coursewareService.findByChapterId(JSONObject.parseObject(chapterId).getString("chapterId")));
+        String token = httpServletRequest.getHeader("token");
+        if (tokenService.isStudent(token)) {
+            return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(JSONObject.parseObject(chapterId).getString("chapterId")));
+        }else {
+            return WebResult.okResult(coursewareService.findByChapterId(JSONObject.parseObject(chapterId).getString("chapterId")));
+        }
     }
 }

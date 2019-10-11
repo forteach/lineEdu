@@ -42,5 +42,5 @@ public class CourseChapterReview extends Entitys implements Serializable {
     private String averageScore;
 
     @Column(name = "review_amount", columnDefinition = "INT(11) DEFAULT 0 COMMENT '评价数量'")
-    private Integer reviewAmount;
+    private Integer reviewAmount = this.reviewAmount == null ? 0 : this.reviewAmount;
 }

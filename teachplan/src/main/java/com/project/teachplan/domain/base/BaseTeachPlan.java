@@ -42,12 +42,12 @@ public abstract class BaseTeachPlan extends Entitys {
     @Column(name = "plan_admin", columnDefinition = "VARCHAR(60) COMMENT '计划负责人'")
     private String planAdmin;
 
-    @Column(name = "course_number", columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的课程数量'")
-    private Integer courseNumber;
+    @Column(name = "course_number", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的课程数量'")
+    private Integer courseNumber = this.courseNumber == null ? 0 : this.courseNumber;
 
-    @Column(name = "class_number", columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的班级数'")
-    private Integer classNumber;
+    @Column(name = "class_number", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的班级数'")
+    private Integer classNumber = this.classNumber == null ? 0 : this.classNumber;
 
-    @Column(name = "sum_number", columnDefinition = "TINYINT (4) DEFAULT 0 COMMENT '总人数'")
-    private Integer sumNumber;
+    @Column(name = "sum_number", nullable = false, columnDefinition = "TINYINT (4) DEFAULT 0 COMMENT '总人数'")
+    private Integer sumNumber = this.sumNumber == null ? 0 : this.sumNumber;
 }

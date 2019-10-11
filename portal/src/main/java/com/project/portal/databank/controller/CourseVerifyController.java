@@ -2,8 +2,11 @@ package com.project.portal.databank.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
+import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
 import com.project.course.service.CourseService;
+import com.project.course.service.CoursewareService;
+import com.project.databank.domain.verify.CourseVerifyEnum;
 import com.project.databank.domain.verify.CourseVerifyVo;
 import com.project.databank.service.ChapteDataService;
 import com.project.databank.service.CourseVerifyVoService;
@@ -25,8 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
-import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_CHAPTER_QUESTION;
-import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_DATA;
+import static com.project.databank.domain.verify.CourseVerifyEnum.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
@@ -48,6 +50,8 @@ public class CourseVerifyController {
     private ChapteDataService chapteDataService;
     @Resource
     private CourseService courseService;
+    @Resource
+    private CoursewareService coursewareService;
 
     @ApiOperation(value = "查询需要审核的课程信息")
     @UserLoginToken
@@ -86,7 +90,7 @@ public class CourseVerifyController {
         //是文件资料信息
         String type = verifyVo.getCourseType();
 
-        if (StrUtil.isNotBlank(verifyVo.getFileId())){
+        if (CHAPTER_DATE.getValue().equals(type)){
             chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getFileId(),
                     request.getVerifyStatus(), request.getRemark(), userId), verifyVo.getDatumType());
         }
@@ -108,6 +112,11 @@ public class CourseVerifyController {
         if (COURSE_CHAPTER_QUESTION.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
             // 是习题需要审核
             courseVerifyVoService.verifyQuestion(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getQuestionId(),
+                    request.getVerifyStatus(), request.getRemark(), userId));
+        }
+        if (COURSE_FILE_DATA.getValue().equals(type)){
+            //课程的课件
+            coursewareService.updateVerifyCourseware(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getFileId(),
                     request.getVerifyStatus(), request.getRemark(), userId));
         }
         //修改数据

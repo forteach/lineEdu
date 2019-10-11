@@ -3,6 +3,7 @@ package com.project.course.service;
 
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
+import com.project.databank.web.vo.CourseVerifyRequest;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface CoursewareService {
      * @param obj
      * @return
      */
-    public void saveFile(ImpCoursewareAll obj);
+    public void saveFile(ImpCoursewareAll obj, String centerId);
 
     public void deleteCourseChapterId(String chapterId);
 
@@ -39,6 +40,10 @@ public interface CoursewareService {
 //    public List<CoursewareAll> getCourseArlitsList(String chapterId);
 
     List<CoursewareAll> findByChapterId(String chapterId);
+
+    List<CoursewareAll> findByChapterIdAndVerifyStatus(String chapterId);
+
+    void updateVerifyCourseware(CourseVerifyRequest request);
 
     /**
      * 获取图册列表

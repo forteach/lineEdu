@@ -100,16 +100,6 @@ public class CourseServiceImpl implements CourseService {
             });
         }
         return course.getCourseId();
-//        return courseRepository.save(course).getCourseId();
-
-        //2、如果是集体备课，保存集体备课基本信息
-//        String shareId = courseShareService.save(course, teachers);
-
-        //3、设置返回数据
-//        List<String> result = new ArrayList<String>();
-//        result.add(course.getCourseId());
-//        result.add(shareId);
-//        return course.getCourseId();
     }
 
 //    @Override
@@ -166,20 +156,8 @@ public class CourseServiceImpl implements CourseService {
      * @return
      */
     @Override
-    public Course getById(String id) {
-        Optional<Course> optionalCourse = courseRepository.findById(id);
-        MyAssert.isFalse(optionalCourse.isPresent(), DefineCode.ERR0010, "编号对应的课程信息不存在");
-        return optionalCourse.get();
-    }
-
-    /**
-     * 查询审核记录表的待审核课程信息
-     * @param courseId
-     * @return
-     */
-    @Override
-    public CourseVerify getCourseVerifyByCourseId(String courseId) {
-        Optional<CourseVerify> optionalCourse = courseVerifyRepository.findById(courseId);
+    public CourseVerify getById(String id) {
+        Optional<CourseVerify> optionalCourse = courseVerifyRepository.findById(id);
         MyAssert.isFalse(optionalCourse.isPresent(), DefineCode.ERR0010, "编号对应的课程信息不存在");
         return optionalCourse.get();
     }
@@ -222,16 +200,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Map<String, Object> getCourseById(String courseId) {
         Map<String, Object> result = new HashMap<>(2);
-        courseRepository.findById(courseId).ifPresent(course -> {
-//            String shareId = "";
-            //课程为集体备课
-//            if (course.getLessonPreparationType().equals(LESSON_PREPARATION_TYPE_GROUP)) {
-//                CourseShare cs = courseShareService.findByCourseIdAll(course.getCourseId());
-//                shareId = cs.getShareId();
-//            }
-            result.put("course", course);
-//            result.put("shareId", shareId);
-        });
+        courseRepository.findById(courseId).ifPresent(course -> result.put("course", course));
         return result;
     }
 

@@ -1,5 +1,6 @@
 package com.project.wechat.mini.app.domain;
 
+import cn.hutool.core.util.StrUtil;
 import com.project.mysql.domain.Entitys;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,6 +10,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+
+import static com.project.base.common.keyword.Dic.WX_INFO_BINDIND_1;
 
 /**
  * @Auther: zhangyy
@@ -33,7 +36,7 @@ public class WeChatUser extends Entitys implements Serializable {
     @Id
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @GeneratedValue(generator = "system-uuid")
-    @Column(name = "wx_id", columnDefinition = "VARCHAR(32) comment '微信信息id'", unique = true)
+    @Column(name = "wx_id", columnDefinition = "VARCHAR(32) COMMENT '微信信息id'", unique = true)
     private String wxId;
 
     @Column(name = "open_id", columnDefinition = "VARCHAR(32) COMMENT '微信openId'", unique = true)
@@ -63,8 +66,8 @@ public class WeChatUser extends Entitys implements Serializable {
     @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
     private String studentId;
 
-    @Column(name = "binding", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '绑定标识 0 绑定 1　未绑定'")
-    private String binding;
+    @Column(name = "binding", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '绑定标识 0 绑定 1　未绑定'")
+    private String binding = StrUtil.isBlank(this.binding) ? WX_INFO_BINDIND_1 : this.binding ;
 
     @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '班级id'")
     private String classId;

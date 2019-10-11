@@ -39,7 +39,7 @@ public class StudentScore extends Entitys implements Serializable {
     /**
      * 学生id
      */
-    @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
+    @Column(name = "student_id", nullable = false, columnDefinition = "VARCHAR(32) COMMENT '学生id'")
     private String studentId;
     /**
      * 课程id

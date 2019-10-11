@@ -11,7 +11,7 @@ public class CoursewareAll implements Serializable {
     /**
      * 文件编号（也可能是图集编号）
      */
-    public String id;
+    public String fileId;
 
     /**
      * 文件名称

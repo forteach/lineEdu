@@ -32,11 +32,4 @@ public class OnLineCourseDic extends Entitys implements Serializable {
 
     @Column(name = "course_name", columnDefinition = "VARCHAR(40) COMMENT '课程名称'")
     private String courseName;
-
-
-//    public OnLineCourseDic(String courseId, String courseName, String centerId) {
-//        this.courseId = courseId;
-//        this.courseName = courseName;
-//        super.centerAreaId=centerId;
-//    }
 }

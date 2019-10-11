@@ -1,5 +1,6 @@
 package com.project.databank.domain.verify;
 
+import cn.hutool.core.util.StrUtil;
 import com.project.mysql.domain.Entitys;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,6 +8,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
 
 /**
  * @author: zhangyy
@@ -66,13 +69,13 @@ public class CourseVerifyVo extends Entitys implements Serializable {
     @Column(name = "datum_type", columnDefinition = "VARCHAR(32) COMMENT '资料类型 1文档　2图册　3视频　4音频　5链接'")
     private String datumType;
 
-    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
-    private String verifyStatus;
+    @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
-    @Column(name = "course_type", columnDefinition = "CHAR(2) COMMENT '提交的课程类型'")
+    @Column(name = "course_type", nullable = false, columnDefinition = "CHAR(2) COMMENT '提交的课程类型'")
     private String courseType;
 
     @Column(name = "question_Id", columnDefinition = "VARCHAR(40) COMMENT '要修改的习题Id' ")

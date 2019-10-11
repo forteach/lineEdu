@@ -45,6 +45,4 @@ public class ClassroomQuestion extends Entitys implements Serializable {
 
     @Column(name = "class_question_type", columnDefinition = "INT(11) COMMENT '问题册类型'")
     private Integer classQuestionType;
-
-
 }

@@ -1,5 +1,6 @@
 package com.project.teachplan.domain.verify;
 
+import cn.hutool.core.util.StrUtil;
 import com.project.teachplan.domain.base.BaseTeachPlan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import java.io.Serializable;
+
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
 
 /**
  * @author: zhangyy
@@ -35,6 +38,6 @@ import java.io.Serializable;
 public class TeachPlanVerify extends BaseTeachPlan implements Serializable {
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
-    @Column(name = "verify_status", columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
-    private String verifyStatus;
+    @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
+    private String verifyStatus = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 }
