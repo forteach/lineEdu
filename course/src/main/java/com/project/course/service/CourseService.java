@@ -36,6 +36,8 @@ public interface CourseService {
 
     public Course findByCourseId(String courseId);
 
+    public CourseVerify findCourseVerifyById(String courseId);
+
     public List<ICourseListDto> findAll(PageRequest page);
 
     public Map<String, Object> getCourseById(String courseId);
@@ -47,6 +49,8 @@ public interface CourseService {
     public List<ICourseListDto> findMyCourse(String userId, PageRequest page);
 
     public Course getById(String id);
+
+    public CourseVerify getCourseVerifyByCourseId(String courseId);
 
     public List<CourseListResp> myCourseList(String classId);
 

@@ -71,26 +71,26 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser, String centerAreaId, String centerName, String teacherName) {
+    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser, String centerAreaId, String centerName, String teacherName, String courseName) {
         //根据文件类型，对应保存信息
         //1文档　3视频　4音频　5链接
         String size = "";
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
-                size = saveT(courseId, chapterId, datumType, files, fileDatumRepository, new FileDatum(), createUser, centerAreaId, centerName, teacherName);
+                size = saveT(courseId, chapterId, datumType, files, fileDatumRepository, new FileDatum(), createUser, centerAreaId, centerName, teacherName, courseName);
                 break;
             //视频
             case Dic.COURSE_ZILIAO_VIEW:
-                size = saveT(courseId, chapterId, datumType, files, viewDatumRepository, new ViewDatum(), createUser, centerAreaId, centerName, teacherName);
+                size = saveT(courseId, chapterId, datumType, files, viewDatumRepository, new ViewDatum(), createUser, centerAreaId, centerName, teacherName, courseName);
                 break;
             //音频
             case Dic.COURSE_ZILIAO_AUDIO:
-                size = saveT(courseId, chapterId, datumType, files, audioDatumRepository, new AudioDatum(), createUser, centerAreaId, centerName, teacherName);
+                size = saveT(courseId, chapterId, datumType, files, audioDatumRepository, new AudioDatum(), createUser, centerAreaId, centerName, teacherName, courseName);
                 break;
             //链接
             case Dic.COURSE_ZILIAO_LINK:
-                size = saveT(courseId, chapterId, datumType, files, linkDatumRepository, new LinkDatum(), createUser, centerAreaId, centerName, teacherName);
+                size = saveT(courseId, chapterId, datumType, files, linkDatumRepository, new LinkDatum(), createUser, centerAreaId, centerName, teacherName, courseName);
                 break;
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
@@ -331,7 +331,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         }
     }
 
-    private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd, String createUser, String centerAreaId, String centerName, String teacherName) {
+    private String saveT(String courseId, String chapterId, String datumType, List<DataDatumVo> files, IDatumRepoitory rep, AbsDatum fd, String createUser, String centerAreaId, String centerName, String teacherName, String courseName) {
         List<CourseVerifyVo> verifyVos = new ArrayList<>();
         //1、添加资料文件列表明细
         List<AbsDatum> fileDatumList = new ArrayList<>();
@@ -346,6 +346,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             fd.setDatumType(datumType);
             fd.setCreateUser(createUser);
             fd.setUpdateUser(createUser);
+            fd.setCenterAreaId(centerAreaId);
             if (fd instanceof ViewDatum && dataDatumVo.getVideoDuration() != null) {
                 ((ViewDatum) fd).setVideoDuration(dataDatumVo.getVideoDuration());
                 videoTime = dataDatumVo.getVideoDuration();
@@ -364,6 +365,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             verifyVo.setCreateUser(createUser);
             verifyVo.setUpdateTime(createUser);
             verifyVo.setCourseType(datumType);
+            verifyVo.setCourseName(courseName);
             verifyVos.add(verifyVo);
             fileDatumList.add(fd);
         }

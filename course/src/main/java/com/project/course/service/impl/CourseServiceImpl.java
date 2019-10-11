@@ -140,6 +140,13 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findByCourseId(courseId);
     }
 
+    @Override
+    public CourseVerify findCourseVerifyById(String courseId){
+        Optional<CourseVerify> courseVerifyOptional = courseVerifyRepository.findById(courseId);
+        MyAssert.isFalse(courseVerifyOptional.isPresent(), DefineCode.ERR0010, "不存在对应的课程信息");
+        return courseVerifyOptional.get();
+    }
+
     /**
      * 分页查询我的课程科目
      *
@@ -161,13 +168,21 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course getById(String id) {
         Optional<Course> optionalCourse = courseRepository.findById(id);
-        if (optionalCourse.isPresent()) {
-            return optionalCourse.get();
-        }
-        MyAssert.isNull(null, DefineCode.ERR0010, "编号对应的课程信息不存在");
-        return null;
+        MyAssert.isFalse(optionalCourse.isPresent(), DefineCode.ERR0010, "编号对应的课程信息不存在");
+        return optionalCourse.get();
     }
 
+    /**
+     * 查询审核记录表的待审核课程信息
+     * @param courseId
+     * @return
+     */
+    @Override
+    public CourseVerify getCourseVerifyByCourseId(String courseId) {
+        Optional<CourseVerify> optionalCourse = courseVerifyRepository.findById(courseId);
+        MyAssert.isFalse(optionalCourse.isPresent(), DefineCode.ERR0010, "编号对应的课程信息不存在");
+        return optionalCourse.get();
+    }
 
     /**
      * 学生端查询我的课程信息

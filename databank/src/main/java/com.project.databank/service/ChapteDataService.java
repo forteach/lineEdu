@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface ChapteDataService {
 
-    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser, String centerAreaId, String centerName, String teacherName);
+    public String save(String courseId, String chapterId, String datumType, List<DataDatumVo> files, String createUser, String centerAreaId, String centerName, String teacherName, String courseName);
     /**
      * 课程资料详细列表
      *
