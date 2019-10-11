@@ -74,4 +74,7 @@ public class CourseVerifyVo extends Entitys implements Serializable {
 
     @Column(name = "course_type", columnDefinition = "CHAR(2) COMMENT '提交的课程类型'")
     private String courseType;
+
+    @Column(name = "question_Id", columnDefinition = "VARCHAR(40) COMMENT '要修改的习题Id' ")
+    private String questionId;
 }

@@ -18,10 +18,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -93,8 +90,7 @@ public class CourseVerifyController {
             chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(request.getId(),
                     request.getVerifyStatus(), request.getRemark(), userId), verifyVo.getDatumType());
         }
-        if (COURSE_DATA.getValue().equals(type)
-                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+        if (COURSE_DATA.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
             //是课程
             courseService.verifyCourse(new com.project.course.web.vo.CourseVerifyVo(verifyVo.courseId,
                     request.getVerifyStatus(), request.getRemark(), userId));
@@ -110,8 +106,9 @@ public class CourseVerifyController {
 //                    request.getVerifyStatus(), request.getRemark(), userId));
 //        }
         if (COURSE_CHAPTER_QUESTION.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-            // 是习题需要审核 TODO
-
+            // 是习题需要审核
+            courseVerifyVoService.verifyQuestion(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getQuestionId(),
+                    request.getVerifyStatus(), request.getRemark(), userId));
         }
         //修改数据
         verifyVo.setUpdateUser(userId);

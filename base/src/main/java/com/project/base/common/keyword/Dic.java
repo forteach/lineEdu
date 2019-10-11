@@ -66,4 +66,13 @@ public class Dic {
      */
     public final static String USER_PREFIX = "userToken$";
 
+
+    /**
+     * mongodb _id
+     */
+    public static final String MONGDB_ID = "_id";
+
+    public static final String QUESTION_ID = "questionId$";
+    public static final String QUESTION_CHAPTER = "questionChapter$";
+    public static final String QUESTIONS_VERIFY = "questionsVerify";
 }

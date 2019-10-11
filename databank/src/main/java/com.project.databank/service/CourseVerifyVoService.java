@@ -1,6 +1,7 @@
 package com.project.databank.service;
 
 import com.project.databank.domain.verify.CourseVerifyVo;
+import com.project.databank.web.vo.CourseVerifyRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -28,5 +29,7 @@ public interface CourseVerifyVoService {
 
     Optional<CourseVerifyVo> findById(String id);
 
-//    void saveUpdateVerify(CourseVerifyRequest courseVerifyRequest);
+    void taskRedis();
+
+    void verifyQuestion(CourseVerifyRequest request);
 }

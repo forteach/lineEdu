@@ -1,6 +1,5 @@
 package com.project.databank.web.vo;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,7 +12,6 @@ import java.io.Serializable;
  * @description:
  */
 @Data
-@Builder
 public class CourseVerifyRequest implements Serializable {
     private String id;
     private String verifyStatus;
