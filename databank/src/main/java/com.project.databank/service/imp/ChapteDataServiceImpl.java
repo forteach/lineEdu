@@ -357,17 +357,14 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             }
             fd.setCourseId(courseId);
             fd.setIsValidated(TAKE_EFFECT_CLOSE);
-//            fd.setVerifyStatus(VERIFY_STATUS_APPLY);
             CourseVerifyVo verifyVo = new CourseVerifyVo();
             BeanUtil.copyProperties(fd, verifyVo);
             verifyVo.setIsValidated(TAKE_EFFECT_OPEN);
-//            verifyVo.setVerifyStatus(VERIFY_STATUS_APPLY);
             verifyVo.setSubmitType("添加章节资料");
             verifyVo.setCenterName(centerName);
             verifyVo.setTeacherId(createUser);
             verifyVo.setTeacherName(teacherName);
             verifyVo.setCreateUser(createUser);
-            verifyVo.setUpdateTime(createUser);
             verifyVo.setCourseType(CHAPTER_DATE.getValue());
             verifyVo.setCourseName(courseName);
             verifyVos.add(verifyVo);

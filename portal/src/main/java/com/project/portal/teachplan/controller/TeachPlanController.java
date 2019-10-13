@@ -151,7 +151,7 @@ public class TeachPlanController {
     @ApiOperation(value = "查询计划对应课程信息")
     @PostMapping(path = "/course/{planId}")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "query")
-    public WebResult findAllCourseByPlanId(@PathVariable String planId) {
+    public WebResult findAllCourseByPlanId(@PathVariable String planId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         return WebResult.okResult(teachPlanCourseService.findAllCourseByPlanId(planId));
     }

@@ -19,7 +19,9 @@ import com.project.course.repository.verify.CourseVerifyRepository;
 import com.project.course.service.CourseService;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
+import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVerifyVo;
+import com.project.course.web.vo.CourseVo;
 import com.project.databank.service.CourseVerifyVoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
 import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_DATA;
@@ -74,18 +77,19 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     @Transactional(rollbackForClassName = "Exception")
-    public String saveUpdate(CourseVerify course) {
+    public String saveUpdate(CourseVerify course, String teacherName, String centerName) {
         //1、保存课程基本信息
         com.project.databank.domain.verify.CourseVerifyVo verifyVo = new com.project.databank.domain.verify.CourseVerifyVo();
         verifyVo.setCourseType(COURSE_DATA.getValue());
+        verifyVo.setTeacherId(course.getCreateUser());
+        verifyVo.setTeacherName(teacherName);
+        verifyVo.setCenterName(centerName);
         if (StrUtil.isBlank(course.getCourseId())) {
             course.setCourseId(IdUtil.fastSimpleUUID());
             course.setUpdateUser(course.getCreateUser());
-
             BeanUtil.copyProperties(course, verifyVo);
             verifyVo.setSubmitType("添加课程");
             courseVerifyVoService.save(verifyVo);
-
             return courseVerifyRepository.save(course).getCourseId();
         } else {
             courseVerifyRepository.findById(course.getCourseId()).ifPresent(c -> {
@@ -101,17 +105,6 @@ public class CourseServiceImpl implements CourseService {
         }
         return course.getCourseId();
     }
-
-//    @Override
-//    @Transactional(rollbackForClassName = "Exception")
-//    public String edit(Course course) {
-
-    //修改课程信息
-//        courseRepository.save(course);
-
-    //判断原有的备课类型是否是集体备课，并修改集体备课信息
-//        return courseShareService.update(course.getLessonPreparationType(), oldShareId, course);
-//    }
 
     /**
      * 获得所有可用课程列表
@@ -251,17 +244,6 @@ public class CourseServiceImpl implements CourseService {
         return courseImagesServiceImpl.findImagesByCourseId(courseId, verifyStatus);
     }
 
-
-    /**
-     * 查询同步过来的课程信息
-     *
-     * @return
-     */
-//    @Override
-//    @Cacheable(value = "allCourseEntity", key = "#root.targetClass", unless = "#result eq null ")
-//    public List<CourseEntity> findCourseList() {
-//        return courseEntrityRepository.findByIsValidated(TAKE_EFFECT_OPEN);
-//    }
     @Override
     public List<ICourseStudyDto> findCourseStudyList(String studentId, Integer studyStatus) {
         return courseStudyRepository.findByIsValidatedEqualsAndStudentId(studentId, studyStatus);
@@ -275,68 +257,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public ICourseDto findByCourseNumberAndTeacherId(String courseNumber, String teacherId) {
-        List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(courseNumber, teacherId);
-        if (!list.isEmpty()) {
-            return list.get(0);
-        } else {
-            return new ICourseDto() {
-                @Override
-                public String getCourseId() {
-                    return null;
-                }
-
-                @Override
-                public String getCourseName() {
-                    return null;
-                }
-
-                @Override
-                public String getCourseNumber() {
-                    return null;
-                }
-
-                @Override
-                public String getAlias() {
-                    return null;
-                }
-
-                @Override
-                public String getTopPicSrc() {
-                    return null;
-                }
-
-                @Override
-                public String getCourseDescribe() {
-                    return null;
-                }
-
-                @Override
-                public String getLearningTime() {
-                    return null;
-                }
-
-                @Override
-                public String getVideoPercentage() {
-                    return null;
-                }
-
-                @Override
-                public String getJobsPercentage() {
-                    return null;
-                }
-
-                @Override
-                public String getCreateUser() {
-                    return null;
-                }
-
-                @Override
-                public String getCreateUserName() {
-                    return null;
-                }
-            };
-        }
+    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds) {
+        return courseIds.parallelStream().map(v -> {
+            List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
+            if (list.isEmpty()){
+                return new CourseVo();
+            }else {
+                ICourseDto iCourseDto = list.get(0);
+                return new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
+                        iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
+                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName());
+            }
+        }).collect(Collectors.toList());
     }
 
     @Override

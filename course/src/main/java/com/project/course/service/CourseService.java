@@ -9,7 +9,9 @@ import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
+import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVerifyVo;
+import com.project.course.web.vo.CourseVo;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
@@ -24,9 +26,7 @@ import java.util.Map;
  */
 public interface CourseService {
 
-    public String saveUpdate(CourseVerify course);
-
-//    public String edit(Course course);
+    public String saveUpdate(CourseVerify course, String teacherName, String centerName);
 
     public void deleteIsValidById(String courseId);
 
@@ -56,7 +56,7 @@ public interface CourseService {
 
     public int deleteImagesByCourseId(String courseId);
 
-    ICourseDto findByCourseNumberAndTeacherId(String courseNumber, String teacherId);
+    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds);
 
     void verifyCourse(CourseVerifyVo verifyVo);
 
