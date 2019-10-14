@@ -55,9 +55,11 @@ public class OnLineCourseDicController {
         OnLineCourseDic onLineCourseDic = new OnLineCourseDic();
         BeanUtil.copyProperties(request, onLineCourseDic);
         String token = httpServletRequest.getHeader("token");
+        String centerId = tokenService.getCenterAreaId(token);
         String userId = tokenService.getUserId(token);
         onLineCourseDic.setCreateUser(userId);
         onLineCourseDic.setUpdateUser(userId);
+        onLineCourseDic.setCenterAreaId(centerId);
         if (StrUtil.isBlank(request.getCourseId())) {
             MyAssert.isNull(request.getCourseName(), DefineCode.ERR0010, "课程名称不为空");
             String centerAreaId = tokenService.getCenterAreaId(token);

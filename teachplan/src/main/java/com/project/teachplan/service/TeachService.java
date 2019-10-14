@@ -102,7 +102,9 @@ public class TeachService {
         List<TeachPlanCourseVerify> planCourseList = courses.parallelStream().filter(Objects::nonNull)
                 .map(t -> createTeachPlanCourse(planId, t, remark, centerAreaId, userId))
                 .collect(toList());
-        teachPlanCourseService.saveAllVerify(planCourseList);
+        if (!planCourseList.isEmpty()) {
+            teachPlanCourseService.saveAllVerify(planCourseList);
+        }
     }
 
     private TeachPlanCourseVerify createTeachPlanCourse(String planId, TeachPlanCourseVo vo, String remark, String centerAreaId, String userId) {
@@ -264,7 +266,9 @@ public class TeachService {
             t.setIsValidated(status);
             t.setUpdateUser(userId);
         }).collect(toList());
-        teachPlanVerifyRepository.saveAll(collect);
+        if (!collect.isEmpty()) {
+            teachPlanVerifyRepository.saveAll(collect);
+        }
     }
 
     @Async
@@ -274,7 +278,9 @@ public class TeachService {
             c.setIsValidated(status);
             c.setUpdateUser(userId);
         }).collect(Collectors.toList());
-        teachPlanCourseVerifyRepository.saveAll(list);
+        if (!list.isEmpty()) {
+            teachPlanCourseVerifyRepository.saveAll(list);
+        }
     }
 
     @Async
@@ -284,7 +290,9 @@ public class TeachService {
             c.setIsValidated(status);
             c.setUpdateUser(userId);
         }).collect(Collectors.toList());
-        teachPlanClassVerifyRepository.saveAll(list);
+        if (!list.isEmpty()){
+            teachPlanClassVerifyRepository.saveAll(list);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

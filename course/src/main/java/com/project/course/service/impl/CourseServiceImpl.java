@@ -212,12 +212,6 @@ public class CourseServiceImpl implements CourseService {
     public void saveCourseImages(CourseImagesReq courseImagesReq) {
         courseImagesServiceImpl.saveCourseImages(courseImagesReq.getCourseId(), courseImagesReq.getImages(),
                 courseImagesReq.getCreateUser(), courseImagesReq.getCenterAreaId());
-        //保存修改记录审核表
-//        com.project.databank.domain.verify.CourseVerifyVo verifyVo = new com.project.databank.domain.verify.CourseVerifyVo();
-//        BeanUtil.copyProperties(courseImagesReq, verifyVo);
-//        verifyVo.setSubmitType("添加课程轮播图");
-//        verifyVo.setCourseType(COURSE_IMAGE_DATE.getValue());
-//        courseVerifyVoService.save(verifyVo);
     }
 
 
@@ -287,15 +281,4 @@ public class CourseServiceImpl implements CourseService {
         }
         courseVerifyRepository.save(courseVerify);
     }
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void verifyCourseImage(CourseVerifyVo verifyVo) {
-//        List<CourseImages> list = courseImagesServiceImpl.findImagesByCourseId(verifyVo.getCourseId(), VERIFY_STATUS_APPLY);
-//        List<CourseImages> courseImagesList = list.stream().peek(c -> {
-//            c.setVerifyStatus(verifyVo.getVerifyStatus());
-//            c.setUpdateUser(verifyVo.getUserId());
-//        }).collect(Collectors.toList());
-//        courseImagesServiceImpl.saveAll(courseImagesList);
-//    }
 }
