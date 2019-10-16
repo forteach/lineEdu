@@ -1,5 +1,6 @@
 package com.project.train.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class TrainPlanCourse extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
+    @JsonIgnore
     private TrainPlanCoursePk trainPlanCoursePk;
 
     private String courseId;

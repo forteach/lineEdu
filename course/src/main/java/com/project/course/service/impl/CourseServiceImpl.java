@@ -1,40 +1,39 @@
 package com.project.course.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseImages;
-import com.project.course.domain.verify.CourseVerify;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
-import com.project.course.repository.verify.CourseVerifyRepository;
 import com.project.course.service.CourseService;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
 import com.project.course.web.vo.CourseTeacherVo;
-import com.project.course.web.vo.CourseVerifyVo;
 import com.project.course.web.vo.CourseVo;
-import com.project.databank.service.CourseVerifyVoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
-import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_DATA;
 
 /**
  * @Auther: zhangyy
@@ -52,12 +51,14 @@ public class CourseServiceImpl implements CourseService {
      */
     @Resource
     private CourseRepository courseRepository;
-
     @Resource
-    private CourseVerifyRepository courseVerifyRepository;
+    private StringRedisTemplate stringRedisTemplate;
 
-    @Resource
-    private CourseVerifyVoService courseVerifyVoService;
+//    @Resource
+//    private CourseVerifyRepository courseVerifyRepository;
+
+//    @Resource
+//    private CourseVerifyVoService courseVerifyVoService;
 
     /**
      * 课程轮播图
@@ -77,30 +78,30 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     @Transactional(rollbackForClassName = "Exception")
-    public String saveUpdate(CourseVerify course, String teacherName, String centerName) {
+    public String saveUpdate(Course course) {
         //1、保存课程基本信息
-        com.project.databank.domain.verify.CourseVerifyVo verifyVo = new com.project.databank.domain.verify.CourseVerifyVo();
-        verifyVo.setCourseType(COURSE_DATA.getValue());
-        verifyVo.setTeacherId(course.getCreateUser());
-        verifyVo.setTeacherName(teacherName);
-        verifyVo.setCenterName(centerName);
+//        com.project.databank.domain.verify.CourseVerifyVo verifyVo = new com.project.databank.domain.verify.CourseVerifyVo();
+//        verifyVo.setCourseType(COURSE_DATA.getValue());
+//        verifyVo.setTeacherId(course.getCreateUser());
+//        verifyVo.setTeacherName(teacherName);
+//        verifyVo.setCenterName(centerName);
         if (StrUtil.isBlank(course.getCourseId())) {
             course.setCourseId(IdUtil.fastSimpleUUID());
-            course.setUpdateUser(course.getCreateUser());
-            BeanUtil.copyProperties(course, verifyVo);
-            verifyVo.setSubmitType("添加课程");
-            courseVerifyVoService.save(verifyVo);
-            return courseVerifyRepository.save(course).getCourseId();
+//            course.setUpdateUser(course.getCreateUser());
+//            BeanUtil.copyProperties(course, verifyVo);
+//            verifyVo.setSubmitType("添加课程");
+//            courseVerifyVoService.save(verifyVo);
+            return courseRepository.save(course).getCourseId();
         } else {
-            courseVerifyRepository.findById(course.getCourseId()).ifPresent(c -> {
+            courseRepository.findById(course.getCourseId()).ifPresent(c -> {
                 UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
 
-                BeanUtil.copyProperties(course, verifyVo);
-                verifyVo.setSubmitType("修改课程");
-                courseVerifyVoService.save(verifyVo);
+//                BeanUtil.copyProperties(course, verifyVo);
+//                verifyVo.setSubmitType("修改课程");
+//                courseVerifyVoService.save(verifyVo);
 
-                courseVerifyRepository.save(c);
+                courseRepository.save(c);
             });
         }
         return course.getCourseId();
@@ -123,12 +124,12 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findByCourseId(courseId);
     }
 
-    @Override
-    public CourseVerify findCourseVerifyById(String courseId){
-        Optional<CourseVerify> courseVerifyOptional = courseVerifyRepository.findById(courseId);
-        MyAssert.isFalse(courseVerifyOptional.isPresent(), DefineCode.ERR0010, "不存在对应的课程信息");
-        return courseVerifyOptional.get();
-    }
+//    @Override
+//    public Course findCourseVerifyById(String courseId){
+//        Optional<Course> courseVerifyOptional = courseRepository.findById(courseId);
+//        MyAssert.isFalse(courseVerifyOptional.isPresent(), DefineCode.ERR0010, "不存在对应的课程信息");
+//        return courseVerifyOptional.get();
+//    }
 
     /**
      * 分页查询我的课程科目
@@ -138,7 +139,7 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     public List<ICourseListDto> findMyCourse(String userId, PageRequest page) {
-        return courseVerifyRepository.findByCreateUserAndIsValidatedOrderByCreateTimeDesc(userId, TAKE_EFFECT_OPEN, page)
+        return courseRepository.findByCreateUserAndIsValidatedOrderByCreateTimeDesc(userId, TAKE_EFFECT_OPEN, page)
                 .getContent();
     }
 
@@ -149,8 +150,8 @@ public class CourseServiceImpl implements CourseService {
      * @return
      */
     @Override
-    public CourseVerify getById(String id) {
-        Optional<CourseVerify> optionalCourse = courseVerifyRepository.findById(id);
+    public Course getById(String id) {
+        Optional<Course> optionalCourse = courseRepository.findById(id);
         MyAssert.isFalse(optionalCourse.isPresent(), DefineCode.ERR0010, "编号对应的课程信息不存在");
         return optionalCourse.get();
     }
@@ -251,8 +252,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds) {
-        return courseIds.parallelStream().map(v -> {
+    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId) {
+        List<CourseVo> vos = courseIds.parallelStream().map(v -> {
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
             if (list.isEmpty()){
                 return new CourseVo();
@@ -263,22 +264,32 @@ public class CourseServiceImpl implements CourseService {
                         iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName());
             }
         }).collect(Collectors.toList());
+        stringRedisTemplate.opsForValue().set(TEACH_PLAN_CLASS_COURSEVO.concat(classId), JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
+        return vos;
+    }
+    @Override
+    public List<CourseVo> findCourseVoByClassId(String classId){
+        String key = TEACH_PLAN_CLASS_COURSEVO.concat(classId);
+        if (stringRedisTemplate.hasKey(key)){
+            return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), CourseVo.class);
+        }
+        return null;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void verifyCourse(CourseVerifyVo verifyVo) {
-        Optional<CourseVerify> optional = courseVerifyRepository.findById(verifyVo.getCourseId());
-        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在对应的课程信息");
-        CourseVerify courseVerify = optional.get();
-        courseVerify.setRemark(verifyVo.getRemark());
-        courseVerify.setVerifyStatus(verifyVo.getVerifyStatus());
-        courseVerify.setUpdateUser(verifyVo.getUserId());
-        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
-            Course course = new Course();
-            BeanUtil.copyProperties(courseVerify, course);
-            courseRepository.save(course);
-        }
-        courseVerifyRepository.save(courseVerify);
-    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void verifyCourse(CourseVerifyVo verifyVo) {
+//        Optional<CourseVerify> optional = courseVerifyRepository.findById(verifyVo.getCourseId());
+//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在对应的课程信息");
+//        CourseVerify courseVerify = optional.get();
+//        courseVerify.setRemark(verifyVo.getRemark());
+//        courseVerify.setVerifyStatus(verifyVo.getVerifyStatus());
+//        courseVerify.setUpdateUser(verifyVo.getUserId());
+//        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
+//            Course course = new Course();
+//            BeanUtil.copyProperties(courseVerify, course);
+//            courseRepository.save(course);
+//        }
+//        courseVerifyRepository.save(courseVerify);
+//    }
 }

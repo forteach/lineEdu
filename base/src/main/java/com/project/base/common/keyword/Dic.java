@@ -75,4 +75,6 @@ public class Dic {
     public static final String QUESTION_ID = "questionId$";
     public static final String QUESTION_CHAPTER = "questionChapter$";
     public static final String QUESTIONS_VERIFY = "questionsVerify";
+
+    public static final String TEACH_PLAN_CLASS_COURSEVO = "teachPlanClassCourseVo$";
 }

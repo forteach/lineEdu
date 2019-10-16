@@ -1,6 +1,7 @@
 package com.project.teachplan.domain.verify;
 
 import cn.hutool.core.util.StrUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.teachplan.domain.base.BaseTeachPlanClass;
 import com.project.teachplan.domain.pk.TeachPlanClassPk;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class TeachPlanClassVerify extends BaseTeachPlanClass implements Serializ
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
+    @JsonIgnore
     private TeachPlanClassPk teachPlanClassPk;
 
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")

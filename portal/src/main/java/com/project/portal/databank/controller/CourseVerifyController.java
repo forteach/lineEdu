@@ -94,11 +94,11 @@ public class CourseVerifyController {
             chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getFileId(),
                     request.getVerifyStatus(), request.getRemark(), userId), verifyVo.getDatumType());
         }
-        if (COURSE_DATA.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-            //是课程
-            courseService.verifyCourse(new com.project.course.web.vo.CourseVerifyVo(verifyVo.courseId,
-                    request.getVerifyStatus(), request.getRemark(), userId));
-        }
+//        if (COURSE_DATA.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+//            //是课程
+//            courseService.verifyCourse(new com.project.course.web.vo.CourseVerifyVo(verifyVo.courseId,
+//                    request.getVerifyStatus(), request.getRemark(), userId));
+//        }
 //        if (CHAPTER_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
 //            //章节
 //            courseChapterService.verifyCourse(new CourseChapterVerifyVo(verifyVo.getChapterId(),

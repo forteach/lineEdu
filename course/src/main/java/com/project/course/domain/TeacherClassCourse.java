@@ -1,5 +1,6 @@
 package com.project.course.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.course.domain.pk.TeacherClassCoursePk;
 import com.project.mysql.domain.Entitys;
 import lombok.*;
@@ -32,6 +33,7 @@ import javax.persistence.*;
 public class TeacherClassCourse extends Entitys {
 
     @EmbeddedId
+    @JsonIgnore
     private TeacherClassCoursePk teacherClassCoursePk;
 
     /**

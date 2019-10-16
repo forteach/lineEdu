@@ -173,6 +173,10 @@ public class TeachService {
         return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
     }
 
+    public List<TeachPlanClassVerify> findAllClassVerifyByPlanId(String planId){
+        return teachPlanClassVerifyRepository.findAllByPlanId(planId);
+    }
+
     public Page<TeachPlanDto> findAllPageByPlanIdAndVerifyStatus(String planId, String verifyStatus, Pageable pageable) {
         if (StrUtil.isNotBlank(planId) && StrUtil.isNotBlank(verifyStatus)) {
             return teachPlanVerifyRepository.findAllPageByPlanIdAndVerifyStatusDto(planId, verifyStatus, pageable);

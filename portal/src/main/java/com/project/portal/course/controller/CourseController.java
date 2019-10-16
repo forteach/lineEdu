@@ -1,18 +1,15 @@
 package com.project.portal.course.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
-import com.project.course.domain.OnLineCourseDic;
-import com.project.course.domain.verify.CourseVerify;
 import com.project.course.service.CourseService;
-import com.project.course.service.OnLineCourseDicService;
 import com.project.course.web.resp.CourseSaveResp;
 import com.project.course.web.vo.CourseTeacherVo;
+import com.project.course.web.vo.CourseVo;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
 import com.project.portal.course.request.CourseFindAllReq;
@@ -22,12 +19,9 @@ import com.project.portal.course.request.CourseStudyReq;
 import com.project.portal.course.response.CourseListResp;
 import com.project.portal.course.vo.RCourse;
 import com.project.portal.response.WebResult;
-import com.project.schoolroll.service.LearnCenterService;
-import com.project.teachplan.repository.dto.CourseTeacherDto;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
-import com.project.user.service.TeacherService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Objects;
 
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
@@ -66,14 +59,14 @@ public class CourseController {
     @Resource
     private TeachPlanCourseService teachPlanCourseService;
 
-    @Resource
-    private OnLineCourseDicService onLineCourseDicService;
+//    @Resource
+//    private OnLineCourseDicService onLineCourseDicService;
 
-    @Resource
-    private LearnCenterService learnCenterService;
+//    @Resource
+//    private LearnCenterService learnCenterService;
 
-    @Resource
-    private TeacherService teacherService;
+//    @Resource
+//    private TeacherService teacherService;
 
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
@@ -97,7 +90,7 @@ public class CourseController {
         //验证请求信息
         CourseVer.saveValide(req);
         //设置service数据
-        CourseVerify course = new CourseVerify();
+        Course course = new Course();
         UpdateUtil.copyNullProperties(req, course);
         String token = request.getHeader("token");
         String userId = tokenService.getUserId(token);
@@ -105,15 +98,15 @@ public class CourseController {
         course.setCreateUser(userId);
         course.setUpdateUser(userId);
         course.setCenterAreaId(centerId);
-        if (StrUtil.isNotBlank(req.getCourseNumber())) {
-            OnLineCourseDic courseDic = onLineCourseDicService.findId(req.getCourseNumber());
-            if (StrUtil.isNotBlank(courseDic.getCourseId())) {
-                course.setCourseNumber(courseDic.getCourseId());
-            }
-        }
-        String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
-        String teacherName = teacherService.findById(userId).getTeacherName();
-        String courseId = courseService.saveUpdate(course, teacherName, centerName);
+//        if (StrUtil.isNotBlank(req.getCourseNumber())) {
+//            OnLineCourseDic courseDic = onLineCourseDicService.findId(req.getCourseNumber());
+//            if (StrUtil.isNotBlank(courseDic.getCourseId())) {
+//                course.setCourseNumber(courseDic.getCourseId());
+//            }
+//        }
+//        String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
+//        String teacherName = teacherService.findById(userId).getTeacherName();
+        String courseId = courseService.saveUpdate(course);
         //创建输出课程对象
         CourseSaveResp courseSaveResp = CourseSaveResp.builder()
                 .courseId(courseId)
@@ -292,7 +285,7 @@ public class CourseController {
         String token = httpServletRequest.getHeader("token");
         if (tokenService.isAdmin(token)) {
             return WebResult.okResult(courseService.findImagesByCourseId(req.getCourseId(), VERIFY_STATUS_APPLY));
-        }else {
+        } else {
             return WebResult.okResult(courseService.findImagesByCourseId(req.getCourseId(), VERIFY_STATUS_AGREE));
         }
     }
@@ -328,9 +321,13 @@ public class CourseController {
     @GetMapping("/studentCourseList")
     public WebResult findCourseStudent(HttpServletRequest request) {
         String classId = tokenService.getClassId(request.getHeader("token"));
+        List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
+        if (vos != null){
+            return WebResult.okResult(vos);
+        }
         List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId).stream()
                 .map(dto -> new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId())).collect(toList());
-        return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds));
+        return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId));
     }
 //
 //    @UserLoginToken

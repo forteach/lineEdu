@@ -1,5 +1,6 @@
 package com.project.teachplan.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.teachplan.domain.base.BaseTeachPlanClass;
 import com.project.teachplan.domain.pk.TeachPlanClassPk;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class TeachPlanClass extends BaseTeachPlanClass implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
+    @JsonIgnore
     private TeachPlanClassPk teachPlanClassPk;
 
 

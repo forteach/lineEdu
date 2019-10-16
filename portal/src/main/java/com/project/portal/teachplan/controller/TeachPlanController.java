@@ -153,16 +153,25 @@ public class TeachPlanController {
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "query")
     public WebResult findAllCourseByPlanId(@PathVariable String planId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
-        return WebResult.okResult(teachPlanCourseService.findAllCourseByPlanId(planId));
+        if (tokenService.isStudent(httpServletRequest.getHeader("token"))) {
+            return WebResult.okResult(teachPlanCourseService.findAllCourseByPlanId(planId));
+        }else {
+            return WebResult.okResult(teachPlanCourseService.findAllCourseVerifyByPlanId(planId));
+        }
     }
 
     @UserLoginToken
     @ApiOperation(value = "查询计划对应班级信息")
     @PostMapping(path = "/class/{planId}")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "query")
-    public WebResult findAllClassByPlanId(@PathVariable String planId) {
+    public WebResult findAllClassByPlanId(@PathVariable String planId, HttpServletRequest request) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
-        return WebResult.okResult(teachService.findAllClassByPlanId(planId));
+        String token = request.getHeader("token");
+        if (tokenService.isStudent(token)) {
+            return WebResult.okResult(teachService.findAllClassByPlanId(planId));
+        }else {
+            return WebResult.okResult(teachService.findAllClassVerifyByPlanId(planId));
+        }
     }
 
     @UserLoginToken

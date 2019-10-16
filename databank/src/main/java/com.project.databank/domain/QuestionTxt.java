@@ -1,5 +1,6 @@
 package com.project.databank.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class QuestionTxt extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
+    @JsonIgnore
     private QuestionTxtFundPrimarykey questionTxtFundPrimarykey;
 
     private String txtId;

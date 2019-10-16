@@ -1,5 +1,6 @@
 package com.project.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class UserRole extends Entitys {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
+    @JsonIgnore
     private UserRoleFundPrimarykey userRoleFundPrimarykey;
 
     private String userId;

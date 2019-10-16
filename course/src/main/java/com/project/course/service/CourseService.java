@@ -3,14 +3,11 @@ package com.project.course.service;
 
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseImages;
-import com.project.course.domain.verify.CourseVerify;
-import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
 import com.project.course.web.vo.CourseTeacherVo;
-import com.project.course.web.vo.CourseVerifyVo;
 import com.project.course.web.vo.CourseVo;
 import org.springframework.data.domain.PageRequest;
 
@@ -26,7 +23,7 @@ import java.util.Map;
  */
 public interface CourseService {
 
-    public String saveUpdate(CourseVerify course, String teacherName, String centerName);
+    public String saveUpdate(Course course);
 
     public void deleteIsValidById(String courseId);
 
@@ -36,7 +33,7 @@ public interface CourseService {
 
     public Course findByCourseId(String courseId);
 
-    public CourseVerify findCourseVerifyById(String courseId);
+//    public Course findCourseVerifyById(String courseId);
 
     public List<ICourseListDto> findAll(PageRequest page);
 
@@ -48,7 +45,7 @@ public interface CourseService {
 
     public List<ICourseListDto> findMyCourse(String userId, PageRequest page);
 
-    public CourseVerify getById(String id);
+    public Course getById(String id);
 
     public List<CourseListResp> myCourseList(String classId);
 
@@ -56,9 +53,11 @@ public interface CourseService {
 
     public int deleteImagesByCourseId(String courseId);
 
-    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds);
+    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId);
 
-    void verifyCourse(CourseVerifyVo verifyVo);
+    List<CourseVo> findCourseVoByClassId(String classId);
+
+//    void verifyCourse(CourseVerifyVo verifyVo);
 
 //    void verifyCourseImage(CourseVerifyVo verifyVo);
 }

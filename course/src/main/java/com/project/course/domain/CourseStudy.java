@@ -1,5 +1,6 @@
 package com.project.course.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.course.domain.pk.CourseStudyPk;
 import com.project.mysql.domain.Entitys;
 import lombok.*;
@@ -33,6 +34,7 @@ import java.io.Serializable;
 public class CourseStudy extends Entitys implements Serializable {
 
     @EmbeddedId
+    @JsonIgnore
     private CourseStudyPk courseStudyPk;
 
     private String courseId;

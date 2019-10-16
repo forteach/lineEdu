@@ -1,6 +1,7 @@
 package com.project.course.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.course.domain.pk.CourseSpecialtyPk;
 import com.project.mysql.domain.Entitys;
 import lombok.*;
@@ -27,6 +28,7 @@ import javax.persistence.Table;
 public class CourseSpecialty extends Entitys {
 
     @EmbeddedId
+    @JsonIgnore
     private CourseSpecialtyPk courseSpecialtyPk;
 
     private String courseId;

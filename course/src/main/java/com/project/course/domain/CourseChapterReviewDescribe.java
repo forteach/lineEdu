@@ -1,5 +1,6 @@
 package com.project.course.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.course.domain.pk.CourseChapterReviewDescribePk;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ import java.io.Serializable;
 public class CourseChapterReviewDescribe extends Entitys implements Serializable {
 
     @EmbeddedId
+    @JsonIgnore
     private CourseChapterReviewDescribePk courseChapterReviewDescribePk;
 
     private String chapterId;

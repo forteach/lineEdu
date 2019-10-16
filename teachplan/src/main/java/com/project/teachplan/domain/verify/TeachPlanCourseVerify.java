@@ -1,6 +1,7 @@
 package com.project.teachplan.domain.verify;
 
 import cn.hutool.core.util.StrUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.teachplan.domain.base.BaseTeachPlanCourse;
 import com.project.teachplan.domain.pk.TeachPlanCoursePk;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ public class TeachPlanCourseVerify extends BaseTeachPlanCourse implements Serial
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
+    @JsonIgnore
     private TeachPlanCoursePk teachPlanCoursePk;
 
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")

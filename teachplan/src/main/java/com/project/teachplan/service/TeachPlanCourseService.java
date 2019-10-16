@@ -53,6 +53,10 @@ public class TeachPlanCourseService {
         return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId);
     }
 
+    public List<TeachPlanCourseVerify> findAllCourseVerifyByPlanId(String planId){
+        return teachPlanCourseVerifyRepository.findAllByPlanId(planId);
+    }
+
     public List<String> findCourseIdByClassId(String classId) {
         return teachPlanCourseRepository.findAllByIsValidatedEqualsAndClassId(classId);
     }

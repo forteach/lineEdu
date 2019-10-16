@@ -1,5 +1,6 @@
 package com.project.teachplan.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
 import com.project.teachplan.domain.pk.TeachPlanFileListPk;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,7 @@ public class TeachPlanFileList extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
+    @JsonIgnore
     private TeachPlanFileListPk teachPlanFileListPk;
 
     private String courseId;
