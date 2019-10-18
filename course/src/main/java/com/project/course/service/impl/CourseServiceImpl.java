@@ -253,17 +253,16 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId) {
-        List<CourseVo> vos = courseIds.parallelStream().map(v -> {
+        List<CourseVo> vos = new ArrayList<>();
+        for (CourseTeacherVo v : courseIds){
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
-            if (list.isEmpty()){
-                return new CourseVo();
-            }else {
+            if (!list.isEmpty()){
                 ICourseDto iCourseDto = list.get(0);
-                return new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
+                vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
                         iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
-                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName());
+                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName()));
             }
-        }).collect(Collectors.toList());
+        }
         stringRedisTemplate.opsForValue().set(TEACH_PLAN_CLASS_COURSEVO.concat(classId), JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
         return vos;
     }
