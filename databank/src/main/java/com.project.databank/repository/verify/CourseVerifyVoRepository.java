@@ -4,6 +4,7 @@ import com.project.databank.domain.verify.CourseVerifyVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -14,12 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
  * @description:
  */
 public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, String> {
+    @Modifying(clearAutomatically = true)
+    void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
+
     @Transactional(readOnly = true)
     Page<CourseVerifyVo> findAllByIsValidatedEqualsAndCourseId(String isValidated, String courseId, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatus(String isValidated, String verifyStatus, Pageable pageable);
+    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String verifyStatus, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusAndCourseId(String isValidated, String verifyStatus, String courseId, Pageable pageable);
+    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusAndCourseIdOrderByCreateTimeDesc(String isValidated, String verifyStatus, String courseId, Pageable pageable);
 }

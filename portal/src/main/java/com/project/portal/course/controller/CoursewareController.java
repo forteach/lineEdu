@@ -8,8 +8,10 @@ import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
 import com.project.portal.response.WebResult;
+import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
+import com.project.user.service.TeacherService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -38,17 +40,25 @@ public class CoursewareController {
     private CoursewareService coursewareService;
     @Resource
     private TokenService tokenService;
+    @Resource
+    private TeacherService teacherService;
+    @Resource
+    private LearnCenterService learnCenterService;
 
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
     @PostMapping("/savefile")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "courseId", value = "课程编号", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "courseName", value = "课程名称", dataTypeClass = String.class, required = true),
             @ApiImplicitParam(name = "fileUrl", value = "视频url", dataTypeClass = CoursewareAll.class, required = true),
             @ApiImplicitParam(name = "fileName", value = "视频名称", dataType = "string", required = true),
             @ApiImplicitParam(name = "videoTime", value = "文件时长(单位秒)", dataType = "string", required = true)
     })
     public WebResult save(@ApiParam(name = "courseReq", value = "科目课程对象") @RequestBody ImpCoursewareAll req, HttpServletRequest request) {
+        MyAssert.blank(req.getCourseId(), DefineCode.ERR0010, "课程编号不为空");
+        MyAssert.blank(req.getCourseName(), DefineCode.ERR0010, "课程名称不为空");
         MyAssert.blank(req.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
         MyAssert.blank(req.getFileUrl(), DefineCode.ERR0010, "视频URL不为空");
         MyAssert.blank(req.getFileName(), DefineCode.ERR0010, "视频名称不为空");
@@ -56,7 +66,13 @@ public class CoursewareController {
         String token = request.getHeader("token");
         String userId = tokenService.getUserId(token);
         String centerId = tokenService.getCenterAreaId(token);
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        String centerName = learnCenterService.findByCenterId(centerAreaId).getCenterName();
+        String teacherName = teacherService.findById(userId).getTeacherName();
+        req.setTeacherId(userId);
+        req.setTeacherName(teacherName);
         req.setCreateUser(userId);
+        req.setCenterName(centerName);
         coursewareService.saveFile(req, centerId);
         return WebResult.okResult();
     }

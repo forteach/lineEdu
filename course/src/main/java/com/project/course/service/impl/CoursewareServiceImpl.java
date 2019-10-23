@@ -22,9 +22,9 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
-import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
+import static com.project.base.common.keyword.Dic.*;
 import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_FILE_DATA;
+import static com.project.databank.domain.verify.CourseVerifyEnum.VIEW_DATUM;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -59,12 +59,24 @@ public class CoursewareServiceImpl implements CoursewareService {
         important.setImportantType("2");
         important.setDatumType("3");
         important.setCenterAreaId(centerId);
+
+        //删除原来没有审核的，防止出错
+        courseVerifyVoService.deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(obj.getCourseId(), obj.getChapterId(), VERIFY_STATUS_APPLY, COURSE_FILE_DATA.getValue());
+
         ImportantCourseware importantCourseware = impCoursewareRepoitory.save(important);
         CourseVerifyVo courseVerifyVo = new CourseVerifyVo();
         BeanUtil.copyProperties(importantCourseware, courseVerifyVo);
         courseVerifyVo.setSubmitType("添加课件");
+        courseVerifyVo.setTeacherId(obj.getTeacherId());
+        courseVerifyVo.setTeacherName(obj.getTeacherName());
+        courseVerifyVo.setCourseName(obj.getCourseName());
+        courseVerifyVo.setCourseId(obj.getCourseId());
+        courseVerifyVo.setCenterName(obj.getCenterName());
         courseVerifyVo.setCenterAreaId(centerId);
+        courseVerifyVo.setUpdateUser(obj.getCreateUser());
+        courseVerifyVo.setCreateUser(obj.getCreateUser());
         courseVerifyVo.setCourseType(COURSE_FILE_DATA.getValue());
+        courseVerifyVo.setFileType(VIEW_DATUM.getValue());
         courseVerifyVoService.save(courseVerifyVo);
     }
 
@@ -222,6 +234,8 @@ public class CoursewareServiceImpl implements CoursewareService {
             coursewareAll.setFileUrl(i.getFileUrl());
             coursewareAll.setVideoTime(i.getVideoTime());
             coursewareAll.setFileId(i.getFileId());
+            coursewareAll.setRemark(i.getRemark());
+            coursewareAll.setVerifyStatus(i.getVerifyStatus());
             return coursewareAll;
         }).collect(toList());
     }

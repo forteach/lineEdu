@@ -32,4 +32,6 @@ public interface CourseVerifyVoService {
     void taskRedis();
 
     void verifyQuestion(CourseVerifyRequest request);
+
+    void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
 }

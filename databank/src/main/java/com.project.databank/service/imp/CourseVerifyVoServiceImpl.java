@@ -52,12 +52,12 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
 
     @Override
     public Page<CourseVerifyVo> findAllPage(PageRequest pageRequest) {
-        return courseVerifyVoRepository.findAllByIsValidatedEqualsAndVerifyStatus(TAKE_EFFECT_OPEN, VERIFY_STATUS_APPLY, pageRequest);
+        return courseVerifyVoRepository.findAllByIsValidatedEqualsAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, VERIFY_STATUS_APPLY, pageRequest);
     }
 
     @Override
     public Page<CourseVerifyVo> findAllPage(String courseId, PageRequest pageRequest) {
-        return courseVerifyVoRepository.findAllByIsValidatedEqualsAndVerifyStatusAndCourseId(TAKE_EFFECT_OPEN, VERIFY_STATUS_APPLY, courseId, pageRequest);
+        return courseVerifyVoRepository.findAllByIsValidatedEqualsAndVerifyStatusAndCourseIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, VERIFY_STATUS_APPLY, courseId, pageRequest);
     }
 
     @Async
@@ -125,5 +125,11 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
         bigQuestion.setRemark(request.getRemark());
         BigQuestion result = mongoTemplate.save(bigQuestion);
         MyAssert.isNull(result, DefineCode.ERR0013, "操作失败");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType) {
+        courseVerifyVoRepository.deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(courseId, chapterId, verifyStatus, courseType);
     }
 }

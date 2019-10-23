@@ -1,5 +1,6 @@
 package com.project.course.web.req;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,5 +46,16 @@ public class ImpCoursewareAll implements Serializable {
      */
     private String videoTime;
 
+    private String courseId;
+
+    private String courseName;
+
+    @JsonIgnore
+    private String centerName;
+    @JsonIgnore
     private String createUser;
+    @JsonIgnore
+    private String teacherName;
+    @JsonIgnore
+    private String teacherId;
 }

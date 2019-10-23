@@ -24,4 +24,7 @@ public class CoursewareAll implements Serializable {
 
     private String videoTime;
 
+    private String remark;
+
+    private String verifyStatus;
 }
