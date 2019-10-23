@@ -10,10 +10,17 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 课时费管理
  */
 public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, JpaSpecificationExecutor<TeachPlan> {
+
+    @Query(value = "select planId from TeachPlan where isValidated = '0' " +
+            " and startDate <= ?1 and endDate >= ?1 and planId in (select planId from TeachPlanClass where isValidated = '0' and classId = ?1)")
+    @Transactional(readOnly = true)
+    List<String> findAllByClassId(String nowDate, String classId);
 
     @Transactional(readOnly = true)
     Page<TeachPlan> findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, String planId, Pageable pageable);

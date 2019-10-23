@@ -1,14 +1,11 @@
 package com.project.teachplan.repository;
 
-import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.repository.dto.CourseTeacherDto;
-import com.project.teachplan.repository.dto.PlanCourseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -44,4 +41,7 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
             " order by createTime desc ")
     @Transactional(readOnly = true)
     List<CourseTeacherDto> findAllByIsValidatedEqualsAndClassIdDto(String classId);
+
+    @Transactional(readOnly = true)
+    List<CourseTeacherDto> findAllByIsValidatedEqualsAndPlanIdIn(String isValidated, List<String> planIds);
 }

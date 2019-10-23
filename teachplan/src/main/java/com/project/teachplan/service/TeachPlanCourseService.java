@@ -1,11 +1,13 @@
 package com.project.teachplan.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.domain.verify.TeachPlanCourseVerify;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
+import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.repository.dto.CourseTeacherDto;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import lombok.NonNull;
@@ -24,11 +26,13 @@ import static com.project.base.common.keyword.Dic.*;
 public class TeachPlanCourseService {
     private final TeachPlanCourseRepository teachPlanCourseRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
+    private final TeachPlanRepository teachPlanRepository;
 
     @Autowired
-    public TeachPlanCourseService(TeachPlanCourseRepository teachPlanCourseRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository) {
+    public TeachPlanCourseService(TeachPlanCourseRepository teachPlanCourseRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository, TeachPlanRepository teachPlanRepository) {
         this.teachPlanCourseRepository = teachPlanCourseRepository;
         this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
+        this.teachPlanRepository = teachPlanRepository;
     }
 
     public TeachPlanCourse findByCourseId(String courseId, String planId) {
@@ -62,7 +66,10 @@ public class TeachPlanCourseService {
     }
 
     public List<CourseTeacherDto> findCourseIdAndTeacherIdByClassId(String classId) {
-        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndClassIdDto(classId);
+        //查询计划Id
+        List<String> planIds = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
+
+        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds);
     }
 
     void updateVerifyPlanCourse(String planId, String isValidated, String remark, String userId) {
