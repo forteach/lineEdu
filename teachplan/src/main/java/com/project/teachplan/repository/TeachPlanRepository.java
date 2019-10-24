@@ -18,7 +18,7 @@ import java.util.List;
 public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, JpaSpecificationExecutor<TeachPlan> {
 
     @Query(value = "select planId from TeachPlan where isValidated = '0' " +
-            " and startDate <= ?1 and endDate >= ?1 and planId in (select planId from TeachPlanClass where isValidated = '0' and classId = ?1)")
+            " and startDate <= ?1 and endDate >= ?1 and planId in (select planId from TeachPlanClass where isValidated = '0' and classId = ?2)")
     @Transactional(readOnly = true)
     List<String> findAllByClassId(String nowDate, String classId);
 

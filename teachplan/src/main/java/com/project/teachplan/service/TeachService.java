@@ -110,7 +110,8 @@ public class TeachService {
     private TeachPlanCourseVerify createTeachPlanCourse(String planId, TeachPlanCourseVo vo, String remark, String centerAreaId, String userId) {
         String teacherName = teacherService.findById(vo.getTeacherId()).getTeacherName();
         return new TeachPlanCourseVerify(planId, vo.getCourseId(), onLineCourseDicService.findId(vo.getCourseId()).getCourseName(),
-                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), teacherName, centerAreaId, remark, userId, VERIFY_STATUS_APPLY);
+                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), teacherName,
+                centerAreaId, remark, userId, VERIFY_STATUS_APPLY);
     }
 
     private void saveTeachPlanClass(String planId, TeachPlanVerify teachPlan, List<String> classIds, String remark, String centerAreaId, String userId) {
@@ -132,6 +133,7 @@ public class TeachService {
         if (!classIds.isEmpty()) {
             teachPlan.setClassNumber(classIds.size());
         }
+        teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
         return teachPlanVerifyRepository.save(teachPlan);
     }
 
@@ -145,6 +147,7 @@ public class TeachService {
         if (!courses.isEmpty()) {
             teachPlan.setCourseNumber(courses.size());
         }
+        teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
         return teachPlanVerifyRepository.save(teachPlan);
     }
 
@@ -311,13 +314,12 @@ public class TeachService {
 
 
     void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
-        // 删除原来的班级
-        teachPlanClassRepository.deleteAllByPlanId(planId);
+        // 审核通过 删除原来的班级
+        if (VERIFY_STATUS_AGREE.equals(verifyStatus)){
+            teachPlanClassRepository.deleteAllByPlanId(planId);
+        }
         List<TeachPlanClass> teachPlanClassList = new ArrayList<>();
-        List<TeachPlanClassVerify> teachPlanClassVerifyList = teachPlanClassVerifyRepository
-                .findAllByVerifyStatusAndPlanId(VERIFY_STATUS_APPLY, planId)
-                .stream()
-                .filter(Objects::nonNull)
+        List<TeachPlanClassVerify> teachPlanClassVerifyList = teachPlanClassVerifyRepository.findAllByPlanId(planId).stream().filter(Objects::nonNull)
                 .peek(t -> {
                     t.setRemark(remark);
                     t.setVerifyStatus(verifyStatus);

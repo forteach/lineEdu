@@ -72,19 +72,14 @@ public class TeachPlanCourseService {
         return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds);
     }
 
-    void updateVerifyPlanCourse(String planId, String isValidated, String remark, String userId) {
-        //删除原来课程信息
-        teachPlanCourseRepository.deleteAllByPlanId(planId);
+    void updateVerifyPlanCourse(String planId, String verifyStatus, String remark, String userId) {
         List<TeachPlanCourse> teachPlanCourseList = new ArrayList<>();
-        List<TeachPlanCourseVerify> teachPlanCourseVerifyList = teachPlanCourseVerifyRepository
-                .findAllByVerifyStatusEqualsAndPlanId(VERIFY_STATUS_APPLY, planId)
-                .stream()
-                .filter(Objects::nonNull)
+        List<TeachPlanCourseVerify> teachPlanCourseVerifyList = teachPlanCourseVerifyRepository.findAllByPlanId(planId).stream().filter(Objects::nonNull)
                 .peek(t -> {
                     t.setRemark(remark);
-                    t.setVerifyStatus(isValidated);
+                    t.setVerifyStatus(verifyStatus);
                     t.setUpdateUser(userId);
-                    if (VERIFY_STATUS_AGREE.equals(isValidated)) {
+                    if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
                         TeachPlanCourse p = new TeachPlanCourse();
                         BeanUtil.copyProperties(t, p);
                         teachPlanCourseList.add(p);
@@ -92,6 +87,10 @@ public class TeachPlanCourseService {
                 }).collect(Collectors.toList());
         if (!teachPlanCourseVerifyList.isEmpty()) {
             teachPlanCourseVerifyRepository.saveAll(teachPlanCourseVerifyList);
+        }
+        //审核通过 删除原来课程信息
+        if (VERIFY_STATUS_AGREE.equals(verifyStatus)){
+            teachPlanCourseRepository.deleteAllByPlanId(planId);
         }
         if (!teachPlanCourseList.isEmpty()) {
             teachPlanCourseRepository.saveAll(teachPlanCourseList);
