@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.project.mysql.domain.Entitys;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -25,10 +27,12 @@ import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
         @Index(columnList = "course_id", name = "course_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
+@DynamicInsert
+@DynamicUpdate
 @org.hibernate.annotations.Table(appliesTo = "course_verify_vo", comment = "课程修改记录")
-@GenericGenerator(name = "system-uuid", strategy = "uuid")
 public class CourseVerifyVo extends Entitys implements Serializable {
     @Id
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @GeneratedValue(generator = "system-uuid")
     @Column(name = "vo_id", columnDefinition = "VARCHAR(32) COMMENT '修改的课程id'")
     private String voId;
