@@ -257,7 +257,7 @@ public class TeacherController {
             MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, "教师信息.xlsx");
         } catch (IOException e) {
             log.error("导出教师信息失败, centerId ; [{}], message : [{}]", centerId, e.getMessage());
-            MyAssert.notNull(e, DefineCode.CORE_ERR, "导出信息失败");
+            MyAssert.notNull(e, DefineCode.ERR0009, "导出信息失败");
             e.printStackTrace();
         }
         return WebResult.okResult();

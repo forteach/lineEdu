@@ -1,6 +1,7 @@
 package com.project.schoolroll.service.online;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -20,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -31,6 +29,7 @@ import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS_ONLINE;
 import static com.project.schoolroll.domain.excel.Dic.STUDENT_ON_LINE_IMPORT_STATUS_IMPORT;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class StudentOnLineService {
@@ -89,7 +88,7 @@ public class StudentOnLineService {
     }
 
     private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId, String userId) {
-        return list.stream().map(s -> setStudentOnLine(s, classIds, centerAreaId, userId)).collect(Collectors.toList());
+        return list.stream().map(s -> setStudentOnLine(s, classIds, centerAreaId, userId)).collect(toList());
     }
 
     private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId, String userId) {
@@ -133,5 +132,50 @@ public class StudentOnLineService {
 
     public List<StudentOnLine> findByStuIDCardAndStudentName(String stuIDCard, String studentName) {
         return studentOnLineRepository.findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, stuIDCard, studentName);
+    }
+
+    public List<List<String>> findAllStudent(){
+        List<List<String>> list = exportChange(studentOnLineRepository.findAllDto());
+        list.add(0, setTitle());
+        return list;
+    }
+
+    public List<List<String>> findAllStudentByCenterId(String centerId) {
+        List<List<String>> list = exportChange(studentOnLineRepository.findAllByCenterAreaIdDto(centerId));
+        list.add(0, setTitle());
+        return list;
+    }
+
+    private List<List<String>> exportChange(List<StudentOnLineDto> list){
+        return list.stream().filter(Objects::nonNull).map(this::setExport).collect(toList());
+    }
+    private List<String> setExport(StudentOnLineDto dto){
+        List<String> list = new ArrayList<>();
+        list.add(dto.getStudentId());
+        list.add(dto.getStudentName());
+        list.add(dto.getGender());
+        list.add(dto.getStuIDCard());
+        list.add(dto.getStuPhone());
+        list.add(dto.getClassName());
+        list.add(dto.getEnrollmentDate());
+        list.add(dto.getNation());
+        list.add(dto.getLearningModality());
+        list.add(dto.getCenterName());
+        list.add(TAKE_EFFECT_OPEN.equals(dto.getIsValidated()) ? "是" : "否");
+        return list;
+    }
+    private List<String> setTitle() {
+        return CollUtil.newArrayList(studentId.getName(),
+                studentName.getName(),
+                gender.getName(),
+                stuIDCard.getName(),
+                stuPhone.getName(),
+                className.getName(),
+                enrollmentDate.getName(),
+                nation.getName(),
+                learningModality.getName(),
+                "学习中心名称",
+                "是否有效"
+        );
     }
 }

@@ -19,10 +19,10 @@ import java.util.Optional;
 public interface TbClassesRepository extends JpaRepository<TbClasses, String> {
 
     @Transactional(readOnly = true)
-    public Optional<TbClasses> findByClassNameAndCenterAreaId(String className, String centerAreaId);
+    Optional<TbClasses> findByClassNameAndCenterAreaId(String className, String centerAreaId);
 
     @Transactional(readOnly = true)
-    public List<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId);
+    List<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId);
 
     @Transactional(readOnly = true)
     Page<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);

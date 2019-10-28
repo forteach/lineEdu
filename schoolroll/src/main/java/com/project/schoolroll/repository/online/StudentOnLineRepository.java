@@ -74,4 +74,48 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " order by s.createTime desc ")
     @Transactional(readOnly = true)
     Page<StudentOnLineDto> findAllDto(Pageable pageable);
+
+    @Query(value = "select " +
+            " s.studentId as studentId," +
+            " s.studentName as studentName," +
+            " s.gender as gender," +
+            " s.stuIDCard as stuIDCard," +
+            " s.stuPhone as stuPhone," +
+            " s.classId as classId," +
+            " s.className as className," +
+            " s.enrollmentDate as enrollmentDate," +
+            " s.nation as nation, " +
+            " s.learningModality as learningModality, " +
+            " s.importStatus as importStatus," +
+            " s.centerAreaId as centerAreaId," +
+            " lc.centerName as centerName, " +
+            " s.createTime as createTime, " +
+            " s.isValidated as isValidated " +
+            " from StudentOnLine as s " +
+            " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
+            " where s.centerAreaId = ?1 order by s.createTime desc ")
+    @Transactional(readOnly = true)
+    List<StudentOnLineDto> findAllByCenterAreaIdDto(String centerAreaId);
+
+    @Query(value = "select " +
+            " s.studentId as studentId," +
+            " s.studentName as studentName," +
+            " s.gender as gender," +
+            " s.stuIDCard as stuIDCard," +
+            " s.stuPhone as stuPhone," +
+            " s.classId as classId," +
+            " s.className as className," +
+            " s.enrollmentDate as enrollmentDate," +
+            " s.nation as nation, " +
+            " s.learningModality as learningModality, " +
+            " s.importStatus as importStatus, " +
+            " s.centerAreaId as centerAreaId, " +
+            " lc.centerName as centerName," +
+            " s.createTime as createTime, " +
+            " s.isValidated as isValidated " +
+            " from StudentOnLine as s " +
+            " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
+            " order by s.createTime desc ")
+    @Transactional(readOnly = true)
+    List<StudentOnLineDto> findAllDto();
 }

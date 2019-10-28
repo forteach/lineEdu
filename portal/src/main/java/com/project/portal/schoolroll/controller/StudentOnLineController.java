@@ -6,6 +6,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.StudentOnLineFindAllPageRequest;
+import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
 import com.project.schoolroll.service.online.StudentOnLineService;
@@ -24,8 +25,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
@@ -122,11 +125,33 @@ public class StudentOnLineController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
+    @ApiOperation(value = "导出学生信息")
+    @PostMapping(path = "/exportStudent")
+    public WebResult exportStudent(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String token = httpServletRequest.getHeader("token");
+        String centerId = tokenService.getCenterAreaId(token);
+        try {
+            List<List<String>> lists;
+            if (tokenService.isAdmin(token)) {
+                lists = studentOnLineService.findAllStudent();
+            } else {
+                lists = studentOnLineService.findAllStudentByCenterId(centerId);
+            }
+            MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, "学生信息表.xlsx");
+        } catch (IOException e) {
+            log.error("导出学生信息数据失败, centerId : [{}], message : [{}]", centerId, e.getMessage());
+            MyAssert.notNull(e, DefineCode.ERR0009, "导出信息失败");
+            e.printStackTrace();
+        }
+        return WebResult.okResult();
+    }
+
 //    @GetMapping("/import")
 //    public WebResult save() {
 //        studentOnLineService.checkoutKey();
 //        String centerAreaId = "1001";
-//        studentOnLineService.importStudent(FileUtil.getInputStream("/home/yy/nextcloud-forteach/zip/工作簿1.xlsx"), centerAreaId);
+//        studentOnLineService.importStudent(FileUtil.getInputStream("/home/yy/nextcloud-forteach/zip/工作簿1.xlsx"), centerAreaId, "admin");
 //        return WebResult.okResult();
 //    }
 }
