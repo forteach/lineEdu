@@ -63,4 +63,58 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             " where t.isValidated = '0' and t.centerAreaId = ?1 order by t.createTime desc ")
     @Transactional(readOnly = true)
     Page<TeacherDto> findAllByCenterAreaIdDto(String centerAreaId, Pageable pageable);
+
+    @Query(value = "select " +
+            " t.teacherId as teacherId, " +
+            " t.teacherName as teacherName, " +
+            " t.teacherCode as teacherCode, " +
+            " t.gender as gender, " +
+            " t.birthDate as birthDate, " +
+            " t.idCard as idCard, " +
+            " t.professionalTitle as professionalTitle, " +
+            " t.professionalTitleDate as professionalTitleDate, " +
+            " t.position as position, " +
+            " t.industry as industry, " +
+            " t.email as email, " +
+            " t.phone as phone, " +
+            " t.specialty as specialty, " +
+            " t.isFullTime as isFullTime, " +
+            " t.academicDegree as academicDegree, " +
+            " t.bankCardAccount as bankCardAccount," +
+            " t.bankCardBank as bankCardBank, " +
+            " t.centerAreaId as centerAreaId, " +
+            " t.isValidated as isValidated, " +
+            " lc.centerName as centerName " +
+            " from Teacher as t " +
+            " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
+            " where t.centerAreaId = ?1 order by t.createTime desc ")
+    @Transactional(readOnly = true)
+    List<TeacherDto> findAllByCenterAreaIdDto(String centerAreaId);
+
+    @Query(value = "select " +
+            " t.teacherId as teacherId, " +
+            " t.teacherName as teacherName, " +
+            " t.teacherCode as teacherCode, " +
+            " t.gender as gender, " +
+            " t.birthDate as birthDate, " +
+            " t.idCard as idCard, " +
+            " t.professionalTitle as professionalTitle, " +
+            " t.professionalTitleDate as professionalTitleDate, " +
+            " t.position as position, " +
+            " t.industry as industry, " +
+            " t.email as email, " +
+            " t.phone as phone, " +
+            " t.specialty as specialty, " +
+            " t.isFullTime as isFullTime, " +
+            " t.academicDegree as academicDegree, " +
+            " t.bankCardAccount as bankCardAccount," +
+            " t.bankCardBank as bankCardBank, " +
+            " t.centerAreaId as centerAreaId, " +
+            " lc.centerName as centerName, " +
+            " t.isValidated as isValidated " +
+            " from Teacher as t " +
+            " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
+            " order by t.createTime desc ")
+    @Transactional(readOnly = true)
+    List<TeacherDto> findAllDto();
 }

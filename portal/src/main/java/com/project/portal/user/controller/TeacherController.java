@@ -11,6 +11,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.user.request.TeacherFindAllPageRequest;
 import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.portal.user.request.TeacherUploadFileRequest;
+import com.project.portal.util.MyExcleUtil;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.user.domain.TeacherFile;
@@ -21,11 +22,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -36,6 +41,7 @@ import static com.project.portal.request.ValideSortVo.valideSort;
  * @version: 1.0
  * @description:
  */
+@Slf4j
 @RestController
 @Api(value = "教师信息管理", tags = {"教师管理"})
 @RequestMapping(path = "/teacher", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -128,7 +134,7 @@ public class TeacherController {
                 return WebResult.okResult(teacherService.findAllPageDtoByVerifyStatusAndCenterAreaId(request.getVerifyStatus(), centerAreaId, pageRequest));
             }
             return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(centerAreaId, pageRequest));
-        }else {
+        } else {
             if (StrUtil.isBlank(request.getVerifyStatus())) {
                 return WebResult.okResult(teacherService.findAllPageDto(pageRequest));
             }
@@ -192,15 +198,16 @@ public class TeacherController {
     @GetMapping(path = "/files/{teacherId}")
     @ApiOperation(value = "查询教师信息的文件资料信息")
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
-    public WebResult findAllTeacherFile(@PathVariable String teacherId){
+    public WebResult findAllTeacherFile(@PathVariable String teacherId) {
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不为空");
         return WebResult.okResult(teacherService.findTeacherFile(teacherId));
     }
+
     @UserLoginToken
     @ApiOperation(value = "删除教师的文件")
     @DeleteMapping(path = "/file/{fileId}")
     @ApiImplicitParam(name = "fileId", value = "文件id", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteFile(@PathVariable String fileId){
+    public WebResult deleteFile(@PathVariable String fileId) {
         MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不为空");
         teacherService.deleteTeacherFile(fileId);
         return WebResult.okResult();
@@ -210,7 +217,7 @@ public class TeacherController {
     @ApiOperation(value = "修改教师用户信息状态")
     @PutMapping(path = "/status/{teacherId}")
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
-    public WebResult updateStatus(@PathVariable String teacherId, HttpServletRequest httpServletRequest){
+    public WebResult updateStatus(@PathVariable String teacherId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
         teacherService.updateStatus(teacherId, userId);
@@ -225,10 +232,34 @@ public class TeacherController {
             @ApiImplicitParam(name = "verifyStatus", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", required = true, paramType = "form"),
             @ApiImplicitParam(name = "remark", value = "备注", dataType = "string", paramType = "form")
     })
-    public WebResult verifyTeacher(@RequestBody TeacherVerifyVo teacherVerifyVo){
+    public WebResult verifyTeacher(@RequestBody TeacherVerifyVo teacherVerifyVo) {
         MyAssert.isNull(teacherVerifyVo.getTeacherId(), DefineCode.ERR0010, "教师Id不能为空");
         MyAssert.isTrue(StrUtil.isBlank(teacherVerifyVo.getVerifyStatus()), DefineCode.ERR0010, "状态不能为空");
         teacherService.verifyTeacher(teacherVerifyVo);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "导出教师信息")
+    @PostMapping(path = "/exportTeachers")
+    public WebResult exportTeachers(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String token = httpServletRequest.getHeader("token");
+        String centerId = tokenService.getCenterAreaId(token);
+        try {
+            List<List<String>> lists;
+            if (tokenService.isAdmin(token)) {
+                //是管理员，导出全部教师信息
+                lists = teacherService.exportTeachers();
+            } else {
+                //不是管理员导出对应的学习中心教师信息
+                lists = teacherService.exportTeachers(centerId);
+            }
+            MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, "教师信息.xlsx");
+        } catch (IOException e) {
+            log.error("导出教师信息失败, centerId ; [{}], message : [{}]", centerId, e.getMessage());
+            MyAssert.notNull(e, DefineCode.CORE_ERR, "导出信息失败");
+            e.printStackTrace();
+        }
         return WebResult.okResult();
     }
 }

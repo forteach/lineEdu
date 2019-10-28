@@ -1,6 +1,7 @@
 package com.project.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
@@ -23,7 +24,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.*;
@@ -242,5 +245,63 @@ public class TeacherServiceImpl implements TeacherService {
             t.setUpdateUser(userId);
             teacherRepository.save(t);
         });
+    }
+
+    @Override
+    public List<List<String>> exportTeachers() {
+        List<List<String>> list = exportChange(teacherRepository.findAllDto());
+        list.add(0, setTitle());
+        return list;
+    }
+
+    @Override
+    public List<List<String>> exportTeachers(String centerId) {
+        List<List<String>> list = exportChange(teacherRepository.findAllByCenterAreaIdDto(centerId));
+        list.add(0, setTitle());
+        return list;
+    }
+
+    private List<List<String>> exportChange(List<TeacherDto> list){
+        return list.parallelStream().filter(Objects::nonNull).map(this::setExport).collect(toList());
+    }
+    private List<String> setExport(TeacherDto dto){
+        List<String> list = new ArrayList<>();
+        list.add(dto.getTeacherName());
+        list.add(dto.getGender());
+        list.add(dto.getCenterName());
+        list.add(dto.getPhone());
+        list.add(dto.getEmail());
+        list.add(dto.getBirthDate());
+        list.add(dto.getIdCard());
+        list.add(dto.getProfessionalTitle());
+        list.add(dto.getProfessionalTitleDate());
+        list.add((dto.getPosition()));
+        list.add(dto.getIndustry());
+        list.add(dto.getSpecialty());
+        list.add(dto.getIsFullTime());
+        list.add(dto.getAcademicDegree());
+        list.add(dto.getBankCardAccount());
+        list.add(dto.getBankCardBank());
+        list.add(TAKE_EFFECT_OPEN.equals(dto.getIsValidated()) ? "是" : "否");
+        return list;
+    }
+    private List<String> setTitle(){
+        return CollUtil.newArrayList("姓名",
+                "性别",
+                "学习中心名称",
+                "联系电话",
+                "邮箱",
+                "出生年月",
+                "身份证号",
+                "现任专业技术职务",
+                "现任专业技术职务取得时间",
+                "工作单位及职务",
+                "所在行业",
+                "专业",
+                "是否全日制",
+                "学位",
+                "银行卡账户",
+                "银行卡开户行",
+                "是否有效");
     }
 }

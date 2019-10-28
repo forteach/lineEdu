@@ -53,4 +53,14 @@ public interface TeacherService {
     void deleteTeacherFile(String fileId);
 
     void updateStatus(String teacherId, String userId);
+
+    /**
+     * 查找全部教师信息
+     */
+    List<List<String>> exportTeachers();
+
+    /**
+     * 根据学习中心查找对应的教师信息
+     */
+    List<List<String>> exportTeachers(String centerId);
 }

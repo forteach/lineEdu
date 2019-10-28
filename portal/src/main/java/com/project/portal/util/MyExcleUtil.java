@@ -2,6 +2,8 @@ package com.project.portal.util;
 
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +20,7 @@ import java.util.List;
  */
 public class MyExcleUtil {
     public static void getExcel(HttpServletResponse response, HttpServletRequest request, List list, String fileName) throws IOException {
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "没有要导出的数据");
         ExcelWriter writer = ExcelUtil.getWriter(true);
         writer.write(list);
         response.reset();
