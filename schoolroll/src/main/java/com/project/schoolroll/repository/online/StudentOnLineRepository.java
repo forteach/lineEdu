@@ -93,9 +93,9 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " where s.centerAreaId = ?1 order by s.createTime desc ")
+            " where s.isValidated = ?1 and s.centerAreaId = ?2 order by s.createTime desc ")
     @Transactional(readOnly = true)
-    List<StudentOnLineDto> findAllByCenterAreaIdDto(String centerAreaId);
+    List<StudentOnLineDto> findAllByIsValidatedAndCenterAreaIdDto(String isValidated, String centerAreaId);
 
     @Query(value = "select " +
             " s.studentId as studentId," +
@@ -115,7 +115,7 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " order by s.createTime desc ")
+            " where s.isValidated = ?1 order by s.createTime desc ")
     @Transactional(readOnly = true)
-    List<StudentOnLineDto> findAllDto();
+    List<StudentOnLineDto> findAllIsValidatedDto(String isValidated);
 }

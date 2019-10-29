@@ -237,13 +237,26 @@ public class TeacherServiceImpl implements TeacherService {
             String status = t.getIsValidated();
             if (TAKE_EFFECT_CLOSE.equals(status)) {
                 t.setIsValidated(TAKE_EFFECT_OPEN);
+                //修改登陆状态
                 userService.updateStatus(t.getTeacherId(), TAKE_EFFECT_OPEN, userId);
+                //修改教师审核表状态
+                setTeacherVerifyStatus(teacherId, userId, TAKE_EFFECT_OPEN);
             } else {
                 t.setIsValidated(TAKE_EFFECT_CLOSE);
                 userService.updateStatus(t.getTeacherId(), TAKE_EFFECT_CLOSE, userId);
+                setTeacherVerifyStatus(teacherId, userId, TAKE_EFFECT_CLOSE);
             }
             t.setUpdateUser(userId);
             teacherRepository.save(t);
+        });
+    }
+
+    private void setTeacherVerifyStatus(String teacherId, String userId, String isValidated){
+        teacherVerifyRepository.findById(teacherId).ifPresent(t -> {
+            t.setIsValidated(isValidated);
+            t.setUpdateUser(userId);
+            t.setUpdateTime(DateUtil.now());
+            teacherVerifyRepository.save(t);
         });
     }
 

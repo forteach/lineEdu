@@ -127,18 +127,30 @@ public class StudentOnLineController {
 
     @UserLoginToken
     @ApiOperation(value = "导出学生信息")
-    @PostMapping(path = "/exportStudent")
-    public WebResult exportStudent(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        String token = httpServletRequest.getHeader("token");
+    @GetMapping(path = "/exportStudent/{token}/{isValidated}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "签名token", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "isValidated", value = "状态（0 有效, 1 无效）", required = true, dataType = "string", paramType = "path")
+    })
+    public WebResult exportStudent(@PathVariable(name = "token") String token, @PathVariable(name = "isValidated") String isValidated,
+                                   HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
+        MyAssert.isTrue(StrUtil.isBlank(isValidated), DefineCode.ERR0010, "学生状态为空");
         String centerId = tokenService.getCenterAreaId(token);
+        String fileName;
+        if (TAKE_EFFECT_CLOSE.equals(isValidated)){
+            fileName = "冻结学生信息表.xlsx";
+        }else {
+            fileName = "学生信息表.xlsx";
+        }
         try {
             List<List<String>> lists;
             if (tokenService.isAdmin(token)) {
-                lists = studentOnLineService.findAllStudent();
+                lists = studentOnLineService.findAllStudent(isValidated);
             } else {
-                lists = studentOnLineService.findAllStudentByCenterId(centerId);
+                lists = studentOnLineService.findAllStudentByCenterId(isValidated, centerId);
             }
-            MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, "学生信息表.xlsx");
+            MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, fileName);
         } catch (IOException e) {
             log.error("导出学生信息数据失败, centerId : [{}], message : [{}]", centerId, e.getMessage());
             MyAssert.notNull(e, DefineCode.ERR0009, "导出信息失败");

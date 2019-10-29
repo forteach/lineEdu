@@ -87,7 +87,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             " lc.centerName as centerName " +
             " from Teacher as t " +
             " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
-            " where t.centerAreaId = ?1 order by t.createTime desc ")
+            " where t.isValidated = '0' and t.centerAreaId = ?1 order by t.createTime desc ")
     @Transactional(readOnly = true)
     List<TeacherDto> findAllByCenterAreaIdDto(String centerAreaId);
 
@@ -114,7 +114,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
             " t.isValidated as isValidated " +
             " from Teacher as t " +
             " left join LearnCenter as lc on lc.centerId = t.centerAreaId " +
-            " order by t.createTime desc ")
+            " where t.isValidated = '0' order by t.createTime desc ")
     @Transactional(readOnly = true)
     List<TeacherDto> findAllDto();
 }

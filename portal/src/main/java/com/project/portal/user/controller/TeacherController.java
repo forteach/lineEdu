@@ -241,9 +241,10 @@ public class TeacherController {
 
     @UserLoginToken
     @ApiOperation(value = "导出教师信息")
-    @PostMapping(path = "/exportTeachers")
-    public WebResult exportTeachers(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        String token = httpServletRequest.getHeader("token");
+    @GetMapping(path = "/exportTeachers/{token}")
+    @ApiImplicitParam(name = "token", value = "签名token", required = true, dataType = "string", paramType = "path")
+    public WebResult exportTeachers(@PathVariable String token, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
         String centerId = tokenService.getCenterAreaId(token);
         try {
             List<List<String>> lists;

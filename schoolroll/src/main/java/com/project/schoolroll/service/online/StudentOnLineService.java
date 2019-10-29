@@ -150,14 +150,14 @@ public class StudentOnLineService {
         return studentOnLineRepository.findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, stuIDCard, studentName);
     }
 
-    public List<List<String>> findAllStudent(){
-        List<List<String>> list = exportChange(studentOnLineRepository.findAllDto());
+    public List<List<String>> findAllStudent(String isValidated){
+        List<List<String>> list = exportChange(studentOnLineRepository.findAllIsValidatedDto(isValidated));
         list.add(0, setTitle());
         return list;
     }
 
-    public List<List<String>> findAllStudentByCenterId(String centerId) {
-        List<List<String>> list = exportChange(studentOnLineRepository.findAllByCenterAreaIdDto(centerId));
+    public List<List<String>> findAllStudentByCenterId(String isValidated, String centerId) {
+        List<List<String>> list = exportChange(studentOnLineRepository.findAllByIsValidatedAndCenterAreaIdDto(isValidated, centerId));
         list.add(0, setTitle());
         return list;
     }
