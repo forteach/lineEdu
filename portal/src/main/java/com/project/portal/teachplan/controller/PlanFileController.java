@@ -1,6 +1,7 @@
 package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -66,6 +68,7 @@ public class PlanFileController {
             MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级id不为空");
             MyAssert.isNull(request.getCourseId(), DefineCode.ERR0010, "课程id不为空");
             MyAssert.isNull(request.getCreateDate(), DefineCode.ERR0010, "上课日期不为空");
+            MyAssert.isTrue(DateUtil.parse(request.getCreateDate()).isAfter(new Date()), DefineCode.ERR0010, "不能选择提交今天日期之后的文件");
             String centerAreaId = tokenService.getCenterAreaId(token);
             planFile.setCenterAreaId(centerAreaId);
             planFile.setCreateUser(userId);
