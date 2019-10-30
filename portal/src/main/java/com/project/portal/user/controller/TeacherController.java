@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
@@ -246,21 +245,15 @@ public class TeacherController {
     public WebResult exportTeachers(@PathVariable String token, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
         String centerId = tokenService.getCenterAreaId(token);
-        try {
-            List<List<String>> lists;
-            if (tokenService.isAdmin(token)) {
-                //是管理员，导出全部教师信息
-                lists = teacherService.exportTeachers();
-            } else {
-                //不是管理员导出对应的学习中心教师信息
-                lists = teacherService.exportTeachers(centerId);
-            }
-            MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, "教师信息.xlsx");
-        } catch (IOException e) {
-            log.error("导出教师信息失败, centerId ; [{}], message : [{}]", centerId, e.getMessage());
-            MyAssert.notNull(e, DefineCode.ERR0009, "导出信息失败");
-            e.printStackTrace();
+        List<List<String>> lists;
+        if (tokenService.isAdmin(token)) {
+            //是管理员，导出全部教师信息
+            lists = teacherService.exportTeachers();
+        } else {
+            //不是管理员导出对应的学习中心教师信息
+            lists = teacherService.exportTeachers(centerId);
         }
+        MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, "教师信息.xlsx");
         return WebResult.okResult();
     }
 }

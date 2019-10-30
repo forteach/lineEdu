@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -121,14 +120,7 @@ public class StudentScoreController {
     public WebResult exportScore(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader("token");
         String centerId = tokenService.getCenterAreaId(token);
-//        String centerId = "1f184d63f76644e3bb0889d7e43d9309";
-        try {
-            MyExcleUtil.getExcel(response, request, studentScoreService.exportScore(centerId), "学生成绩.xlsx");
-        } catch (IOException e) {
-            log.error("export student score error, ERROR MESSAGE [{}], ERROR toString [{}]", e.getMessage(), e.toString());
-            e.printStackTrace();
-            MyAssert.isNull(null, DefineCode.ERR0014, "导出错误");
-        }
+        MyExcleUtil.getExcel(response, request, studentScoreService.exportScore(centerId), "学生成绩.xlsx");
         return WebResult.okResult();
     }
 }

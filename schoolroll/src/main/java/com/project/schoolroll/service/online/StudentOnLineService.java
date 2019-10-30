@@ -84,13 +84,13 @@ public class StudentOnLineService {
     private void checkImportStudentData(List<StudentOnLine> list){
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "导入数据不存在");
         list.parallelStream().forEach(s -> {
-            MyAssert.isTrue(StrUtil.isBlank(s.getStudentId()), DefineCode.ERR0010, "学生Id不能为空");
-            MyAssert.isTrue(StrUtil.isBlank(s.getStudentName()), DefineCode.ERR0010, "学生名称不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(s.getStudentId()), DefineCode.ERR0010, "学号不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(s.getStudentName()), DefineCode.ERR0010, "姓名不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getGender()), DefineCode.ERR0010, "性别不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getClassName()), DefineCode.ERR0010, "班级名称不能为空");
-            MyAssert.isTrue(StrUtil.isBlank(s.getStuIDCard()), DefineCode.ERR0010, "身份证号码不能为空");
-            MyAssert.isTrue(StrUtil.isBlank(s.getStuPhone()), DefineCode.ERR0010, "电话号码不能为空");
-            MyAssert.isTrue(StrUtil.isBlank(s.getEnrollmentDate()), DefineCode.ERR0010, "入学时间不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(s.getStuIDCard()), DefineCode.ERR0010, "身份证件号不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(s.getStuPhone()), DefineCode.ERR0010, "联系电话不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(s.getEnrollmentDate()), DefineCode.ERR0010, "入学年月不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getLearningModality()), DefineCode.ERR0010, "学习形式不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getNation()), DefineCode.ERR0010, "民族不能为空");
         });

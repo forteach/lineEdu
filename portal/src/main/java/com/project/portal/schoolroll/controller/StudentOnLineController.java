@@ -137,25 +137,14 @@ public class StudentOnLineController {
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
         MyAssert.isTrue(StrUtil.isBlank(isValidated), DefineCode.ERR0010, "学生状态为空");
         String centerId = tokenService.getCenterAreaId(token);
-        String fileName;
-        if (TAKE_EFFECT_CLOSE.equals(isValidated)){
-            fileName = "冻结学生信息表.xlsx";
-        }else {
-            fileName = "学生信息表.xlsx";
+        String fileName = TAKE_EFFECT_CLOSE.equals(isValidated) ? "冻结学生信息表.xlsx" : "学生信息表.xlsx";
+        List<List<String>> lists;
+        if (tokenService.isAdmin(token)) {
+            lists = studentOnLineService.findAllStudent(isValidated);
+        } else {
+            lists = studentOnLineService.findAllStudentByCenterId(isValidated, centerId);
         }
-        try {
-            List<List<String>> lists;
-            if (tokenService.isAdmin(token)) {
-                lists = studentOnLineService.findAllStudent(isValidated);
-            } else {
-                lists = studentOnLineService.findAllStudentByCenterId(isValidated, centerId);
-            }
-            MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, fileName);
-        } catch (IOException e) {
-            log.error("导出学生信息数据失败, centerId : [{}], message : [{}]", centerId, e.getMessage());
-            MyAssert.notNull(e, DefineCode.ERR0009, "导出信息失败");
-            e.printStackTrace();
-        }
+        MyExcleUtil.getExcel(httpServletResponse, httpServletRequest, lists, fileName);
         return WebResult.okResult();
     }
 
