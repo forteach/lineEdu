@@ -1,4 +1,4 @@
-package com.project.portal.databank.controller;
+package com.project.portal.databank.verify;
 
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChapterDataVerify {
 
-    void saveVerify(ChapteDataReq chapteDataReq) {
+    public void saveVerify(ChapteDataReq chapteDataReq) {
         MyAssert.elt(0, chapteDataReq.getFiles().size(), DefineCode.ERR0010, "文件对象不为空");
         verify(chapteDataReq);
     }

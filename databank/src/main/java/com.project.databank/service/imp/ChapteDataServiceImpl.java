@@ -438,7 +438,6 @@ public class ChapteDataServiceImpl implements ChapteDataService {
      * @param fileId
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void deleteById(String fileId, String datumType) {
         //删除文件列表
         switch (datumType) {
@@ -463,7 +462,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         }
     }
 
-    private void deleteDatumById(String fileId, IDatumRepoitory rep) {
+    @Transactional(rollbackFor = Exception.class)
+    void deleteDatumById(String fileId, IDatumRepoitory rep) {
         rep.deleteById(fileId);
     }
 
