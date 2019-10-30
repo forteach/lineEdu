@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,9 +25,10 @@ public class TbClassService {
         this.tbClassesRepository = tbClassesRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     TbClasses getClassIdByClassName(String className, String centerAreaId, String userId){
-           return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId)
-                   .orElse(tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId)));
+        return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId)
+                .orElseGet(() -> tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId)));
     }
 
 
