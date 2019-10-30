@@ -24,7 +24,9 @@ import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
 @Entity
 @Table(name = "course_verify_vo", indexes = {
         @Index(columnList = "vo_id", name = "vo_id_index"),
-        @Index(columnList = "course_id", name = "course_id_index")
+        @Index(columnList = "course_id", name = "course_id_index"),
+        @Index(columnList = "course_name", name = "course_name_index"),
+        @Index(columnList = "verify_status", name = "verify_status_index")
 })
 @EqualsAndHashCode(callSuper = true)
 @DynamicInsert

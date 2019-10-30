@@ -56,8 +56,8 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     }
 
     @Override
-    public Page<CourseVerifyVo> findAllPage(String courseId, PageRequest pageRequest) {
-        return courseVerifyVoRepository.findAllByIsValidatedEqualsAndVerifyStatusAndCourseIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, VERIFY_STATUS_APPLY, courseId, pageRequest);
+    public Page<CourseVerifyVo> findAllPage(String courseName, PageRequest pageRequest) {
+        return courseVerifyVoRepository.findAllByIsValidatedEqualsAndVerifyStatusAndCourseNameOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, VERIFY_STATUS_APPLY, courseName, pageRequest);
     }
 
     @Async
@@ -131,5 +131,10 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType) {
         courseVerifyVoRepository.deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(courseId, chapterId, verifyStatus, courseType);
+    }
+
+    @Override
+    public Page<String> findVerifyCourse(PageRequest pageRequest){
+        return courseVerifyVoRepository.findDistinctAllByIsValidatedEqualsAndVerifyStatus(pageRequest);
     }
 }

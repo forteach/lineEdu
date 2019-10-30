@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,5 +26,8 @@ public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, 
     Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String verifyStatus, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusAndCourseIdOrderByCreateTimeDesc(String isValidated, String verifyStatus, String courseId, Pageable pageable);
+    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusAndCourseNameOrderByCreateTimeDesc(String isValidated, String verifyStatus, String courseName, Pageable pageable);
+
+    @Query(value = "select distinct courseName from CourseVerifyVo where isValidated = '0' and verifyStatus = '1'")
+    Page<String> findDistinctAllByIsValidatedEqualsAndVerifyStatus(Pageable pageable);
 }
