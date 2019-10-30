@@ -2,7 +2,6 @@ package com.project.databank.service.imp;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.json.JSONUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.databank.domain.verify.CourseVerifyVo;
@@ -134,7 +133,13 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     }
 
     @Override
-    public Page<String> findVerifyCourse(PageRequest pageRequest){
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByFileId(String fileId) {
+        courseVerifyVoRepository.deleteByFileId(fileId);
+    }
+
+    @Override
+    public Page<String> findVerifyCourse(PageRequest pageRequest) {
         return courseVerifyVoRepository.findDistinctAllByIsValidatedEqualsAndVerifyStatus(pageRequest);
     }
 }

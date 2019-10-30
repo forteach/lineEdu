@@ -460,6 +460,7 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             default:
                 MyAssert.fail(DefineCode.ERR0010, new AssertErrorException(DefineCode.ERR0010, "文件类型不正确"), "文件类型不正确");
         }
+        courseVerifyVoService.deleteByFileId(fileId);
     }
 
     @Transactional(rollbackFor = Exception.class)

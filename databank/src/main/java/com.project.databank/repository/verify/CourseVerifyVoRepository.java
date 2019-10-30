@@ -28,6 +28,9 @@ public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, 
     @Transactional(readOnly = true)
     Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusAndCourseNameOrderByCreateTimeDesc(String isValidated, String verifyStatus, String courseName, Pageable pageable);
 
+    @Modifying(flushAutomatically = true)
+    int deleteByFileId(String fileId);
+
     @Query(value = "select distinct courseName from CourseVerifyVo where isValidated = '0' and verifyStatus = '1'")
     Page<String> findDistinctAllByIsValidatedEqualsAndVerifyStatus(Pageable pageable);
 }
