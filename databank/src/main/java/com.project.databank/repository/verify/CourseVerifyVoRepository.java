@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
@@ -32,5 +34,5 @@ public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, 
     int deleteByFileId(String fileId);
 
     @Query(value = "select distinct courseName from CourseVerifyVo where isValidated = '0' and verifyStatus = '1'")
-    Page<String> findDistinctAllByIsValidatedEqualsAndVerifyStatus(Pageable pageable);
+    List<String> findDistinctAllByIsValidatedEqualsAndVerifyStatus();
 }

@@ -37,5 +37,5 @@ public interface CourseVerifyVoService {
 
     void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
 
-    Page<String> findVerifyCourse(PageRequest pageRequest);
+    List<String> findVerifyCourse();
 }
