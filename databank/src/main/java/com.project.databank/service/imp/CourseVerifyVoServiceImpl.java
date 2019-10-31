@@ -139,7 +139,7 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     }
 
     @Override
-    public Page<String> findVerifyCourse(PageRequest pageRequest) {
-        return courseVerifyVoRepository.findDistinctAllByIsValidatedEqualsAndVerifyStatus(pageRequest);
+    public List<String> findVerifyCourse() {
+        return courseVerifyVoRepository.findDistinctAllByIsValidatedEqualsAndVerifyStatus();
     }
 }

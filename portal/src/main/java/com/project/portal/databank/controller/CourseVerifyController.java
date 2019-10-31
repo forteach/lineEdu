@@ -127,11 +127,10 @@ public class CourseVerifyController {
         return WebResult.okResult();
     }
 
+    @UserLoginToken
     @ApiOperation(value = "查询需要修改的课程信息")
     @GetMapping(path = "/findCourse")
-    public WebResult findAllCourse(@RequestBody SortVo req){
-        valideSort(req.getPage(), req.getSize());
-        PageRequest pageReq = PageRequest.of(req.getPage(), req.getSize());
-        return WebResult.okResult(courseVerifyVoService.findVerifyCourse(pageReq));
+    public WebResult findAllCourse(){
+        return WebResult.okResult(courseVerifyVoService.findVerifyCourse());
     }
 }
