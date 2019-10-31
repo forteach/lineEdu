@@ -53,20 +53,17 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String createToken(String userId) {
+    public String createToken(String openId, String centerId) {
         return JWT.create()
-                .withAudience(userId, TOKEN_STUDENT)
+                .withAudience(openId, TOKEN_STUDENT, centerId)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_VALIDITY_TIME * 1000))
-                .sign(Algorithm.HMAC256(salt.concat(userId)));
+                .sign(Algorithm.HMAC256(salt.concat(openId)));
     }
 
     @Override
     public String getCenterAreaId(String token){
-        if (TOKEN_TEACHER.equals(getValue(token, 1))){
-            return getValue(token, 2);
-        }
-        return null;
+        return getValue(token, 2);
     }
 
     @Override
@@ -109,7 +106,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getStudentId(String token){
-//        String token = request.getHeader("token");
         if (TOKEN_STUDENT.equals(getValue(token, 1))){
             return hashOperations.get(getKey(getUserId(token)), "studentId");
         }
@@ -118,7 +114,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getTeacherId(String token) {
-//        String token = request.getHeader("token");
         if (TOKEN_TEACHER.equals(getValue(token, 1))){
             return getKey(getUserId(token));
         }
@@ -127,7 +122,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getClassId(String token) {
-//        String token = request.getHeader("token");
         if (TOKEN_STUDENT.equals(getValue(token, 1))){
             return hashOperations.get(getKey(getUserId(token)), "classId");
         }

@@ -99,7 +99,7 @@ public class PlanFileService extends BaseMySqlService {
     public PlanFile findId(String fileId) {
         Optional<PlanFile> obj = planFileRepository.findById(fileId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
-        return obj.orElse(new PlanFile());
+        return obj.orElseGet(PlanFile::new);
     }
 
 

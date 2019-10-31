@@ -15,10 +15,10 @@ public interface TokenService {
     /**
      * 用微信openId生成一个一天有效期的token
      *
-     * @param userId
+     * @param openId
      * @return
      */
-    String createToken(String userId);
+    String createToken(String openId, String centerId);
 
     String createToken(String userId, String centerAreaId, String roleCode);
 

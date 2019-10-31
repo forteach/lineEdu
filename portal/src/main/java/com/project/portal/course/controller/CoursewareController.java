@@ -197,10 +197,10 @@ public class CoursewareController {
         String token = httpServletRequest.getHeader("token");
         if (tokenService.isStudent(token)) {
             MyAssert.isNull(req.getChapterId(), DefineCode.ERR0010, "课程编号不为空");
-            String userId = tokenService.getUserId(token);
+            String studentId = tokenService.getStudentId(token);
             String centerAreaId = tokenService.getCenterAreaId(token);
-            courseRecordsService.saveCourseRecord(new CourseRecordsSaveReq(userId, req.getCourseId(), req.getChapterId(), centerAreaId, userId));
-            return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(req.getCourseId(), req.getChapterId(), userId));
+            courseRecordsService.saveCourseRecord(new CourseRecordsSaveReq(studentId, req.getCourseId(), req.getChapterId(), centerAreaId, studentId));
+            return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(req.getCourseId(), req.getChapterId(), studentId));
         } else {
             return WebResult.okResult(coursewareService.findByChapterId(req.getChapterId()));
         }

@@ -120,17 +120,17 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse bindingToken(WxMaJscode2SessionResult session, String portrait, String ip) {
         String openId = session.getOpenid();
-        String token = tokenService.createToken(openId);
         String binding = WX_INFO_BINDIND_1;
-
+        String centerAreaId = "";
         Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(openId).stream().findFirst();
         if (weChatUserInfoOptional.isPresent()) {
             WeChatUser weChatUser = weChatUserInfoOptional.get();
             MyAssert.isTrue(TAKE_EFFECT_CLOSE.equals(weChatUser.getIsValidated()), DefineCode.ERR0010, "您的信息已经失效请联系管理员");
             binding = weChatUser.getBinding();
+            centerAreaId = weChatUser.getCenterAreaId();
         }
-
-        Map<String, Object> map = BeanUtil.beanToMap(weChatUserInfoOptional.orElse(new WeChatUser()));
+        String token = tokenService.createToken(openId, centerAreaId);
+        Map<String, Object> map = BeanUtil.beanToMap(weChatUserInfoOptional.orElseGet(WeChatUser::new));
         map.put("openId", openId);
         map.put("sessionKey", session.getSessionKey());
         map.put("token", token);

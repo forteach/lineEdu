@@ -86,7 +86,7 @@ public class ClassFileService extends BaseMySqlService {
     public ClassFile findId(String fileId) {
         Optional<ClassFile> obj = classFileRepository.findById(fileId);
         MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
-        return obj.orElse(new ClassFile());
+        return obj.orElseGet(ClassFile::new);
     }
 
     /**

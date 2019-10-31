@@ -71,20 +71,4 @@ public class WeChatUser extends Entitys implements Serializable {
 
     @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '班级id'")
     private String classId;
-
-    public WeChatUser() {
-    }
-
-    public WeChatUser(String openId, String nickName, String gender, String language, String city, String province, String country, String avatarUrl, String studentId, String binding) {
-        this.openId = openId;
-        this.nickName = nickName;
-        this.gender = gender;
-        this.language = language;
-        this.city = city;
-        this.province = province;
-        this.country = country;
-        this.avatarUrl = avatarUrl;
-        this.studentId = studentId;
-        this.binding = binding;
-    }
 }
