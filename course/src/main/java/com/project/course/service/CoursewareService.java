@@ -41,7 +41,7 @@ public interface CoursewareService {
 
     List<CoursewareAll> findByChapterId(String chapterId);
 
-    List<CoursewareAll> findByChapterIdAndVerifyStatus(String chapterId);
+    List<CoursewareAll> findByChapterIdAndVerifyStatus(String courseId, String chapterId, String userId);
 
     void updateVerifyCourseware(CourseVerifyRequest request);
 

@@ -1,11 +1,17 @@
 package com.project.course.web.req;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CoursewareAll implements Serializable {
 
     /**
@@ -27,4 +33,9 @@ public class CoursewareAll implements Serializable {
     private String remark;
 
     private String verifyStatus;
+
+    /** 视频时长(单位秒)*/
+    private Long videoDuration;
+    /** 观看位置时间*/
+    private String locationTime;
 }

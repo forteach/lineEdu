@@ -24,12 +24,14 @@ public class CourseVo implements Serializable {
     public String jobsPercentage;
     public String createUser;
     public String createUserName;
+    public String chapterId;
+    public String chapterName;
 
     public CourseVo() {
     }
 
     public CourseVo(String courseId, String courseName, String courseNumber, String alias, String topPicSrc, String courseDescribe,
-                    String learningTime, String videoPercentage, String jobsPercentage, String createUser, String createUserName) {
+                    String learningTime, String videoPercentage, String jobsPercentage, String createUser, String createUserName, String chapterId, String chapterName) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseNumber = courseNumber;
@@ -41,5 +43,7 @@ public class CourseVo implements Serializable {
         this.jobsPercentage = jobsPercentage;
         this.createUser = createUser;
         this.createUserName = createUserName;
+        this.chapterId = chapterId;
+        this.chapterName = chapterName;
     }
 }

@@ -59,15 +59,6 @@ public class CourseController {
     @Resource
     private TeachPlanCourseService teachPlanCourseService;
 
-//    @Resource
-//    private OnLineCourseDicService onLineCourseDicService;
-
-//    @Resource
-//    private LearnCenterService learnCenterService;
-
-//    @Resource
-//    private TeacherService teacherService;
-
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
     @PostMapping("/save")
@@ -320,14 +311,16 @@ public class CourseController {
     @ApiOperation(value = "学生端登录后加载对应的课程信息")
     @GetMapping("/studentCourseList")
     public WebResult findCourseStudent(HttpServletRequest request) {
-        String classId = tokenService.getClassId(request.getHeader("token"));
+        String token = request.getHeader("token");
+        String classId = tokenService.getClassId(token);
+        String userId = tokenService.getStudentId(token);
         List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
         if (vos != null){
             return WebResult.okResult(vos);
         }
         List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId).stream()
                 .map(dto -> new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId())).collect(toList());
-        return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId));
+        return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, userId));
     }
 //
 //    @UserLoginToken

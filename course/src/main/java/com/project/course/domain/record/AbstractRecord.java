@@ -1,6 +1,5 @@
 package com.project.course.domain.record;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,7 +35,7 @@ abstract class AbstractRecord extends Entitys {
     @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '章节id'")
     private String chapterId;
 
-    @Column(name = "sum_time", columnDefinition = "BIGINT(20) DEFAULT 0 COMMENT '上课总时间(秒)'")
+    @Column(name = "sum_time", columnDefinition = "BIGINT(20) DEFAULT 0 COMMENT '上课总时间(秒)'", nullable = false)
     private Long sumTime = this.sumTime == null ? 0 : this.sumTime;
 
     @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '评分'")

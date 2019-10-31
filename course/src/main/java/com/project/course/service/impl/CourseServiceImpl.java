@@ -12,9 +12,11 @@ import com.project.course.domain.Course;
 import com.project.course.domain.CourseImages;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
+import com.project.course.repository.dto.ChapterRecordDto;
 import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
+import com.project.course.repository.record.CourseRecordsRepository;
 import com.project.course.service.CourseService;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
@@ -53,12 +55,8 @@ public class CourseServiceImpl implements CourseService {
     private CourseRepository courseRepository;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-
-//    @Resource
-//    private CourseVerifyRepository courseVerifyRepository;
-
-//    @Resource
-//    private CourseVerifyVoService courseVerifyVoService;
+    @Resource
+    private CourseRecordsRepository courseRecordsRepository;
 
     /**
      * 课程轮播图
@@ -252,15 +250,24 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId) {
+    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId) {
         List<CourseVo> vos = new ArrayList<>();
         for (CourseTeacherVo v : courseIds){
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
             if (!list.isEmpty()){
                 ICourseDto iCourseDto = list.get(0);
+                String chapterId = "";
+                String chapterName = "";
+                ChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
+                if (dto != null){
+                    String s = dto.getChapterId();
+                    String s1 = dto.getCHapterName();
+                    chapterId = dto.getChapterId();
+                    chapterName = dto.getCHapterName();
+                }
                 vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
                         iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
-                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName()));
+                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName(), chapterId, chapterName));
             }
         }
         stringRedisTemplate.opsForValue().set(TEACH_PLAN_CLASS_COURSEVO.concat(classId), JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));

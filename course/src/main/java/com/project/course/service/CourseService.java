@@ -53,7 +53,7 @@ public interface CourseService {
 
     public int deleteImagesByCourseId(String courseId);
 
-    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId);
+    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId);
 
     List<CourseVo> findCourseVoByClassId(String classId);
 

@@ -1,9 +1,11 @@
 package com.project.course.repository.record;
 
 import com.project.course.domain.record.CourseRecords;
+import com.project.course.repository.dto.ChapterRecordDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -23,4 +25,10 @@ public interface CourseRecordsRepository extends JpaRepository<CourseRecords, St
     /** 查询有效的分页学生学习记录信息*/
     @Transactional(readOnly = true)
     Page<CourseRecords> findByIsValidatedEqualsAndStudentIdOrderByUpdateTimeDesc(String isValidated, String studentId, Pageable pageable);
+
+    @Query(value = "select " +
+            " chapterId, chapterName from CourseChapter where chapterId = (select distinct chapterId from CourseRecords " +
+            " where isValidated = '0' and studentId = ?1 and courseId = ?2) ")
+    @Transactional(readOnly = true)
+    ChapterRecordDto findDtoByStudentIdAndCourseId(String studentId, String courseId);
 }

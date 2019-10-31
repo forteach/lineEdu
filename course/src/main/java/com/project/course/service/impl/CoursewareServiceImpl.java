@@ -4,14 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.ziliao.ImportantCourseware;
 import com.project.course.repository.ziliao.ImpCoursewareRepoitory;
+import com.project.course.service.CourseRecordsService;
 import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
 import com.project.databank.domain.verify.CourseVerifyVo;
-import com.project.databank.domain.ziliao.AbsDatum;
-import com.project.databank.repository.ziliao.IDatumRepoitory;
 import com.project.databank.service.CourseVerifyVoService;
 import com.project.databank.web.vo.CourseVerifyRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +39,8 @@ public class CoursewareServiceImpl implements CoursewareService {
 
     @Resource
     private CourseVerifyVoService courseVerifyVoService;
+    @Resource
+    private CourseRecordsService courseRecordsService;
 
 
     /**
@@ -223,26 +225,42 @@ public class CoursewareServiceImpl implements CoursewareService {
     }
 
     @Override
-    public List<CoursewareAll> findByChapterIdAndVerifyStatus(String chapterId) {
-        return findCoursewareAll(impCoursewareRepoitory.findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(TAKE_EFFECT_OPEN, chapterId, VERIFY_STATUS_AGREE));
+    public List<CoursewareAll> findByChapterIdAndVerifyStatus(String courseId, String chapterId, String userId) {
+        return findCoursewareAll(impCoursewareRepoitory.findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(TAKE_EFFECT_OPEN, chapterId, VERIFY_STATUS_AGREE), courseId, chapterId, userId);
     }
 
-    private List<CoursewareAll> findCoursewareAll(List<ImportantCourseware> list){
+    private List<CoursewareAll> findCoursewareAll(List<ImportantCourseware> list, String courseId, String chapterId, String userId) {
         return list.stream().map(i -> {
-            CoursewareAll coursewareAll = new CoursewareAll();
-            coursewareAll.setFileName(i.getFileName());
-            coursewareAll.setFileUrl(i.getFileUrl());
-            coursewareAll.setVideoTime(i.getVideoTime());
-            coursewareAll.setFileId(i.getFileId());
-            coursewareAll.setRemark(i.getRemark());
-            coursewareAll.setVerifyStatus(i.getVerifyStatus());
-            return coursewareAll;
+            ChapterRecords chapterRecords = courseRecordsService.findChapterRecordsByStudentIdAndChapterId(userId, courseId, chapterId);
+            return CoursewareAll.builder()
+                    .fileId(i.getFileId())
+                    .fileName(i.getFileName())
+                    .fileUrl(i.getFileUrl())
+                    .videoTime(i.getVideoTime())
+                    .remark(i.getRemark())
+                    .verifyStatus(i.getVerifyStatus())
+                    .locationTime(chapterRecords.getLocationTime())
+                    .videoDuration(chapterRecords.getVideoDuration())
+                    .build();
+        }).collect(toList());
+    }
+
+    private List<CoursewareAll> findCoursewareAll(List<ImportantCourseware> list) {
+        return list.stream().map(i -> {
+            return CoursewareAll.builder()
+                    .fileId(i.getFileId())
+                    .fileName(i.getFileName())
+                    .fileUrl(i.getFileUrl())
+                    .videoTime(i.getVideoTime())
+                    .remark(i.getRemark())
+                    .verifyStatus(i.getVerifyStatus())
+                    .build();
         }).collect(toList());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateVerifyCourseware(CourseVerifyRequest request){
+    public void updateVerifyCourseware(CourseVerifyRequest request) {
         Optional<ImportantCourseware> coursewareOptional = impCoursewareRepoitory.findById(request.getId());
         MyAssert.isFalse(coursewareOptional.isPresent(), DefineCode.ERR0010, "资料Id不存在");
         ImportantCourseware importantCourseware = coursewareOptional.get();

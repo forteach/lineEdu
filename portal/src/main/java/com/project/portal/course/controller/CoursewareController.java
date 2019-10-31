@@ -200,7 +200,7 @@ public class CoursewareController {
             String userId = tokenService.getUserId(token);
             String centerAreaId = tokenService.getCenterAreaId(token);
             courseRecordsService.saveCourseRecord(new CourseRecordsSaveReq(userId, req.getCourseId(), req.getChapterId(), centerAreaId, userId));
-            return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(req.getChapterId()));
+            return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(req.getCourseId(), req.getChapterId(), userId));
         } else {
             return WebResult.okResult(coursewareService.findByChapterId(req.getChapterId()));
         }
