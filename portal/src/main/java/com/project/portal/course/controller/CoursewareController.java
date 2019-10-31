@@ -4,9 +4,12 @@ package com.project.portal.course.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.service.CourseRecordsService;
 import com.project.course.service.CoursewareService;
+import com.project.course.web.req.CourseRecordsSaveReq;
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
+import com.project.portal.course.request.ChapterVideoReq;
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
@@ -44,6 +47,8 @@ public class CoursewareController {
     private TeacherService teacherService;
     @Resource
     private LearnCenterService learnCenterService;
+    @Resource
+    private CourseRecordsService courseRecordsService;
 
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
@@ -185,14 +190,19 @@ public class CoursewareController {
     @PostMapping("/findByChapterId")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
+            @ApiImplicitParam(name = "courseId", value = "课程编号", dataTypeClass = String.class, required = true)
     })
-    public WebResult findByChapterId(@RequestBody String chapterId, HttpServletRequest httpServletRequest) {
-        MyAssert.blank(chapterId, DefineCode.ERR0010, "章节编号不为空");
+    public WebResult findByChapterId(@RequestBody ChapterVideoReq req, HttpServletRequest httpServletRequest) {
+        MyAssert.blank(req.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
         String token = httpServletRequest.getHeader("token");
         if (tokenService.isStudent(token)) {
-            return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(JSONObject.parseObject(chapterId).getString("chapterId")));
-        }else {
-            return WebResult.okResult(coursewareService.findByChapterId(JSONObject.parseObject(chapterId).getString("chapterId")));
+            MyAssert.isNull(req.getChapterId(), DefineCode.ERR0010, "课程编号不为空");
+            String userId = tokenService.getUserId(token);
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            courseRecordsService.saveCourseRecord(new CourseRecordsSaveReq(userId, req.getCourseId(), req.getChapterId(), centerAreaId, userId));
+            return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(req.getChapterId()));
+        } else {
+            return WebResult.okResult(coursewareService.findByChapterId(req.getChapterId()));
         }
     }
 }

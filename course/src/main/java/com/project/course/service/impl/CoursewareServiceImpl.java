@@ -240,6 +240,7 @@ public class CoursewareServiceImpl implements CoursewareService {
         }).collect(toList());
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateVerifyCourseware(CourseVerifyRequest request){
         Optional<ImportantCourseware> coursewareOptional = impCoursewareRepoitory.findById(request.getId());

@@ -1,14 +1,13 @@
 package com.project.course.domain.record;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
 /**
  * @author: zhangyy
@@ -23,6 +22,8 @@ import javax.persistence.MappedSuperclass;
 @EntityListeners(AuditingEntityListener.class)
 abstract class AbstractRecord extends Entitys {
     @Id
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "system-uuid")
     @Column(name = "record_id", columnDefinition = "VARCHAR(32) COMMENT '上课记录id'")
     private String recordId;
 
@@ -32,8 +33,11 @@ abstract class AbstractRecord extends Entitys {
     @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '科目编号'")
     private String courseId;
 
-    @Column(name = "sum_time", columnDefinition = "VARCHAR(32) COMMENT '上课总时间(秒)'")
-    private long sumTime;
+    @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '章节id'")
+    private String chapterId;
+
+    @Column(name = "sum_time", columnDefinition = "BIGINT(20) DEFAULT 0 COMMENT '上课总时间(秒)'")
+    private Long sumTime = this.sumTime == null ? 0 : this.sumTime;
 
     @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '评分'")
     private String grade;

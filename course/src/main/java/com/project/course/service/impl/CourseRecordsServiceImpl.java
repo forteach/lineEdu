@@ -1,7 +1,6 @@
 package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.IdUtil;
 import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.record.CourseRecords;
 import com.project.course.repository.record.ChapterRecordsRepository;
@@ -13,8 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
@@ -38,47 +35,35 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveRecords(CourseRecordsSaveReq req) {
-        Optional<ChapterRecords> optional = chapterRecordsRepository
-                .findByIsValidatedEqualsAndStudentIdAndCourseIdAndChapterId(TAKE_EFFECT_OPEN, req.getStudentId(), req.getCourseId(), req.getChapterId());
-        if (optional.isPresent()) {
-            ChapterRecords chapterRecords = optional.get();
-            chapterRecords.setLocationTime(req.getLocationTime());
-            //判断观看总时长最大是视频长度
-            long sumTime = chapterRecords.getSumTime() + req.getDuration();
-            chapterRecords.setSumTime(sumTime < req.getVideoDuration() ? sumTime : req.getVideoDuration());
-            chapterRecordsRepository.save(chapterRecords);
-            saveCourseRecords(req.getStudentId(), req.getCourseId(), req.getDuration());
-        }else {
-            ChapterRecords chapterRecords = new ChapterRecords();
-            BeanUtil.copyProperties(req, chapterRecords);
-            chapterRecords.setSumTime(req.getDuration() < req.getVideoDuration() ? req.getDuration() : req.getVideoDuration());
-            chapterRecords.setRecordId(IdUtil.fastSimpleUUID());
-            chapterRecordsRepository.save(chapterRecords);
-            saveCourseRecords(req.getStudentId(), req.getCourseId(), req.getDuration());
-        }
+    public void saveCourseRecord(CourseRecordsSaveReq req) {
+        CourseRecords courseRecords = findCourseRecordsByStudentIdAndCourseId(req.getStudentId(), req.getCourseId());
+        BeanUtil.copyProperties(req, courseRecords);
+        courseRecords.setUpdateUser(req.getCreateUser());
+        courseRecordsRepository.save(courseRecords);
     }
 
-    /**
-     * 保存课程记录
-     * @param studentId
-     * @param courseId
-     * @param duration
-     */
-    private void saveCourseRecords(String studentId, String courseId, int duration){
-        Optional<CourseRecords> optional = courseRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId);
-        if (optional.isPresent()){
-            CourseRecords records = optional.get();
-            records.setSumTime(records.getSumTime() + duration);
-            courseRecordsRepository.save(records);
-        }else {
-            CourseRecords courseRecords = new CourseRecords();
-            courseRecords.setSumTime(duration);
-            courseRecords.setRecordId(IdUtil.fastSimpleUUID());
-            courseRecords.setStudentId(studentId);
-            courseRecords.setCourseId(courseId);
-            courseRecordsRepository.save(courseRecords);
-        }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveChapterRecord(CourseRecordsSaveReq req) {
+        ChapterRecords chapterRecords = findChapterRecordsByStudentIdAndChapterId(req.getStudentId(), req.getCourseId(), req.getChapterId());
+        BeanUtil.copyProperties(req, chapterRecords);
+        long length = req.getDuration() + chapterRecords.getSumTime();
+        long sumLength = length > req.getVideoDuration() ? req.getVideoDuration() : length;
+        chapterRecords.setSumTime(sumLength);
+        chapterRecords.setUpdateUser(req.getCreateUser());
+        chapterRecordsRepository.save(chapterRecords);
+    }
+
+    @Override
+    public ChapterRecords findChapterRecordsByStudentIdAndChapterId(String studentId, String courseId, String chapterId) {
+        return chapterRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseIdAndChapterId(TAKE_EFFECT_OPEN, studentId, courseId, chapterId)
+                .orElseGet(ChapterRecords::new);
+    }
+
+    @Override
+    public CourseRecords findCourseRecordsByStudentIdAndCourseId(String studentId, String courseId) {
+        return courseRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId)
+                .orElseGet(CourseRecords::new);
     }
 
     @Override

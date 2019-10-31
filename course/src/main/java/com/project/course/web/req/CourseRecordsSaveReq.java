@@ -22,7 +22,22 @@ public class CourseRecordsSaveReq implements Serializable {
     /** 观看视频位置*/
     private String locationTime;
     /** 观看视频时间长度*/
-    private int duration;
+    private long duration;
     /** 视频总长度*/
-    private int videoDuration;
+    private long videoDuration;
+    /** 学习中心*/
+    private String centerAreaId;
+
+    private String createUser;
+
+    public CourseRecordsSaveReq() {
+    }
+
+    public CourseRecordsSaveReq(String studentId, String courseId, String chapterId, String centerAreaId, String createUser) {
+        this.studentId = studentId;
+        this.courseId = courseId;
+        this.chapterId = chapterId;
+        this.centerAreaId = centerAreaId;
+        this.createUser = createUser;
+    }
 }

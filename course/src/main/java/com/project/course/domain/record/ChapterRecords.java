@@ -32,8 +32,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class ChapterRecords extends AbstractRecord implements Serializable {
 
-    @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '章节id'")
-    private String chapterId;
+    @Column(name = "video_duration", columnDefinition = "INT(11) DEFAULT 0 COMMENT '视频时长(单位秒)'")
+    private Long videoDuration = this.videoDuration == null ? 0 : this.videoDuration;
 
     @Column(name = "location_time", columnDefinition = "VARCHAR(32) COMMENT '观看位置时间'")
     private String locationTime;

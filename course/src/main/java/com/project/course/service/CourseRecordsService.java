@@ -13,9 +13,16 @@ import org.springframework.data.domain.Page;
  * @description:
  */
 public interface CourseRecordsService {
-    public void saveRecords(CourseRecordsSaveReq req);
 
-    public Page<CourseRecords> findCourseByStudentId(String studentId, int page, int size);
+    void saveCourseRecord(CourseRecordsSaveReq req);
 
-    public Page<ChapterRecords> findCourseByCourseIdAndStudentId(String studentId, String courseId, int page, int size);
+    void saveChapterRecord(CourseRecordsSaveReq req);
+
+    ChapterRecords findChapterRecordsByStudentIdAndChapterId(String studentId, String courseId, String chapterId);
+
+    CourseRecords findCourseRecordsByStudentIdAndCourseId(String studentId, String courseId);
+
+    Page<CourseRecords> findCourseByStudentId(String studentId, int page, int size);
+
+    Page<ChapterRecords> findCourseByCourseIdAndStudentId(String studentId, String courseId, int page, int size);
 }
