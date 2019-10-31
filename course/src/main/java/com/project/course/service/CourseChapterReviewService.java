@@ -2,7 +2,6 @@ package com.project.course.service;
 
 
 import com.project.course.web.req.CourseChapterReviewSaveReq;
-import com.project.course.web.resp.CourseChapterReviewDescribeResp;
 import com.project.course.web.resp.CourseChapterReviewResp;
 
 /**

@@ -33,23 +33,4 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, String> {
 
     @Transactional(readOnly = true)
     public Specialty findBySpecialtyName(String specialtyName);
-
-    /**
-     * 分页查询生效科目信息
-     *
-     * @param isValidated
-     * @param pageable
-     * @return
-     */
-    @Transactional(readOnly = true)
-    Page<Specialty> findByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
-
-    /**
-     * 根据名字和有效状态查询课程信息
-     * @param isValidated
-     * @param specialtyName
-     * @return
-     */
-    @Transactional(readOnly = true)
-    Specialty findByIsValidatedEqualsAndSpecialtyName(String isValidated, String specialtyName);
 }

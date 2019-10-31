@@ -8,7 +8,6 @@ import com.project.course.domain.Specialty;
 import com.project.course.repository.SpecialtyRepository;
 import com.project.course.repository.dto.SpecialtyDto;
 import com.project.course.service.SpecialtyService;
-import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

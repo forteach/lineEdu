@@ -25,13 +25,4 @@ public class TeacherClassCoursePk implements Serializable {
 
     @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '科目编号'", insertable = false, updatable = false)
     private String courseId;
-
-    public TeacherClassCoursePk() {
-    }
-
-    public TeacherClassCoursePk(String teacherId, String classId, String courseId) {
-        this.teacherId = teacherId;
-        this.classId = classId;
-        this.courseId = courseId;
-    }
 }

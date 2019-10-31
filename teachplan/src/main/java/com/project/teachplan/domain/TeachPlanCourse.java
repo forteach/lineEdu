@@ -35,9 +35,4 @@ public class TeachPlanCourse extends BaseTeachPlanCourse implements Serializable
     @EmbeddedId
     @JsonIgnore
     private TeachPlanCoursePk teachPlanCoursePk;
-
-    public TeachPlanCourse(String planId, String courseId, String courseName, String credit, Integer onLinePercentage,
-                           Integer linePercentage, String teacherId, String teacherName, String centerAreaId, String userId) {
-        super(planId, courseId, courseName, credit, onLinePercentage, linePercentage, teacherId, teacherName, centerAreaId, userId);
-    }
 }

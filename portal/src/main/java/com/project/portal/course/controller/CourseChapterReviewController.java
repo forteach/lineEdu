@@ -9,7 +9,6 @@ import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: zhangyy
@@ -60,7 +57,7 @@ public class CourseChapterReviewController {
     @ApiOperation(value = "查询当课程章节评价的信息", notes = "查询章节评价信息(评价的分数, 评价的人数)")
     @PostMapping("/findChapterReview")
     @ApiImplicitParam(name = "chapterId", value = "课程章节id", dataType = "string", required = true, paramType = "query")
-    public WebResult findChapterReview(@RequestBody String chapterId){
+    public WebResult findChapterReview(@RequestBody String chapterId) {
         MyAssert.isNull(chapterId, DefineCode.ERR0010, "课程章节不为空");
         return WebResult.okResult(courseChapterReviewService.findChapterReview(JSONObject.parseObject(chapterId).getString("chapterId")));
     }

@@ -54,17 +54,6 @@ public interface CourseChapterRepository extends JpaRepository<CourseChapter, St
     List<ICourseChapterDto> findByChapterParentId(@Param("isValidated") String isValidated, @Param("chapterParentId") String chapterParentId);
 
     /**
-     * 根据科目章节查询科目章节信息
-     *
-     * @param isValidated
-     * @param courseId
-     * @param chapterId
-     * @return
-     */
-//    @Transactional(readOnly = true)
-//    List<CourseChapter> findByIsValidatedEqualsAndCourseIdAndChapterId(String isValidated, String courseId, String chapterId);
-
-    /**
      * 根据章节ID和是否有效查询章节目录信息
      *
      * @param isValidated 　是否有效 0 有效 1无效
@@ -91,11 +80,6 @@ public interface CourseChapterRepository extends JpaRepository<CourseChapter, St
 
     @Transactional(readOnly = true)
     List<CourseChapter> findByCourseIdAndAndChapterParentId(String courseId, String chapterParentId);
-
-//    @Modifying
-//    @Transactional
-//    @Query("delete from CourseChapter c where c.chapterId in (?1)")
-//    void deleteBath(List<String> ids);
 
     /**
      * 根据id批量删除

@@ -23,13 +23,4 @@ public class CourseSpecialtyPk implements Serializable {
 
     @Column(name = "specialty_id", columnDefinition = "varchar(32) COMMENT '专业编号'", insertable = false, updatable = false)
     private String specialtyId;
-
-    public CourseSpecialtyPk() {
-
-    }
-
-    public CourseSpecialtyPk(String courseId, String specialtyId) {
-        this.courseId = courseId;
-        this.specialtyId = specialtyId;
-    }
 }

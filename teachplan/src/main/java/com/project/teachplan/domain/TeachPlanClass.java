@@ -31,12 +31,4 @@ public class TeachPlanClass extends BaseTeachPlanClass implements Serializable {
     @EmbeddedId
     @JsonIgnore
     private TeachPlanClassPk teachPlanClassPk;
-
-
-    public TeachPlanClass() {
-    }
-
-    public TeachPlanClass(String classId, String planId, String className, String planName, int classNumber, String centerAreaId, String userId) {
-        super(classId, planId, className, planName, classNumber, centerAreaId, userId);
-    }
 }

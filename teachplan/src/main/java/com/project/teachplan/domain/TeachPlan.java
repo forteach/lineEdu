@@ -1,15 +1,15 @@
 package com.project.teachplan.domain;
 
-import com.project.mysql.domain.Entitys;
 import com.project.teachplan.domain.base.BaseTeachPlan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**

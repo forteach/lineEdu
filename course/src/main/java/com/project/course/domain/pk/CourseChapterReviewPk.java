@@ -21,11 +21,4 @@ public class CourseChapterReviewPk implements Serializable {
 
     @Column(name = "chapter_id", columnDefinition = "CHAR(32) COMMENT '章节编号'", updatable = false, insertable = false)
     private String chapterId;
-
-    public CourseChapterReviewPk() {
-    }
-
-    public CourseChapterReviewPk(String chapterId) {
-        this.chapterId = chapterId;
-    }
 }

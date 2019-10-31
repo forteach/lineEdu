@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
@@ -25,7 +24,6 @@ import com.project.course.web.vo.CourseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
 
@@ -252,14 +249,14 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId) {
         List<CourseVo> vos = new ArrayList<>();
-        for (CourseTeacherVo v : courseIds){
+        for (CourseTeacherVo v : courseIds) {
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
-            if (!list.isEmpty()){
+            if (!list.isEmpty()) {
                 ICourseDto iCourseDto = list.get(0);
                 String chapterId = "";
                 String chapterName = "";
                 ChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
-                if (dto != null){
+                if (dto != null) {
                     String s = dto.getChapterId();
                     String s1 = dto.getCHapterName();
                     chapterId = dto.getChapterId();
@@ -273,10 +270,11 @@ public class CourseServiceImpl implements CourseService {
         stringRedisTemplate.opsForValue().set(TEACH_PLAN_CLASS_COURSEVO.concat(classId), JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
         return vos;
     }
+
     @Override
-    public List<CourseVo> findCourseVoByClassId(String classId){
+    public List<CourseVo> findCourseVoByClassId(String classId) {
         String key = TEACH_PLAN_CLASS_COURSEVO.concat(classId);
-        if (stringRedisTemplate.hasKey(key)){
+        if (stringRedisTemplate.hasKey(key)) {
             return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), CourseVo.class);
         }
         return null;

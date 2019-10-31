@@ -1,10 +1,8 @@
 package com.project.course.domain;
 
 import com.project.mysql.domain.Entitys;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 

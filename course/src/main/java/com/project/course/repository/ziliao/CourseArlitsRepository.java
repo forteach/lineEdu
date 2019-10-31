@@ -2,9 +2,6 @@ package com.project.course.repository.ziliao;
 
 import com.project.course.domain.ziliao.CourseAtlits;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -15,13 +12,4 @@ import java.util.List;
  */
 public interface CourseArlitsRepository extends JpaRepository<CourseAtlits, String> {
 
-    @Transactional(readOnly = true)
-    public List<CourseAtlits> findByChapterIdAndIsValidated(String chapterId, String isValidated);
-
-//    @Transactional(readOnly = true)
-//    public Page<CourseAtlits> findByChapterIdAndIsValidated(String chapterId, String isValidated, Pageable pageable);
-
-//    @Modifying(clearAutomatically = true)
-//    @Transactional(rollbackFor = Exception.class)
-//    public int deleteByChapterId(String chapterId);
 }

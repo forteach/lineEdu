@@ -1,7 +1,6 @@
 package com.project.teachplan.domain.base;
 
 import com.project.mysql.domain.Entitys;
-import com.project.teachplan.domain.pk.TeachPlanCoursePk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 

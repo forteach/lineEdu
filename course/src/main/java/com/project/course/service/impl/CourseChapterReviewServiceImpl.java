@@ -12,7 +12,6 @@ import com.project.course.repository.CourseChapterReviewRepository;
 import com.project.course.repository.dto.ICourseChapterReviewCountDto;
 import com.project.course.service.CourseChapterReviewService;
 import com.project.course.web.req.CourseChapterReviewSaveReq;
-import com.project.course.web.resp.CourseChapterReviewDescribeResp;
 import com.project.course.web.resp.CourseChapterReviewResp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

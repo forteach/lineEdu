@@ -22,8 +22,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,8 +37,6 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PlanFileService extends BaseMySqlService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
     private final PlanFileRepository planFileRepository;
     private final TeachPlanClassRepository teachPlanClassRepository;
     private final OnLineCourseDicService onLineCourseDicService;
@@ -144,7 +140,7 @@ public class PlanFileService extends BaseMySqlService {
                     p.setVerifyStatus(verifyVo.getVerifyStatus());
                     p.setUpdateUser(userId);
                     p.setRemark(verifyVo.getRemark());
-        }).collect(toList());
+                }).collect(toList());
         planFileRepository.saveAll(list);
     }
 
@@ -176,7 +172,7 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate);
     }
 
-    public List<PlanFile> findAllByCourseIdAndCreateDateAndVerifyStatus(String planId, String classId, String courseId, String createDate, String verifyStatus){
+    public List<PlanFile> findAllByCourseIdAndCreateDateAndVerifyStatus(String planId, String classId, String courseId, String createDate, String verifyStatus) {
         return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate, verifyStatus);
     }
 }

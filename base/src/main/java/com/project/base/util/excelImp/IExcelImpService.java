@@ -16,7 +16,5 @@ public interface IExcelImpService<T> {
 
     public List<T> ExcelReader(InputStream inputStream, Class<T> obj );
 
-//    public List<T> studentsExcel03Reader(InputStream inputStream,Class<T> obj );
-
     public void setHeaderAlias(ExcelReader reader);
 }

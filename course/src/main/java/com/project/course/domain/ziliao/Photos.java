@@ -7,9 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
-;
-
-
 /**
  * @Description:　图集图片
  * @author: liu zhenming

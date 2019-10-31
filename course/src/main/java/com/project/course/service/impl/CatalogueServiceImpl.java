@@ -11,7 +11,6 @@ import com.project.course.web.req.State;
 import com.project.course.web.resp.CourseChapterSaveResp;
 import com.project.course.web.resp.CourseTreeResp;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
