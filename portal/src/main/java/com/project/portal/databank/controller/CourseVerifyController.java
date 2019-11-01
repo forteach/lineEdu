@@ -6,13 +6,11 @@ import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
 import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
-import com.project.databank.domain.verify.CourseVerifyEnum;
 import com.project.databank.domain.verify.CourseVerifyVo;
 import com.project.databank.service.ChapteDataService;
 import com.project.databank.service.CourseVerifyVoService;
 import com.project.portal.databank.request.CourseVerifyRequest;
 import com.project.portal.databank.request.FindDatumVerifyRequest;
-import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -51,6 +49,8 @@ public class CourseVerifyController {
     private ChapteDataService chapteDataService;
     @Resource
     private CoursewareService coursewareService;
+    @Resource
+    private CourseService courseService;
 
     @ApiOperation(value = "查询需要审核的课程信息")
     @UserLoginToken
@@ -124,6 +124,12 @@ public class CourseVerifyController {
         verifyVo.setRemark(request.getRemark());
         courseVerifyVoService.save(verifyVo);
 
+        //是课程资料并且修改通过，就将对应的课程资料长度求和后保存对应的课程信息 todo 需要测试
+        if (CHAPTER_DATE.getValue().equals(type) && Dic.COURSE_ZILIAO_VIEW.equals(verifyVo.getDatumType())
+                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+            Integer videoTimeSum = chapteDataService.findCourseVideoTimeSumByCourseId(verifyVo.getCourseId());
+            courseService.updateCourseTime(verifyVo.getCourseId(), videoTimeSum);
+        }
         return WebResult.okResult();
     }
 

@@ -3,6 +3,9 @@ package com.project.databank.repository.ziliao;
 import com.project.databank.domain.ziliao.ViewDatum;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -15,4 +18,7 @@ public interface ViewDatumRepository extends IDatumRepoitory<ViewDatum, String> 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE ViewDatum set isValidated = :isValidated WHERE courseId = :courseId and chapterId = :chapterId")
     int updateIsValidated(String isValidated, String courseId, String chapterId);
+
+    @Transactional(readOnly = true)
+    List<ViewDatum> findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(String isValidated, String courseId, String datumType, String verifyStatus);
 }

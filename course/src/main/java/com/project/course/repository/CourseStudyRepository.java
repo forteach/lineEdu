@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -42,4 +43,7 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " order by cs.createTime desc")
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     List<ICourseStudyDto> findByIsValidatedEqualsAndStudentId(String studentId, Integer studyStatus);
+
+    @Transactional(readOnly = true)
+    Optional<CourseStudy> findAllByCourseIdAndStudentId(String courseId, String studentId);
 }

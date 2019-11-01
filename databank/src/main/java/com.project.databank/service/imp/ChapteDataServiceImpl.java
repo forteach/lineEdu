@@ -471,7 +471,6 @@ public class ChapteDataServiceImpl implements ChapteDataService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void verifyData(CourseVerifyRequest request, String datumType) {
-        //删除文件列表
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
@@ -510,6 +509,14 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         fd.setUpdateUser(request.getUserId());
         fd.setRemark(request.getRemark());
         fd.setVerifyStatus(request.getVerifyStatus());
-        rep.save(fd);
+        rep.saveAndFlush(fd);
+    }
+
+    @Override
+    public Integer findCourseVideoTimeSumByCourseId(String courseId) {
+        return viewDatumRepository.findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(TAKE_EFFECT_OPEN, courseId, COURSE_ZILIAO_VIEW, VERIFY_STATUS_AGREE)
+                .stream()
+                .mapToInt(ViewDatum::getVideoDuration)
+                .sum();
     }
 }

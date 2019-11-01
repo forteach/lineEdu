@@ -39,4 +39,6 @@ public interface ChapteDataService {
     void deleteById(String fileId, String datumType);
 
     void verifyData(CourseVerifyRequest request, String datumType);
+
+    Integer findCourseVideoTimeSumByCourseId(String courseId);
 }

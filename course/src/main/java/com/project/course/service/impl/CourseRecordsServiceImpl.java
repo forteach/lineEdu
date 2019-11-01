@@ -2,7 +2,6 @@ package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.course.domain.record.ChapterRecords;
@@ -56,8 +55,8 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
     public void saveChapterRecord(CourseRecordsSaveReq req) {
         ChapterRecords chapterRecords = findChapterRecordsByStudentIdAndChapterId(req.getStudentId(), req.getCourseId(), req.getChapterId());
         BeanUtil.copyProperties(req, chapterRecords);
-        long length = req.getDuration() + chapterRecords.getSumTime();
-        long sumLength = length > req.getVideoDuration() ? req.getVideoDuration() : length;
+        int length = req.getDuration() + chapterRecords.getSumTime();
+        int sumLength = length > req.getVideoDuration() ? req.getVideoDuration() : length;
         chapterRecords.setSumTime(sumLength);
         chapterRecords.setUpdateUser(req.getCreateUser());
         chapterRecordsRepository.save(chapterRecords);
@@ -83,10 +82,10 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
 
     /** 计算每名学生每课上课总时长*/
     private CourseRecords sumRecordsByCourseIdAndStudent(CourseRecords courseRecords){
-        Long sumTime = chapterRecordsRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentId(TAKE_EFFECT_OPEN, courseRecords.getCourseId(), courseRecords.getStudentId())
+        Integer sumTime = chapterRecordsRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentId(TAKE_EFFECT_OPEN, courseRecords.getCourseId(), courseRecords.getStudentId())
                 .stream()
                 .filter(Objects::nonNull)
-                .mapToLong(ChapterRecords::getSumTime)
+                .mapToInt(ChapterRecords::getSumTime)
                 .sum();
         courseRecords.setSumTime(sumTime);
         return courseRecords;

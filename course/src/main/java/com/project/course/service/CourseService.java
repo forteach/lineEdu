@@ -57,6 +57,10 @@ public interface CourseService {
 
     List<CourseVo> findCourseVoByClassId(String classId);
 
+    void updateCourseTime(String courseId, Integer videoTimeNum);
+
+    void taskCourseStudy();
+
 //    void verifyCourse(CourseVerifyVo verifyVo);
 
 //    void verifyCourseImage(CourseVerifyVo verifyVo);

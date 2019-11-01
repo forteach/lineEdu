@@ -1,6 +1,8 @@
 package com.project.course.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -9,6 +11,7 @@ import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
 import com.project.course.domain.CourseImages;
+import com.project.course.domain.CourseStudy;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ChapterRecordDto;
@@ -278,7 +281,33 @@ public class CourseServiceImpl implements CourseService {
         return null;
     }
 
-//    @Override
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCourseTime(String courseId, Integer videoTimeNum) {
+        courseRepository.findById(courseId).ifPresent(c -> c.setVideoTimeNum(videoTimeNum));
+    }
+
+    @Override
+    public void taskCourseStudy() {
+        courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
+                .parallelStream().filter(Objects::nonNull)
+                .forEach(r -> {
+                    courseRepository.findById(r.getCourseId())
+                            .ifPresent(c -> {
+                                CourseStudy courseStudy = findCourseStudy(c.getCourseId(), r.getStudentId());
+                                courseStudy.setStudentId(r.getStudentId());
+                                courseStudy.setCourseId(c.getCourseId());
+                                courseStudy.setOnLineTime(r.getSumTime());
+                                courseStudy.setOnLineTimeSum(c.getVideoTimeNum());
+                                courseStudyRepository.save(courseStudy);
+                            });
+                });
+    }
+
+    private CourseStudy findCourseStudy(String courseId, String studentId){
+        return courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId).orElseGet(CourseStudy::new);
+    }
+    //    @Override
 //    @Transactional(rollbackFor = Exception.class)
 //    public void verifyCourse(CourseVerifyVo verifyVo) {
 //        Optional<CourseVerify> optional = courseVerifyRepository.findById(verifyVo.getCourseId());

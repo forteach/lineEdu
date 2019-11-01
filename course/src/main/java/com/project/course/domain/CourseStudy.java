@@ -41,6 +41,18 @@ public class CourseStudy extends Entitys implements Serializable {
 
     private String studentId;
 
+    @Column(name = "on_line_time", columnDefinition = "INT(11) DEFAULT 0 COMMENT '在线学习时长(秒)'", nullable = false)
+    private Integer onLineTime;
+
+    @Column(name = "on_line_time_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '课程视频总长度(秒)'", nullable = false)
+    private Integer onLineTimeSum;
+
+    @Column(name = "answer_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '回答题目数量'", nullable = false)
+    private Integer answerSum;
+
+    @Column(name = "correct_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '正确题目总数量'", nullable = false)
+    private Integer correctSum;
+
     @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '最近学习到的章节位置'")
     private String chapterId;
 
@@ -54,7 +66,7 @@ public class CourseStudy extends Entitys implements Serializable {
     private String examGrade;
 
     @Column(name = "examResults", nullable = false, columnDefinition = "INT(2) DEFAULT 1 COMMENT '考试结果状态 0 已经通过 1 未通过'")
-    private Integer examResults = this.examResults == null ? 0 : this.examResults;
+    private Integer examResults;
 
     @Column(name = "make_up_examination", columnDefinition = "INT(2) COMMENT '是否需要补考 0 需要补考 1 不需要补考'")
     private Integer makeUpExamination = this.makeUpExamination == null ? 0 : this.makeUpExamination;

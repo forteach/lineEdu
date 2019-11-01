@@ -39,7 +39,7 @@ abstract class AbstractRecord extends Entitys {
     private String chapterId;
 
     @Column(name = "sum_time", columnDefinition = "BIGINT(20) DEFAULT 0 COMMENT '上课总时间(秒)'", nullable = false)
-    private Long sumTime = this.sumTime == null ? 0 : this.sumTime;
+    private Integer sumTime = this.sumTime == null ? 0 : this.sumTime;
 
     @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '评分'")
     private String grade;

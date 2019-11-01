@@ -22,9 +22,9 @@ public class CourseRecordsSaveReq implements Serializable {
     /** 观看视频位置*/
     private String locationTime;
     /** 观看视频时间长度*/
-    private long duration;
+    private int duration;
     /** 视频总长度*/
-    private long videoDuration;
+    private int videoDuration;
     /** 学习中心*/
     private String centerAreaId;
 

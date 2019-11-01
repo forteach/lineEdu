@@ -1,6 +1,7 @@
 package com.project.portal.work;
 
 import com.project.course.service.CourseRecordsService;
+import com.project.course.service.CourseService;
 import com.project.databank.service.CourseVerifyVoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,8 @@ public class CourseTask {
     private CourseVerifyVoService courseVerifyVoService;
     @Resource
     private CourseRecordsService courseRecordsService;
+    @Resource
+    private CourseService courseService;
 
     /**
      * 同步教师端修改的习题记录
@@ -32,10 +35,10 @@ public class CourseTask {
             @Scheduled(cron = "0 0/1 * * * ?")
     })
     @Async
-    public void asyncRedisQuestion(){
+    public void asyncRedisQuestion() {
         log.info("start course question async ==> ");
         // 定时查询习题信息
-        if (log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("task thread name : {}", Thread.currentThread().getName());
         }
         courseVerifyVoService.taskRedis();
@@ -50,13 +53,32 @@ public class CourseTask {
             @Scheduled(cron = "0 0/10 * * * ?")
     })
     @Async
-    public void asyncCourseRecordsCount(){
+    public void asyncCourseRecordsCount() {
         log.info("start course Records async ==> ");
         // 定时查询习题信息
-        if (log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("task thread name : {}", Thread.currentThread().getName());
         }
         courseRecordsService.taskCourseRecordsSum();
         log.info(" <== end course Records async ");
+    }
+
+
+    /**
+     * 统计学习课程占比
+     */
+    @Schedules({
+//            @Scheduled(cron = "0 0 0/2 * * ?")
+            @Scheduled(cron = "0 0 0/1 * * ?")
+    })
+    @Async
+    public void asyncCourseStudyCount() {
+        log.info("start course study async ==> ");
+        // 定时查询习题信息
+        if (log.isDebugEnabled()) {
+            log.debug("task thread name : {}", Thread.currentThread().getName());
+        }
+        courseService.taskCourseStudy();
+        log.info(" <== end course study async ");
     }
 }
