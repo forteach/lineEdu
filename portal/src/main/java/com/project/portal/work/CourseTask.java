@@ -1,8 +1,10 @@
-package com.project.databank.work;
+package com.project.portal.work;
 
+import com.project.course.service.CourseRecordsService;
 import com.project.databank.service.CourseVerifyVoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.annotation.Schedules;
 
@@ -11,19 +13,25 @@ import javax.annotation.Resource;
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
- * @date: 19-10-10 11:38
+ * @date: 19-11-1 14:53
  * @version: 1.0
  * @description:
  */
 @Slf4j
 @Configuration
-public class CourseVerifyTask {
-
+public class CourseTask {
     @Resource
     private CourseVerifyVoService courseVerifyVoService;
+    @Resource
+    private CourseRecordsService courseRecordsService;
+
+    /**
+     * 同步教师端修改的习题记录
+     */
     @Schedules({
             @Scheduled(cron = "0 0/1 * * * ?")
     })
+    @Async
     public void asyncRedisQuestion(){
         log.info("start course question async ==> ");
         // 定时查询习题信息
@@ -32,5 +40,22 @@ public class CourseVerifyTask {
         }
         courseVerifyVoService.taskRedis();
         log.info(" <== end course question async ");
+    }
+
+    /**
+     * 同步学生学习的时间
+     */
+    @Schedules({
+            @Scheduled(cron = "0 0 0/2 * * ?")
+    })
+    @Async
+    public void asyncCourseRecordsCount(){
+        log.info("start course Records async ==> ");
+        // 定时查询习题信息
+        if (log.isDebugEnabled()){
+            log.debug("task thread name : {}", Thread.currentThread().getName());
+        }
+        courseRecordsService.taskCourseRecordsSum();
+        log.info(" <== end course Records async ");
     }
 }

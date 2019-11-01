@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,4 +26,7 @@ public interface ChapterRecordsRepository extends JpaRepository<ChapterRecords, 
      */
     @Transactional(readOnly = true)
     Page<ChapterRecords> findByIsValidatedEqualsAndStudentIdAndCourseIdOrderByUpdateTimeDesc(String isValidated, String studentId, String courseId, Pageable pageable);
+
+    @Transactional(readOnly = true)
+    List<ChapterRecords> findAllByIsValidatedEqualsAndCourseIdAndStudentId(String isValidated, String courseId, String studentId);
 }

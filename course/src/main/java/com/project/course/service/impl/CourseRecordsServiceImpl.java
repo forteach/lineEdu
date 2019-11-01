@@ -1,6 +1,10 @@
 package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.record.CourseRecords;
 import com.project.course.repository.record.ChapterRecordsRepository;
@@ -12,6 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 
@@ -60,19 +69,60 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
                 .orElseGet(ChapterRecords::new);
     }
 
+
+    @Override
+    public void taskCourseRecordsSum() {
+        List<CourseRecords> list = courseRecordsRepository
+                .findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -3)))
+                .parallelStream()
+                .filter(Objects::nonNull)
+                .map(this::sumRecordsByCourseIdAndStudent)
+                .collect(Collectors.toList());
+        courseRecordsRepository.saveAll(list);
+    }
+
+    /** 计算每名学生每课上课总时长*/
+    private CourseRecords sumRecordsByCourseIdAndStudent(CourseRecords courseRecords){
+        Long sumTime = chapterRecordsRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentId(TAKE_EFFECT_OPEN, courseRecords.getCourseId(), courseRecords.getStudentId())
+                .stream()
+                .filter(Objects::nonNull)
+                .mapToLong(ChapterRecords::getSumTime)
+                .sum();
+        courseRecords.setSumTime(sumTime);
+        return courseRecords;
+    }
+
     @Override
     public CourseRecords findCourseRecordsByStudentIdAndCourseId(String studentId, String courseId) {
-        return courseRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId)
-                .orElseGet(CourseRecords::new);
+        return courseRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId).orElseGet(CourseRecords::new);
     }
 
     @Override
-    public Page<CourseRecords> findCourseByStudentId(String studentId, int page, int size) {
-        return courseRecordsRepository.findByIsValidatedEqualsAndStudentIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, studentId, PageRequest.of(page, size));
+    public Page<CourseRecords> findCourseByStudentId(String studentId, PageRequest page) {
+        return courseRecordsRepository.findByIsValidatedEqualsAndStudentIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, studentId, page);
     }
 
     @Override
-    public Page<ChapterRecords> findCourseByCourseIdAndStudentId(String studentId, String courseId, int page, int size) {
-        return chapterRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, studentId, courseId, PageRequest.of(page, size));
+    public Page<ChapterRecords> findCourseByCourseIdAndStudentId(String studentId, String courseId, PageRequest page) {
+        return chapterRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, studentId, courseId, page);
+    }
+
+
+    @Override
+    public Page<CourseRecords> findCourseByCourseId(String courseId, PageRequest page) {
+        if (StrUtil.isNotBlank(courseId)){
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, courseId, page);
+        }else {
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, courseId, page);
+        }
+    }
+
+    @Override
+    public Page<CourseRecords> findCourseByCenterAreaId(String courseId, String centerAreaId, PageRequest page) {
+        if (StrUtil.isNotBlank(courseId)){
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, courseId, page);
+        }else {
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, page);
+        }
     }
 }

@@ -190,16 +190,19 @@ public class CoursewareController {
     @PostMapping("/findByChapterId")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
-            @ApiImplicitParam(name = "courseId", value = "课程编号", dataTypeClass = String.class, required = true)
+            @ApiImplicitParam(name = "courseName", value = "课程名称", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "courseId", value = "课程编号", dataTypeClass = String.class)
     })
     public WebResult findByChapterId(@RequestBody ChapterVideoReq req, HttpServletRequest httpServletRequest) {
         MyAssert.blank(req.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
         String token = httpServletRequest.getHeader("token");
         if (tokenService.isStudent(token)) {
             MyAssert.isNull(req.getChapterId(), DefineCode.ERR0010, "课程编号不为空");
+            MyAssert.isNull(req.getCourseName(), DefineCode.ERR0010, "课程名称不为空");
             String studentId = tokenService.getStudentId(token);
             String centerAreaId = tokenService.getCenterAreaId(token);
-            courseRecordsService.saveCourseRecord(new CourseRecordsSaveReq(studentId, req.getCourseId(), req.getChapterId(), centerAreaId, studentId));
+            //添加学习记录
+            courseRecordsService.saveCourseRecord(new CourseRecordsSaveReq(studentId, req.getCourseId(), req.getChapterId(), centerAreaId, studentId, req.getCourseName()));
             return WebResult.okResult(coursewareService.findByChapterIdAndVerifyStatus(req.getCourseId(), req.getChapterId(), studentId));
         } else {
             return WebResult.okResult(coursewareService.findByChapterId(req.getChapterId()));

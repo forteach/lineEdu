@@ -30,14 +30,17 @@ public class CourseRecordsSaveReq implements Serializable {
 
     private String createUser;
 
+    private String courseName;
+
     public CourseRecordsSaveReq() {
     }
 
-    public CourseRecordsSaveReq(String studentId, String courseId, String chapterId, String centerAreaId, String createUser) {
+    public CourseRecordsSaveReq(String studentId, String courseId, String chapterId, String centerAreaId, String createUser, String courseName) {
         this.studentId = studentId;
         this.courseId = courseId;
         this.chapterId = chapterId;
         this.centerAreaId = centerAreaId;
         this.createUser = createUser;
+        this.courseName = courseName;
     }
 }

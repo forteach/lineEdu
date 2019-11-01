@@ -4,6 +4,7 @@ import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.record.CourseRecords;
 import com.project.course.web.req.CourseRecordsSaveReq;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 /**
  * @author: zhangyy
@@ -18,11 +19,17 @@ public interface CourseRecordsService {
 
     void saveChapterRecord(CourseRecordsSaveReq req);
 
+    void taskCourseRecordsSum();
+
     ChapterRecords findChapterRecordsByStudentIdAndChapterId(String studentId, String courseId, String chapterId);
 
     CourseRecords findCourseRecordsByStudentIdAndCourseId(String studentId, String courseId);
 
-    Page<CourseRecords> findCourseByStudentId(String studentId, int page, int size);
+    Page<CourseRecords> findCourseByStudentId(String studentId, PageRequest page);
 
-    Page<ChapterRecords> findCourseByCourseIdAndStudentId(String studentId, String courseId, int page, int size);
+    Page<ChapterRecords> findCourseByCourseIdAndStudentId(String studentId, String courseId, PageRequest page);
+
+    Page<CourseRecords> findCourseByCourseId(String courseId, PageRequest page);
+
+    Page<CourseRecords> findCourseByCenterAreaId(String courseId, String centerAreaId, PageRequest page);
 }

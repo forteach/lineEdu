@@ -32,6 +32,9 @@ abstract class AbstractRecord extends Entitys {
     @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '科目编号'")
     private String courseId;
 
+    @Column(name = "course_name", columnDefinition = "VARCHAR(32) COMMENT '课程名称'")
+    private String courseName;
+
     @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '章节id'")
     private String chapterId;
 

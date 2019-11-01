@@ -8,12 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CourseVer {
-
     public static void saveValide(RCourse req) {
         MyAssert.isNull(req, DefineCode.ERR0010, "课程信息未填写");
         MyAssert.isNull(req.getCourseName(), DefineCode.ERR0010, "课程名称不能为空");
-//        MyAssert.isNull(req.getCourseNumber(), DefineCode.ERR0010, "课程编号不能为空");
-
     }
-
 }

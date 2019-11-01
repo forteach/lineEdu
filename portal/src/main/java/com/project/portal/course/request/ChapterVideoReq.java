@@ -16,6 +16,9 @@ import java.io.Serializable;
 public class ChapterVideoReq implements Serializable {
     @ApiModelProperty(name = "courseId", value = "课程id", dataType = "string")
     private String courseId;
+
+    @ApiModelProperty(name = "courseName", value = "课程名称", dataType = "string")
+    private String courseName;
     /** 章节id*/
     @ApiModelProperty(name = "chapterId", value = "章节Id", dataType = "string")
     private String chapterId;

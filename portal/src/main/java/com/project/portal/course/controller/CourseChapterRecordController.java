@@ -9,6 +9,7 @@ import com.project.course.service.CourseRecordsService;
 import com.project.portal.course.request.ChapterRecordSaveReq;
 import com.project.portal.course.request.CourseChapterFindPageAllReq;
 import com.project.portal.course.request.CourseChapterRecordFindReq;
+import com.project.portal.course.request.CourseRecordsFindReq;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -16,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,13 +39,10 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 @Api(value = "课程章节学习记录", tags = {"课程章节学习记录管理"})
 @RequestMapping(path = "/courseChapterRecord", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class CourseChapterRecordController {
-    private final CourseChapterService courseChapterService;
     private final CourseRecordsService courseRecordsService;
     private final TokenService tokenService;
 
-    public CourseChapterRecordController(CourseChapterService courseChapterService, TokenService tokenService,
-                                         CourseRecordsService courseRecordsService) {
-        this.courseChapterService = courseChapterService;
+    public CourseChapterRecordController(TokenService tokenService, CourseRecordsService courseRecordsService) {
         this.courseRecordsService = courseRecordsService;
         this.tokenService = tokenService;
     }
@@ -65,6 +64,7 @@ public class CourseChapterRecordController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "chapterId", value = "章节Id", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "locationTime", value = "观看视频位置", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "duration", value = "观看视频时间长度", dataType = "int", paramType = "form", required = true),
@@ -85,27 +85,27 @@ public class CourseChapterRecordController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "查询学习课程章节学习记录")
+    @ApiOperation(value = "查询学习课程章节学习记录详情")
     @PostMapping(path = "/findCourseChapterRecord")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "chapterId", value = "章节Id", dataType = "string", paramType = "form", example = "如果参数为空则查询课程记录")
     })
-    public WebResult findCourseChapterRecord(@RequestBody CourseChapterRecordFindReq req){
+    public WebResult findCourseChapterRecord(@RequestBody CourseChapterRecordFindReq req) {
         MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不能为空");
         MyAssert.isNull(req.getStudentId(), DefineCode.ERR0010, "学生Id不能为空");
-        if (StrUtil.isBlank(req.getChapterId())){
-            return WebResult.okResult(courseRecordsService.findCourseRecordsByStudentIdAndCourseId(req.getStudentId(), req.getCourseId()));
+        if (StrUtil.isNotBlank(req.getChapterId())) {
+            return WebResult.okResult(courseRecordsService.findChapterRecordsByStudentIdAndChapterId(req.getStudentId(), req.getCourseId(), req.getChapterId()));
         }
-        return WebResult.okResult(courseRecordsService.findChapterRecordsByStudentIdAndChapterId(req.getStudentId(), req.getCourseId(), req.getChapterId()));
+        return WebResult.okResult(courseRecordsService.findCourseRecordsByStudentIdAndCourseId(req.getStudentId(), req.getCourseId()));
     }
 
     @UserLoginToken
     @ApiOperation(value = "分页查询学生对应的学习课程")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string"),
-            @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string"),
+            @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", example = "课程为空查询所有学习课程记录,课程不为空查询对应课程章节学习记录"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
     })
@@ -113,10 +113,32 @@ public class CourseChapterRecordController {
     public WebResult findCourseCourseIdPageAll(@RequestBody CourseChapterFindPageAllReq req) {
         MyAssert.isNull(req.getStudentId(), DefineCode.ERR0010, "学生Id不为空");
         valideSort(req.getPage(), req.getSize());
-        if (StrUtil.isBlank(req.getCourseId())) {
-            return WebResult.okResult(courseRecordsService.findCourseByStudentId(req.getStudentId(), req.getPage(), req.getSize()));
+        PageRequest page = PageRequest.of(req.getPage(), req.getSize());
+        if (StrUtil.isNotBlank(req.getCourseId())) {
+            return WebResult.okResult(courseRecordsService.findCourseByCourseIdAndStudentId(req.getStudentId(), req.getCourseId(), page));
         } else {
-            return WebResult.okResult(courseRecordsService.findCourseByCourseIdAndStudentId(req.getStudentId(), req.getCourseId(), req.getPage(), req.getSize()));
+            return WebResult.okResult(courseRecordsService.findCourseByStudentId(req.getStudentId(), page));
+        }
+    }
+
+    @ApiOperation(value = "分页查询课程对应的学习记录")
+    @UserLoginToken
+    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string"),
+            @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string")
+    })
+    @PostMapping(path = "/findAllPageRecords")
+    public WebResult findAllPageRecords(@RequestBody CourseRecordsFindReq req, HttpServletRequest request){
+        valideSort(req.getPage(), req.getSize());
+        String token = request.getHeader("token");
+        String centerAreaId = tokenService.getCenterAreaId(token);
+        PageRequest page = PageRequest.of(req.getPage(), req.getSize());
+        if (tokenService.isAdmin(token)){
+            //是管理端可以查看所有记录
+            return WebResult.okResult(courseRecordsService.findCourseByCourseId(req.getCourseId(), page));
+        }else {
+            //是学习中心只能查看本中心学习记录
+            return WebResult.okResult(courseRecordsService.findCourseByCenterAreaId(req.getCourseId(), centerAreaId, page));
         }
     }
 }

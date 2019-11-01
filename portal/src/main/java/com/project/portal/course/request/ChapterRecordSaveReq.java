@@ -37,6 +37,9 @@ public class ChapterRecordSaveReq implements Serializable {
     @ApiModelProperty(name = "duration", value = "观看视频时间长度", dataType = "long")
     private Long duration;
 
+    @ApiModelProperty(name = "courseName", value = "课程名称", dataType = "string")
+    private String courseName;
+
     @JsonIgnore
     public String centerAreaId;
 
