@@ -46,7 +46,8 @@ public class CourseTask {
      * 同步学生学习的时间
      */
     @Schedules({
-            @Scheduled(cron = "0 0 0/2 * * ?")
+//            @Scheduled(cron = "0 0 0/2 * * ?")
+            @Scheduled(cron = "0 0/10 * * * ?")
     })
     @Async
     public void asyncCourseRecordsCount(){

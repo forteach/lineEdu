@@ -74,7 +74,7 @@ public class CourseChapterRecordController {
         myAssertCourseChapter(req.getStudentId(), req.getCourseId(), req.getChapterId());
         myAssertSaveVideoRecord(req.getLocationTime(), req.getDuration(), req.getVideoDuration());
         String token = request.getHeader("token");
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getStudentId(token);
         String centerAreaId = tokenService.getCenterAreaId(token);
         com.project.course.web.req.CourseRecordsSaveReq recordsSaveReq = new com.project.course.web.req.CourseRecordsSaveReq();
         BeanUtil.copyProperties(req, recordsSaveReq);

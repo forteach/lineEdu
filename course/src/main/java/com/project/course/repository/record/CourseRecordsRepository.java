@@ -38,11 +38,14 @@ public interface CourseRecordsRepository extends JpaRepository<CourseRecords, St
     ChapterRecordDto findDtoByStudentIdAndCourseId(String studentId, String courseId);
 
     @Transactional(readOnly = true)
-    Page<CourseRecords> findAllByIsValidatedEqualsAndCenterAreaIdOrderByUpdateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);
+    Page<CourseRecords> findAllByIsValidatedEqualsAndCenterAreaIdAndCreateTimeAfterOrderByUpdateTimeDesc(String isValidated, String centerAreaId, String createTime, Pageable pageable);
+
+    @Transactional(rollbackFor = Exception.class)
+    Page<CourseRecords> findAllByIsValidatedEqualsAndCreateTimeAfterOrderByUpdateTimeDesc(String isValidated, String createTime, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<CourseRecords> findAllByIsValidatedEqualsAndCourseIdOrderByUpdateTimeDesc(String isValidated, String courseId, Pageable pageable);
+    Page<CourseRecords> findAllByIsValidatedEqualsAndCourseIdAndCreateTimeAfterOrderByUpdateTimeDesc(String isValidated, String courseId, String createTime, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<CourseRecords> findAllByIsValidatedEqualsAndCenterAreaIdAndCourseIdOrderByUpdateTimeDesc(String isValidated, String centerAreaId, String courseId, Pageable pageable);
+    Page<CourseRecords> findAllByIsValidatedEqualsAndCenterAreaIdAndCourseIdAndCreateTimeAfterOrderByUpdateTimeDesc(String isValidated, String centerAreaId, String courseId, String createTime, Pageable pageable);
 }

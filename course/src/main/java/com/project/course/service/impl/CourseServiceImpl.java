@@ -253,12 +253,12 @@ public class CourseServiceImpl implements CourseService {
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
             if (!list.isEmpty()) {
                 ICourseDto iCourseDto = list.get(0);
-                String chapterId = "";
-                String chapterName = "";
+                String chapterId = null;
+                String chapterName = null;
                 ChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
                 if (dto != null) {
-                    chapterId = dto.getChapterId() != null ? dto.getChapterId() : "";
-                    chapterName = dto.getChapterName() != null ? dto.getChapterName() : "";
+                    chapterId = dto.getChapterId();
+                    chapterName = dto.getChapterName();
                 }
                 vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
                         iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),

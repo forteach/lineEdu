@@ -110,19 +110,21 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
 
     @Override
     public Page<CourseRecords> findCourseByCourseId(String courseId, PageRequest page) {
+        String createTime = DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -3));
         if (StrUtil.isNotBlank(courseId)){
-            return courseRecordsRepository.findAllByIsValidatedEqualsAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, courseId, page);
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCourseIdAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, createTime, courseId, page);
         }else {
-            return courseRecordsRepository.findAllByIsValidatedEqualsAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, courseId, page);
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, createTime, page);
         }
     }
 
     @Override
     public Page<CourseRecords> findCourseByCenterAreaId(String courseId, String centerAreaId, PageRequest page) {
+        String createTime = DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -3));
         if (StrUtil.isNotBlank(courseId)){
-            return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndCourseIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, courseId, page);
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndCourseIdAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, createTime, courseId, page);
         }else {
-            return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, page);
+            return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, createTime, page);
         }
     }
 }
