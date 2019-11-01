@@ -9,5 +9,5 @@ package com.project.course.repository.dto;
  */
 public interface ChapterRecordDto {
     public String getChapterId();
-    public String getCHapterName();
+    public String getChapterName();
 }

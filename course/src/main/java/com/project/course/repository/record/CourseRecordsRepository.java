@@ -27,7 +27,7 @@ public interface CourseRecordsRepository extends JpaRepository<CourseRecords, St
     Page<CourseRecords> findByIsValidatedEqualsAndStudentIdOrderByUpdateTimeDesc(String isValidated, String studentId, Pageable pageable);
 
     @Query(value = "select " +
-            " chapterId, chapterName from CourseChapter where chapterId = (select distinct chapterId from CourseRecords " +
+            " chapterId as chapterId, chapterName as chapterName from CourseChapter where chapterId = (select distinct chapterId from CourseRecords " +
             " where isValidated = '0' and studentId = ?1 and courseId = ?2) ")
     @Transactional(readOnly = true)
     ChapterRecordDto findDtoByStudentIdAndCourseId(String studentId, String courseId);

@@ -257,10 +257,8 @@ public class CourseServiceImpl implements CourseService {
                 String chapterName = "";
                 ChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
                 if (dto != null) {
-                    String s = dto.getChapterId();
-                    String s1 = dto.getCHapterName();
-                    chapterId = dto.getChapterId();
-                    chapterName = dto.getCHapterName();
+                    chapterId = dto.getChapterId() != null ? dto.getChapterId() : "";
+                    chapterName = dto.getChapterName() != null ? dto.getChapterName() : "";
                 }
                 vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
                         iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
