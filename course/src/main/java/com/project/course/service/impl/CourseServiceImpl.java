@@ -24,9 +24,15 @@ import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
 import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
+import com.project.mongodb.domain.QuestionsLists;
+import com.project.mongodb.domain.base.QuestionAnswer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +40,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @Auther: zhangyy
@@ -66,6 +74,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Resource
     private CourseStudyRepository courseStudyRepository;
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     /**
      * 保存课程基本信息
@@ -304,8 +314,56 @@ public class CourseServiceImpl implements CourseService {
                 });
     }
 
-    private CourseStudy findCourseStudy(String courseId, String studentId){
+    private CourseStudy findCourseStudy(String courseId, String studentId) {
         return courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId).orElseGet(CourseStudy::new);
+    }
+
+    @Override
+    public void taskCourseQuestions() {
+        List<CourseStudy> list = courseStudyRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
+                .stream()
+                .filter(Objects::nonNull)
+                .map(this::setStudyValue)
+                .collect(toList());
+        courseStudyRepository.saveAll(list);
+    }
+
+    /**
+     * @return 成绩统计信息
+     */
+    private CourseStudy setStudyValue(CourseStudy courseStudy) {
+        List<QuestionsLists> list = mongoTemplate.find(Query
+                .query(Criteria.where("courseId").is(courseStudy.getCourseId()).and("studentId").is(courseStudy.getStudentId())), QuestionsLists.class);
+        long answerSum = list.stream().filter(Objects::nonNull).map(QuestionsLists::getQuestionIds).filter(Objects::nonNull).mapToInt(List::size).sum();
+        long correctSum = list.stream()
+                .map(QuestionsLists::getBigQuestions)
+                .filter(Objects::nonNull)
+                .mapToLong(this::countRightQuestion)
+                .sum();
+        courseStudy.setCorrectSum((int) correctSum);
+        courseStudy.setAnswerSum((int) answerSum);
+        return courseStudy;
+    }
+
+    /**
+     * @param questionAnswers 回答的习题列表
+     * @return 正确的题目数量
+     * @description d过虑正确题数量
+     */
+    private Long countRightQuestion(List<QuestionAnswer> questionAnswers) {
+        return questionAnswers.stream()
+                .map(QuestionAnswer::getRight)
+                .filter(Objects::nonNull)
+                .filter(b -> true == b)
+                .count();
+    }
+
+    @Override
+    public Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest) {
+        if (StrUtil.isBlank(studentId)) {
+            return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, pageRequest);
+        }
+        return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, studentId, pageRequest);
     }
     //    @Override
 //    @Transactional(rollbackFor = Exception.class)

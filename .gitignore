@@ -33,6 +33,8 @@ hs_err_pid*
 *.project
 *.prefs
 *.iml
+*.lst
+*.json
 *.sh
 *.tls
 *.cmd

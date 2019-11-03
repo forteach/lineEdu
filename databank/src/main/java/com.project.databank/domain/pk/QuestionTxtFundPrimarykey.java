@@ -1,4 +1,4 @@
-package com.project.databank.domain;
+package com.project.databank.domain.pk;
 
 import lombok.Data;
 
@@ -23,12 +23,4 @@ public class QuestionTxtFundPrimarykey implements Serializable {
 
     @Column(name = "class_question_id", columnDefinition = "varchar(32) COMMENT '问题册编号'", insertable = false, updatable = false)
     private String classQuestionId;
-
-    public QuestionTxtFundPrimarykey() {
-    }
-
-    public QuestionTxtFundPrimarykey(String txtId, String classQuestionId) {
-        this.txtId = txtId;
-        this.classQuestionId = classQuestionId;
-    }
 }

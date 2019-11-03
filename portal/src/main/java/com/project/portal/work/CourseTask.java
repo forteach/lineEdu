@@ -81,4 +81,23 @@ public class CourseTask {
         courseService.taskCourseStudy();
         log.info(" <== end course study async ");
     }
+
+
+    /**
+     * 统计学习课程占比
+     */
+    @Schedules({
+            @Scheduled(cron = "0 0/3 * * * ?")
+//            @Scheduled(cron = "0 0 0/1 * * ?")
+    })
+    @Async
+    public void asyncCourseQuestions() {
+        log.info("start course questions async ==> ");
+        // 定时查询习题信息
+        if (log.isDebugEnabled()) {
+            log.debug("task thread name : {}", Thread.currentThread().getName());
+        }
+        courseService.taskCourseQuestions();
+        log.info(" <== end course questions async ");
+    }
 }

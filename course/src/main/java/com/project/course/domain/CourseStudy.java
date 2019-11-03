@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @email: zhang10092009@hotmail.com
  * @date: 19-5-27 14:37
  * @version: 1.0
- * @description:
+ * @description: 学生学习情况表
  */
 @Data
 @Entity
@@ -53,8 +53,8 @@ public class CourseStudy extends Entitys implements Serializable {
     @Column(name = "correct_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '正确题目总数量'", nullable = false)
     private Integer correctSum;
 
-    @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '最近学习到的章节位置'")
-    private String chapterId;
+//    @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '最近学习到的章节位置'")
+//    private String chapterId;
 
     @Column(name = "study_status", columnDefinition = "INT(2) DEFAULT 0 COMMENT '学习状态 0 未学习　1 在学习　2 已完结'")
     private Integer studyStatus;
@@ -65,7 +65,7 @@ public class CourseStudy extends Entitys implements Serializable {
     @Column(name = "exam_grade", columnDefinition = "VARCHAR(32) COMMENT '考试成绩'")
     private String examGrade;
 
-    @Column(name = "examResults", nullable = false, columnDefinition = "INT(2) DEFAULT 1 COMMENT '考试结果状态 0 已经通过 1 未通过'")
+    @Column(name = "exam_results", nullable = false, columnDefinition = "INT(2) DEFAULT 1 COMMENT '考试结果状态 0 已经通过 1 未通过'")
     private Integer examResults;
 
     @Column(name = "make_up_examination", columnDefinition = "INT(2) COMMENT '是否需要补考 0 需要补考 1 不需要补考'")

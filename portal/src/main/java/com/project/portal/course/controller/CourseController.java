@@ -12,10 +12,7 @@ import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
-import com.project.portal.course.request.CourseFindAllReq;
-import com.project.portal.course.request.CourseImageFindReq;
-import com.project.portal.course.request.CourseImagesReq;
-import com.project.portal.course.request.CourseStudyReq;
+import com.project.portal.course.request.*;
 import com.project.portal.course.response.CourseListResp;
 import com.project.portal.course.vo.RCourse;
 import com.project.portal.response.WebResult;
@@ -293,8 +290,22 @@ public class CourseController {
     @PostMapping("/findCourseStudy")
     @ApiImplicitParam(name = "studyStatus", value = "学习状态 0 未学习　1 在学习　2 已完结", dataType = "int")
     public WebResult findCourseStudy(@RequestBody CourseStudyReq courseStudyReq, HttpServletRequest request) {
+        MyAssert.isNull(courseStudyReq.getStudyStatus(), DefineCode.ERR0010, "学习状态不能为空");
         String studentId = tokenService.getStudentId(request.getHeader("token"));
         return WebResult.okResult(courseService.findCourseStudyList(studentId, courseStudyReq.getStudyStatus()));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "查询课程对应的学生上课信息")
+    @PostMapping(path = "/findCourseStudyPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "科目编号ID", name = "courseId", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form")
+    })
+    public WebResult findCourseStudyPage(@RequestBody CourseStudyFindPage req, HttpServletRequest request){
+        valideSort(req.getPage(), req.getSize());
+        return WebResult.okResult(courseService.findCourseStudyPageAll(req.getCourseId(), req.getStudentId(),
+                PageRequest.of(req.getPage(), req.getSize())));
     }
 
     @UserLoginToken

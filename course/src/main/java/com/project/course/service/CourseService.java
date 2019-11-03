@@ -9,6 +9,7 @@ import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
 import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
@@ -60,6 +61,10 @@ public interface CourseService {
     void updateCourseTime(String courseId, Integer videoTimeNum);
 
     void taskCourseStudy();
+
+    void taskCourseQuestions();
+
+    Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
 
 //    void verifyCourse(CourseVerifyVo verifyVo);
 

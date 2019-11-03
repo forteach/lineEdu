@@ -1,6 +1,6 @@
-package com.project.databank.repository;
+package com.project.databank.repository.question;
 
-import com.project.databank.domain.StudentAnswer;
+import com.project.databank.domain.question.StudentAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

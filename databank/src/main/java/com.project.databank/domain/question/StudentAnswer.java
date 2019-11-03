@@ -1,6 +1,7 @@
-package com.project.databank.domain;
+package com.project.databank.domain.question;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.databank.domain.pk.StudentAnswerFundPrimarykey;
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;

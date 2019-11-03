@@ -1,4 +1,4 @@
-package com.project.databank.domain;
+package com.project.databank.domain.question;
 
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.project.databank.domain;
+package com.project.databank.domain.pk;
 
 import lombok.Data;
 
@@ -23,12 +23,4 @@ public class StudentAnswerFundPrimarykey implements Serializable {
 
     @Column(name = "examineeId", columnDefinition = "varchar(32) COMMENT '考生id'", insertable = false, updatable = false)
     private String examineeId;
-
-    public StudentAnswerFundPrimarykey() {
-    }
-
-    public StudentAnswerFundPrimarykey(String classQuestionId, String examineeId) {
-        this.classQuestionId = classQuestionId;
-        this.examineeId = examineeId;
-    }
 }
