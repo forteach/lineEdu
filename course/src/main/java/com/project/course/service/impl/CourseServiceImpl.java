@@ -350,13 +350,13 @@ public class CourseServiceImpl implements CourseService {
     /**
      * @param questionAnswers 回答的习题列表
      * @return 正确的题目数量
-     * @description d过虑正确题数量
+     * @description 过虑正确题数量
      */
     private long countRightQuestion(List<QuestionAnswer> questionAnswers) {
         return questionAnswers.stream()
                 .map(QuestionAnswer::getRight)
                 .filter(Objects::nonNull)
-                .filter(b -> true == b)
+                .filter(b -> b)
                 .count();
     }
 
