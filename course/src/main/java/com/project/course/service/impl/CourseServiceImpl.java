@@ -31,9 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
@@ -75,8 +71,6 @@ public class CourseServiceImpl implements CourseService {
 
     @Resource
     private CourseStudyRepository courseStudyRepository;
-    @Resource
-    private MongoTemplate mongoTemplate;
     @Resource
     private QuestionListsRepository questionListsRepository;
 
@@ -333,6 +327,7 @@ public class CourseServiceImpl implements CourseService {
 
     /**
      * 查询计算每个学生每门课回答的习题数量和回答正确的习题数量
+     *
      * @return 成绩统计信息
      */
     private CourseStudy setStudyValue(CourseStudy courseStudy) {
@@ -346,7 +341,7 @@ public class CourseServiceImpl implements CourseService {
                 .filter(Objects::nonNull)
                 .mapToLong(this::countRightQuestion)
                 .sum();
-        courseStudy.setCorrectSum((int)correctSum);
+        courseStudy.setCorrectSum((int) correctSum);
         courseStudy.setAnswerSum(answerSum);
         return courseStudy;
     }

@@ -9,10 +9,10 @@ import com.project.databank.repository.verify.CourseVerifyVoRepository;
 import com.project.databank.service.CourseVerifyVoService;
 import com.project.databank.web.vo.CourseVerifyRequest;
 import com.project.mongodb.domain.BigQuestion;
+import com.project.mongodb.repository.BigQuestionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -38,15 +38,15 @@ import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_CHAPTER
 public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     private final CourseVerifyVoRepository courseVerifyVoRepository;
     private final RedisTemplate redisTemplate;
-    private HashOperations<String, String, String> hashOperations;
-    private final MongoTemplate mongoTemplate;
+    private final HashOperations<String, String, String> hashOperations;
+    private final BigQuestionRepository bigQuestionRepository;
 
-    public CourseVerifyVoServiceImpl(CourseVerifyVoRepository courseVerifyVoRepository, RedisTemplate redisTemplate, MongoTemplate mongoTemplate,
-                                     HashOperations<String, String, String> hashOperations) {
+    public CourseVerifyVoServiceImpl(CourseVerifyVoRepository courseVerifyVoRepository, RedisTemplate redisTemplate,
+                                     HashOperations<String, String, String> hashOperations, BigQuestionRepository bigQuestionRepository) {
         this.courseVerifyVoRepository = courseVerifyVoRepository;
         this.redisTemplate = redisTemplate;
-        this.mongoTemplate = mongoTemplate;
         this.hashOperations = hashOperations;
+        this.bigQuestionRepository = bigQuestionRepository;
     }
 
     @Override
@@ -118,11 +118,12 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
 
     @Override
     public void verifyQuestion(CourseVerifyRequest request) {
-        BigQuestion bigQuestion = mongoTemplate.findById(request.getId(), BigQuestion.class);
-        MyAssert.isNull(bigQuestion, DefineCode.ERR0014, "不存在要审核的题目信息");
+        Optional<BigQuestion> optional = bigQuestionRepository.findById(request.getId());
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在要审核的题目信息");
+        BigQuestion bigQuestion = optional.get();
         bigQuestion.setVerifyStatus(request.getVerifyStatus());
         bigQuestion.setRemark(request.getRemark());
-        BigQuestion result = mongoTemplate.save(bigQuestion);
+        BigQuestion result = bigQuestionRepository.save(bigQuestion);
         MyAssert.isNull(result, DefineCode.ERR0013, "操作失败");
     }
 
