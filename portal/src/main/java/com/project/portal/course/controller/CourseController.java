@@ -300,12 +300,25 @@ public class CourseController {
     @PostMapping(path = "/findCourseStudyPage")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "科目编号ID", name = "courseId", dataType = "string", paramType = "form", required = true),
-            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findCourseStudyPage(@RequestBody CourseStudyFindPage req, HttpServletRequest request){
         valideSort(req.getPage(), req.getSize());
+        MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不是空");
         return WebResult.okResult(courseService.findCourseStudyPageAll(req.getCourseId(), req.getStudentId(),
                 PageRequest.of(req.getPage(), req.getSize())));
+    }
+    // todo
+    @UserLoginToken
+    @ApiOperation(value = "查询计划对应的学习信息")
+    @GetMapping(path = "/{planId}")
+    @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query")
+    public WebResult findAllStudyCourse(@PathVariable String planId){
+        MyAssert.isNull(planId, DefineCode.ERR0010, "计划Id不能为空");
+
+        return WebResult.okResult();
     }
 
     @UserLoginToken

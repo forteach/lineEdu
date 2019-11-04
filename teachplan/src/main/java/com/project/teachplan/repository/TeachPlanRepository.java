@@ -1,6 +1,7 @@
 package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.TeachPlan;
+import com.project.teachplan.repository.dto.PlanCourseStudyDto;
 import com.project.teachplan.repository.dto.TeachPlanDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,9 +33,14 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Query(value = "update TeachPlan set isValidated = ?1 where planId = ?2")
     int updateIsValidatedByPlanId(String isValidated, String planId);
 
-    @Transactional
     @Modifying(clearAutomatically = true)
     int deleteByPlanId(String planId);
+
+
+
+    // todo
+    @Transactional(readOnly = true)
+    Page<PlanCourseStudyDto> findAllByPlanId(String planId);
 
     @Query(value = "select " +
             " tp.planId as planId, " +
