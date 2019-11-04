@@ -26,6 +26,7 @@ import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
 import com.project.mongodb.domain.QuestionsLists;
 import com.project.mongodb.domain.base.QuestionAnswer;
+import com.project.mongodb.repository.QuestionListsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -76,6 +77,8 @@ public class CourseServiceImpl implements CourseService {
     private CourseStudyRepository courseStudyRepository;
     @Resource
     private MongoTemplate mongoTemplate;
+    @Resource
+    private QuestionListsRepository questionListsRepository;
 
     /**
      * 保存课程基本信息
@@ -321,7 +324,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void taskCourseQuestions() {
         List<CourseStudy> list = courseStudyRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
-                .stream()
+                .parallelStream()
                 .filter(Objects::nonNull)
                 .map(this::setStudyValue)
                 .collect(toList());
@@ -329,19 +332,22 @@ public class CourseServiceImpl implements CourseService {
     }
 
     /**
+     * 查询计算每个学生每门课回答的习题数量和回答正确的习题数量
      * @return 成绩统计信息
      */
     private CourseStudy setStudyValue(CourseStudy courseStudy) {
-        List<QuestionsLists> list = mongoTemplate.find(Query
-                .query(Criteria.where("courseId").is(courseStudy.getCourseId()).and("studentId").is(courseStudy.getStudentId())), QuestionsLists.class);
-        long answerSum = list.stream().filter(Objects::nonNull).map(QuestionsLists::getQuestionIds).filter(Objects::nonNull).mapToInt(List::size).sum();
+        // 查询课程学生对应的习题信息
+        List<QuestionsLists> list = questionListsRepository.findAllByCourseIdAndStudentId(courseStudy.getCourseId(), courseStudy.getStudentId());
+        //计算全部回答习题数量
+        int answerSum = list.stream().filter(Objects::nonNull).map(QuestionsLists::getQuestionIds).filter(Objects::nonNull).mapToInt(List::size).sum();
+        //过滤回答正确的习题数量
         long correctSum = list.stream()
                 .map(QuestionsLists::getBigQuestions)
                 .filter(Objects::nonNull)
                 .mapToLong(this::countRightQuestion)
                 .sum();
-        courseStudy.setCorrectSum((int) correctSum);
-        courseStudy.setAnswerSum((int) answerSum);
+        courseStudy.setCorrectSum((int)correctSum);
+        courseStudy.setAnswerSum(answerSum);
         return courseStudy;
     }
 
@@ -350,7 +356,7 @@ public class CourseServiceImpl implements CourseService {
      * @return 正确的题目数量
      * @description d过虑正确题数量
      */
-    private Long countRightQuestion(List<QuestionAnswer> questionAnswers) {
+    private long countRightQuestion(List<QuestionAnswer> questionAnswers) {
         return questionAnswers.stream()
                 .map(QuestionAnswer::getRight)
                 .filter(Objects::nonNull)
