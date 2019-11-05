@@ -17,16 +17,6 @@ public interface PlanCourseStudyDto {
     public String getStuPhone();
 
     /**
-     * 课程Id
-     */
-    public String getCourseId();
-
-    /**
-     * 课程名称
-     */
-    public String getCourseName();
-
-    /**
      * 学习中心Id
      */
     public String getCenterAreaId();
@@ -55,4 +45,6 @@ public interface PlanCourseStudyDto {
      * 结束时间
      */
     public String getEndDate();
+
+    public String getCourse();
 }

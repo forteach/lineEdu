@@ -22,19 +22,18 @@ import com.project.teachplan.repository.dto.TeachPlanDto;
 import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
+import com.project.teachplan.vo.TeachCourseVo;
 import com.project.teachplan.vo.TeachPlanCourseVo;
 import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
@@ -177,7 +176,7 @@ public class TeachService {
         return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
     }
 
-    public List<TeachPlanClassVerify> findAllClassVerifyByPlanId(String planId){
+    public List<TeachPlanClassVerify> findAllClassVerifyByPlanId(String planId) {
         return teachPlanClassVerifyRepository.findAllByPlanId(planId);
     }
 
@@ -258,7 +257,7 @@ public class TeachService {
         });
     }
 
-    private void setVerifyStatus(String planId, String status, String userId){
+    private void setVerifyStatus(String planId, String status, String userId) {
         //修改教学计划
         updateTeachPlanVerify(planId, status, userId);
         //修改教学计划班级
@@ -269,7 +268,7 @@ public class TeachService {
 
     @Async
     @Transactional(rollbackFor = Exception.class)
-    void updateTeachPlanVerify(String planId, String status, String userId){
+    void updateTeachPlanVerify(String planId, String status, String userId) {
         List<TeachPlanVerify> collect = teachPlanVerifyRepository.findAllByPlanId(planId).stream().peek(t -> {
             t.setIsValidated(status);
             t.setUpdateUser(userId);
@@ -298,7 +297,7 @@ public class TeachService {
             c.setIsValidated(status);
             c.setUpdateUser(userId);
         }).collect(Collectors.toList());
-        if (!list.isEmpty()){
+        if (!list.isEmpty()) {
             teachPlanClassVerifyRepository.saveAll(list);
         }
     }
@@ -316,7 +315,7 @@ public class TeachService {
 
     void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
         // 审核通过 删除原来的班级
-        if (VERIFY_STATUS_AGREE.equals(verifyStatus)){
+        if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
             teachPlanClassRepository.deleteAllByPlanId(planId);
         }
         List<TeachPlanClass> teachPlanClassList = new ArrayList<>();
@@ -361,7 +360,23 @@ public class TeachService {
         teachPlanVerifyRepository.save(t);
     }
 
-    public Page<PlanCourseStudyDto> findAllPageDtoByPlanId(String planId, Pageable pageable){
-        return teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+    public Page<Map<String, Object>> findAllPageDtoByPlanId(String planId, Pageable pageable) {
+        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+        List<Map<String, Object>> list = page.getContent().stream().map(d -> {
+                    Map<String, Object> map = BeanUtil.beanToMap(new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(), d.getCenterName(),
+                            d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate()));
+                    toMap(d.getCourse(), map);
+                    return map;
+                }
+        ).collect(toList());
+        return new PageImpl<>(list, pageable, page.getTotalElements());
+    }
+
+    private Map<String, Object> toMap(String course, Map<String, Object> map) {
+        Arrays.asList(StrUtil.split(course, ",")).forEach(s -> {
+            String[] strings = StrUtil.split(s, "&");
+            map.put(strings[0], strings[1]);
+        });
+        return map;
     }
 }

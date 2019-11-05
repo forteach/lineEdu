@@ -11,8 +11,8 @@ import lombok.EqualsAndHashCode;
  * @version: V1.0
  * @date: 2018/11/15  10:00
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ChoiceQst extends AbstractExam {
 
 }
