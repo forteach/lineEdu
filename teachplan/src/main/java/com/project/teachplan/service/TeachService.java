@@ -17,6 +17,7 @@ import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
+import com.project.teachplan.repository.dto.PlanCourseStudyDto;
 import com.project.teachplan.repository.dto.TeachPlanDto;
 import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
@@ -358,5 +359,9 @@ public class TeachService {
             teachPlanRepository.save(p);
         }
         teachPlanVerifyRepository.save(t);
+    }
+
+    public Page<PlanCourseStudyDto> findAllPageDtoByPlanId(String planId, Pageable pageable){
+        return teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
     }
 }

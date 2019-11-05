@@ -2,7 +2,6 @@ package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.repository.dto.PlanCourseStudyDto;
-import com.project.teachplan.repository.dto.TeachPlanDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,85 +35,41 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Modifying(clearAutomatically = true)
     int deleteByPlanId(String planId);
 
-
-
-    // todo
+    /** 根据计划Id分页查询学生和课程信息*/
+    @Query(value = " select " +
+            " tp.plan_id as planId, " +
+            " tp.plan_name as planName, " +
+            " tp.start_date as startDate, " +
+            " tp.end_date as endDate, " +
+            " tpc.course_id as courseId, " +
+            " tpc.course_name as courseName, " +
+            " s_lc_v.center_name as centerName, " +
+            " s_lc_v.center_area_id as centerAreaId, " +
+            " s_lc_v.student_id as studentId, " +
+            " s_lc_v.student_name as studentName, " +
+            " s_lc_v.stu_phone as stuPhone " +
+            " from ( SELECT s.student_id,s.stu_phone,s.student_name, s.center_area_id, lc.center_name, tpc.plan_id " +
+            " from student_on_line as s inner join learn_center as lc on lc.center_id = s.center_area_id " +
+            " LEFT JOIN teach_plan_class as tpc on tpc.center_area_id = s.center_area_id " +
+            " where s.is_validated = '0' and tpc.plan_id = ?1 and s.class_id in " +
+            " (select DISTINCT class_id from teach_plan_class " +
+            " where is_validated = '0' and plan_id = ?1) " +
+            " GROUP BY s.student_id) " +
+            " as s_lc_v LEFT JOIN teach_plan as tp on tp.plan_id = s_lc_v.plan_id " +
+            " LEFT JOIN teach_plan_course as tpc on tpc.plan_id = s_lc_v.plan_id " +
+            " where tp.is_validated = '0' and tp.plan_id = ?1 ",
+            countQuery = "select count(*) " +
+                    " from ( SELECT s.student_id,s.stu_phone,s.student_name, s.center_area_id, lc.center_name, tpc.plan_id " +
+                    " from student_on_line as s inner join learn_center as lc on lc.center_id = s.center_area_id " +
+                    " LEFT JOIN teach_plan_class as tpc on tpc.center_area_id = s.center_area_id " +
+                    " where s.is_validated = '0' and tpc.plan_id = ?1 and s.class_id in " +
+                    " (select DISTINCT class_id from teach_plan_class " +
+                    " where is_validated = '0' and plan_id = ?1) " +
+                    " GROUP BY s.student_id) " +
+                    " as s_lc_v LEFT JOIN teach_plan as tp on tp.plan_id = s_lc_v.plan_id " +
+                    " LEFT JOIN teach_plan_course as tpc on tpc.plan_id = s_lc_v.plan_id " +
+                    " where tp.is_validated = '0' and tp.plan_id = ?1 ",
+            nativeQuery = true)
     @Transactional(readOnly = true)
-    Page<PlanCourseStudyDto> findAllByPlanId(String planId);
-
-    @Query(value = "select " +
-            " tp.planId as planId, " +
-            " tp.planName as planName," +
-            " tp.startDate as startDate," +
-            " tp.endDate as endDate," +
-            " tp.planAdmin as planAdmin," +
-            " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
-            " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName, " +
-            " tp.isValidated as isValidated, " +
-            " tp.createTime as createTime " +
-            " from TeachPlan as tp " +
-            " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " order by tp.createTime desc ")
-    @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllPageDto(Pageable pageable);
-
-    @Query(value = "select " +
-            " tp.planId as planId, " +
-            " tp.planName as planName," +
-            " tp.startDate as startDate," +
-            " tp.endDate as endDate," +
-            " tp.planAdmin as planAdmin," +
-            " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
-            " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName, " +
-            " tp.isValidated as isValidated, " +
-            " tp.createTime as createTime " +
-            " from TeachPlan as tp " +
-            " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " where tp.planId = ?1 order by tp.createTime desc ")
-    @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllPageByPlanIdDto(String planId, Pageable pageable);
-
-    @Query(value = "select " +
-            " tp.planId as planId, " +
-            " tp.planName as planName," +
-            " tp.startDate as startDate," +
-            " tp.endDate as endDate," +
-            " tp.planAdmin as planAdmin," +
-            " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
-            " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName, " +
-            " tp.isValidated as isValidated, " +
-            " tp.createTime as createTime " +
-            " from TeachPlan as tp " +
-            " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " where tp.centerAreaId = ?1 order by tp.createTime desc ")
-    @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllPageByCenterAreaIdDto(String centerAreaId, Pageable pageable);
-
-    @Query(value = "select " +
-            " tp.planId as planId, " +
-            " tp.planName as planName," +
-            " tp.startDate as startDate," +
-            " tp.endDate as endDate," +
-            " tp.planAdmin as planAdmin," +
-            " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
-            " tp.centerAreaId as centerAreaId, " +
-            " lc.centerName as centerName," +
-            " tp.isValidated as isValidated," +
-            " tp.createTime as createTime " +
-            " from TeachPlan as tp " +
-            " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
-            " where tp.centerAreaId = ?1 and tp.planId = ?2 order by tp.createTime desc ")
-    @Transactional(readOnly = true)
-    Page<TeachPlanDto> findAllPageByCenterAreaIdAndPlanIdDto(String centerAreaId, String planId, Pageable pageable);
+    Page<PlanCourseStudyDto> findAllPageDtoByPlanId(String planId, Pageable pageable);
 }

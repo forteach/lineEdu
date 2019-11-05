@@ -200,4 +200,20 @@ public class TeachPlanController {
         teachService.verifyTeachPlan(request.getPlanId(), request.getVerifyStatus(), request.getRemark(), userId);
         return WebResult.okResult();
     }
+
+
+
+    @UserLoginToken
+    @ApiOperation(value = "分页查询计划对应的课程学生信息")
+    @PostMapping(path = "/findPlanCourseAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
+    })
+    public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req){
+        valideSort(req.getPage(), req.getSize());
+        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
+        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getPlanId(), PageRequest.of(req.getPage(), req.getSize())));
+    }
 }
