@@ -13,7 +13,10 @@ import java.io.Serializable;
  */
 @Data
 public class StudyVo implements Serializable {
+
     private String courseId;
+
+    private String courseName;
 
     private Integer onLineTime;
 
@@ -26,8 +29,9 @@ public class StudyVo implements Serializable {
     public StudyVo() {
     }
 
-    public StudyVo(String courseId, Integer onLineTime, Integer onLineTimeSum, Integer answerSum, Integer correctSum) {
+    public StudyVo(String courseId, String courseName, Integer onLineTime, Integer onLineTimeSum, Integer answerSum, Integer correctSum) {
         this.courseId = courseId;
+        this.courseName = courseName;
         this.onLineTime = onLineTime;
         this.onLineTimeSum = onLineTimeSum;
         this.answerSum = answerSum;

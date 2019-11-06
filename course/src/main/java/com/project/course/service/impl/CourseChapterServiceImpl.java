@@ -4,6 +4,8 @@ package com.project.course.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.CourseChapter;
 import com.project.course.repository.CourseChapterRepository;
@@ -217,8 +219,10 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     }
 
     @Override
-    public void saveChapterDataList(String courseId, String chapterParentId, List<ChapterDataFileVo> files, String teacherName, String centerName, String userId, String centerId) {
-        ChapterDataFileVo vo = files.stream().findFirst().get();
+    public void saveChapterDataList(String courseId, String courseName, String chapterParentId, ChapterDataFileVo vo, String teacherName, String centerName, String userId, String centerId) {
+        MyAssert.isNull(vo.getFileUrl(), DefineCode.ERR0010, "文件URL不能为空");
+        MyAssert.isNull(vo.getFileName(), DefineCode.ERR0010, "文件名称不能为空");
+        MyAssert.isNull(vo.getFileVideoTime(), DefineCode.ERR0010, "文件时长不能为空");
         String chapterName = FileUtil.mainName(vo.getFileName());
         CourseChapter courseChapter = new CourseChapter();
         BeanUtil.copyProperties(vo, courseChapter);
@@ -234,6 +238,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         ImpCoursewareAll impCoursewareAll = new ImpCoursewareAll();
         BeanUtil.copyProperties(vo, impCoursewareAll);
         impCoursewareAll.setCreateUser(userId);
+        impCoursewareAll.setCourseId(courseId);
+        impCoursewareAll.setCourseName(courseName);
         impCoursewareAll.setChapterId(chapterId);
         impCoursewareAll.setTeacherId(userId);
         impCoursewareAll.setTeacherName(teacherName);

@@ -191,6 +191,7 @@ public class CourseChapterController {
     @ApiOperation(value = "批量保存课程对应的章节信息和视频资源")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", dataType = "string", value = "课程Id", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "chapterParentId", value = "父章节Id", required = true, paramType = "form"),
             @ApiImplicitParam(name = "teacherName", value = "教师名称", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "centerName", value = "学习中心名称", dataType = "string", required = true, paramType = "form"),
@@ -199,6 +200,7 @@ public class CourseChapterController {
     @PostMapping(path = "/saveChapterDataList")
     public WebResult saveChapterDataList(@RequestBody ChapterDataListReq req, HttpServletRequest httpServletRequest){
         MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不能是空");
+        MyAssert.isNull(req.getCourseName(), DefineCode.ERR0010, "课程名称不能是空");
         MyAssert.isTrue(req.getFiles().isEmpty(), DefineCode.ERR0010, "资料信息不能是空");
         MyAssert.isNull(req.getChapterParentId(), DefineCode.ERR0010, "父章节Id不能为空");
         MyAssert.isNull(req.getCenterName(), DefineCode.ERR0010, "学习中心名称不能为空");
@@ -206,7 +208,7 @@ public class CourseChapterController {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         String centerId = tokenService.getCenterAreaId(token);
-        courseChapterService.saveChapterDataList(req.getCourseId(), req.getChapterParentId(), req.getFiles(), req.getTeacherName(), req.getCenterName(), userId, centerId);
+        req.getFiles().stream().forEach(v -> courseChapterService.saveChapterDataList(req.getCourseId(), req.getCourseName(), req.getChapterParentId(), v, req.getTeacherName(), req.getCenterName(), userId, centerId));
         return WebResult.okResult();
     }
 

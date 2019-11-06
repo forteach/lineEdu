@@ -2,6 +2,7 @@ package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.record.ChapterRecords;
@@ -60,7 +61,9 @@ public class CoursewareServiceImpl implements CoursewareService {
         important.setFileId(IdUtil.fastSimpleUUID());
         important.setImportantType("2");
         important.setDatumType("3");
+        important.setUpdateUser(obj.getCreateUser());
         important.setCenterAreaId(centerId);
+        important.setFileType(StrUtil.subAfter(obj.getFileName(), ".", true));
 
         //删除原来没有审核的，防止出错
         courseVerifyVoService.deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(obj.getCourseId(), obj.getChapterId(), VERIFY_STATUS_APPLY, COURSE_FILE_DATA.getValue());

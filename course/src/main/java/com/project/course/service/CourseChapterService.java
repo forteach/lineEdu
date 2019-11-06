@@ -38,7 +38,7 @@ public interface CourseChapterService {
 
     public List<ICourseChapterDto> findAllCourseChapter(CourseChapterVo vo);
 
-    void saveChapterDataList(String courseId, String chapterParentId, List<ChapterDataFileVo> files, String teacherName, String centerName, String userId, String centerId);
+    void saveChapterDataList(String courseId, String courseName, String chapterParentId, ChapterDataFileVo files, String teacherName, String centerName, String userId, String centerId);
 
 //    void verifyCourse(CourseChapterVerifyVo verifyVo);
 }

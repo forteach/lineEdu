@@ -364,23 +364,23 @@ public class TeachService {
         teachPlanVerifyRepository.save(t);
     }
 
-    public Page<Map<String, Object>> findAllPageDtoByPlanId(String planId, Pageable pageable) {
+    public Page<TeachCourseVo> findAllPageDtoByPlanId(String planId, Pageable pageable) {
         Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
-        List<Map<String, Object>> list = page.getContent().stream().map(d -> {
-            Map<String, Object> map = BeanUtil.beanToMap(new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(), d.getCenterName(),
-                    d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate()));
-            toMap(d.getStudentId(), d.getCourse(), map);
-            return map;
-        }).collect(toList());
+        List<TeachCourseVo> list = page.getContent().stream()
+                .map(d -> new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+                        d.getCenterName(), d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate(),
+                        toListStudy(d.getStudentId(), d.getCourse())))
+                .collect(toList());
         return new PageImpl<>(list, pageable, page.getTotalElements());
     }
 
-    private Map<String, Object> toMap(String studentId, String course, Map<String, Object> map) {
+    private List<StudyVo> toListStudy(String studentId, String course) {
+        List list = new ArrayList();
         Arrays.asList(StrUtil.split(course, ",")).forEach(s -> {
             String[] strings = StrUtil.split(s, "&");
             courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
-                    .ifPresent(d -> map.put(strings[0], new StudyVo(d.getCourseId(), d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum())));
+                    .ifPresent(d -> list.add(new StudyVo(d.getCourseId(), strings[0], d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum())));
         });
-        return map;
+        return list;
     }
 }

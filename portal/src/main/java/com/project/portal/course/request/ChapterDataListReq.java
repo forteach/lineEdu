@@ -18,6 +18,8 @@ import java.util.List;
 public class ChapterDataListReq implements Serializable {
     @ApiModelProperty(name = "courseId", value = "课程Id", dataType = "string", required = true)
     private String courseId;
+    @ApiModelProperty(name = "courseName", value = "课程名称", dataType = "string", required = true)
+    private String courseName;
     @ApiModelProperty(name = "teacherName", value = "教师名称", dataType = "string", required = true)
     private String teacherName;
     @ApiModelProperty(name = "centerName", value = "学习中心名称", dataType = "string", required = true)

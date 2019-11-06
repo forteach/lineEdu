@@ -3,6 +3,7 @@ package com.project.teachplan.vo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Auther: zhangyy
@@ -58,12 +59,14 @@ public class TeachCourseVo implements Serializable {
      */
     public String endDate;
 
+    public List<StudyVo> courses;
+
     public TeachCourseVo() {
     }
 
     public TeachCourseVo(String studentId, String studentName, String stuPhone,
                          String centerAreaId, String centerName, String planId,
-                         String planName, String startDate, String endDate) {
+                         String planName, String startDate, String endDate, List<StudyVo> courses) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.stuPhone = stuPhone;
@@ -73,5 +76,6 @@ public class TeachCourseVo implements Serializable {
         this.planName = planName;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.courses = courses;
     }
 }
