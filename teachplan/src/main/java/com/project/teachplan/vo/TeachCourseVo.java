@@ -3,7 +3,6 @@ package com.project.teachplan.vo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * @Auther: zhangyy
@@ -58,8 +57,6 @@ public class TeachCourseVo implements Serializable {
      * 结束时间
      */
     public String endDate;
-
-    public Map<String, String> course;
 
     public TeachCourseVo() {
     }

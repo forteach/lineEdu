@@ -5,6 +5,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.repository.CourseStudyRepository;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
@@ -22,6 +23,7 @@ import com.project.teachplan.repository.dto.TeachPlanDto;
 import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
+import com.project.teachplan.vo.StudyVo;
 import com.project.teachplan.vo.TeachCourseVo;
 import com.project.teachplan.vo.TeachPlanCourseVo;
 import com.project.user.service.TeacherService;
@@ -54,6 +56,7 @@ public class TeachService {
     private final OnLineCourseDicService onLineCourseDicService;
     private final TeacherService teacherService;
     private final PlanFileService planFileService;
+    private final CourseStudyRepository courseStudyRepository;
 
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
     private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
@@ -64,7 +67,7 @@ public class TeachService {
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
                         TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
                         PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService,
-                        OnLineCourseDicService onLineCourseDicService,
+                        OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
                         TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository,
                         TeachPlanClassVerifyRepository teachPlanClassVerifyRepository) {
         this.studentOnLineService = studentOnLineService;
@@ -79,6 +82,7 @@ public class TeachService {
         this.teachPlanVerifyRepository = teachPlanVerifyRepository;
         this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
         this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
+        this.courseStudyRepository = courseStudyRepository;
     }
 
 
@@ -363,19 +367,19 @@ public class TeachService {
     public Page<Map<String, Object>> findAllPageDtoByPlanId(String planId, Pageable pageable) {
         Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
         List<Map<String, Object>> list = page.getContent().stream().map(d -> {
-                    Map<String, Object> map = BeanUtil.beanToMap(new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(), d.getCenterName(),
-                            d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate()));
-                    toMap(d.getCourse(), map);
-                    return map;
-                }
-        ).collect(toList());
+            Map<String, Object> map = BeanUtil.beanToMap(new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(), d.getCenterName(),
+                    d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate()));
+            toMap(d.getStudentId(), d.getCourse(), map);
+            return map;
+        }).collect(toList());
         return new PageImpl<>(list, pageable, page.getTotalElements());
     }
 
-    private Map<String, Object> toMap(String course, Map<String, Object> map) {
+    private Map<String, Object> toMap(String studentId, String course, Map<String, Object> map) {
         Arrays.asList(StrUtil.split(course, ",")).forEach(s -> {
             String[] strings = StrUtil.split(s, "&");
-            map.put(strings[0], strings[1]);
+            courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
+                    .ifPresent(d -> map.put(strings[0], new StudyVo(d.getCourseId(), d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum())));
         });
         return map;
     }

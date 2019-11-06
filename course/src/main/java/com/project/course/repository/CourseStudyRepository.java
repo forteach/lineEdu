@@ -1,6 +1,7 @@
 package com.project.course.repository;
 
 import com.project.course.domain.CourseStudy;
+import com.project.course.repository.dto.CourseStudyDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ import java.util.Optional;
  * @version: 1.0
  * @description: 课程学习数据
  */
-public interface CourseStudyRepository extends JpaRepository<CourseStudy, String>, JpaSpecificationExecutor<CourseStudy>{
+public interface CourseStudyRepository extends JpaRepository<CourseStudy, String>, JpaSpecificationExecutor<CourseStudy> {
 
     /**
      * 查询学生学习课程的状态信息
@@ -107,4 +108,17 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             nativeQuery = true)
     @Transactional(readOnly = true)
     Page<ICourseStudyDto> findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(String isValidated, String courseId, String studentId, Pageable pageable);
+
+
+    @Query(value = "select" +
+            " courseId as courseId, " +
+            " onLineTime as onLineTime," +
+            " onLineTimeSum as onLineTimeSum," +
+            " answerSum as answerSum, " +
+            " correctSum as correctSum " +
+            " from CourseStudy where isValidated = '0' " +
+            " and studentId = ?1 and courseId in ( " +
+            " select distinct courseId from Course where courseNumber = ?2 and createUser = ?3 ) ")
+    @Transactional(readOnly = true)
+    Optional<CourseStudyDto> findStudyDto(String studentId, String courseNumber, String teacherId);
 }

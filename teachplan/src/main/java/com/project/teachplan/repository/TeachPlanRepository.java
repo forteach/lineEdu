@@ -35,7 +35,9 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Modifying(clearAutomatically = true)
     int deleteByPlanId(String planId);
 
-    /** 根据计划Id分页查询学生和课程信息*/
+    /**
+     * 根据计划Id分页查询学生和课程信息
+     */
     @Query(value = " select " +
             " tp.plan_id as planId," +
             " tp.plan_name as planName, " +
@@ -46,7 +48,7 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " s_lc_v.student_id as studentId, " +
             " s_lc_v.student_name as studentName, " +
             " s_lc_v.stu_phone as stuPhone, " +
-            " GROUP_CONCAT(concat(tpc.course_name,'&', tpc.course_id)) as course " +
+            " GROUP_CONCAT(concat(tpc.course_name, '&', tpc.course_id, '&', tpc.teacher_Id)) as course " +
             " from( SELECT " +
             " s.student_id, " +
             " s.stu_phone, " +
