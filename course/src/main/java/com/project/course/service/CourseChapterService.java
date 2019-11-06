@@ -6,6 +6,7 @@ import com.project.course.repository.dto.ICourseChapterDto;
 import com.project.course.web.req.CourseChapterEditReq;
 import com.project.course.web.resp.CourseChapterSaveResp;
 import com.project.course.web.resp.CourseTreeResp;
+import com.project.course.web.vo.ChapterDataFileVo;
 import com.project.course.web.vo.CourseChapterVo;
 
 import java.util.List;
@@ -36,6 +37,8 @@ public interface CourseChapterService {
     public List<ICourseChapterDto> findByChapterParentId(String isValidated, String chapterParentId);
 
     public List<ICourseChapterDto> findAllCourseChapter(CourseChapterVo vo);
+
+    void saveChapterDataList(String courseId, String chapterParentId, List<ChapterDataFileVo> files, String teacherName, String centerName, String userId, String centerId);
 
 //    void verifyCourse(CourseChapterVerifyVo verifyVo);
 }

@@ -2,16 +2,20 @@ package com.project.course.service.impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.CourseChapter;
 import com.project.course.repository.CourseChapterRepository;
 import com.project.course.repository.dto.ICourseChapterDto;
 import com.project.course.service.CourseChapterService;
+import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CourseChapterEditReq;
+import com.project.course.web.req.ImpCoursewareAll;
 import com.project.course.web.req.State;
 import com.project.course.web.resp.CourseChapterSaveResp;
 import com.project.course.web.resp.CourseTreeResp;
+import com.project.course.web.vo.ChapterDataFileVo;
 import com.project.course.web.vo.CourseChapterVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
 
     @Resource
     private CourseChapterRepository courseChapterRepository;
+    @Resource
+    private CoursewareService coursewareService;
 
 
     @Override
@@ -210,7 +216,34 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         return courseChapterRepository.findCourseId(vo.getIsValidated(), vo.getCourseId());
     }
 
-//    @Override
+    @Override
+    public void saveChapterDataList(String courseId, String chapterParentId, List<ChapterDataFileVo> files, String teacherName, String centerName, String userId, String centerId) {
+        ChapterDataFileVo vo = files.stream().findFirst().get();
+        String chapterName = FileUtil.mainName(vo.getFileName());
+        CourseChapter courseChapter = new CourseChapter();
+        BeanUtil.copyProperties(vo, courseChapter);
+        courseChapter.setCourseId(courseId);
+        courseChapter.setCenterAreaId(centerId);
+        courseChapter.setCreateUser(userId);
+        courseChapter.setUpdateUser(userId);
+        courseChapter.setChapterName(chapterName);
+        courseChapter.setChapterParentId(chapterParentId);
+        //保存章节信息
+        CourseChapterSaveResp courseChapterSaveResp = save(courseChapter);
+        String chapterId = courseChapterSaveResp.getChapterId();
+        ImpCoursewareAll impCoursewareAll = new ImpCoursewareAll();
+        BeanUtil.copyProperties(vo, impCoursewareAll);
+        impCoursewareAll.setCreateUser(userId);
+        impCoursewareAll.setChapterId(chapterId);
+        impCoursewareAll.setTeacherId(userId);
+        impCoursewareAll.setTeacherName(teacherName);
+        impCoursewareAll.setCenterName(centerName);
+        impCoursewareAll.setVideoTime(vo.getFileVideoTime());
+        //保存章节资料
+        coursewareService.saveFile(impCoursewareAll, centerId);
+    }
+
+    //    @Override
 //    @Transactional(rollbackFor = Exception.class)
 //    public void verifyCourse(CourseChapterVerifyVo verifyVo) {
 //        Optional<CourseChapterVerify> verifyOptional = courseChapterVerifyRepository.findById(verifyVo.getChapterId());
