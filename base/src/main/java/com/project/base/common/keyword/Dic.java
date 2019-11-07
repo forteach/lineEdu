@@ -77,4 +77,6 @@ public class Dic {
     public static final String QUESTIONS_VERIFY = "questionsVerify";
 
     public static final String TEACH_PLAN_CLASS_COURSEVO = "teachPlanClassCourseVo$";
+
+    public static final String PLAN_COURSE_STUDENT_STUDY = "studyCourse$";
 }

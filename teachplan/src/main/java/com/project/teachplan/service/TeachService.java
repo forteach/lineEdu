@@ -1,8 +1,10 @@
 package com.project.teachplan.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.repository.CourseStudyRepository;
@@ -31,10 +33,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,7 +61,7 @@ public class TeachService {
     private final TeacherService teacherService;
     private final PlanFileService planFileService;
     private final CourseStudyRepository courseStudyRepository;
-
+    private final StringRedisTemplate redisTemplate;
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
     private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
@@ -66,7 +70,7 @@ public class TeachService {
     public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
                         TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
-                        PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService,
+                        PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService, StringRedisTemplate redisTemplate,
                         OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
                         TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository,
                         TeachPlanClassVerifyRepository teachPlanClassVerifyRepository) {
@@ -83,6 +87,7 @@ public class TeachService {
         this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
         this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
         this.courseStudyRepository = courseStudyRepository;
+        this.redisTemplate = redisTemplate;
     }
 
 
@@ -317,7 +322,7 @@ public class TeachService {
     }
 
 
-    void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
+    private void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
         // 审核通过 删除原来的班级
         if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
             teachPlanClassRepository.deleteAllByPlanId(planId);
@@ -346,7 +351,7 @@ public class TeachService {
     /**
      * 修改计划信息
      */
-    void updateVerifyTeachPlan(String planId, String verifyStatus, String remark, String userId) {
+    private void updateVerifyTeachPlan(String planId, String verifyStatus, String remark, String userId) {
         Optional<TeachPlanVerify> optional = teachPlanVerifyRepository.findById(planId);
         MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在对应的计划信息");
         TeachPlanVerify t = optional.get();
@@ -364,9 +369,23 @@ public class TeachService {
         teachPlanVerifyRepository.save(t);
     }
 
-    public Page<TeachCourseVo> findAllPageDtoByPlanId(String planId, Pageable pageable) {
+    @SuppressWarnings(value = "all")
+    public Page<TeachCourseVo> findAllPageDtoByPlanId(String planId, String key, Pageable pageable) {
+        //查询redis缓存
+        if (redisTemplate.hasKey(key)) {
+            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
+            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
+        }
+        //设置redis缓存
+        Page<TeachCourseVo> page = findAllPageByPlanId(planId, pageable);
+        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
+        return page;
+    }
+
+    private Page<TeachCourseVo> findAllPageByPlanId(String planId, Pageable pageable) {
         Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
-        List<TeachCourseVo> list = page.getContent().stream()
+        List<TeachCourseVo> list = page.getContent()
+                .stream()
                 .map(d -> new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
                         d.getCenterName(), d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate(),
                         toListStudy(d.getStudentId(), d.getCourse())))
@@ -375,12 +394,13 @@ public class TeachService {
     }
 
     private List<StudyVo> toListStudy(String studentId, String course) {
-        List list = new ArrayList();
-        Arrays.asList(StrUtil.split(course, ",")).forEach(s -> {
-            String[] strings = StrUtil.split(s, "&");
-            courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
-                    .ifPresent(d -> list.add(new StudyVo(d.getCourseId(), strings[0], d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum())));
-        });
+        List<StudyVo> list = CollUtil.newArrayList();
+        Arrays.asList(StrUtil.split(course, ","))
+                .forEach(s -> {
+                    String[] strings = StrUtil.split(s, "&");
+                    courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
+                            .ifPresent(d -> list.add(new StudyVo(d.getCourseId(), strings[0], d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum())));
+                });
         return list;
     }
 }
