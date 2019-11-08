@@ -50,7 +50,7 @@ public class CourseTask {
      */
     @Schedules({
 //            @Scheduled(cron = "0 0 0/2 * * ?")
-            @Scheduled(cron = "0 0/10 * * * ?")
+            @Scheduled(cron = "0 0/1 * * * ?")
     })
     @Async
     public void asyncCourseRecordsCount() {
@@ -69,7 +69,7 @@ public class CourseTask {
      */
     @Schedules({
 //            @Scheduled(cron = "0 0 0/2 * * ?")
-            @Scheduled(cron = "0 0 0/1 * * ?")
+            @Scheduled(cron = "0 0/1 * * * ?")
     })
     @Async
     public void asyncCourseStudyCount() {
@@ -87,7 +87,7 @@ public class CourseTask {
      * 统计学习课程占比
      */
     @Schedules({
-            @Scheduled(cron = "0 0/3 * * * ?")
+            @Scheduled(cron = "0 0/1 * * * ?")
 //            @Scheduled(cron = "0 0 0/1 * * ?")
     })
     @Async
