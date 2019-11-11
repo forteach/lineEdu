@@ -66,7 +66,7 @@ public class Course extends Entitys {
     private String learningTime;
 
     @Column(name = "video_time_num", columnDefinition = "INT(11) DEFAULT 0 COMMENT '当前课程视频总长度课程视频总长度'", nullable = false)
-    private Integer videoTimeNum;
+    private Integer videoTimeNum = this.videoTimeNum == null ? 0 : this.videoTimeNum;
 
 //    @Column(name = "credit", columnDefinition = "VARCHAR(32) COMMENT '学分'")
 //    private String credit;
