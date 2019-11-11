@@ -26,11 +26,12 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
     @Query(value = "SELECT centerId AS centerId, centerName AS centerName, address as address, principal as principal, " +
             " phone as phone, bankingAccount as bankingAccount, accountHolder as accountHolder, accountHolderPhone as accountHolderPhone, " +
             " bankingAccountAddress as bankingAccountAddress, companyAddress as companyAddress, companyName as companyName " +
-            " FROM LearnCenter WHERE isValidated = '0' order by createTime desc ")
+            " FROM LearnCenter WHERE isValidated = '0' and roleId = 1 order by createTime desc ")
     public List<LearnCenterDto> findAllByIsValidatedEquals();
 
     @Transactional(readOnly = true)
     public List<LearnCenter> findByCenterName(String centerName);
 
-    Page<LearnCenter> findAllByCenterAreaIdIsNotNull(Pageable pageable);
+    @Transactional(readOnly = true)
+    Page<LearnCenter> findAllByIsValidatedEqualsAndRoleId(String isValidated, Integer roleId, Pageable pageable);
 }

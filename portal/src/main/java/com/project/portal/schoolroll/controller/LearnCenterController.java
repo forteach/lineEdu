@@ -30,8 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
@@ -135,7 +134,7 @@ public class LearnCenterController {
     })
     public WebResult findAllPage(@RequestBody SortVo sortVo) {
         valideSort(sortVo.getPage(), sortVo.getSize());
-        return WebResult.okResult(learnCenterRepository.findAllByCenterAreaIdIsNotNull(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+        return WebResult.okResult(learnCenterRepository.findAllByIsValidatedEqualsAndRoleId(TAKE_EFFECT_OPEN, CENTER_ROLE_ID, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
     }
 
     @UserLoginToken

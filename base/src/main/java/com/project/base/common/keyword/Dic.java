@@ -14,6 +14,12 @@ public class Dic {
 
     public static final String TAKE_EFFECT_CLOSE = "1";
 
+    /**
+     *学习中心类别 0 总部 1 其它分中心
+     */
+    public static final Integer CENTER_ROLE_ID_ADMIN = 0;
+    public static final Integer CENTER_ROLE_ID = 1;
+
     /**申请审核状态 0 同意，1 申请 2 拒绝*/
     public static final String VERIFY_STATUS_AGREE = "0";
     public static final String VERIFY_STATUS_APPLY = "1";
