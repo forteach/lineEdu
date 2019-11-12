@@ -15,4 +15,7 @@ public interface ImpCoursewareRepoitory extends JpaRepository<ImportantCoursewar
 
     @Transactional(readOnly = true)
     List<ImportantCourseware> findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(String isValidated, String chapterId, String verifyStatus);
+
+    @Transactional(readOnly = true)
+    List<ImportantCourseware> findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(String isValidated, String courseId, String datumType, String verifyStatus);
 }

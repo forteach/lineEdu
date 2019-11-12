@@ -42,9 +42,9 @@ public class ImpCoursewareAll implements Serializable {
      */
     public String fileUrl;
     /**
-     * 时长
+     * 视频时长
      */
-    private String videoTime;
+    private Integer videoTime;
 
     private String courseId;
 

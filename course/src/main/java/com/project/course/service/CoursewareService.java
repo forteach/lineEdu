@@ -45,6 +45,8 @@ public interface CoursewareService {
 
     void updateVerifyCourseware(CourseVerifyRequest request);
 
+    int findVideoTimeSum(String courseId);
+
     /**
      * 获取图册列表
      *

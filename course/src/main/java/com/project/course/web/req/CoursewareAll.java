@@ -28,7 +28,7 @@ public class CoursewareAll implements Serializable {
      */
     public String fileUrl;
 
-    private String videoTime;
+    private Integer videoTime;
 
     private String remark;
 

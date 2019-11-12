@@ -23,8 +23,10 @@ public enum StudentEnum {
     namePinYin("姓名拼音"),
     /** 班级名称*/
     className("班级名称"),
-    /** 学号*/
+    /** 原学号对应身份证号*/
     studentId("学号"),
+    /** 新添加字段记录学号信息*/
+    stuId("学号Id"),
     /** 学生类别*/
     studentCategory("学生类别"),
     /** 学习形式*/

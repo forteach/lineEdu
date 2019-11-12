@@ -28,8 +28,8 @@ import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_FILE_DA
 import static com.project.databank.domain.verify.CourseVerifyEnum.VIEW_DATUM;
 import static java.util.stream.Collectors.toList;
 
-@Service
 @Slf4j
+@Service
 public class CoursewareServiceImpl implements CoursewareService {
 
     /**
@@ -60,7 +60,7 @@ public class CoursewareServiceImpl implements CoursewareService {
         BeanUtil.copyProperties(obj, important);
         important.setFileId(IdUtil.fastSimpleUUID());
         important.setImportantType("2");
-        important.setDatumType("3");
+        important.setDatumType(COURSE_ZILIAO_VIEW);
         important.setUpdateUser(obj.getCreateUser());
         important.setCenterAreaId(centerId);
         important.setFileType(StrUtil.subAfter(obj.getFileName(), ".", true));
@@ -85,137 +85,6 @@ public class CoursewareServiceImpl implements CoursewareService {
         courseVerifyVoService.save(courseVerifyVo);
     }
 
-    /**
-     * 保存图集
-     *
-     * @param obj
-     * @return
-     */
-//    @Override
-//    public List<CoursewareAll> saveCourseAtlit(ImpCoursewareAll obj) {
-//
-//        CourseAtlits ca = new CourseAtlits();
-//        ca.setId(IdUtil.fastSimpleUUID());
-//        ca.setChapterId(obj.getChapterId());
-//        ca.setFileName(obj.getPhotoDatumName());
-//        //保存图集信息
-//        courseArlitsRepository.save(ca);
-//
-//        List<Photos> list = obj.getFiles().stream().map(item -> {
-//            Photos photo = new Photos();
-//            photo.setId(IdUtil.fastSimpleUUID());
-//            photo.setArlitsId(ca.getId());
-//            photo.setChapterId(obj.getChapterId());
-//            BeanUtil.copyProperties(item, photo);
-//            return photo;
-//        }).collect(toList());
-//
-//        photoDatumRepository.saveAll(list);
-//        return getCourseArlitsList(obj.getChapterId());
-//
-//    }
-
-    /**
-     * 获得重要除图集以外，课件文件列表
-     *
-     * @param chapterId
-     * @param importantType
-     * @param datumType
-     * @return
-     */
-//    @Override
-//    public ImpCoursewareAll getImpCourseware(String chapterId, String importantType, String datumType) {
-//        List<ImportantCourseware> list = impCoursewareRepoitory.findByChapterIdAndDatumTypeAndImportantTypeAndIsValidated(chapterId, datumType, importantType, Dic.TAKE_EFFECT_OPEN);
-//        List<CoursewareAll> files = list.stream().map((ImportantCourseware item) -> {
-//            CoursewareAll ca = new CoursewareAll();
-//            BeanUtil.copyProperties(item, ca);
-//            return ca;
-//        }).collect(toList());
-//
-//        if (list.size() > 0) {
-//            return new ImpCoursewareAll(chapterId, importantType, files.size(), datumType, "", files);
-//        }
-//        return null;
-//    }
-
-    /**
-     * 获得图集列表
-     *
-     * @param chapterId
-     * @return
-     */
-//    @Override
-//    public List<CoursewareAll> getCourseArlitsList(String chapterId) {
-//
-//        List<CoursewareAll> list = courseArlitsRepository.findByChapterIdAndIsValidated(chapterId, Dic.TAKE_EFFECT_OPEN)
-//                .stream().map((item) -> {
-//                            CoursewareAll ca = new CoursewareAll();
-//                            BeanUtil.copyProperties(item, ca);
-//                            return ca;
-//                        }
-//                ).collect(toList());
-//
-//        return list;
-//
-//    }
-
-//    @Override
-//    public List<CoursewareAll> getPhotoList(String arlitId) {
-//
-//        List<CoursewareAll> phlist = photoDatumRepository.findByArlitsIdAndIsValidated(arlitId, Dic.TAKE_EFFECT_OPEN)
-//                .stream().map((item) -> {
-//                    CoursewareAll ca = new CoursewareAll();
-//                    BeanUtil.copyProperties(item, ca);
-//                    return ca;
-//                }).collect(toList());
-//        return phlist;
-//    }
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void removePhotoList(String arlitId) {
-//        List<Photos> photosList = photoDatumRepository.findByArlitsIdAndIsValidated(arlitId, Dic.TAKE_EFFECT_OPEN)
-//                .stream()
-//                .map(photos -> {
-//                    photos.setIsValidated(TAKE_EFFECT_CLOSE);
-//                    return photos;
-//                }).collect(toList());
-//        photoDatumRepository.saveAll(photosList);
-//    }
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void removeCourseArlitsList(String chapterId) {
-//        List<CourseAtlits> courseAtlitsList = courseArlitsRepository.findByChapterIdAndIsValidated(chapterId, Dic.TAKE_EFFECT_OPEN).stream()
-//                .map(courseAtlits -> {
-//                    courseAtlits.setIsValidated(TAKE_EFFECT_CLOSE);
-//                    return courseAtlits;
-//                }).collect(toList());
-//        courseArlitsRepository.saveAll(courseAtlitsList);
-//    }
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void removeCourseware(String chapterId, String importantType, String datumType) {
-//        List<ImportantCourseware> list = impCoursewareRepoitory.findByChapterIdAndDatumTypeAndImportantTypeAndIsValidated(chapterId, datumType, importantType, Dic.TAKE_EFFECT_OPEN)
-//                .stream().map(importantCourseware -> {
-//                    importantCourseware.setImportantType(TAKE_EFFECT_CLOSE);
-//                    return importantCourseware;
-//                }).collect(toList());
-//        impCoursewareRepoitory.saveAll(list);
-//    }
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void removeCourseAtlit(String chapterId) {
-//        removeCourseArlitsList(chapterId);
-//        List<Photos> photosList = photoDatumRepository.findByChapterId(chapterId).stream()
-//                .map(photos -> {
-//                    photos.setIsValidated(TAKE_EFFECT_CLOSE);
-//                    return photos;
-//                }).collect(toList());
-//        photoDatumRepository.saveAll(photosList);
-//    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteCourseChapterId(String chapterId) {
@@ -229,7 +98,11 @@ public class CoursewareServiceImpl implements CoursewareService {
 
     @Override
     public List<CoursewareAll> findByChapterIdAndVerifyStatus(String courseId, String chapterId, String userId) {
-        return findCoursewareAll(impCoursewareRepoitory.findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(TAKE_EFFECT_OPEN, chapterId, VERIFY_STATUS_AGREE), courseId, chapterId, userId);
+        return findCoursewareAll(findImportantCoursewareByChapterId(chapterId), courseId, chapterId, userId);
+    }
+
+    private List<ImportantCourseware> findImportantCoursewareByChapterId(String chapterId){
+        return impCoursewareRepoitory.findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(TAKE_EFFECT_OPEN, chapterId, VERIFY_STATUS_AGREE);
     }
 
     private List<CoursewareAll> findCoursewareAll(List<ImportantCourseware> list, String courseId, String chapterId, String userId) {
@@ -249,16 +122,15 @@ public class CoursewareServiceImpl implements CoursewareService {
     }
 
     private List<CoursewareAll> findCoursewareAll(List<ImportantCourseware> list) {
-        return list.stream().map(i -> {
-            return CoursewareAll.builder()
-                    .fileId(i.getFileId())
-                    .fileName(i.getFileName())
-                    .fileUrl(i.getFileUrl())
-                    .videoTime(i.getVideoTime())
-                    .remark(i.getRemark())
-                    .verifyStatus(i.getVerifyStatus())
-                    .build();
-        }).collect(toList());
+        return list.stream().map(i -> CoursewareAll.builder()
+                .fileId(i.getFileId())
+                .fileName(i.getFileName())
+                .fileUrl(i.getFileUrl())
+                .videoTime(i.getVideoTime())
+                .remark(i.getRemark())
+                .verifyStatus(i.getVerifyStatus())
+                .build()
+        ).collect(toList());
     }
 
     @Override
@@ -275,6 +147,13 @@ public class CoursewareServiceImpl implements CoursewareService {
         importantCourseware.setRemark(request.getRemark());
         importantCourseware.setVerifyStatus(request.getVerifyStatus());
         impCoursewareRepoitory.save(importantCourseware);
+    }
+    @Override
+    public int findVideoTimeSum(String courseId){
+        return impCoursewareRepoitory.findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(TAKE_EFFECT_OPEN, courseId, COURSE_ZILIAO_VIEW, VERIFY_STATUS_AGREE)
+                .stream()
+                .mapToInt(ImportantCourseware::getVideoTime)
+                .sum();
     }
 }
 

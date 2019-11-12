@@ -40,7 +40,7 @@ public class ChapterDataFileVo implements Serializable {
     /**
      * 视频文件长度
      */
-    private String fileVideoTime;
+    private Integer fileVideoTime;
     /**
      * 当前是否章、节、小节
      */

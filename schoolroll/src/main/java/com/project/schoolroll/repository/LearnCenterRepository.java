@@ -33,5 +33,5 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
     public List<LearnCenter> findByCenterName(String centerName);
 
     @Transactional(readOnly = true)
-    Page<LearnCenter> findAllByIsValidatedEqualsAndRoleId(String isValidated, Integer roleId, Pageable pageable);
+    Page<LearnCenter> findAllByRoleId(Integer roleId, Pageable pageable);
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
+import com.project.course.domain.ziliao.ImportantCourseware;
 import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
 import com.project.databank.domain.verify.CourseVerifyVo;
@@ -117,6 +118,8 @@ public class CourseVerifyController {
             //课程的课件
             coursewareService.updateVerifyCourseware(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getFileId(),
                     request.getVerifyStatus(), request.getRemark(), userId));
+            int videoTimeSum = coursewareService.findVideoTimeSum(verifyVo.getCourseId());
+            courseService.updateCourseTime(verifyVo.getCourseId(), videoTimeSum);
         }
         //修改数据
         verifyVo.setUpdateUser(userId);
@@ -125,11 +128,10 @@ public class CourseVerifyController {
         courseVerifyVoService.save(verifyVo);
 
         //是课程资料并且修改通过，就将对应的课程资料长度求和后保存对应的课程信息 todo 需要测试
-        if (CHAPTER_DATE.getValue().equals(type) && Dic.COURSE_ZILIAO_VIEW.equals(verifyVo.getDatumType())
-                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-            Integer videoTimeSum = chapteDataService.findCourseVideoTimeSumByCourseId(verifyVo.getCourseId());
-            courseService.updateCourseTime(verifyVo.getCourseId(), videoTimeSum);
-        }
+//        if (CHAPTER_DATE.getValue().equals(type) && Dic.COURSE_ZILIAO_VIEW.equals(verifyVo.getDatumType())
+//                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+//            Integer videoTimeSum = chapteDataService.findCourseVideoTimeSumByCourseId(verifyVo.getCourseId());
+//        }
         return WebResult.okResult();
     }
 

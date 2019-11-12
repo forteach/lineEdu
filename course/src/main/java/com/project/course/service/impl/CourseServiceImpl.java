@@ -297,18 +297,18 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void taskCourseStudy() {
         courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
-                .parallelStream().filter(Objects::nonNull)
-                .forEach(r -> {
-                    courseRepository.findById(r.getCourseId())
-                            .ifPresent(c -> {
-                                CourseStudy courseStudy = findCourseStudy(c.getCourseId(), r.getStudentId());
-                                courseStudy.setStudentId(r.getStudentId());
-                                courseStudy.setCourseId(c.getCourseId());
-                                courseStudy.setOnLineTime(r.getSumTime());
-                                courseStudy.setOnLineTimeSum(c.getVideoTimeNum());
-                                courseStudyRepository.save(courseStudy);
-                            });
-                });
+                .parallelStream()
+                .filter(Objects::nonNull)
+                .forEach(r -> courseRepository.findById(r.getCourseId())
+                        .ifPresent(c -> {
+                            CourseStudy courseStudy = findCourseStudy(c.getCourseId(), r.getStudentId());
+                            courseStudy.setStudentId(r.getStudentId());
+                            courseStudy.setCourseId(c.getCourseId());
+                            courseStudy.setOnLineTime(r.getSumTime());
+                            courseStudy.setOnLineTimeSum(c.getVideoTimeNum());
+                            courseStudyRepository.save(courseStudy);
+                        })
+                );
     }
 
     private CourseStudy findCourseStudy(String courseId, String studentId) {

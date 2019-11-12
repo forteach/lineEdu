@@ -25,6 +25,9 @@ public abstract class AbsFile extends Entitys {
     @Column(name = "file_id", columnDefinition = "VARCHAR(32) COMMENT '文件编号'")
     private String fileId;
 
+    @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '科目编号'")
+    private String courseId;
+
     @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '章节编号'")
     public String chapterId;
 

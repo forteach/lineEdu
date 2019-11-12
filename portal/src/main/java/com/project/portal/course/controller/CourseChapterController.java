@@ -208,8 +208,7 @@ public class CourseChapterController {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         String centerId = tokenService.getCenterAreaId(token);
-        req.getFiles().stream().forEach(v -> courseChapterService.saveChapterDataList(req.getCourseId(), req.getCourseName(), req.getChapterParentId(), v, req.getTeacherName(), req.getCenterName(), userId, centerId));
+        req.getFiles().forEach(v -> courseChapterService.saveChapterDataList(req.getCourseId(), req.getCourseName(), req.getChapterParentId(), v, req.getTeacherName(), req.getCenterName(), userId, centerId));
         return WebResult.okResult();
     }
-
 }

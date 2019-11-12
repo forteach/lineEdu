@@ -49,7 +49,7 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " where s.centerAreaId = ?1 order by s.createTime desc ")
+            " where s.centerAreaId = ?1 order by s.classId, s.createTime desc ")
     @Transactional(readOnly = true)
     Page<StudentOnLineDto> findAllByCenterAreaIdDto(String centerAreaId, Pageable pageable);
 
@@ -71,7 +71,7 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " order by s.createTime desc ")
+            " order by s.classId, s.createTime desc ")
     @Transactional(readOnly = true)
     Page<StudentOnLineDto> findAllDto(Pageable pageable);
 
@@ -93,7 +93,7 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " where s.isValidated = ?1 and s.centerAreaId = ?2 order by s.createTime desc ")
+            " where s.isValidated = ?1 and s.centerAreaId = ?2 order by s.classId, s.createTime desc ")
     @Transactional(readOnly = true)
     List<StudentOnLineDto> findAllByIsValidatedAndCenterAreaIdDto(String isValidated, String centerAreaId);
 
@@ -115,7 +115,7 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " s.isValidated as isValidated " +
             " from StudentOnLine as s " +
             " left join LearnCenter as lc on lc.centerId = s.centerAreaId " +
-            " where s.isValidated = ?1 order by s.createTime desc ")
+            " where s.isValidated = ?1 order by s.classId, s.createTime desc ")
     @Transactional(readOnly = true)
     List<StudentOnLineDto> findAllIsValidatedDto(String isValidated);
 }

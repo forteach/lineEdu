@@ -82,4 +82,9 @@ public class StudentOnLine extends Entitys implements Serializable {
      */
     @Column(name = "import_status", columnDefinition = "TINYINT(2) COMMENT '0 导入, 1 手动添加'")
     private Integer importStatus;
+    /**
+     * 由于原学号要改为非必填字段，则用身份证号替换学号信息，新建字段为学号信息
+     */
+    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学号ID信息'")
+    private String stuId;
 }

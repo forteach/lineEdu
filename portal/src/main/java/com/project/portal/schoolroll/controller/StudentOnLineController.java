@@ -72,8 +72,7 @@ public class StudentOnLineController {
             if (StrUtil.isNotBlank(type) && "xlsx".equals(type) || "xls".equals(type)) {
                 String centerAreaId = tokenService.getCenterAreaId(token);
                 String userId = tokenService.getUserId(token);
-                studentOnLineService.importStudent(file.getInputStream(), centerAreaId, userId);
-                return WebResult.okResult();
+                return WebResult.okResult(studentOnLineService.importStudent(file.getInputStream(), centerAreaId, userId));
             }
         } catch (IOException e) {
             studentOnLineService.deleteKey();

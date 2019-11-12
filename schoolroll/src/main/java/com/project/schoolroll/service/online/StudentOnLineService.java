@@ -3,6 +3,7 @@ package com.project.schoolroll.service.online;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -58,7 +59,7 @@ public class StudentOnLineService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void importStudent(InputStream inputStream, String centerAreaId, String userId) {
+    public int importStudent(InputStream inputStream, String centerAreaId, String userId) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
         List<StudentOnLine> list = reader.readAll(StudentOnLine.class);
@@ -79,16 +80,17 @@ public class StudentOnLineService {
         });
         //删除键值操作
         deleteKey();
+        return list.size();
     }
 
     private void checkImportStudentData(List<StudentOnLine> list){
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "导入数据不存在");
         list.parallelStream().forEach(s -> {
-            MyAssert.isTrue(StrUtil.isBlank(s.getStudentId()), DefineCode.ERR0010, "学号不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getStudentName()), DefineCode.ERR0010, "姓名不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getGender()), DefineCode.ERR0010, "性别不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getClassName()), DefineCode.ERR0010, "班级名称不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getStuIDCard()), DefineCode.ERR0010, "身份证件号不能为空");
+            MyAssert.isFalse(IdcardUtil.isValidCard(s.getStuIDCard()), DefineCode.ERR0010, "身份证号: ".concat(s.getStuIDCard()).concat("无效"));
             MyAssert.isTrue(StrUtil.isBlank(s.getStuPhone()), DefineCode.ERR0010, "联系电话不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getEnrollmentDate()), DefineCode.ERR0010, "入学年月不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getLearningModality()), DefineCode.ERR0010, "学习形式不能为空");
@@ -118,7 +120,10 @@ public class StudentOnLineService {
     }
 
     private void setHeaderAlias(@NonNull ExcelReader reader) {
-        reader.addHeaderAlias(studentId.getName(), studentId.name());
+        // 新添加字段，对应学号信息
+        reader.addHeaderAlias(studentId.getName(), stuId.name());
+        //原学号字段应身份证证号
+        reader.addHeaderAlias(stuIDCard.getName(), studentId.name());
         reader.addHeaderAlias(studentName.getName(), studentName.name());
         reader.addHeaderAlias(gender.getName(), gender.name());
         reader.addHeaderAlias(stuIDCard.getName(), stuIDCard.name());

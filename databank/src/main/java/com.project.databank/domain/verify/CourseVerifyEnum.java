@@ -11,14 +11,14 @@ public enum CourseVerifyEnum {
     //习题
     CHAPTER_QUESTION("0"),
     //1文档　2图册　3视频　4音频　5链接
-    FILE_DATUM("1"),
-    PHOTO_DATUM("2"),
+//    FILE_DATUM("1"),
+//    PHOTO_DATUM("2"),
     VIEW_DATUM("3"),
-    AUDIO_DATUM("4"),
-    LINK_DATUM("5"),
-    COURSE_DATA("6"),
+//    AUDIO_DATUM("4"),
+//    LINK_DATUM("5"),
+//    COURSE_DATA("6"),
     CHAPTER_DATE("7"),
-    COURSE_IMAGE_DATE("8"),
+//    COURSE_IMAGE_DATE("8"),
     COURSE_CHAPTER_QUESTION("9"),
     COURSE_FILE_DATA("10")
     ;

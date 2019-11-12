@@ -38,7 +38,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus," +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " order by tp.createTime desc ")
@@ -58,7 +59,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus, " +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.verifyStatus =?1 order by tp.createTime desc ")
@@ -78,7 +80,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus, " +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.verifyStatus =?1 and tp.centerAreaId = ?2 order by tp.createTime desc ")
@@ -98,7 +101,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus, " +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.centerAreaId = ?1 order by tp.createTime desc ")
@@ -118,7 +122,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus, " +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.planId = ?1 order by tp.createTime desc ")
@@ -138,7 +143,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus, " +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.centerAreaId = ?1 and tp.planId = ?2 order by tp.createTime desc ")
@@ -158,7 +164,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus, " +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.planId = ?1 and tp.verifyStatus = ?2 order by tp.createTime desc ")
@@ -178,7 +185,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
             " tp.createTime as createTime," +
-            " tp.verifyStatus as verifyStatus " +
+            " tp.verifyStatus as verifyStatus, " +
+            " tp.remark as remark " +
             " from TeachPlanVerify as tp " +
             " left join LearnCenter as lc on lc.centerId = tp.centerAreaId " +
             " where tp.planId = ?1 and tp.verifyStatus = ?2 and tp.centerAreaId = ?3 order by tp.createTime desc ")
