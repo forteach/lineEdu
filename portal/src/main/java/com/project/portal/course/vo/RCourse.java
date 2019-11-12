@@ -37,20 +37,11 @@ public class RCourse implements Serializable {
     @ApiModelProperty(name = "alias", value = "别名", dataType = "string", example = "第一学期")
     private String alias;
 
-//    @ApiModelProperty(name = "courseType", value = "课程类别 公共基础课,实训课,专业", dataType = "string")
-//    private String courseType;
-
     @ApiModelProperty(name = "isRequired", value = "是否必修课 Y/N", dataType = "string")
     private String isRequired;
 
-//    @ApiModelProperty(name = "scoringMethod", value = "评分方式 笔试,口试,网上考试", dataType = "string")
-//    private String scoringMethod;
-
     @ApiModelProperty(name = "learningTime", value = "需要学习的总时长(小时)", dataType = "string")
     private String learningTime;
-
-//    @ApiModelProperty(name = "credit", value = "学分", dataType = "string")
-//    private String credit;
 
     @ApiModelProperty(name = "videoPercentage", value = "观看视频占百分比", dataType = "string")
     private String videoPercentage;

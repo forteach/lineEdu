@@ -62,5 +62,4 @@ public class CourseReviewDescResp implements Serializable {
 
     @ApiModelProperty(name = "teacherName", value = "教师名字")
     private String teacherName;
-
 }

@@ -18,5 +18,4 @@ public class CourseSaveResp implements Serializable {
 
     private String courseId;
 
-//    private String shareId;
 }

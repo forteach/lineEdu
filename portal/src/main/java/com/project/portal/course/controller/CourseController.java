@@ -66,15 +66,12 @@ public class CourseController {
             @ApiImplicitParam(name = "topPicSrc", value = "封面图片路径", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseDescribe", value = "课程描述富文本", example = "<p>富文本</p>", paramType = "form"),
             @ApiImplicitParam(name = "alias", value = "别名", dataType = "string", example = "第一学期", paramType = "form"),
-//            @ApiImplicitParam(name = "courseType", value = "课程类别 公共基础课,实训课,专业", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "isRequired", value = "是否必修课 Y/N", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "scoringMethod", dataType = "string", value = "评分方式 笔试,口试,网上考试", paramType = "form"),
             @ApiImplicitParam(name = "learningTime", value = "需要学习的总时长(小时)", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "credit", value = "学分", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "videoPercentage", value = "观看视频占百分比", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "jobsPercentage", value = "平时作业占百分比", dataType = "string", paramType = "form"),
     })
-    public WebResult save(@ApiParam(name = "courseReq", value = "科目课程对象") @RequestBody RCourse req, HttpServletRequest request) {
+    public WebResult save(@RequestBody RCourse req, HttpServletRequest request) {
         //验证请求信息
         CourseVer.saveValide(req);
         //设置service数据
@@ -86,19 +83,9 @@ public class CourseController {
         course.setCreateUser(userId);
         course.setUpdateUser(userId);
         course.setCenterAreaId(centerId);
-//        if (StrUtil.isNotBlank(req.getCourseNumber())) {
-//            OnLineCourseDic courseDic = onLineCourseDicService.findId(req.getCourseNumber());
-//            if (StrUtil.isNotBlank(courseDic.getCourseId())) {
-//                course.setCourseNumber(courseDic.getCourseId());
-//            }
-//        }
-//        String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
-//        String teacherName = teacherService.findById(userId).getTeacherName();
         String courseId = courseService.saveUpdate(course);
         //创建输出课程对象
-        CourseSaveResp courseSaveResp = CourseSaveResp.builder()
-                .courseId(courseId)
-                .build();
+        CourseSaveResp courseSaveResp = CourseSaveResp.builder().courseId(courseId).build();
         return WebResult.okResult(courseSaveResp);
     }
 
@@ -117,7 +104,8 @@ public class CourseController {
     @UserLoginToken
     @ApiOperation(value = "分页查询", notes = "分页查询分页科目信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sortVo", value = "分页参数息", dataTypeClass = CourseFindAllReq.class, example = "{\"sortVo\":{\"isValidated\":\"0\",\"page\":0,\"size\":15,\"sort\":1}}")
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     @PostMapping("/findAll")
     public WebResult findAll(@ApiParam(name = "sortVo", value = "分页查科目信息") @RequestBody CourseFindAllReq req, HttpServletRequest request) {
@@ -125,9 +113,7 @@ public class CourseController {
         req.setUserId(tokenService.getTeacherId(request.getHeader("token")));
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findAll(page).stream()
-                .map((item) -> {
-                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias());
-                })
+                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias()))
                 .collect(toList()));
     }
 
@@ -139,34 +125,14 @@ public class CourseController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findMyCourse(@ApiParam(name = "CourseFindAllReq", value = "课程列表请求对象", required = true) @RequestBody CourseFindAllReq req, HttpServletRequest request) {
+    public WebResult findMyCourse(@RequestBody CourseFindAllReq req, HttpServletRequest request) {
         valideSort(req.getPage(), req.getSize());
         String userId = tokenService.getUserId(request.getHeader("token"));
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findMyCourse(userId, page).stream()
-                .map((item) -> {
-                    return new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias());
-                })
+                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias()))
                 .collect(toList()));
     }
-
-//    @UserLoginToken
-//    @PostMapping("/selectTeachersByShareId")
-//    @ApiOperation(value = "根据课程备课分享ID查询对应的协作老师信息")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "shareId", value = "科目备课分享ID", dataType = "string", required = true)
-//    })
-//    public WebResult selectTeachersByCourseId(@ApiParam(name = "shareId", value = "查询对应的协作老师信息", type = "string", required = true) @RequestBody String shareId) {
-//        MyAssert.blank(shareId, DefineCode.ERR0010, "科目备课分享ID不为空");
-//        List<CourseUsersResp> list = courseShareService.findByShareIdUsers(String.valueOf(JSONObject.parseObject(shareId).getString("shareId")))
-//                .stream().map(item -> {
-//                    CourseUsersResp resp = new CourseUsersResp();
-//                    BeanUtil.copyProperties(item, resp);
-//                    return resp;
-//                }).collect(toList());
-//
-//        return WebResult.okResult(list);
-//    }
 
     @UserLoginToken
     @ApiOperation(value = "学生查询我的课程信息", notes = "学生端查询我的课程信息")
@@ -176,16 +142,6 @@ public class CourseController {
         return WebResult.okResult(courseService.myCourseList(classId));
     }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "查询课程信息", notes = "查询同步的外部课程信息")
-//    @GetMapping("/findCourseList")
-//    public WebResult findCourseList() {
-//        return WebResult.okResult(courseService.findCourseList());
-//    }
-
-
-    //******************************************************************************************************一下内容未修改
-
     /**
      * 通过文件资源 ID 逻辑删除文件资源信息
      *
@@ -193,14 +149,15 @@ public class CourseController {
      * @return
      */
     @UserLoginToken
-    @ApiOperation(value = "使其无效", notes = "删除科目信息(逻辑删除)")
-    @PostMapping("/deleteIsValidById")
+    @ApiOperation(value = "修改课程状态", notes = "修改课程课程信息")
+    @PostMapping("/updateStatus")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
     })
-    public WebResult deleteIsValidById(@ApiParam(name = "courseId", value = "根据资源ID 逻辑删除对应科目信息", type = "string", required = true) @RequestBody String courseId) {
+    public WebResult deleteIsValidById(@RequestBody String courseId, HttpServletRequest httpServletRequest) {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
-        courseService.deleteIsValidById(String.valueOf(JSONObject.parseObject("courseId").getString("courseId")));
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        courseService.updateStatusById(String.valueOf(JSONObject.parseObject("courseId").getString("courseId")), userId);
         return WebResult.okResult();
     }
 
@@ -209,17 +166,16 @@ public class CourseController {
     @PostMapping("/delete")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "course", value = "科目课程对象", dataTypeClass = Course.class, dataType = "string", required = true),
-//            @ApiImplicitParam(name = "teachers", value = "教师信息列表", dataTypeClass = Teacher.class)
     })
-    public WebResult delete(@ApiParam(name = "course", value = "科目对象", required = true) @RequestBody Course course) {
+    public WebResult delete(@RequestBody Course course) {
         MyAssert.blank(course.getCourseId(), DefineCode.ERR0010, "科目ID不为空");
         courseService.delete(course);
         return WebResult.okResult();
     }
 
     @UserLoginToken
-    @ApiOperation(value = "删除文件信息", notes = "根据文件资源ID 删除科目信息")
-    @PostMapping("/deleteById")
+    @ApiOperation(value = "删除课程", notes = "通过课程Id 删除科目信息(物理删除)")
+    @DeleteMapping("/deleteById")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
     })
@@ -336,42 +292,4 @@ public class CourseController {
                 .map(dto -> new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId())).collect(toList());
         return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, userId));
     }
-//
-//    @UserLoginToken
-//    @ApiOperation(value = "审批课程信息")
-//    @PostMapping(path = "/verifyCourse")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "courseId", value = "课程Id", required = true, dataType = "string"),
-//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", required = true, dataType = "string"),
-//            @ApiImplicitParam(name = "remark", value = "备注", dataType = "string")
-//    })
-//    public WebResult verifyCourse(@RequestBody CourseVerifyReq req, HttpServletRequest httpServletRequest){
-//        MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不能为空");
-//        MyAssert.isNull(req.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
-//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-//        CourseVerifyVo verifyVo = new CourseVerifyVo();
-//        BeanUtil.copyProperties(req, verifyVo);
-//        verifyVo.setUserId(userId);
-//        courseService.verifyCourse(verifyVo);
-//        return WebResult.okResult();
-//    }
-//
-//    @UserLoginToken
-//    @ApiOperation(value = "审批课程轮播图")
-//    @PostMapping(path = "/verifyCourseImage")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "courseId", value = "课程Id", required = true, dataType = "string"),
-//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", required = true, dataType = "string"),
-//            @ApiImplicitParam(name = "remark", value = "备注", dataType = "string")
-//    })
-//    public WebResult verifyCourseImage(@RequestBody CourseVerifyReq req, HttpServletRequest httpServletRequest){
-//        MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不能为空");
-//        MyAssert.isNull(req.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
-//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-//        CourseVerifyVo verifyVo = new CourseVerifyVo();
-//        BeanUtil.copyProperties(req, verifyVo);
-//        verifyVo.setUserId(userId);
-//        courseService.verifyCourseImage(verifyVo);
-//        return WebResult.okResult();
-//    }
 }

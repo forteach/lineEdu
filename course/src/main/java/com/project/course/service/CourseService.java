@@ -26,7 +26,7 @@ public interface CourseService {
 
     public String saveUpdate(Course course);
 
-    public void deleteIsValidById(String courseId);
+    public void updateStatusById(String courseId, String userId);
 
     public void deleteById(String courseId);
 
@@ -34,11 +34,7 @@ public interface CourseService {
 
     public Course findByCourseId(String courseId);
 
-//    public Course findCourseVerifyById(String courseId);
-
     public List<ICourseListDto> findAll(PageRequest page);
-
-    public Map<String, Object> getCourseById(String courseId);
 
     public List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus);
 
@@ -65,8 +61,4 @@ public interface CourseService {
     void taskCourseQuestions();
 
     Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
-
-//    void verifyCourse(CourseVerifyVo verifyVo);
-
-//    void verifyCourseImage(CourseVerifyVo verifyVo);
 }

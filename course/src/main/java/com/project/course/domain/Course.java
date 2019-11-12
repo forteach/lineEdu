@@ -45,31 +45,11 @@ public class Course extends Entitys {
     @Column(name = "course_describe", columnDefinition = "MEDIUMTEXT COMMENT'课程描述'")
     private String courseDescribe;
 
-//    @Column(name = "average_score", columnDefinition = "VARCHAR(32) DEFAULT 0 COMMENT '课程平均分数'")
-//    private String averageScore;
-
-//    @Column(name = "review_amount", columnDefinition = "INT(11) DEFAULT 0 COMMENT '评价数量'")
-//    private Integer reviewAmount;
-
-    // 新添加属性
-
-//    @Column(name = "course_type", columnDefinition = "VARCHAR(32) COMMENT '课程类别 公共基础课,实训课,专业'")
-//    private String courseType;
-
-//    @Column(name = "is_required", columnDefinition = "VARCHAR(32) COMMENT '是否必修课 Y/N'")
-//    private String isRequired;
-
-//    @Column(name = "scoring_method", columnDefinition = "VARCHAR(32) COMMENT '评分方式 笔试,口试,网上考试'")
-//    private String scoringMethod;
-
     @Column(name = "learning_time", columnDefinition = "VARCHAR(32) COMMENT '需要学习的总时长(小时)'")
     private String learningTime;
 
     @Column(name = "video_time_num", columnDefinition = "INT(11) DEFAULT 0 COMMENT '当前课程视频总长度课程视频总长度'", nullable = false)
     private Integer videoTimeNum = this.videoTimeNum == null ? 0 : this.videoTimeNum;
-
-//    @Column(name = "credit", columnDefinition = "VARCHAR(32) COMMENT '学分'")
-//    private String credit;
 
     @Column(name = "video_percentage", columnDefinition = "VARCHAR(32) COMMENT '观看视频占百分比'")
     private String videoPercentage;

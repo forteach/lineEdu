@@ -85,27 +85,13 @@ public class CourseServiceImpl implements CourseService {
     @Transactional(rollbackForClassName = "Exception")
     public String saveUpdate(Course course) {
         //1、保存课程基本信息
-//        com.project.databank.domain.verify.CourseVerifyVo verifyVo = new com.project.databank.domain.verify.CourseVerifyVo();
-//        verifyVo.setCourseType(COURSE_DATA.getValue());
-//        verifyVo.setTeacherId(course.getCreateUser());
-//        verifyVo.setTeacherName(teacherName);
-//        verifyVo.setCenterName(centerName);
         if (StrUtil.isBlank(course.getCourseId())) {
             course.setCourseId(IdUtil.fastSimpleUUID());
-//            course.setUpdateUser(course.getCreateUser());
-//            BeanUtil.copyProperties(course, verifyVo);
-//            verifyVo.setSubmitType("添加课程");
-//            courseVerifyVoService.save(verifyVo);
             return courseRepository.save(course).getCourseId();
         } else {
             courseRepository.findById(course.getCourseId()).ifPresent(c -> {
                 UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
-
-//                BeanUtil.copyProperties(course, verifyVo);
-//                verifyVo.setSubmitType("修改课程");
-//                courseVerifyVoService.save(verifyVo);
-
                 courseRepository.save(c);
             });
         }
@@ -128,13 +114,6 @@ public class CourseServiceImpl implements CourseService {
     public Course findByCourseId(String courseId) {
         return courseRepository.findByCourseId(courseId);
     }
-
-//    @Override
-//    public Course findCourseVerifyById(String courseId){
-//        Optional<Course> courseVerifyOptional = courseRepository.findById(courseId);
-//        MyAssert.isFalse(courseVerifyOptional.isPresent(), DefineCode.ERR0010, "不存在对应的课程信息");
-//        return courseVerifyOptional.get();
-//    }
 
     /**
      * 分页查询我的课程科目
@@ -190,25 +169,17 @@ public class CourseServiceImpl implements CourseService {
         return listRespList;
     }
 
-    /**
-     * 根据课程ID，获得课程基本信息和集体备课共享编号
-     *
-     * @param courseId
-     * @return
-     */
-    @Override
-    public Map<String, Object> getCourseById(String courseId) {
-        Map<String, Object> result = new HashMap<>(2);
-        courseRepository.findById(courseId).ifPresent(course -> result.put("course", course));
-        return result;
-    }
-
     @Override
     @Transactional(rollbackForClassName = "Exception")
-    public void deleteIsValidById(String courseId) {
+    public void updateStatusById(String courseId, String userId) {
         courseRepository.findById(courseId)
                 .ifPresent(course -> {
-                    course.setIsValidated(TAKE_EFFECT_CLOSE);
+                    if (TAKE_EFFECT_CLOSE.equals(course.getIsValidated())){
+                        course.setIsValidated(TAKE_EFFECT_OPEN);
+                    }else {
+                        course.setIsValidated(TAKE_EFFECT_CLOSE);
+                    }
+                    course.setUpdateUser(userId);
                     courseRepository.save(course);
                 });
     }
@@ -261,8 +232,7 @@ public class CourseServiceImpl implements CourseService {
         List<CourseVo> vos = new ArrayList<>();
         for (CourseTeacherVo v : courseIds) {
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
-            if (!list.isEmpty()) {
-                ICourseDto iCourseDto = list.get(0);
+            for (ICourseDto iCourseDto: list) {
                 String chapterId = null;
                 String chapterName = null;
                 ChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
@@ -367,20 +337,4 @@ public class CourseServiceImpl implements CourseService {
         }
         return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, studentId, pageRequest);
     }
-    //    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void verifyCourse(CourseVerifyVo verifyVo) {
-//        Optional<CourseVerify> optional = courseVerifyRepository.findById(verifyVo.getCourseId());
-//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0014, "不存在对应的课程信息");
-//        CourseVerify courseVerify = optional.get();
-//        courseVerify.setRemark(verifyVo.getRemark());
-//        courseVerify.setVerifyStatus(verifyVo.getVerifyStatus());
-//        courseVerify.setUpdateUser(verifyVo.getUserId());
-//        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
-//            Course course = new Course();
-//            BeanUtil.copyProperties(courseVerify, course);
-//            courseRepository.save(course);
-//        }
-//        courseVerifyRepository.save(courseVerify);
-//    }
 }

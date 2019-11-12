@@ -16,6 +16,4 @@ import java.io.Serializable;
 public class CourseImageFindReq implements Serializable {
     @ApiModelProperty(name = "courseId", value = "课程id")
     private String courseId;
-//    @ApiModelProperty(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝")
-//    private String verifyStatus;
 }

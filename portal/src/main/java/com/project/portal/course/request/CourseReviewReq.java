@@ -20,8 +20,4 @@ public class CourseReviewReq extends SortVo implements Serializable {
 
     @ApiModelProperty(name = "courseId", value = "课程id", required = true, dataType = "string")
     private String courseId;
-
-//    @ApiModelProperty(value = "分页排序字段", name = "sortVo")
-//    private SortVo sortVo = new SortVo();
-
 }

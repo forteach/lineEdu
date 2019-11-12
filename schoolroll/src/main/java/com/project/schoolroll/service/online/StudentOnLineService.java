@@ -95,6 +95,7 @@ public class StudentOnLineService {
             MyAssert.isTrue(StrUtil.isBlank(s.getEnrollmentDate()), DefineCode.ERR0010, "入学年月不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getLearningModality()), DefineCode.ERR0010, "学习形式不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getNation()), DefineCode.ERR0010, "民族不能为空");
+            s.setStudentId(s.getStuIDCard());
         });
     }
 

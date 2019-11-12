@@ -40,5 +40,4 @@ public class CourseChapterSaveResp implements Serializable {
 
     @ApiModelProperty(value = "publish")
     private String publish;
-
 }

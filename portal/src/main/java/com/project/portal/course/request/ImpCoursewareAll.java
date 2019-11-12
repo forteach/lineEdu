@@ -64,13 +64,4 @@ public class ImpCoursewareAll implements Serializable {
 
     @ApiModelProperty(hidden = true)
     private String createUser;
-
-    public ImpCoursewareAll(String chapterId, String importantType, int fileCount, String datumType, String photoDatumName, List<CoursewareAll> files) {
-        this.chapterId = chapterId;
-        this.importantType = importantType;
-        this.fileCount = fileCount;
-        this.datumType = datumType;
-        this.photoDatumName = photoDatumName;
-        this.files = files;
-    }
 }
