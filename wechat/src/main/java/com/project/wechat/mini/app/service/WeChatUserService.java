@@ -40,5 +40,5 @@ public interface WeChatUserService {
      * @param gender 教师性别
      * @param userId 审核人id
      */
-    void saveTeacher(String phone, String teacherName, String gender, String userId);
+    void saveTeacher(String phone, String teacherName, String gender, String centerId, String userId);
 }

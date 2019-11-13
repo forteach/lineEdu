@@ -8,6 +8,7 @@ import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.user.request.UpdatePassWordRequest;
 import com.project.portal.user.request.UserLoginRequest;
+import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.user.service.RoleService;
@@ -47,6 +48,7 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
+    @PassToken
     @ApiOperation("用户登录")
     @PostMapping(path = "/login")
     @ApiImplicitParams({

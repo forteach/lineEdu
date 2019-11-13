@@ -83,5 +83,4 @@ public class SysUserManagerController {
         BeanUtil.copyProperties(user, sysUserEditReq);
         return WebResult.okResult(userMgrService.edit(sysUserEditReq));
     }
-
 }

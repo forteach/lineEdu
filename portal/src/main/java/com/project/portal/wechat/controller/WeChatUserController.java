@@ -9,6 +9,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.wechat.req.BindingUserReq;
+import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.wechat.mini.app.config.WeChatMiniAppConfig;
@@ -45,6 +46,7 @@ public class WeChatUserController {
         this.tokenService = tokenService;
     }
 
+    @PassToken
     @ApiOperation(value = "微信小程序登录接口")
     @GetMapping("/login")
     @ApiImplicitParams({
@@ -93,6 +95,7 @@ public class WeChatUserController {
      * @param studentId
      * @return
      */
+    @PassToken
     @ApiOperation(value = "重置用户登陆绑定信息")
     @GetMapping("/restart/{studentId}")
     public WebResult restart(@PathVariable("studentId") String studentId){

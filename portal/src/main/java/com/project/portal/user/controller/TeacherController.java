@@ -243,7 +243,7 @@ public class TeacherController {
         TeacherVerify teacherVerify = teacherService.verifyTeacher(teacherVerifyVo);
         // 注册修改微信用户
         if (VERIFY_STATUS_AGREE.equals(teacherVerifyVo.getVerifyStatus())){
-            weChatUserService.saveTeacher(teacherVerify.getPhone(), teacherVerify.getTeacherName(), teacherVerify.getGender(), userId);
+            weChatUserService.saveTeacher(teacherVerify.getPhone(), teacherVerify.getTeacherName(), teacherVerify.getGender(), teacherVerify.getCenterAreaId(), userId);
         }
         return WebResult.okResult();
     }

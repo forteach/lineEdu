@@ -108,9 +108,12 @@ public class WeChatUserServiceImpl implements WeChatUserService {
      */
     private String bindTeacher(BindingUserRequest bindingUserReq) {
         List<WeChatUser> list = weChatUserRepository.findByStudentId(bindingUserReq.getStuIDCard());
-        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "不存在您的登录信息");
-        WeChatUser weChatUser = list.get(0);
         String openId = bindingUserReq.getOpenId();
+        if (list.isEmpty()) {
+            tokenService.removeToken(openId);
+            MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "不存在您的登录信息");
+        }
+        WeChatUser weChatUser = list.get(0);
         String key = USER_PREFIX.concat(openId);
         updateWeChatUser(key, bindingUserReq, weChatUser);
         weChatUser.setOpenId(openId);
@@ -157,13 +160,13 @@ public class WeChatUserServiceImpl implements WeChatUserService {
             centerAreaId = weChatUser.getCenterAreaId();
         }
         WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
-        Map<String, Object> map = BeanUtil.beanToMap(weChatUser);
-        String token = "";
-        if (WECHAT_ROLE_ID_STUDENT.equals(weChatUser.getRoleId())){
-            tokenService.createToken(openId, centerAreaId);
+        String token;
+        if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())){
+            token = tokenService.createToken(openId, centerAreaId, USER_ROLE_CODE_TEACHER);
         }else {
-            tokenService.createToken(openId, centerAreaId, USER_ROLE_CODE_TEACHER);
+            token = tokenService.createToken(openId, centerAreaId);
         }
+        Map<String, Object> map = BeanUtil.beanToMap(weChatUser);
         map.put("openId", openId);
         map.put("sessionKey", session.getSessionKey());
         map.put("token", token);
@@ -267,12 +270,15 @@ public class WeChatUserServiceImpl implements WeChatUserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveTeacher(String phone, String teacherName, String gender, String userId) {
-        WeChatUser weChatUser = new WeChatUser();
+    public void saveTeacher(String phone, String teacherName, String gender, String centerId, String userId) {
+        List<WeChatUser> list = weChatUserRepository.findByStudentId(phone);
+        WeChatUser weChatUser = list.isEmpty() ? new WeChatUser() : list.get(0);
         weChatUser.setUpdateUser(userId);
         weChatUser.setStudentId(phone);
         weChatUser.setGender(gender);
         weChatUser.setStudentName(teacherName);
+        weChatUser.setCenterAreaId(centerId);
+        weChatUser.setRoleId(WECHAT_ROLE_ID_TEACHER);
         weChatUserRepository.save(weChatUser);
     }
 }
