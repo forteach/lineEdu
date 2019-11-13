@@ -1,11 +1,8 @@
 package com.project.wechat.mini.app.service;
 
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
-import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import com.project.wechat.mini.app.web.request.BindingUserRequest;
-import com.project.wechat.mini.app.web.request.WeChatUserRequest;
 import com.project.wechat.mini.app.web.response.LoginResponse;
-import com.project.wechat.mini.app.web.vo.WxDataVo;
 
 /**
  * @Auther: zhangyy
@@ -36,4 +33,12 @@ public interface WeChatUserService {
     void restart(String string);
 
     void updateStatus(String studentId, String status, String userId);
+
+    /**
+     * 注册微信教师登录信息
+     * @param phone 教师注册电话
+     * @param gender 教师性别
+     * @param userId 审核人id
+     */
+    void saveTeacher(String phone, String teacherName, String gender, String userId);
 }

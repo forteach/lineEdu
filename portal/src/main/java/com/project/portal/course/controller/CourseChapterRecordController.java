@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.course.service.CourseChapterService;
 import com.project.course.service.CourseRecordsService;
 import com.project.portal.course.request.ChapterRecordSaveReq;
 import com.project.portal.course.request.CourseChapterFindPageAllReq;
@@ -74,13 +73,16 @@ public class CourseChapterRecordController {
         myAssertCourseChapter(req.getStudentId(), req.getCourseId(), req.getChapterId());
         myAssertSaveVideoRecord(req.getLocationTime(), req.getDuration(), req.getVideoDuration());
         String token = request.getHeader("token");
-        String userId = tokenService.getStudentId(token);
-        String centerAreaId = tokenService.getCenterAreaId(token);
-        com.project.course.web.req.CourseRecordsSaveReq recordsSaveReq = new com.project.course.web.req.CourseRecordsSaveReq();
-        BeanUtil.copyProperties(req, recordsSaveReq);
-        recordsSaveReq.setCreateUser(userId);
-        recordsSaveReq.setCenterAreaId(centerAreaId);
-        courseRecordsService.saveChapterRecord(recordsSaveReq);
+        if (tokenService.isStudent(token)) {
+            //观看课程是学生身份才记录观看记录
+            String userId = tokenService.getStudentId(token);
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            com.project.course.web.req.CourseRecordsSaveReq recordsSaveReq = new com.project.course.web.req.CourseRecordsSaveReq();
+            BeanUtil.copyProperties(req, recordsSaveReq);
+            recordsSaveReq.setCreateUser(userId);
+            recordsSaveReq.setCenterAreaId(centerAreaId);
+            courseRecordsService.saveChapterRecord(recordsSaveReq);
+        }
         return WebResult.okResult();
     }
 
@@ -124,7 +126,6 @@ public class CourseChapterRecordController {
     @ApiOperation(value = "分页查询课程对应的学习记录")
     @UserLoginToken
     @ApiImplicitParams({
-//            @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string"),
             @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string")
     })
     @PostMapping(path = "/findAllPageRecords")

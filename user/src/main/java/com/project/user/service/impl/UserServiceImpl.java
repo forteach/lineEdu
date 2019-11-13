@@ -6,14 +6,11 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.Md5Util;
-import com.project.schoolroll.repository.LearnCenterRepository;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.service.TokenService;
 import com.project.user.domain.SysUserLog;
 import com.project.user.domain.SysUsers;
 import com.project.user.domain.Teacher;
-import com.project.user.domain.UserRole;
-import com.project.user.repository.SysRoleRepository;
 import com.project.user.repository.TeacherRepository;
 import com.project.user.repository.UserRepository;
 import com.project.user.repository.UserRoleRepository;
@@ -80,6 +77,7 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private LearnCenterService learnCenterService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(UserLoginReq userLoginReq) {
@@ -154,12 +152,6 @@ public class UserServiceImpl implements UserService {
         user.setUpdateUser(registerUserReq.getTeacherCode());
         user.setCreateUser(registerUserReq.getTeacherCode());
         userRepository.save(user);
-//        SysUsers sysUsers =
-        //分配角色
-//        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
-//            s.setUpdateUser(registerUserReq.getTeacherCode());
-//            userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(s.getRoleId()).build());
-//        });
         return true;
     }
 
@@ -176,35 +168,6 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public boolean addSysTeacher(String teacherCode, String userId) {
-//        Optional<Teacher> teacherOptional = teacherRepository.findById(teacherCode);
-//        if (!teacherOptional.isPresent()) {
-//            MyAssert.isNull(null, DefineCode.ERR0014, "不存在您的信息，请联系管理员");
-//        }
-//        Teacher teacher = teacherOptional.get();
-//        //验证是否注册
-//        SysUsers users = userRepository.findByTeacherId(teacherCode);
-//        if (users != null) {
-//            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
-//        }
-//        SysUsers user = new SysUsers();
-//        user.setPassWord(Md5Util.macMD5(initPassWord.concat(salt)));
-//        user.setTeacherId(teacherCode);
-//        user.setId(teacherCode);
-//        user.setRoleCode(USER_ROLE_CODE_TEACHER);
-//        user.setUserName(teacher.getTeacherName());
-//        user.setUpdateUser(userId);
-//        user.setCreateUser(userId);
-//        userRepository.save(user);
-//        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
-//            s.setUpdateUser(userId);
-//            userRoleRepository.save(UserRole.builder().userId(user.getId()).roleId(s.getRoleId()).build());
-//        });
-//        return true;
-//    }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePassWord(UpdatePassWordReq updatePassWordReq) {
@@ -217,12 +180,6 @@ public class UserServiceImpl implements UserService {
         users.setPassWord(newPassWord);
         users.setUpdateUser(updatePassWordReq.getTeacherCode());
         userRepository.save(users);
-//        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
-//            userRoleRepository.save(UserRole.builder()
-//                    .userId(users.getId())
-//                    .roleId(s.getRoleId())
-//                    .build());
-//        });
     }
 
     @Override
@@ -262,11 +219,6 @@ public class UserServiceImpl implements UserService {
         user.setUpdateUser(vo.getCreateUser());
         user.setCreateUser(vo.getCreateUser());
         userRepository.save(user);
-//        SysUsers sysUsers =
-        //分配角色
-//        sysRoleRepository.findSysRoleByRoleNameAndIsValidated("teacher", TAKE_EFFECT_OPEN).ifPresent(s -> {
-//            userRoleRepository.save(UserRole.builder().userId(sysUsers.getId()).roleId(s.getRoleId()).build());
-//        });
     }
 
     @Async
@@ -288,9 +240,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void registerCenter(String centerName, String phone, String centerAreaId, String createUser) {
         Optional<SysUsers> optionalSysUsers = userRepository.findById(centerName);
-        if (optionalSysUsers.isPresent()) {
-            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
-        }
+        MyAssert.isTrue(optionalSysUsers.isPresent(), DefineCode.ERR0011, "您已经注册过了");
         SysUsers user = new SysUsers();
         user.setId(centerName);
         user.setRoleCode(USER_ROLE_CODE_CENTER);

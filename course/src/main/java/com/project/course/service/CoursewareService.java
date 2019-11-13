@@ -6,6 +6,7 @@ import com.project.course.web.req.ImpCoursewareAll;
 import com.project.databank.web.vo.CourseVerifyRequest;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CoursewareService {
 
@@ -15,29 +16,9 @@ public interface CoursewareService {
      * @param obj
      * @return
      */
-    public void saveFile(ImpCoursewareAll obj, String centerId);
+    void saveFile(ImpCoursewareAll obj, String centerId);
 
-    public void deleteCourseChapterId(String chapterId);
-
-//    public List<CoursewareAll> saveCourseAtlit(ImpCoursewareAll obj);
-//
-    /**
-     * 获得对应类型的重要课件信息数量和列表
-     *
-     * @param chapterId
-     * @param importantType
-     * @param datumType
-     * @return
-     */
-//    public ImpCoursewareAll getImpCourseware(String chapterId, String importantType, String datumType);
-
-    /**
-     * 获得图集列表
-     *
-     * @param chapterId
-     * @return
-     */
-//    public List<CoursewareAll> getCourseArlitsList(String chapterId);
+    void deleteCourseChapterId(String chapterId);
 
     List<CoursewareAll> findByChapterId(String chapterId);
 
@@ -47,19 +28,7 @@ public interface CoursewareService {
 
     int findVideoTimeSum(String courseId);
 
-    /**
-     * 获取图册列表
-     *
-     * @param arlitId
-     * @return
-     */
-//    public List<CoursewareAll> getPhotoList(String arlitId);
+    void deleteBathByChapterIds(Set<String> stringSet);
 
-//    public void removePhotoList(String arlitId);
-
-//    public void removeCourseArlitsList(String chapterId);
-
-//    public void removeCourseware(String chapterId, String importantType, String datumType);
-
-//    public void removeCourseAtlit(String chapterId);
+//    void deleteByFileId(String fileId);
 }

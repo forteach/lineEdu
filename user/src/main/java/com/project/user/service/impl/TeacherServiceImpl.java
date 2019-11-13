@@ -61,11 +61,6 @@ public class TeacherServiceImpl implements TeacherService {
         teacherVerify.setTeacherId(teacherVerify.getPhone());
         teacherVerify.setVerifyStatus(VERIFY_STATUS_APPLY);
         return teacherVerifyRepository.save(teacherVerify);
-        // 添加到用户保存用户
-//        RegisterTeacherVo vo = new RegisterTeacherVo();
-//        BeanUtil.copyProperties(teacher, vo);
-//        userService.registerTeacher(vo);
-//        return teacherRepository.save(teacher);
     }
 
     @Override
@@ -78,17 +73,12 @@ public class TeacherServiceImpl implements TeacherService {
         BeanUtil.copyProperties(teacherVerify, t);
         t.setVerifyStatus(VERIFY_STATUS_APPLY);
         t.setCenterAreaId(centerId);
-
-//        if (StrUtil.isNotBlank(teacherVerify.getPhone()) && !t.getPhone().equals(teacherVerify.getPhone())) {
-//            userService.updateTeacher(t.getPhone(), teacherVerify.getPhone(), teacherVerify.getUpdateUser());
-//        }
-
         return teacherVerifyRepository.save(t);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void verifyTeacher(TeacherVerifyVo vo) {
+    public TeacherVerify verifyTeacher(TeacherVerifyVo vo) {
         Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(vo.getTeacherId());
         MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "没有要修改的数据");
         TeacherVerify teacherVerify = optionalTeacher.get();
@@ -109,7 +99,6 @@ public class TeacherServiceImpl implements TeacherService {
                 BeanUtil.copyProperties(teacherVerify, registerTeacherVo);
                 userService.registerTeacher(registerTeacherVo);
 
-                //修改审核过后的课程信息，通过可以登录注册微信登陆
             }
             BeanUtil.copyProperties(teacherVerify, teacher);
             teacher.setUpdateTime(DateUtil.now());
@@ -123,6 +112,8 @@ public class TeacherServiceImpl implements TeacherService {
         teacherVerifyRepository.save(teacherVerify);
         //修改教师信息对应的资料信息
         updateTeacherFileIsValidated(vo.getTeacherId(), vo.getVerifyStatus());
+
+        return teacherVerify;
     }
 
     @Async

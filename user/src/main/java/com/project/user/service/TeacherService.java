@@ -22,7 +22,7 @@ public interface TeacherService {
 
     TeacherVerify update(TeacherVerify teacher);
 
-    void verifyTeacher(TeacherVerifyVo vo);
+    TeacherVerify verifyTeacher(TeacherVerifyVo vo);
 
     Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest);
 
@@ -30,11 +30,11 @@ public interface TeacherService {
 
     void deleteByTeacherCode(String teacherCode);
 
-    public void removeByTeacherId(String teacherId);
+    void removeByTeacherId(String teacherId);
 
-    public void deleteByTeacherId(String teacherId);
+    void deleteByTeacherId(String teacherId);
 
-    public Teacher findById(String teacherId);
+    Teacher findById(String teacherId);
 
     Page<TeacherDto> findAllPageDto(PageRequest pageRequest);
 

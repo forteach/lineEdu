@@ -67,27 +67,6 @@ public class CourseChapterController {
         return WebResult.okResult(courseChapterService.save(cs));
     }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "修改科目章节", notes = "修改科目章节信息")
-//    @PostMapping("/edit")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "courseId", value = "科目编号", required = true, dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "chapterName", value = "章节名称", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "chapterParentId", value = "章节父编号", paramType = "form", dataType = "string"),
-//            @ApiImplicitParam(name = "sort", value = "层级位置", defaultValue = "1", paramType = "form", dataType = "int"),
-//            @ApiImplicitParam(name = "chapterType", value = "目录类型", dataType = "int", paramType = "form"),
-//            @ApiImplicitParam(name = "publish", value = "是否发布　Y(是) N(否)", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "randomQuestionsNumber", value = "随机题目数量", dataType = "int", paramType = "form"),
-//            @ApiImplicitParam(name = "videoTime", value = "需要观看视频长度(秒)", dataType = "int", paramType = "form")
-//    })
-//    public WebResult edit(@ApiParam(name = "courseChapter", value = "修改科目章节信息", required = true) @RequestBody CourseChapterEditReq courseChapterEditReq) {
-//        MyAssert.blank(courseChapterEditReq.getChapterId(), DefineCode.ERR0010, "章节编号不为空");
-//        com.project.course.web.req.CourseChapterEditReq chapterEditReq  = new com.project.course.web.req.CourseChapterEditReq();
-//        BeanUtil.copyProperties(courseChapterEditReq, chapterEditReq);
-//        return WebResult.okResult(courseChapterService.edit(chapterEditReq));
-//    }
-
     @UserLoginToken
     @ApiOperation(value = "查询科目章节信息", notes = "根据章节ID 查询对应的信息")
     @PostMapping("/getCourseChapterById")
@@ -98,9 +77,6 @@ public class CourseChapterController {
         MyAssert.blank(chapterId, DefineCode.ERR0010, "科目id不为空");
         return WebResult.okResult(courseChapterService.getCourseChapterById(JSONObject.parseObject(chapterId).getString("chapterId")));
     }
-
-
-//************************************************************************************************************************//
 
     @UserLoginToken
     @PostMapping("/deleteById")
@@ -142,50 +118,6 @@ public class CourseChapterController {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目id不为空");
         return WebResult.okResult(courseChapterService.findByCourseId(JSONObject.parseObject(courseId).getString("courseId")));
     }
-
-//    @PostMapping("/findByChapterParentId")
-//    @ApiOperation(value = "根据父章节ID查询对应子小节信息", notes = "根据父章节ID查询对应子小节id和名称")
-//    public WebResult findByChapterParentId(
-//            @Valid @NotBlank(message = "父章节ID不为空") @ApiParam(value = "父章节ID", name = "chapterParentId", type = "string", required = true) @RequestBody String chapterParentId){
-//        return WebResult.okResult(courseChapterService.findByChapterParentId(JSONObject.parseObject(chapterParentId).getString("chapterParentId")));
-//    }
-
-//    @PostMapping("/findAllCourseChapter")
-//    @ApiOperation(value = "查找章节信息", notes = "管理端查询最上层章节")
-//    public WebResult findAllCourseChapter(@Valid @ApiParam(name = "courseChapterVo", value = "管理端根据科目ID 查询对应上层科目信息", required = true) @RequestBody CourseChapterVo vo){
-//        return WebResult.okResult(courseChapterService.findAllCourseChapter(vo));
-//    }
-//
-//    /**
-//     * 批量保存科目章节资料信息
-//     * @param courseDataDatumReq
-//     * @return
-//     */
-//    @PostMapping("/saveFilesDatum")
-//    @ApiOperation(value = "批量保存资料信息")
-//    public WebResult saveFilesDatum(@Valid @ApiParam(value = "保存章节资料文件信息") @RequestBody CourseDataDatumReq courseDataDatumReq){
-//        fileDatumService.saveCourseDataDatum(courseDataDatumReq);
-//        return WebResult.okResult();
-//    }
-//
-//    @UserLoginToken
-//    @ApiOperation(value = "审批课程信息")
-//    @PostMapping(path = "/verifyCourse")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "chapterId", value = "课程Id", required = true, dataType = "string"),
-//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", required = true, dataType = "string"),
-//            @ApiImplicitParam(name = "remark", value = "备注", dataType = "string")
-//    })
-//    public WebResult verifyCourse(@RequestBody CourseChapterVerifyReq req, HttpServletRequest httpServletRequest){
-//        MyAssert.isNull(req.getChapterId(), DefineCode.ERR0010, "章节Id不能为空");
-//        MyAssert.isNull(req.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
-//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-//        CourseChapterVerifyVo verifyVo = new CourseChapterVerifyVo();
-//        BeanUtil.copyProperties(req, verifyVo);
-//        verifyVo.setUserId(userId);
-//        courseChapterService.verifyCourse(verifyVo);
-//        return WebResult.okResult();
-//    }
 
     @UserLoginToken
     @ApiOperation(value = "批量保存课程对应的章节信息和视频资源")

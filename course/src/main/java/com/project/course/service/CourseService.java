@@ -54,6 +54,8 @@ public interface CourseService {
 
     List<CourseVo> findCourseVoByClassId(String classId);
 
+    List<Course> findAllCourseVoByCreateUser(String createUser);
+
     void updateCourseTime(String courseId, Integer videoTimeNum);
 
     void taskCourseStudy();

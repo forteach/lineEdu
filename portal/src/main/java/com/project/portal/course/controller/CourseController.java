@@ -284,12 +284,17 @@ public class CourseController {
         String token = request.getHeader("token");
         String classId = tokenService.getClassId(token);
         String userId = tokenService.getStudentId(token);
-        List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
-        if (vos != null){
-            return WebResult.okResult(vos);
+        if (tokenService.isStudent(token)) {
+            List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
+            if (vos != null) {
+                return WebResult.okResult(vos);
+            }
+            List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId).stream()
+                    .map(dto -> new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId())).collect(toList());
+            return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, userId));
+        }else {
+            //不是学生是教师只能查看自己创建的课程信息
+            return WebResult.okResult(courseService.findAllCourseVoByCreateUser(userId));
         }
-        List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId).stream()
-                .map(dto -> new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId())).collect(toList());
-        return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, userId));
     }
 }

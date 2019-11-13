@@ -45,6 +45,11 @@ public class Dic {
      * 所处的层级是2
      */
     public static final String COURSE_CHAPTER_LEVERL = "2";
+    /**
+     * 教师信息 roleId 0 studentId 1
+     */
+    public static final String WECHAT_ROLE_ID_TEACHER = "0";
+    public static final String WECHAT_ROLE_ID_STUDENT = "1";
 
 
     /**

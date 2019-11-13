@@ -18,10 +18,7 @@ import com.project.user.service.TeacherService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +80,7 @@ public class CoursewareController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "删除视频信息(逻辑删除)", notes = "删除重要课件图册列表(逻辑删除)")
+    @ApiOperation(value = "删除视频信息(物理删除)", notes = "删除课件视频信息(物理删除)")
     @PostMapping("/deleteCourseChapterId")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterId", value = "章节编号", dataTypeClass = String.class, required = true),
@@ -92,8 +89,17 @@ public class CoursewareController {
         MyAssert.blank(chapterId, DefineCode.ERR0010, "章节编号不为空");
         coursewareService.deleteCourseChapterId(JSONObject.parseObject(chapterId).getString("chapterId"));
         return WebResult.okResult();
-
     }
+
+//    @UserLoginToken
+//    @ApiOperation(value = "删除单个课件视频文件(物理删除)")
+//    @DeleteMapping("/{fileId}")
+//    @ApiImplicitParam(name = "fileId", value = "文件Id", dataType = "string", required = true)
+//    public WebResult deleteByFileId(@PathVariable String fileId){
+//        MyAssert.isNull(fileId, DefineCode.ERR0010, "文件Id不能为空");
+//        coursewareService.deleteByFileId(fileId);
+//        return WebResult.okResult();
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "查询章节对应教学视频")

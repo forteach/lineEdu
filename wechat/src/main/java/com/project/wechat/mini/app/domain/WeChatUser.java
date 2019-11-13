@@ -66,11 +66,18 @@ public class WeChatUser extends Entitys implements Serializable {
     @Column(name = "student_id", columnDefinition = "VARCHAR(32) COMMENT '学生id'")
     private String studentId;
 
+    @Column(name = "student_name", columnDefinition = "VARCHAR(32) COMMENT '学生姓名'")
+    private String studentName;
+
     @Column(name = "binding", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '绑定标识 0 绑定 1　未绑定'")
     private String binding = StrUtil.isBlank(this.binding) ? WX_INFO_BINDIND_1 : this.binding ;
 
     @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '班级id'")
     private String classId;
+
+    @Column(name = "class_name", columnDefinition = "VARCHAR(32) COMMENT '班级名称'")
+    private String className;
+
     /**
      * 添加角色记录，teacher 0 student 1
      */

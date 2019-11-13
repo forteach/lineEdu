@@ -4,7 +4,6 @@ import com.project.user.web.req.RegisterUserReq;
 import com.project.user.web.req.UpdatePassWordReq;
 import com.project.user.web.req.UserLoginReq;
 import com.project.user.web.resp.LoginResponse;
-import com.project.user.web.vo.RegisterCenterVo;
 import com.project.user.web.vo.RegisterTeacherVo;
 
 /**

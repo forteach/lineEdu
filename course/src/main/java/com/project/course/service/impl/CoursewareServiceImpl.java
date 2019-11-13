@@ -9,6 +9,7 @@ import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.ziliao.ImportantCourseware;
 import com.project.course.repository.ziliao.ImpCoursewareRepoitory;
 import com.project.course.service.CourseRecordsService;
+import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.project.base.common.keyword.Dic.*;
 import static com.project.databank.domain.verify.CourseVerifyEnum.COURSE_FILE_DATA;
@@ -37,7 +39,8 @@ public class CoursewareServiceImpl implements CoursewareService {
      */
     @Resource
     private ImpCoursewareRepoitory impCoursewareRepoitory;
-
+    @Resource
+    private CourseService courseService;
     @Resource
     private CourseVerifyVoService courseVerifyVoService;
     @Resource
@@ -154,6 +157,12 @@ public class CoursewareServiceImpl implements CoursewareService {
                 .stream()
                 .mapToInt(ImportantCourseware::getVideoTime)
                 .sum();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBathByChapterIds(Set<String> stringSet) {
+        impCoursewareRepoitory.deleteAllByBathIds(stringSet);
     }
 }
 

@@ -89,4 +89,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
             " and c.createUser = ?2 order by c.createTime desc")
     @Transactional(readOnly = true)
     List<ICourseDto> findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(String courseNumber, String cUser);
+
+    @Transactional(readOnly = true)
+    List<Course> findAllByCreateUserOrderByCreateTimeDesc(String cUser);
 }

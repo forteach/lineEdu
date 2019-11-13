@@ -23,6 +23,6 @@ public class BindingUserReq extends WxDataVo implements Serializable {
     @ApiModelProperty(value = "用户名", name = "studentName")
     private String studentName;
 
-    @ApiModelProperty(value = "身份证号码", name = "stuIDCard")
+    @ApiModelProperty(value = "身份证号码/手机电话号码", name = "stuIDCard")
     private String stuIDCard;
 }

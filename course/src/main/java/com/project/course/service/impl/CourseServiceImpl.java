@@ -257,6 +257,10 @@ public class CourseServiceImpl implements CourseService {
         }
         return null;
     }
+    @Override
+    public List<Course> findAllCourseVoByCreateUser(String createUser){
+        return courseRepository.findAllByCreateUserOrderByCreateTimeDesc(createUser);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

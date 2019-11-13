@@ -3,6 +3,8 @@ package com.project.portal.wechat.controller;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.IdcardUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
@@ -69,16 +71,17 @@ public class WeChatUserController {
     @ApiOperation(value = "绑定微信用户登录信息")
     @PostMapping("/binding")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "studentName", value = "学生身份证姓名", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "stuIDCard", value = "学生身份证号码", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "studentName", value = "姓名", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "stuIDCard", value = "身份证号码/电话号码", required = true, paramType = "form"),
             @ApiImplicitParam(name = "signature", value = "sha1( rawData + session_key )", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "rawData", value = "rawData", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "encryptedData", value = "加密数据", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "iv", value = "数据接口返回", dataType = "string", paramType = "form"),
     })
     public WebResult binding(@RequestBody BindingUserReq bindingUserReq, HttpServletRequest request){
-        MyAssert.blank(bindingUserReq.getStuIDCard(), DefineCode.ERR0010, "身份证号码不为空");
+        MyAssert.blank(bindingUserReq.getStuIDCard(), DefineCode.ERR0010, "身份证号码/手机号码不为空");
         MyAssert.blank(bindingUserReq.getStudentName(), DefineCode.ERR0010, "用户名不为空");
+        MyAssert.isFalse(Validator.isMobile(bindingUserReq.getStuIDCard()) || IdcardUtil.isValidCard(bindingUserReq.getStuIDCard()), DefineCode.ERR0010, "身份证号码或手机号码格式不正确");
         BindingUserRequest bindingUser = new BindingUserRequest();
         BeanUtil.copyProperties(bindingUserReq, bindingUser);
         bindingUser.setOpenId(tokenService.getOpenId(request.getHeader("token")));

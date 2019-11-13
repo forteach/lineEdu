@@ -18,6 +18,7 @@ import com.project.user.domain.TeacherFile;
 import com.project.user.domain.TeacherVerify;
 import com.project.user.service.TeacherService;
 import com.project.user.web.vo.TeacherVerifyVo;
+import com.project.wechat.mini.app.service.WeChatUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
@@ -47,10 +49,12 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class TeacherController {
     private final TeacherService teacherService;
     private final TokenService tokenService;
+    private final WeChatUserService weChatUserService;
 
-    public TeacherController(TeacherService teacherService, TokenService tokenService) {
+    public TeacherController(TeacherService teacherService, TokenService tokenService, WeChatUserService weChatUserService) {
         this.teacherService = teacherService;
         this.tokenService = tokenService;
+        this.weChatUserService = weChatUserService;
     }
 
     private void validator(TeacherSaveUpdateRequest request) {
@@ -96,7 +100,6 @@ public class TeacherController {
         if (StrUtil.isBlank(request.getTeacherId())) {
             MyAssert.isNull(request.getTeacherName(), DefineCode.ERR0010, "教师名称不为空");
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "联系电话不为空");
-            MyAssert.isNull(request.getIdCard(), DefineCode.ERR0010, "身份证号码不为空");
             validator(request);
             String centerAreaId = tokenService.getCenterAreaId(token);
             teacher.setCenterAreaId(centerAreaId);
@@ -233,10 +236,15 @@ public class TeacherController {
             @ApiImplicitParam(name = "verifyStatus", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", required = true, paramType = "form"),
             @ApiImplicitParam(name = "remark", value = "备注", dataType = "string", paramType = "form")
     })
-    public WebResult verifyTeacher(@RequestBody TeacherVerifyVo teacherVerifyVo) {
+    public WebResult verifyTeacher(@RequestBody TeacherVerifyVo teacherVerifyVo, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(teacherVerifyVo.getTeacherId(), DefineCode.ERR0010, "教师Id不能为空");
         MyAssert.isTrue(StrUtil.isBlank(teacherVerifyVo.getVerifyStatus()), DefineCode.ERR0010, "状态不能为空");
-        teacherService.verifyTeacher(teacherVerifyVo);
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        TeacherVerify teacherVerify = teacherService.verifyTeacher(teacherVerifyVo);
+        // 注册修改微信用户
+        if (VERIFY_STATUS_AGREE.equals(teacherVerifyVo.getVerifyStatus())){
+            weChatUserService.saveTeacher(teacherVerify.getPhone(), teacherVerify.getTeacherName(), teacherVerify.getGender(), userId);
+        }
         return WebResult.okResult();
     }
 

@@ -11,6 +11,7 @@ import com.project.course.domain.CourseChapter;
 import com.project.course.repository.CourseChapterRepository;
 import com.project.course.repository.dto.ICourseChapterDto;
 import com.project.course.service.CourseChapterService;
+import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CourseChapterEditReq;
 import com.project.course.web.req.ImpCoursewareAll;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +49,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     private CourseChapterRepository courseChapterRepository;
     @Resource
     private CoursewareService coursewareService;
+    @Resource
+    private CourseService courseService;
 
 
     @Override
@@ -124,11 +128,18 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     @Override
     @Transactional(rollbackForClassName = "Exception")
     public void deleteById(String chapterId) {
-        CourseChapter courseChapter = courseChapterRepository.findById(chapterId).get();
+        Optional<CourseChapter> chapterOptional = courseChapterRepository.findById(chapterId);
+        MyAssert.isFalse(chapterOptional.isPresent(), DefineCode.ERR0010, "章节信息不存在");
+        CourseChapter courseChapter = chapterOptional.get();
+        String courseId = courseChapter.getCourseId();
         Set<String> stringSet = findLists(courseChapter.getCourseId(), chapterId);
         stringSet.add(chapterId);
         int result = courseChapterRepository.deleteBathIds(stringSet);
         log.info("chapterId : {}, deleteBath : {}", result);
+        //重新计算课程总时长
+        coursewareService.deleteBathByChapterIds(stringSet);
+        int videoTimeSum = coursewareService.findVideoTimeSum(courseId);
+        courseService.updateCourseTime(courseId, videoTimeSum);
     }
 
     /**
@@ -143,7 +154,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         Set<String> stringSet = lists.stream().filter(courseChapter -> !COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId()))
                 .map(CourseChapter::getChapterId)
                 .collect(Collectors.toSet());
-        stringSet.parallelStream().map(s -> {
+        stringSet.stream().map(s -> {
             //查询对应的目录集合
             return findLists(s, courseId);
         });
@@ -248,21 +259,4 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         //保存章节资料
         coursewareService.saveFile(impCoursewareAll, centerId);
     }
-
-    //    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void verifyCourse(CourseChapterVerifyVo verifyVo) {
-//        Optional<CourseChapterVerify> verifyOptional = courseChapterVerifyRepository.findById(verifyVo.getChapterId());
-//        MyAssert.isFalse(verifyOptional.isPresent(), DefineCode.ERR0014, "不存在对应的章节信息");
-//        CourseChapterVerify courseChapterVerify = verifyOptional.get();
-//        courseChapterVerify.setUpdateUser(verifyVo.getUserId());
-//        courseChapterVerify.setVerifyStatus(verifyVo.getVerifyStatus());
-//        courseChapterVerify.setRemark(verifyVo.getRemark());
-//        if (VERIFY_STATUS_AGREE.equals(verifyVo.getVerifyStatus())) {
-//            CourseChapter courseChapter = new CourseChapter();
-//            BeanUtil.copyProperties(courseChapterVerify, courseChapter);
-//            courseChapterRepository.save(courseChapter);
-//        }
-//        courseChapterVerifyRepository.save(courseChapterVerify);
-//    }
 }

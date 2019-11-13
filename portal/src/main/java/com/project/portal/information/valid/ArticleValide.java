@@ -16,6 +16,4 @@ public class ArticleValide {
 		MyAssert.blank(title, DefineCode.ERR0010,"资讯标题不能为空");
 		MyAssert.blank(userId, DefineCode.ERR0010,"资讯发布人信息不能为空");
 	}
-
-
 }
