@@ -94,7 +94,9 @@ public class TeacherController {
         String userId = tokenService.getUserId(token);
         teacher.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getTeacherId())) {
+            MyAssert.isNull(request.getTeacherName(), DefineCode.ERR0010, "教师名称不为空");
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "联系电话不为空");
+            MyAssert.isNull(request.getIdCard(), DefineCode.ERR0010, "身份证号码不为空");
             validator(request);
             String centerAreaId = tokenService.getCenterAreaId(token);
             teacher.setCenterAreaId(centerAreaId);

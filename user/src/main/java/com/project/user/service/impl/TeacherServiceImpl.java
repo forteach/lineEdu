@@ -108,6 +108,8 @@ public class TeacherServiceImpl implements TeacherService {
                 RegisterTeacherVo registerTeacherVo = new RegisterTeacherVo();
                 BeanUtil.copyProperties(teacherVerify, registerTeacherVo);
                 userService.registerTeacher(registerTeacherVo);
+
+                //修改审核过后的课程信息，通过可以登录注册微信登陆
             }
             BeanUtil.copyProperties(teacherVerify, teacher);
             teacher.setUpdateTime(DateUtil.now());

@@ -34,31 +34,14 @@ public interface WeChatUserRepository extends JpaRepository<WeChatUser, String> 
     @Transactional(readOnly = true)
     List<WeChatUser> findByStudentId(String studentId);
 
-    /**
-     * 查询用户信息
-     *
-     * @param openId
-     * @return
-     */
-//    @Query(value = " select " +
-//            " w.studentId as studentId, " +
-//            " s.studentName as studentName, " +
-//            " w.avatarUrl as portrait, " +
-//            " s.classId as classId, " +
-//            " s.className as className " +
-//            " from WeChatUser as w " +
-//            " left join Student as s on w.studentId = s.studentId " +
-//            " where w.isValidated = '0' and s.isValidated = '0' and w.openId = ?1 ")
-//    @Transactional(readOnly = true)
-//    IWeChatUser findByIsValidatedEqualsAndOpenId(String openId);
-
     @Query(value = "select " +
             " w.studentId as studentId, " +
             " s.studentName as studentName, " +
             " w.avatarUrl as portrait, " +
             " s.classId as classId, " +
             " s.className as className," +
-            " s.centerAreaId as centerAreaId " +
+            " s.centerAreaId as centerAreaId," +
+            " w.roleId as roleId " +
             " from WeChatUser as w " +
             " left join StudentOnLine as s on s.studentId = w.studentId " +
             " where w.isValidated = '0' and s.isValidated = '0' and w.openId = ?1 ")

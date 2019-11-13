@@ -30,17 +30,10 @@ public interface WeChatUserService {
     LoginResponse bindingToken(WxMaJscode2SessionResult session, String portrait, String ip);
 
     /**
-     * 获取绑定手机号码信息
-     */
-    WxMaPhoneNumberInfo getBindingPhone(WxDataVo wxDataVo);
-
-    /**
      * 重置微信用户绑定信息
      * @param string
      */
     void restart(String string);
-
-    Object saveWeChatUser(WeChatUserRequest weChatUserReq);
 
     void updateStatus(String studentId, String status, String userId);
 }

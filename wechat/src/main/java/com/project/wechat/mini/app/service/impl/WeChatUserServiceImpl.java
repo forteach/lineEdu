@@ -141,20 +141,19 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         //设置有效期7天
         stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
 
-        weChatUserInfoOptional.ifPresent(weChatUser -> {
-            weChatUserRepository.findById(weChatUser.getStudentId()).ifPresent(studentEntitys -> {
-                if (StrUtil.isNotBlank(portrait)) {
-                    weChatUser.setAvatarUrl(portrait);
-                    weChatUserRepository.save(weChatUser);
-                }
-//                studentEntitys.setPortrait(portrait);
-//                studentEntitysRepository.save(studentEntitys);
-                String studentKey = STUDENT_ADO.concat(weChatUser.getStudentId());
-                stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
-            });
-        });
+        weChatUserInfoOptional.ifPresent(weChatUser -> weChatUserRepository
+                .findById(weChatUser.getStudentId())
+                .ifPresent(studentEntitys -> {
+                    if (StrUtil.isNotBlank(portrait)) {
+                        weChatUser.setAvatarUrl(portrait);
+                        weChatUserRepository.save(weChatUser);
+                    }
+                    String studentKey = STUDENT_ADO.concat(weChatUser.getStudentId());
+                    stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
+                })
+        );
 
-        //todo 获取登陆用户信息
+        //获取登陆用户信息
         IWeChatUser iWeChatUser = weChatUserRepository.findAllByIsValidatedEqualsAndOpenId(openId);
         LoginResponse loginResp = new LoginResponse();
         if (iWeChatUser != null) {
@@ -164,6 +163,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
             loginResp.setStudentId(iWeChatUser.getStudentId());
             loginResp.setStudentName(iWeChatUser.getStudentName());
             loginResp.setCenterAreaId(iWeChatUser.getCenterAreaId());
+            loginResp.setRoleId(iWeChatUser.getRoleId());
 
             //添加异步登陆日志
             saveLoginLog(iWeChatUser, ip);
@@ -183,43 +183,11 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     }
 
     @Override
-    public WxMaPhoneNumberInfo getBindingPhone(WxDataVo wxDataVo) {
-        final WxMaService wxService = WeChatMiniAppConfig.getMaService();
-        String sessionKey = tokenService.getSessionKey(USER_PREFIX.concat(wxDataVo.getOpenId()));
-        // 用户信息校验
-        if (!wxService.getUserService().checkUserInfo(sessionKey, wxDataVo.getRawData(), wxDataVo.getSignature())) {
-            MyAssert.isNull(null, DefineCode.ERR0004, "user check failed");
-        }
-        WxMaPhoneNumberInfo phoneNoInfo = wxService.getUserService().getPhoneNoInfo(sessionKey, wxDataVo.getEncryptedData(), wxDataVo.getIv());
-        return phoneNoInfo;
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void restart(String string) {
         List<WeChatUser> list = weChatUserRepository.findByStudentId(string);
-        if (list.size() > 0) {
-            list.stream().filter(Objects::nonNull)
-                    .forEach(weChatUser -> {
-                        weChatUserRepository.delete(weChatUser);
-                    });
-        } else {
-            MyAssert.isNull(null, DefineCode.ERR0014, "不存要删除的用户");
-        }
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Object saveWeChatUser(WeChatUserRequest weChatUserReq) {
-        Optional<WeChatUser> optionalWeChatUserInfo = weChatUserRepository.findByOpenId(weChatUserReq.getOpenId()).stream().filter(Objects::nonNull).findFirst();
-        if (optionalWeChatUserInfo.isPresent()) {
-            WeChatUser weChatUser = optionalWeChatUserInfo.get();
-            BeanUtil.copyProperties(weChatUserReq, weChatUser);
-            weChatUserRepository.save(weChatUser);
-            return "操作成功!";
-        }
-        MyAssert.isNull(null, DefineCode.ERR0014, "用户不存在");
-        return null;
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "不存要删除的用户");
+        list.forEach(weChatUser -> weChatUserRepository.delete(weChatUser));
     }
 
     /**
@@ -251,6 +219,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         }
         return false;
     }
+
     @Async
     @Override
     @Transactional(rollbackFor = Exception.class)

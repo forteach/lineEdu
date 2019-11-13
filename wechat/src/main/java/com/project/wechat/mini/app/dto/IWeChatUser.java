@@ -20,4 +20,6 @@ public interface IWeChatUser {
     public String getPortrait();
 
     public String getCenterAreaId();
+
+    public String getRoleId();
 }

@@ -55,4 +55,10 @@ public class LoginResponse implements Serializable {
     private String portrait;
 
     private String centerAreaId;
+    /**
+     * 微信登陆角色
+     * student 1
+     * teacher 0
+     */
+    private String roleId;
 }
