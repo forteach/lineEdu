@@ -113,7 +113,7 @@ public class CourseController {
         req.setUserId(tokenService.getTeacherId(request.getHeader("token")));
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findAll(page).stream()
-                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias()))
+                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated()))
                 .collect(toList()));
     }
 
@@ -130,7 +130,7 @@ public class CourseController {
         String userId = tokenService.getUserId(request.getHeader("token"));
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findMyCourse(userId, page).stream()
-                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias()))
+                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated()))
                 .collect(toList()));
     }
 
@@ -145,19 +145,19 @@ public class CourseController {
     /**
      * 通过文件资源 ID 逻辑删除文件资源信息
      *
-     * @param courseId
      * @return
      */
     @UserLoginToken
     @ApiOperation(value = "修改课程状态", notes = "修改课程课程信息")
     @PostMapping("/updateStatus")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
+            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true),
+            @ApiImplicitParam(name = "userId", value = "用户ID", dataType = "string", required = true)
     })
-    public WebResult deleteIsValidById(@RequestBody String courseId, HttpServletRequest httpServletRequest) {
-        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
-        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-        courseService.updateStatusById(String.valueOf(JSONObject.parseObject("courseId").getString("courseId")), userId);
+    public WebResult updateIsValidById(@RequestBody CourseStatusReq req) {
+        MyAssert.blank(req.getCourseId(), DefineCode.ERR0010, "科目ID不为空");
+        MyAssert.blank(req.getUserId(), DefineCode.ERR0010, "用户ID不为空");
+        courseService.updateStatusById(req.getCourseId(), req.getUserId());
         return WebResult.okResult();
     }
 

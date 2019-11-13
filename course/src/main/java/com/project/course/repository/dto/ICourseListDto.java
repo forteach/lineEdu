@@ -43,17 +43,5 @@ public interface ICourseListDto {
      */
     public String getCourseDescribe();
 
-//    /**
-//     * 章节id
-//     * @return
-//     */
-//    public String getChapterId();
-//
-//    /**
-//     * 章节名字
-//     * @return
-//     */
-//    public String getChapterName();
-
-
+    public String getIsValidated();
 }

@@ -106,8 +106,7 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     public List<ICourseListDto> findAll(PageRequest page) {
-        return courseRepository.findByIsValidated(TAKE_EFFECT_OPEN, page)
-                .getContent();
+        return courseRepository.findByIsValidated(TAKE_EFFECT_OPEN, page).getContent();
     }
 
     @Override
@@ -123,8 +122,7 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     public List<ICourseListDto> findMyCourse(String userId, PageRequest page) {
-        return courseRepository.findByCreateUserAndIsValidatedOrderByCreateTimeDesc(userId, TAKE_EFFECT_OPEN, page)
-                .getContent();
+        return courseRepository.findByCreateUserOrderByCreateTimeDesc(userId, page).getContent();
     }
 
     /**
@@ -152,7 +150,6 @@ public class CourseServiceImpl implements CourseService {
         List<CourseListResp> listRespList = CollUtil.newArrayList();
         courseRepository.findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(classId)
                 .stream()
-                .filter(Objects::nonNull)
                 .forEach(iCourseChapterListDto -> {
                     listRespList.add(CourseListResp.builder()
                             .courseId(iCourseChapterListDto.getCourseId())
@@ -272,7 +269,6 @@ public class CourseServiceImpl implements CourseService {
     public void taskCourseStudy() {
         courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
                 .parallelStream()
-                .filter(Objects::nonNull)
                 .forEach(r -> courseRepository.findById(r.getCourseId())
                         .ifPresent(c -> {
                             CourseStudy courseStudy = findCourseStudy(c.getCourseId(), r.getStudentId());
