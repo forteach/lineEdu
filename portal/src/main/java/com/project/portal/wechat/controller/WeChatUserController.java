@@ -58,8 +58,6 @@ public class WeChatUserController {
         final WxMaService wxService = WeChatMiniAppConfig.getMaService();
         try {
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
-            log.info(session.getSessionKey());
-            log.info(session.getOpenid());
             //可以增加自己的逻辑，关联业务相关数据
             String ip = httpServletRequest.getRemoteHost();
             return WebResult.okResult(weChatUserService.bindingToken(session, portrait, ip));

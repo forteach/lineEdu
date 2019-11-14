@@ -40,6 +40,7 @@ public class TokenServiceImpl implements TokenService {
 
     /**
      * 生成一个token
+     *
      * @param userId
      * @return
      */
@@ -62,13 +63,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String getCenterAreaId(String token){
+    public String getCenterAreaId(String token) {
         return getValue(token, 2);
     }
 
     @Override
     public String getRoleCode(String token) {
-        if (TOKEN_TEACHER.equals(getValue(token, 1))){
+        if (TOKEN_TEACHER.equals(getValue(token, 1))) {
             return getValue(token, 3);
         }
         return "";
@@ -86,6 +87,7 @@ public class TokenServiceImpl implements TokenService {
 
     /**
      * 校验token
+     *
      * @param userId
      * @return
      */
@@ -96,6 +98,7 @@ public class TokenServiceImpl implements TokenService {
 
     /**
      * 获取token携带的用户信息
+     *
      * @param token
      * @return
      */
@@ -105,16 +108,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String getStudentId(String token){
-        if (TOKEN_STUDENT.equals(getValue(token, 1))){
-            return hashOperations.get(getKey(getUserId(token)), "studentId");
-        }
-        return null;
+    public String getStudentId(String token) {
+        return hashOperations.get(getKey(getUserId(token)), "studentId");
     }
 
     @Override
     public String getTeacherId(String token) {
-        if (TOKEN_TEACHER.equals(getValue(token, 1))){
+        if (TOKEN_TEACHER.equals(getValue(token, 1))) {
             return getKey(getUserId(token));
         }
         return null;
@@ -122,7 +122,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getClassId(String token) {
-        if (TOKEN_STUDENT.equals(getValue(token, 1))){
+        if (TOKEN_STUDENT.equals(getValue(token, 1))) {
             return hashOperations.get(getKey(getUserId(token)), "classId");
         }
         return null;
@@ -150,11 +150,11 @@ public class TokenServiceImpl implements TokenService {
         return hashOperations.get(key, "sessionKey");
     }
 
-    private String getValue(String token, int index){
+    private String getValue(String token, int index) {
         return JWT.decode(token).getAudience().get(index);
     }
 
-    private String getKey(String userId){
+    private String getKey(String userId) {
         return USER_TOKEN_PREFIX.concat(userId);
     }
 }

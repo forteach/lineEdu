@@ -282,19 +282,20 @@ public class CourseController {
     @GetMapping("/studentCourseList")
     public WebResult findCourseStudent(HttpServletRequest request) {
         String token = request.getHeader("token");
-        String classId = tokenService.getClassId(token);
-        String userId = tokenService.getStudentId(token);
+        // 微信端获取用户学生Id,教师
+        String studentId = tokenService.getStudentId(token);
         if (tokenService.isStudent(token)) {
+            String classId = tokenService.getClassId(token);
             List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
             if (vos != null) {
                 return WebResult.okResult(vos);
             }
             List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId).stream()
                     .map(dto -> new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId())).collect(toList());
-            return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, userId));
+            return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, studentId));
         }else {
             //不是学生是教师只能查看自己创建的课程信息
-            return WebResult.okResult(courseService.findAllCourseVoByCreateUser(userId));
+            return WebResult.okResult(courseService.findAllCourseVoByCreateUser(studentId));
         }
     }
 }

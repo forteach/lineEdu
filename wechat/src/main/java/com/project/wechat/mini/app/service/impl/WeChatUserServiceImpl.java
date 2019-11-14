@@ -110,13 +110,13 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         List<WeChatUser> list = weChatUserRepository.findByStudentId(bindingUserReq.getStuIDCard());
         String openId = bindingUserReq.getOpenId();
         if (list.isEmpty()) {
-            tokenService.removeToken(openId);
-            MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "不存在您的登录信息");
+            MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "您注册的手机号码，不是教师手机号码，请联系管理员");
         }
         WeChatUser weChatUser = list.get(0);
         String key = USER_PREFIX.concat(openId);
         updateWeChatUser(key, bindingUserReq, weChatUser);
         weChatUser.setOpenId(openId);
+        weChatUser.setBinding(WX_INFO_BINDIND_0);
         weChatUserRepository.save(weChatUser);
         setTokenRedis(weChatUser, key, TOKEN_TEACHER);
         return "绑定成功";
