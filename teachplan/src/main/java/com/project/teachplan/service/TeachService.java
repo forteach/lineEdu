@@ -95,6 +95,11 @@ public class TeachService {
     public TeachPlanVerify saveUpdatePlan(TeachPlanVerify teachPlan) {
         teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
         if (StrUtil.isBlank(teachPlan.getPlanId())) {
+            MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanName()), DefineCode.ERR0010, "计划名称不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(teachPlan.getStartDate()), DefineCode.ERR0010, "计划开始时间不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(teachPlan.getEndDate()), DefineCode.ERR0010, "计划结束时间不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanAdmin()), DefineCode.ERR0010, "负责人不能为空");
+            MyAssert.isTrue(teachPlanVerifyRepository.existsByPlanName(teachPlan.getPlanName()), DefineCode.ERR0010, "已经存在同名计划,请修改");
             String planId = IdUtil.fastSimpleUUID();
             teachPlan.setPlanId(planId);
             return teachPlanVerifyRepository.save(teachPlan);
@@ -102,6 +107,10 @@ public class TeachService {
             Optional<TeachPlanVerify> optional = teachPlanVerifyRepository.findById(teachPlan.getPlanId());
             MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的计划不存在");
             TeachPlanVerify t = optional.get();
+            //修改计划名称需要判断是否存在同名计划存在不能修改
+            if (!t.getPlanName().equals(teachPlan.getPlanName())){
+                MyAssert.isTrue(teachPlanVerifyRepository.existsByPlanName(teachPlan.getPlanName()), DefineCode.ERR0010, "已经存在同名计划,请修改");
+            }
             BeanUtil.copyProperties(teachPlan, t);
             return teachPlanVerifyRepository.save(t);
         }

@@ -12,6 +12,7 @@ import com.project.portal.user.request.TeacherFindAllPageRequest;
 import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.portal.util.MyExcleUtil;
+import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.user.domain.TeacherFile;
@@ -248,7 +249,7 @@ public class TeacherController {
         return WebResult.okResult();
     }
 
-    @UserLoginToken
+    @PassToken
     @ApiOperation(value = "导出教师信息")
     @GetMapping(path = "/exportTeachers/{token}")
     @ApiImplicitParam(name = "token", value = "签名token", required = true, dataType = "string", paramType = "path")

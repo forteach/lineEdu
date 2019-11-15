@@ -10,6 +10,7 @@ import com.project.classfee.service.ClassFeeInfoService;
 import com.project.portal.response.WebResult;
 import com.project.schoolroll.domain.excel.StudentImport;
 import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
+import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
@@ -49,7 +50,7 @@ public class ImportClassFeeController {
         this.tokenService = tokenService;
     }
 
-    @UserLoginToken
+    @PassToken
     @ApiOperation(value = "导入课时费信息")
     @PostMapping(path = "/classFee/{token}")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)

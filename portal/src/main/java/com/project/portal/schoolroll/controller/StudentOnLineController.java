@@ -10,6 +10,7 @@ import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
 import com.project.schoolroll.service.online.StudentOnLineService;
+import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.wechat.mini.app.service.WeChatUserService;
@@ -124,7 +125,7 @@ public class StudentOnLineController {
         return WebResult.okResult();
     }
 
-    @UserLoginToken
+    @PassToken
     @ApiOperation(value = "导出学生信息")
     @GetMapping(path = "/exportStudent/{token}/{isValidated}")
     @ApiImplicitParams({
