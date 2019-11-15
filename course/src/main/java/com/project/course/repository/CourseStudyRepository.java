@@ -1,7 +1,6 @@
 package com.project.course.repository;
 
 import com.project.course.domain.CourseStudy;
-import com.project.course.repository.dto.CourseStudyDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -120,5 +119,5 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " and studentId = ?1 and courseId in ( " +
             " select distinct courseId from Course where courseNumber = ?2 and createUser = ?3 ) ")
     @Transactional(readOnly = true)
-    Optional<CourseStudyDto> findStudyDto(String studentId, String courseNumber, String teacherId);
+    Optional<ICourseStudyDto> findStudyDto(String studentId, String courseNumber, String teacherId);
 }

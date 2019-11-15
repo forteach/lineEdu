@@ -14,7 +14,7 @@ import com.project.course.domain.CourseImages;
 import com.project.course.domain.CourseStudy;
 import com.project.course.repository.CourseRepository;
 import com.project.course.repository.CourseStudyRepository;
-import com.project.course.repository.dto.ChapterRecordDto;
+import com.project.course.repository.dto.IChapterRecordDto;
 import com.project.course.repository.dto.ICourseDto;
 import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
@@ -232,7 +232,7 @@ public class CourseServiceImpl implements CourseService {
             for (ICourseDto iCourseDto: list) {
                 String chapterId = null;
                 String chapterName = null;
-                ChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
+                IChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
                 if (dto != null) {
                     chapterId = dto.getChapterId();
                     chapterName = dto.getChapterName();
@@ -267,6 +267,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void taskCourseStudy() {
+        //查询学生近一年学习时长并计算学习情况
         courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
                 .parallelStream()
                 .forEach(r -> courseRepository.findById(r.getCourseId())
@@ -288,6 +289,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void taskCourseQuestions() {
+        //查询近一年学生学习情况，并计算学生回答总数和正确的数量
         List<CourseStudy> list = courseStudyRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
                 .parallelStream()
                 .filter(Objects::nonNull)

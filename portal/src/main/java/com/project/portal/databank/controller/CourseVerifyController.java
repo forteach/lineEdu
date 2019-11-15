@@ -2,9 +2,7 @@ package com.project.portal.databank.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
-import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
-import com.project.course.domain.ziliao.ImportantCourseware;
 import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
 import com.project.databank.domain.verify.CourseVerifyVo;
@@ -78,7 +76,7 @@ public class CourseVerifyController {
             @ApiImplicitParam(name = "verifyStatus", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", required = true, paramType = "form"),
             @ApiImplicitParam(name = "remark", value = "备注", dataType = "string", paramType = "form")
     })
-    public WebResult verifyStatus(@RequestBody CourseVerifyRequest request, HttpServletRequest httpServletRequest){
+    public WebResult verifyStatus(@RequestBody CourseVerifyRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getId(), DefineCode.ERR0010, "审核id不能为空");
         MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "审核状态不能为空");
         String token = httpServletRequest.getHeader("token");
@@ -90,31 +88,17 @@ public class CourseVerifyController {
         //是文件资料信息
         String type = verifyVo.getCourseType();
 
-        if (CHAPTER_DATE.getValue().equals(type)){
+        if (CHAPTER_DATE.getValue().equals(type)) {
+            //是章节资料
             chapteDataService.verifyData(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getFileId(),
                     request.getVerifyStatus(), request.getRemark(), userId), verifyVo.getDatumType());
         }
-//        if (COURSE_DATA.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-//            //是课程
-//            courseService.verifyCourse(new com.project.course.web.vo.CourseVerifyVo(verifyVo.courseId,
-//                    request.getVerifyStatus(), request.getRemark(), userId));
-//        }
-//        if (CHAPTER_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-//            //章节
-//            courseChapterService.verifyCourse(new CourseChapterVerifyVo(verifyVo.getChapterId(),
-//                    request.getVerifyStatus(), request.getRemark(), userId));
-//        }
-//        if (COURSE_IMAGE_DATE.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-//            //课程图片轮播图
-//            courseService.verifyCourseImage(new com.project.course.web.vo.CourseVerifyVo(verifyVo.getCourseId(),
-//                    request.getVerifyStatus(), request.getRemark(), userId));
-//        }
-        if (COURSE_CHAPTER_QUESTION.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
+        if (COURSE_CHAPTER_QUESTION.getValue().equals(type) && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())) {
             // 是习题需要审核
             courseVerifyVoService.verifyQuestion(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getQuestionId(),
                     request.getVerifyStatus(), request.getRemark(), userId));
         }
-        if (COURSE_FILE_DATA.getValue().equals(type)){
+        if (COURSE_FILE_DATA.getValue().equals(type)) {
             //课程的课件
             coursewareService.updateVerifyCourseware(new com.project.databank.web.vo.CourseVerifyRequest(verifyVo.getFileId(),
                     request.getVerifyStatus(), request.getRemark(), userId));
@@ -126,19 +110,13 @@ public class CourseVerifyController {
         verifyVo.setVerifyStatus(request.getVerifyStatus());
         verifyVo.setRemark(request.getRemark());
         courseVerifyVoService.save(verifyVo);
-
-        //是课程资料并且修改通过，就将对应的课程资料长度求和后保存对应的课程信息 todo 需要测试
-//        if (CHAPTER_DATE.getValue().equals(type) && Dic.COURSE_ZILIAO_VIEW.equals(verifyVo.getDatumType())
-//                && VERIFY_STATUS_AGREE.equals(request.getVerifyStatus())){
-//            Integer videoTimeSum = chapteDataService.findCourseVideoTimeSumByCourseId(verifyVo.getCourseId());
-//        }
         return WebResult.okResult();
     }
 
     @UserLoginToken
     @ApiOperation(value = "查询需要修改的课程信息")
     @GetMapping(path = "/findCourse")
-    public WebResult findAllCourse(){
+    public WebResult findAllCourse() {
         return WebResult.okResult(courseVerifyVoService.findVerifyCourse());
     }
 }

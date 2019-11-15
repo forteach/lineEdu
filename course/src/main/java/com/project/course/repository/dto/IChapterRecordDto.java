@@ -7,7 +7,7 @@ package com.project.course.repository.dto;
  * @version: 1.0
  * @description:
  */
-public interface ChapterRecordDto {
+public interface IChapterRecordDto {
     public String getChapterId();
     public String getChapterName();
 }

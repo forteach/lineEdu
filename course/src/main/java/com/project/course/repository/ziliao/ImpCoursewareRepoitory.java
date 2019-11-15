@@ -1,6 +1,7 @@
 package com.project.course.repository.ziliao;
 
 import com.project.course.domain.ziliao.ImportantCourseware;
+import com.project.course.repository.dto.IVideoTimeSumDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,9 @@ public interface ImpCoursewareRepoitory extends JpaRepository<ImportantCoursewar
 
     @Transactional(readOnly = true)
     List<ImportantCourseware> findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(String isValidated, String courseId, String datumType, String verifyStatus);
+
+    @Query(value = "select sum(videoTime) as videoTimeSum from ImportantCourseware " +
+            " where isValidated = '0' and verifyStatus = '0' and datumType = '3' and importantType = '2' and courseId = ?1")
+    @Transactional(readOnly = true)
+    IVideoTimeSumDto findVideoTimeSumByCourseId(String courseId);
 }

@@ -1,8 +1,7 @@
 package com.project.course.repository.record;
 
-import com.project.course.domain.Course;
 import com.project.course.domain.record.CourseRecords;
-import com.project.course.repository.dto.ChapterRecordDto;
+import com.project.course.repository.dto.IChapterRecordDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,7 +34,7 @@ public interface CourseRecordsRepository extends JpaRepository<CourseRecords, St
             " chapterId as chapterId, chapterName as chapterName from CourseChapter where chapterId = (select distinct chapterId from CourseRecords " +
             " where isValidated = '0' and studentId = ?1 and courseId = ?2) ")
     @Transactional(readOnly = true)
-    ChapterRecordDto findDtoByStudentIdAndCourseId(String studentId, String courseId);
+    IChapterRecordDto findDtoByStudentIdAndCourseId(String studentId, String courseId);
 
     @Transactional(readOnly = true)
     Page<CourseRecords> findAllByIsValidatedEqualsAndCenterAreaIdAndCreateTimeAfterOrderByUpdateTimeDesc(String isValidated, String centerAreaId, String createTime, Pageable pageable);

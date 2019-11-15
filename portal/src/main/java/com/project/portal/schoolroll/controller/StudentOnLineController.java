@@ -148,11 +148,16 @@ public class StudentOnLineController {
         return WebResult.okResult();
     }
 
+//    @Resource
+//    private CoursewareService coursewareService;
+//    @PassToken
 //    @GetMapping("/import")
 //    public WebResult save() {
 //        studentOnLineService.checkoutKey();
 //        String centerAreaId = "1001";
 //        studentOnLineService.importStudent(FileUtil.getInputStream("/home/yy/nextcloud-forteach/zip/工作簿1.xlsx"), centerAreaId, "admin");
-//        return WebResult.okResult();
+
+//        int sum = coursewareService.findVideoTimeSum("c710d114b19a42358cd0a67618015302");
+//        return WebResult.okResult(sum);
 //    }
 }
