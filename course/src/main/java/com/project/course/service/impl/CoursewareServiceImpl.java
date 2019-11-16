@@ -9,7 +9,6 @@ import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.ziliao.ImportantCourseware;
 import com.project.course.repository.ziliao.ImpCoursewareRepoitory;
 import com.project.course.service.CourseRecordsService;
-import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CoursewareAll;
 import com.project.course.web.req.ImpCoursewareAll;
@@ -39,8 +38,6 @@ public class CoursewareServiceImpl implements CoursewareService {
      */
     @Resource
     private ImpCoursewareRepoitory impCoursewareRepoitory;
-    @Resource
-    private CourseService courseService;
     @Resource
     private CourseVerifyVoService courseVerifyVoService;
     @Resource
@@ -104,7 +101,7 @@ public class CoursewareServiceImpl implements CoursewareService {
         return findCoursewareAll(findImportantCoursewareByChapterId(chapterId), courseId, chapterId, userId);
     }
 
-    private List<ImportantCourseware> findImportantCoursewareByChapterId(String chapterId){
+    private List<ImportantCourseware> findImportantCoursewareByChapterId(String chapterId) {
         return impCoursewareRepoitory.findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(TAKE_EFFECT_OPEN, chapterId, VERIFY_STATUS_AGREE);
     }
 
@@ -151,12 +148,10 @@ public class CoursewareServiceImpl implements CoursewareService {
         importantCourseware.setVerifyStatus(request.getVerifyStatus());
         impCoursewareRepoitory.save(importantCourseware);
     }
+
     @Override
-    public int findVideoTimeSum(String courseId){
-        return impCoursewareRepoitory.findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(TAKE_EFFECT_OPEN, courseId, COURSE_ZILIAO_VIEW, VERIFY_STATUS_AGREE)
-                .stream()
-                .mapToInt(ImportantCourseware::getVideoTime)
-                .sum();
+    public int findVideoTimeSum(String courseId) {
+        return impCoursewareRepoitory.findVideoTimeSumByCourseId(courseId).getVideoTimeSum();
     }
 
     @Override

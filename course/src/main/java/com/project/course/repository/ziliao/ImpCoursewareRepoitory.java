@@ -26,9 +26,6 @@ public interface ImpCoursewareRepoitory extends JpaRepository<ImportantCoursewar
     @Transactional(readOnly = true)
     List<ImportantCourseware> findAllByIsValidatedEqualsAndChapterIdAndVerifyStatus(String isValidated, String chapterId, String verifyStatus);
 
-    @Transactional(readOnly = true)
-    List<ImportantCourseware> findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(String isValidated, String courseId, String datumType, String verifyStatus);
-
     @Query(value = "select sum(videoTime) as videoTimeSum from ImportantCourseware " +
             " where isValidated = '0' and verifyStatus = '0' and datumType = '3' and importantType = '2' and courseId = ?1")
     @Transactional(readOnly = true)
