@@ -55,4 +55,21 @@ public interface TeachPlanClassRepository extends JpaRepository<TeachPlanClass, 
             " where tpc.isValidated = '0' and tp.isValidated = '0' and tpc.centerAreaId = ?1 and tpc.classId = ?2")
     @Transactional(readOnly = true)
     Page<TeachPlanClassDto> findAllByCenterAreaIdAndClassIdDto(String centerAreaId, String classId, Pageable pageable);
+
+    /**
+     * 查询计划结束的学生Id
+     * @param endDate
+     * @return
+     */
+    @Query(value = " select studentId from StudentOnLine WHERE isValidated = '0' and classId in " +
+            " (select classId from TeachPlanClass where isValidated = '0' and planId in " +
+            " (select planId from TeachPlan where isValidated = '0' and endDate >= ?1)) ")
+    @Transactional(readOnly = true)
+    List<String> findAllByEndDateAfter(String endDate);
+
+
+    @Query(value = " select studentId from StudentOnLine WHERE isValidated = '0' and classId in " +
+            " (select classId from TeachPlanClass where isValidated = '0' and planId = ?1) ")
+    @Transactional(readOnly = true)
+    List<String> findAllStudentIdByPlanId(String planeId);
 }

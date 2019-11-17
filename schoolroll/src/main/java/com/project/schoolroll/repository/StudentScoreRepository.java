@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -21,23 +22,10 @@ import java.util.List;
 public interface StudentScoreRepository extends JpaRepository<StudentScore, String>, JpaSpecificationExecutor<StudentScore> {
 
     @Transactional(readOnly = true)
-    StudentScore findAllByIsValidatedEqualsAndStudentIdAndCourseId(String isValidated, String studentId, String courseId);
+    Optional<StudentScore> findAllByIsValidatedEqualsAndStudentIdAndCourseId(String isValidated, String studentId, String courseId);
 
     @Transactional(readOnly = true)
     List<StudentScore> findAllByIsValidatedEqualsAndStudentIdOrderByUpdateTime(String isValidated, String studentId);
-
-    /**  value = "SELECT * FROM student"
-          + " WHERE (age = ?1 OR ?1 IS NULL)"
-          + " WHERE (id = ?2 OR ?2 IS NULL)"
-          + " WHERE (first_name = ?3 OR ?3 IS NULL)"
-          + " ORDER BY ?#{#pageable}",
-      countQuery = "SELECT COUNT(1) FROM "
-          + "SELECT * FROM student"
-          + " WHERE (age = ?1 OR ?1 IS NULL)"
-          + " WHERE (id = ?2 OR ?2 IS NULL)"
-          + " WHERE (first_name = ?3 OR ?3 IS NULL)"
-          + " ORDER BY ?#{#pageable}",
-     */
 
     @Query(value = " select " +
             " ss.studentId as studentId," +

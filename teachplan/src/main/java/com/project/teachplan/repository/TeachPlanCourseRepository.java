@@ -2,6 +2,7 @@ package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.repository.dto.CourseTeacherDto;
+import com.project.teachplan.repository.dto.IPlanCourseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,9 +19,6 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
 
     @Transactional(readOnly = true)
     List<TeachPlanCourse> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
-
-    @Transactional(readOnly = true)
-    List<TeachPlanCourse> findAllByIsValidatedEqualsAndCourseId(String isValidated, String courseId);
 
     @Modifying(clearAutomatically = true)
     int deleteAllByPlanId(String planId);
@@ -44,4 +42,15 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
 
     @Transactional(readOnly = true)
     List<CourseTeacherDto> findAllByIsValidatedEqualsAndPlanIdIn(String isValidated, List<String> planIds);
+
+    /**
+     * 查讯计划对应的课程计划成绩占比
+     * @param planId
+     * @return
+     */
+    @Query(value = " SELECT c.course_id as courseId, tpcv.line_percentage as linePercentage, tpcv.on_line_percentage as onLinePercentage from " +
+            " (select line_percentage, on_line_percentage, teacher_id, course_id from teach_plan_course where is_validated = '0' and plan_id = ?1) as tpcv " +
+            " left join course as c on c.course_number = tpcv.course_id and c.c_user = tpcv.teacher_id ", nativeQuery = true)
+    @Transactional(readOnly = true)
+    List<IPlanCourseDto> findAllPlanCourseDtoByPlanId(String planId);
 }

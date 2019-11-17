@@ -3,6 +3,7 @@ package com.project.portal.work;
 import com.project.course.service.CourseRecordsService;
 import com.project.course.service.CourseService;
 import com.project.databank.service.CourseVerifyVoService;
+import com.project.teachplan.service.TeachService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
@@ -27,6 +28,8 @@ public class CourseTask {
     private CourseRecordsService courseRecordsService;
     @Resource
     private CourseService courseService;
+    @Resource
+    private TeachService teachService;
 
     /**
      * 同步教师端修改的习题记录
@@ -99,5 +102,23 @@ public class CourseTask {
         }
         courseService.taskCourseQuestions();
         log.info(" <== end course questions async ");
+    }
+
+    /**
+     * 统计学习课程占比
+     */
+    @Schedules({
+            @Scheduled(cron = "0 0/1 * * * ?")
+//            @Scheduled(cron = "0 0 0/1 * * ?")
+    })
+    @Async
+    public void asyncCourseStudentScore() {
+        log.info("start course student score async ==> ");
+        // 定时查询习题信息
+        if (log.isDebugEnabled()) {
+            log.debug("task thread name : {}", Thread.currentThread().getName());
+        }
+        teachService.taskOnLineCourseScore();
+        log.info(" <== end course student score async ");
     }
 }

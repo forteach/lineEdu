@@ -22,18 +22,16 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Transactional(readOnly = true)
     List<String> findAllByClassId(String nowDate, String classId);
 
-    @Transactional(readOnly = true)
-    Page<TeachPlan> findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, String planId, Pageable pageable);
-
-    @Transactional(readOnly = true)
-    Page<TeachPlan> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);
-
     @Modifying(clearAutomatically = true)
     @Query(value = "update TeachPlan set isValidated = ?1 where planId = ?2")
     int updateIsValidatedByPlanId(String isValidated, String planId);
 
     @Modifying(clearAutomatically = true)
     int deleteByPlanId(String planId);
+
+    @Query(value = "select distinct planId from TeachPlan where isValidated = '0' and endDate >= ?1")
+    @Transactional(readOnly = true)
+    List<String> findByEndDateAfter(String endDate);
 
     /**
      * 根据计划Id分页查询学生和课程信息
@@ -49,7 +47,7 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
             " s_lc_v.student_name as studentName, " +
             " s_lc_v.stu_phone as stuPhone, " +
             " GROUP_CONCAT(concat(tpc.course_name, '&', tpc.course_id, '&', tpc.teacher_Id)) as course " +
-            " from( SELECT " +
+            " from ( SELECT " +
             " s.student_id, " +
             " s.stu_phone, " +
             " s.student_name, " +

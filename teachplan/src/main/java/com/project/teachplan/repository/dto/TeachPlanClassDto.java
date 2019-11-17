@@ -8,12 +8,6 @@ package com.project.teachplan.repository.dto;
  * @description:
  */
 public interface TeachPlanClassDto {
-    /** 文件url*/
-//    public String getFileId();
-    /** 文件名称*/
-//    public String getFileName();
-    /** 文件url*/
-//    public String getFileUrl();
     /**班级id*/
     public String getClassId();
     /** 班级名称*/

@@ -46,7 +46,8 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
 
     @Override
     public StudentScore findByStudentIdAndCourseId(String studentId, String courseId) {
-        return studentScoreRepository.findAllByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId);
+        return studentScoreRepository.findAllByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId)
+                .orElseGet(StudentScore::new);
     }
 
     @Override
@@ -127,21 +128,18 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean save() {
-        // todo 生成对应成绩信息,
-        StudentScore studentScore = new StudentScore();
-        studentScoreRepository.save(studentScore);
-        return false;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public void updateOffLineScore(OffLineScoreUpdateVo vo) {
         studentScoreRepository.findById(vo.getScoreId()).ifPresent(s -> {
             s.setOffLineScore(vo.getOffLineScore());
             s.setUpdateUser(vo.getUpdateUser());
             studentScoreRepository.save(s);
         });
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveAll(List<StudentScore> list) {
+        studentScoreRepository.saveAll(list);
     }
 
     @Override

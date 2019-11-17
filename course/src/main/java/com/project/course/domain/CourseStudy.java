@@ -53,9 +53,6 @@ public class CourseStudy extends Entitys implements Serializable {
     @Column(name = "correct_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '正确题目总数量'", nullable = false)
     private Integer correctSum;
 
-//    @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '最近学习到的章节位置'")
-//    private String chapterId;
-
     @Column(name = "study_status", columnDefinition = "INT(2) DEFAULT 0 COMMENT '学习状态 0 未学习　1 在学习　2 已完结'")
     private Integer studyStatus;
 

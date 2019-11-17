@@ -7,9 +7,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.print.attribute.standard.MediaSize;
 import java.io.Serializable;
 
 /**
@@ -22,7 +22,11 @@ import java.io.Serializable;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "student_score", indexes = {@Index(columnList = "score_id", name = "score_id_index")})
+@Table(name = "student_score", indexes = {
+        @Index(columnList = "score_id", name = "score_id_index"),
+        @Index(columnList = "course_id", name = "course_id_index"),
+        @Index(columnList = "student_id", name = "student_id_index")
+})
 @DynamicUpdate
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "student_score", comment = "学生成绩")
@@ -34,6 +38,8 @@ public class StudentScore extends Entitys implements Serializable {
      * 成绩编号
      */
     @Id
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "system-uuid")
     @Column(name = "score_id", columnDefinition = "VARCHAR(32) COMMENT '成绩编号'")
     private String scoreId;
     /**

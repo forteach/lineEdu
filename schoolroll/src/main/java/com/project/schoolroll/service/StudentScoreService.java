@@ -18,30 +18,33 @@ import java.util.List;
 public interface StudentScoreService {
     /**
      * 查询学生的有效课程成绩信息
+     *
      * @param studentId
      * @param courseId
      * @return
      */
-    public StudentScore findByStudentIdAndCourseId(String studentId, String courseId);
+    StudentScore findByStudentIdAndCourseId(String studentId, String courseId);
 
     /**
      * 查询对应的学生成绩信息
+     *
      * @param studentId
      * @return
      */
-    public List<StudentScore> findByStudentId(String studentId);
+    List<StudentScore> findByStudentId(String studentId);
 
     /**
      * 删除对应的学生成绩信息
+     *
      * @param scoreId
      */
-    public void deleteStudentScoreById(String scoreId);
+    void deleteStudentScoreById(String scoreId);
 
-    public Page<StudentScore> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of);
+    Page<StudentScore> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of);
 
-    public boolean save();
+    void updateOffLineScore(OffLineScoreUpdateVo vo);
 
-    public void updateOffLineScore(OffLineScoreUpdateVo vo);
+    void saveAll(List<StudentScore> list);
 
     List<List<String>> exportScore(String centerId);
 }

@@ -1,7 +1,5 @@
 package com.project.teachplan.repository.dto;
 
-import javax.persistence.Column;
-
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com

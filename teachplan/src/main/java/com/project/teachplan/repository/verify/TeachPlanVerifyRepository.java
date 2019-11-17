@@ -19,9 +19,6 @@ import java.util.List;
  */
 public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify, String> {
 
-    @Transactional(readOnly = true)
-    List<TeachPlanVerify> findAllByVerifyStatusEqualsAndPlanId(String verifyStatus, String planId);
-
     boolean existsByPlanName(String planName);
 
     @Transactional(readOnly = true)

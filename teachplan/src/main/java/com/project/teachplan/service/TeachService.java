@@ -2,13 +2,18 @@ package com.project.teachplan.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.domain.CourseStudy;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.service.OnLineCourseDicService;
+import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
 import com.project.teachplan.domain.TeachPlan;
@@ -65,11 +70,12 @@ public class TeachService {
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
     private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
+    private final StudentScoreService studentScoreService;
 
     @Autowired
     public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
-                        TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
+                        TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,StudentScoreService studentScoreService,
                         PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService, StringRedisTemplate redisTemplate,
                         OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
                         TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository,
@@ -88,6 +94,7 @@ public class TeachService {
         this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
         this.courseStudyRepository = courseStudyRepository;
         this.redisTemplate = redisTemplate;
+        this.studentScoreService = studentScoreService;
     }
 
 
@@ -167,14 +174,6 @@ public class TeachService {
         }
         teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
         return teachPlanVerifyRepository.save(teachPlan);
-    }
-
-    public Page<TeachPlan> findByPlanIdPageAll(String centerAreaId, String planId, Pageable pageable) {
-        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, planId, pageable);
-    }
-
-    public Page<TeachPlan> findPageAll(String centerAreaId, Pageable pageable) {
-        return teachPlanRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageable);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -411,5 +410,41 @@ public class TeachService {
                             .ifPresent(d -> list.add(new StudyVo(d.getCourseId(), strings[0], d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum())));
                 });
         return list;
+    }
+
+
+    public void taskOnLineCourseScore() {
+        List<String> planIds = teachPlanRepository.findByEndDateAfter(DateUtil.formatDate(DateUtil.offsetDay(new Date(), -7)));
+        planIds.forEach(p -> teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(p)
+                .forEach(c -> {
+                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId());
+                    if (!list.isEmpty()) {
+                        studentScoreService.saveAll(list);
+                    }
+                }));
+    }
+
+    private List<StudentScore> findAllStudentScore(String planeId, String courseId){
+        return teachPlanClassRepository.findAllStudentIdByPlanId(planeId).stream()
+                .filter(Objects::nonNull)
+                .map(s -> findSetStudentScore(s, courseId))
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
+
+    private StudentScore findSetStudentScore(String studentId, String courseId){
+        Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
+        if (optional.isPresent()) {
+            CourseStudy c = optional.get();
+            StudentScore studentScore = studentScoreService.findByStudentIdAndCourseId(studentId, courseId);
+            studentScore.setCourseId(courseId);
+            studentScore.setStudentId(studentId);
+            int onLineTime = c.getOnLineTime();
+            int onLineTimeSum = c.getOnLineTimeSum();
+            String onLineScore = NumberUtil.toStr(NumberUtil.mul(NumberUtil.round(NumberUtil.div(onLineTime, onLineTimeSum), 2), 100));
+            studentScore.setOnLineScore(onLineScore);
+            return studentScore;
+        }
+        return null;
     }
 }
