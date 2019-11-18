@@ -33,6 +33,7 @@ import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import com.project.teachplan.vo.StudyVo;
 import com.project.teachplan.vo.TeachCourseVo;
 import com.project.teachplan.vo.TeachPlanCourseVo;
+import com.project.user.domain.TeacherVerify;
 import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,12 +44,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author zhang
@@ -412,37 +415,57 @@ public class TeachService {
         return list;
     }
 
+    public void taskPlanStatus(){
+        List<TeachPlan> list = teachPlanRepository.findAllByStatusAndEndDateBefore(PLAN_STATUS_ONGOING, DateUtil.today()).stream()
+                .filter(Objects::nonNull).peek(t -> t.setStatus(PLAN_STATUS_SUCCESS)).collect(toList());
+        if (!list.isEmpty()){
+            teachPlanRepository.saveAll(list);
+        }
+    }
 
     public void taskOnLineCourseScore() {
-        List<String> planIds = teachPlanRepository.findByEndDateAfter(DateUtil.formatDate(DateUtil.offsetDay(new Date(), -7)));
+        List<TeachPlan> planList = teachPlanRepository.findAllByIsValidatedEqualsAndStatusAndCountStatus(TAKE_EFFECT_OPEN, PLAN_STATUS_SUCCESS, PLAN_COUNT_STATUS_ONGOING);
+        Set<String> planIds = planList.stream().filter(Objects::nonNull).map(TeachPlan::getPlanId).collect(toSet());
         planIds.forEach(p -> teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(p)
                 .forEach(c -> {
-                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId());
+                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage());
                     if (!list.isEmpty()) {
                         studentScoreService.saveAll(list);
                     }
                 }));
+        if (!planList.isEmpty()){
+            teachPlanRepository.saveAll(planList.stream().peek(t -> t.setCountStatus(PLAN_COUNT_STATUS_SUCCESS)).collect(toList()));
+        }
     }
 
-    private List<StudentScore> findAllStudentScore(String planeId, String courseId){
+    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage){
         return teachPlanClassRepository.findAllStudentIdByPlanId(planeId).stream()
                 .filter(Objects::nonNull)
-                .map(s -> findSetStudentScore(s, courseId))
+                .map(s -> findSetStudentScore(s, courseId, onLinePercentage))
                 .filter(Objects::nonNull)
                 .collect(toList());
     }
 
-    private StudentScore findSetStudentScore(String studentId, String courseId){
+    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage){
         Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
         if (optional.isPresent()) {
             CourseStudy c = optional.get();
             StudentScore studentScore = studentScoreService.findByStudentIdAndCourseId(studentId, courseId);
             studentScore.setCourseId(courseId);
             studentScore.setStudentId(studentId);
+            studentScore.setUpdateUser(c.getStudentId());
+            studentScore.setCreateUser(c.getStudentId());
+            studentScore.setCenterAreaId(c.getCenterAreaId());
             int onLineTime = c.getOnLineTime();
             int onLineTimeSum = c.getOnLineTimeSum();
-            String onLineScore = NumberUtil.toStr(NumberUtil.mul(NumberUtil.round(NumberUtil.div(onLineTime, onLineTimeSum), 2), 100));
-            studentScore.setOnLineScore(onLineScore);
+            //计算在线学习时长对应的成绩
+            double onLineScore = NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F);
+            //转换string
+            String onLineScoreStr = NumberUtil.toStr(onLineScore);
+            //计算学习时长成绩占比课程时长
+            double courseScore = NumberUtil.mul(onLinePercentage, NumberUtil.div(onLinePercentage, 100));
+            studentScore.setOnLineScore(onLineScoreStr);
+            studentScore.setCourseScore(NumberUtil.toBigDecimal(courseScore).floatValue());
             return studentScore;
         }
         return null;

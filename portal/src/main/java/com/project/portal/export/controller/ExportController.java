@@ -3,7 +3,7 @@ package com.project.portal.export.controller;
 import cn.hutool.core.io.resource.ClassPathResource;
 import com.project.portal.response.WebResult;
 import com.project.portal.util.MyExcleUtil;
-import com.project.token.annotation.UserLoginToken;
+import com.project.token.annotation.PassToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ import java.io.OutputStream;
 @RequestMapping(path = "/export", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ExportController {
 
-    @UserLoginToken
+    @PassToken
     @ApiOperation(value = "导出学生需要信息模版")
     @GetMapping(path = "/exportStudentTemplate")
     public WebResult leadingOutStudentTemplate(HttpServletResponse response, HttpServletRequest request) throws IOException {

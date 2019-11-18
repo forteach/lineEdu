@@ -41,7 +41,6 @@ public class SysUserLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
         // 从 http 请求头中取出 token
-        String token = httpServletRequest.getHeader("token");
         // 如果不是映射到方法直接通过
         if(!(handler instanceof HandlerMethod)){
             return true;
@@ -58,6 +57,7 @@ public class SysUserLoginInterceptor implements HandlerInterceptor {
         //检查有没有需要用户权限的注解
         UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
         if (userLoginToken.required()) {
+            String token = httpServletRequest.getHeader("token");
             // 执行认证
             MyAssert.blank(token, DefineCode.ERR0004, "token is null");
             // 获取 token 中的 openId

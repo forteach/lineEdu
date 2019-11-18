@@ -1,10 +1,12 @@
 package com.project.portal.user.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.request.SortVo;
+import com.project.portal.request.ValideSortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.user.request.UpdatePassWordRequest;
 import com.project.portal.user.request.UserLoginRequest;
@@ -52,29 +54,17 @@ public class AuthController {
     @ApiOperation("用户登录")
     @PostMapping(path = "/login")
     @ApiImplicitParams({
-//            @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "string", paramType = "from"),
-            @ApiImplicitParam(name = "teacherCode", value = "用户代码", required = true, dataType = "string", paramType = "from"),
+            @ApiImplicitParam(name = "teacherCode", value = "学习中心名称/教师手机号码/管理员名称", required = true, dataType = "string", paramType = "from"),
             @ApiImplicitParam(name = "passWord", value = "密码", required = true, dataType = "string", paramType = "from")
     })
     public WebResult login(@RequestBody UserLoginRequest req, HttpServletRequest httpServletRequest){
-        MyAssert.blank(req.getTeacherCode(), DefineCode.ERR0010, "教师代码不为空");
-        MyAssert.blank(req.getPassWord(), DefineCode.ERR0010, "密码不为空");
+        MyAssert.isTrue(StrUtil.isBlank(req.getTeacherCode()), DefineCode.ERR0010, "用户名称不为空");
+        MyAssert.isTrue(StrUtil.isBlank(req.getPassWord()), DefineCode.ERR0010, "密码不为空");
         UserLoginReq userLoginReq = new UserLoginReq();
         BeanUtil.copyProperties(req, userLoginReq);
         userLoginReq.setIp(httpServletRequest.getRemoteHost());
         return WebResult.okResult(userService.login(userLoginReq));
     }
-
-//    @ApiOperation(value = "用户注册", notes = "用户只能是本校教职工才能注册")
-//    @PostMapping("/registerUser")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "string", paramType = "from"),
-//            @ApiImplicitParam(name = "passWord", value = "密码", dataType = "string", required = true, paramType = "from"),
-//            @ApiImplicitParam(name = "teacherCode", value = "教师代码", dataType = "string", required = true, paramType = "from")
-//    })
-//    public WebResult registerUser(@Valid @RequestBody RegisterUserReq registerUserReq){
-//        return WebResult.okResult(userService.registerUser(registerUserReq));
-//    }
 
     @ApiOperation("重置管理端账户密码为初始化密码")
     @PostMapping("/resetPassWord")
@@ -86,16 +76,6 @@ public class AuthController {
         return WebResult.okResult(userService.resetPassWord(JSONObject.parseObject(id).getString("id"), userId));
     }
 
-//    @ApiOperation("添加教师用户信息用户账户")
-//    @PostMapping("/addSysTeacher")
-//    @ApiImplicitParam(name = "teacherCode",value = "教师代码", required = true, dataType = "string",paramType = "from")
-//    @UserLoginToken
-//    public WebResult addSysTeacher(@RequestBody String teacherCode, HttpServletRequest httpServletRequest){
-//        MyAssert.blank(teacherCode, DefineCode.ERR0010, "教师代码不为空");
-//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-//        return WebResult.okResult(userService.addSysTeacher(JSONObject.parseObject(teacherCode).getString("teacherCode"), userId));
-//    }
-
     @UserLoginToken
     @ApiOperation("修改密码")
     @PostMapping("/updatePassWord")
@@ -105,8 +85,8 @@ public class AuthController {
     })
     @ApiResponse(code = 0, message = "OK")
     public WebResult updatePassWord(@RequestBody UpdatePassWordRequest passWordRequest, HttpServletRequest request){
-        MyAssert.blank(passWordRequest.getOldPassWord(), DefineCode.ERR0010, "旧密码不能为空");
-        MyAssert.blank(passWordRequest.getNewPassWord(), DefineCode.ERR0010, "新密码不能为空");
+        MyAssert.isTrue(StrUtil.isBlank(passWordRequest.getOldPassWord()), DefineCode.ERR0010, "旧密码不能为空");
+        MyAssert.isTrue(StrUtil.isBlank(passWordRequest.getNewPassWord()), DefineCode.ERR0010, "新密码不能为空");
         MyAssert.isTrue(passWordRequest.getOldPassWord().equals(passWordRequest.getNewPassWord()), DefineCode.ERR0010, "新密码和原密码不能相同");
         UpdatePassWordReq updatePassWordReq = new UpdatePassWordReq();
         BeanUtil.copyProperties(passWordRequest, updatePassWordReq);
@@ -141,8 +121,7 @@ public class AuthController {
             @ApiImplicitParam(name = "size", value = "每页数量", required = true, dataType = "int", type = "int", example = "10")
     })
     public WebResult userList(@Valid @RequestBody @ApiParam(value = "分页对象", required = true) SortVo sortVo) {
-        MyAssert.blank(String.valueOf(sortVo.getPage()), DefineCode.ERR0010, "当前页码不为空");
-        MyAssert.blank(String.valueOf(sortVo.getSize()), DefineCode.ERR0010, "每页数量不为空");
+        ValideSortVo.valideSort(sortVo.getPage(), sortVo.getSize());
         return WebResult.okResult(roleService.findUsersInfo(sortVo.getPage(), sortVo.getSize()));
     }
 }

@@ -91,6 +91,7 @@ public class LearnCenterController {
                     userService.updateCenter(learnCenter.getCenterName(), request.getCenterName(), userId);
                 }
                 if (StrUtil.isNotBlank(request.getPhone()) && !learnCenter.getPhone().equals(request.getPhone())){
+                    MyAssert.isFalse(Validator.isMobile(request.getPhone()), DefineCode.ERR0002, "联系电话不是手机号码");
                     //修改注册手机号码
                     userService.updateCenterPhone(learnCenter.getCenterName(), request.getPhone(), userId);
                 }
@@ -104,6 +105,7 @@ public class LearnCenterController {
 
             List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
             MyAssert.isFalse(learnCenters.isEmpty(), DefineCode.ERR0011, "已经存在同名学习中心");
+            MyAssert.isTrue(learnCenterRepository.existsByPhone(request.getPhone()), DefineCode.ERR0010, "已经存在相同负责人电话");
 
             LearnCenter learnCenter = new LearnCenter();
             BeanUtils.copyProperties(request, learnCenter);

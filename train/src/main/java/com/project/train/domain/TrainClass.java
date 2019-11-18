@@ -46,6 +46,4 @@ public class TrainClass extends Entitys implements Serializable {
 
     @Column(name = "line_on_line", columnDefinition = "VARCHAR(60) COMMENT '线上线下'")
     private String lineOnLine;
-
-
 }

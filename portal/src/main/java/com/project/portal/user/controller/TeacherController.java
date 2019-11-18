@@ -105,9 +105,11 @@ public class TeacherController {
             String centerAreaId = tokenService.getCenterAreaId(token);
             teacher.setCenterAreaId(centerAreaId);
             teacher.setCreateUser(userId);
+            teacher.setUpdateUser(userId);
             return WebResult.okResult(teacherService.save(teacher));
         } else {
             validator(request);
+            teacher.setUpdateUser(userId);
             return WebResult.okResult(teacherService.update(teacher));
         }
     }

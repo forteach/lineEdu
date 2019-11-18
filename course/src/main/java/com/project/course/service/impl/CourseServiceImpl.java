@@ -273,7 +273,10 @@ public class CourseServiceImpl implements CourseService {
                 .forEach(r -> courseRepository.findById(r.getCourseId())
                         .ifPresent(c -> {
                             CourseStudy courseStudy = findCourseStudy(c.getCourseId(), r.getStudentId());
+                            courseStudy.setCenterAreaId(r.getCenterAreaId());
                             courseStudy.setStudentId(r.getStudentId());
+                            courseStudy.setUpdateUser(r.getUpdateUser());
+                            courseStudy.setCreateUser(r.getStudentId());
                             courseStudy.setCourseId(c.getCourseId());
                             courseStudy.setOnLineTime(r.getSumTime());
                             courseStudy.setOnLineTimeSum(c.getVideoTimeNum());

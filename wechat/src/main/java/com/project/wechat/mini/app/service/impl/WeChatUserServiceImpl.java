@@ -92,6 +92,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                 weChatUser.setStudentName(studentOnLine.getStudentName());
                 weChatUser.setClassName(tbClassService.findClassByClassId(studentOnLine.getClassId()).getClassName());
                 weChatUser.setOpenId(openId);
+                weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
+                weChatUser.setCreateUser(bindingUserReq.getStuIDCard());
                 weChatUserRepository.save(weChatUser);
                 setTokenRedis(weChatUser, key, TOKEN_STUDENT);
                 return "绑定成功";
@@ -117,6 +119,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         updateWeChatUser(key, bindingUserReq, weChatUser);
         weChatUser.setOpenId(openId);
         weChatUser.setBinding(WX_INFO_BINDIND_0);
+        weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
         weChatUserRepository.save(weChatUser);
         setTokenRedis(weChatUser, key, TOKEN_TEACHER);
         return "绑定成功";
@@ -161,9 +164,9 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         }
         WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
         String token;
-        if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())){
+        if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())) {
             token = tokenService.createToken(openId, centerAreaId, USER_ROLE_CODE_TEACHER);
-        }else {
+        } else {
             token = tokenService.createToken(openId, centerAreaId);
         }
         Map<String, Object> map = BeanUtil.beanToMap(weChatUser);
@@ -223,7 +226,19 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     public void restart(String string) {
         List<WeChatUser> list = weChatUserRepository.findByStudentId(string);
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "不存要删除的用户");
-        list.forEach(weChatUser -> weChatUserRepository.delete(weChatUser));
+        //删除token登录信息
+        list.forEach(weChatUser -> tokenService.removeToken(weChatUser.getOpenId()));
+        //删除微信登录信息
+        list.forEach(weChatUser -> {
+            if (Validator.isMobile(weChatUser.getStudentId())) {
+                //是电话号码是教师绑定,绑定信息重置
+                weChatUser.setBinding(WX_INFO_BINDIND_1);
+                weChatUser.setOpenId("");
+                weChatUserRepository.save(weChatUser);
+            } else {
+                weChatUserRepository.delete(weChatUser);
+            }
+        });
     }
 
     /**

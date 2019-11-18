@@ -110,23 +110,6 @@ public class ChapteDataController {
         }
     }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "教师端/管理员 查询资料信息列表")
-//    @PostMapping("/findAllDatumList")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "chapterId", value = "章节编号", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "datumType", value = "资料类型", dataType = "string", required = true, paramType = "form", example = "资料类型 1文档　2图册　3视频　4音频　5链接"),
-//            @ApiImplicitParam(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", dataType = "string", paramType = "form", example = "1")
-//    })
-//    public WebResult findAllDatumList(@ApiParam(value = "资料信息列表", name = "chapteData") @RequestBody ChapteDataListReq req) {
-//        //判断是否按资源领域查询列表，并设置返回结果
-//        if (StrUtil.isNotBlank(req.getVerifyStatus())) {
-//            return WebResult.okResult(chapteDataService.findAllDatumByChapterId(req.getChapterId(), req.getDatumType()));
-//        } else {
-//            return WebResult.okResult(chapteDataService.findAllDatumByChapterIdAndVerifyStatus(req.getChapterId(), req.getDatumType(), req.getVerifyStatus()));
-//        }
-//    }
-
     @UserLoginToken
     @ApiOperation(value = "删除单个文件")
     @ApiImplicitParams({

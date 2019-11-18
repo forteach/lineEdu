@@ -1,11 +1,11 @@
 package com.project.portal.information.controller;
 
-import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+//import io.swagger.annotations.Api;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.http.MediaType;
+//
+//import org.springframework.web.bind.annotation.RequestMapping;
+//import org.springframework.web.bind.annotation.RestController;
 
 //@RestController
 //@RequestMapping(path = "/myArticle", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

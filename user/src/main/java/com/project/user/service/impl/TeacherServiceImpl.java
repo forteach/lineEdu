@@ -58,6 +58,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public TeacherVerify save(TeacherVerify teacherVerify) {
+        MyAssert.isTrue(teacherVerifyRepository.existsById(teacherVerify.getPhone()), DefineCode.ERR0010, "您添加的手机号码已经注册");
         teacherVerify.setTeacherId(teacherVerify.getPhone());
         teacherVerify.setVerifyStatus(VERIFY_STATUS_APPLY);
         return teacherVerifyRepository.save(teacherVerify);
@@ -69,8 +70,12 @@ public class TeacherServiceImpl implements TeacherService {
         Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(teacherVerify.getTeacherId());
         MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "没有要修改的数据");
         TeacherVerify t = optionalTeacher.get();
+        if (!t.getPhone().equals(teacherVerify.getPhone())){
+            MyAssert.isTrue(teacherVerifyRepository.existsById(teacherVerify.getPhone()), DefineCode.ERR0010, "您添加的手机号码已经注册");
+        }
         String centerId = t.getCenterAreaId();
         BeanUtil.copyProperties(teacherVerify, t);
+        t.setTeacherId(teacherVerify.getPhone());
         t.setVerifyStatus(VERIFY_STATUS_APPLY);
         t.setCenterAreaId(centerId);
         return teacherVerifyRepository.save(t);

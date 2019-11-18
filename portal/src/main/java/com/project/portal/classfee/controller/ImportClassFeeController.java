@@ -78,7 +78,7 @@ public class ImportClassFeeController {
         return WebResult.failException("导入的Excel文件数据错误");
     }
 
-    @UserLoginToken
+    @PassToken
     @ApiOperation(value = "导入学生信息数据")
     @PostMapping(path = "/students/{token}")
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)

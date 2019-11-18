@@ -19,6 +19,7 @@ import java.util.List;
  */
 public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify, String> {
 
+    @Transactional(readOnly = true)
     boolean existsByPlanName(String planName);
 
     @Transactional(readOnly = true)

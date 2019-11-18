@@ -1,19 +1,19 @@
 package com.project.portal.information.controller;
 
-import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import static java.util.stream.Collectors.toList;
+//import io.swagger.annotations.Api;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.data.domain.PageRequest;
+//import org.springframework.http.MediaType;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestBody;
+//import org.springframework.web.bind.annotation.RequestMapping;
+//import org.springframework.web.bind.annotation.RestController;
+//import static java.util.stream.Collectors.toList;
 
 //@RestController
 //@RequestMapping(path = "/articleComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 //@Api(value = "文章资讯资料", tags = {"文章资讯资料操作信息"})
-public class ArticleCommentController {
+//public class ArticleCommentController {
 //
 //	@Autowired
 //	private ArticleCommentService articleCommentService;
@@ -81,4 +81,4 @@ public class ArticleCommentController {
 //		return WebResult.okResult(String.valueOf(articleCommentService.saveReply(req.getReply(),req.getCommentId(),req.getReplyUserName())));
 //	}
 
-}
+//}

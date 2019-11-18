@@ -57,15 +57,15 @@ public class StudentOnLineController {
         this.weChatUserService = weChatUserService;
     }
 
-    @UserLoginToken
+    @PassToken
     @ApiOperation(value = "导入学生信息数据")
     @PostMapping(path = "/saveImport/{token}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class),
-            @ApiImplicitParam(name = "centerAreaId", value = "学习中心Id", required = true, paramType = "form", dataType = "string")
+            @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
     })
     public WebResult saveImport(@RequestParam("file") MultipartFile file, @PathVariable String token) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
+        MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
         try {
             studentOnLineService.checkoutKey();
             //设置导入修改时间 防止失败没有过期时间

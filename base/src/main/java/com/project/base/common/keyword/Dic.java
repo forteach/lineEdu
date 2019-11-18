@@ -90,4 +90,14 @@ public class Dic {
     public static final String TEACH_PLAN_CLASS_COURSEVO = "teachPlanClassCourseVo$";
 
     public static final String PLAN_COURSE_STUDENT_STUDY = "studyCourse$";
+    /**
+     * 教学计划统计信息，计划完成 0,计划进行 1 (默认)
+     */
+    public static final int PLAN_STATUS_SUCCESS = 0;
+    public static final int PLAN_STATUS_ONGOING = 1;
+    /**
+     * 是否统计学生成绩计划 0 计算过,1没有计算过
+     */
+    public static final int PLAN_COUNT_STATUS_SUCCESS = 0;
+    public static final int PLAN_COUNT_STATUS_ONGOING = 1;
 }

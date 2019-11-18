@@ -118,6 +118,7 @@ public class CourseTask {
         if (log.isDebugEnabled()) {
             log.debug("task thread name : {}", Thread.currentThread().getName());
         }
+        teachService.taskPlanStatus();
         teachService.taskOnLineCourseScore();
         log.info(" <== end course student score async ");
     }
