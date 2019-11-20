@@ -28,8 +28,6 @@ public interface TeacherService {
 
     List<Teacher> findAllByCenterAreaId(String centerAreaId);
 
-    void deleteByTeacherCode(String teacherCode);
-
     void removeByTeacherId(String teacherId);
 
     void deleteByTeacherId(String teacherId);
@@ -43,8 +41,6 @@ public interface TeacherService {
     Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest);
 
     Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest);
-
-    void updateState(String teacherId, String status, String userId);
 
     TeacherFile saveFile(TeacherFile teacherFile);
 

@@ -1,7 +1,6 @@
 package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.TeachPlan;
-import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.repository.dto.PlanCourseStudyDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,13 +25,6 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Modifying(clearAutomatically = true)
     @Query(value = "update TeachPlan set isValidated = ?1 where planId = ?2")
     int updateIsValidatedByPlanId(String isValidated, String planId);
-
-    @Modifying(clearAutomatically = true)
-    int deleteByPlanId(String planId);
-
-//    @Query(value = "select distinct planId from TeachPlan where isValidated = '0' and endDate >= ?1")
-//    @Transactional(readOnly = true)
-//    List<String> findByEndDateAfter(String endDate);
 
     @Transactional(readOnly = true)
     List<TeachPlan> findAllByStatusAndEndDateBefore(int status, String endDate);

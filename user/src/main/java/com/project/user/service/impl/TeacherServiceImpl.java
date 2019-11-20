@@ -140,12 +140,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByTeacherCode(String teacherCode) {
-        teacherRepository.deleteTeacherByTeacherCode(teacherCode);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public void removeByTeacherId(String teacherId) {
         teacherRepository.findById(teacherId).ifPresent(t -> {
             t.setIsValidated(TAKE_EFFECT_CLOSE);
@@ -197,16 +191,6 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest) {
         return teacherVerifyRepository.findAllByCenterAreaIdDto(centerAreaId, pageRequest);
-    }
-
-    @Async
-    @Override
-    public void updateState(String teacherId, String status, String userId) {
-        teacherRepository.findById(teacherId).ifPresent(t -> {
-            t.setIsValidated(status);
-            t.setUpdateUser(userId);
-            teacherRepository.save(t);
-        });
     }
 
     @Override

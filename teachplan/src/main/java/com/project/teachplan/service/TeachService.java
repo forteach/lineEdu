@@ -189,8 +189,16 @@ public class TeachService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteByPlanId(String planId) {
+        Optional<TeachPlanVerify> optional = teachPlanVerifyRepository.findById(planId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在要删除的计划信息");
+        TeachPlanVerify teachPlanVerify = optional.get();
+        MyAssert.isTrue(DateUtil.parseDate(teachPlanVerify.getEndDate()).isAfterOrEquals(new Date()), DefineCode.ERR0010, "正在进行的计划不能删除");
+        teachPlanCourseRepository.deleteAllByPlanId(planId);
         teachPlanClassRepository.deleteAllByPlanId(planId);
-        teachPlanRepository.deleteByPlanId(planId);
+        teachPlanRepository.deleteById(planId);
+        teachPlanVerifyRepository.deleteById(planId);
+        teachPlanCourseVerifyRepository.deleteAllByPlanId(planId);
+        teachPlanClassVerifyRepository.deleteAllByPlanId(planId);
     }
 
     public List<TeachPlanClass> findAllClassByPlanId(String planId) {
@@ -290,13 +298,11 @@ public class TeachService {
     @Async
     @Transactional(rollbackFor = Exception.class)
     void updateTeachPlanVerify(String planId, String status, String userId) {
-        List<TeachPlanVerify> collect = teachPlanVerifyRepository.findAllByPlanId(planId).stream().peek(t -> {
+        teachPlanVerifyRepository.findById(planId).ifPresent(t -> {
             t.setIsValidated(status);
             t.setUpdateUser(userId);
-        }).collect(toList());
-        if (!collect.isEmpty()) {
-            teachPlanVerifyRepository.saveAll(collect);
-        }
+            teachPlanVerifyRepository.save(t);
+        });
     }
 
     @Async

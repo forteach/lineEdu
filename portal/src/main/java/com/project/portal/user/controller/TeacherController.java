@@ -12,6 +12,7 @@ import com.project.portal.user.request.TeacherFindAllPageRequest;
 import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.portal.util.MyExcleUtil;
+import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -51,11 +52,14 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final TokenService tokenService;
     private final WeChatUserService weChatUserService;
+    private final TeachPlanCourseService teachPlanCourseService;
 
-    public TeacherController(TeacherService teacherService, TokenService tokenService, WeChatUserService weChatUserService) {
+    public TeacherController(TeacherService teacherService, TokenService tokenService,
+                             WeChatUserService weChatUserService, TeachPlanCourseService teachPlanCourseService) {
         this.teacherService = teacherService;
         this.tokenService = tokenService;
         this.weChatUserService = weChatUserService;
+        this.teachPlanCourseService = teachPlanCourseService;
     }
 
     private void validator(TeacherSaveUpdateRequest request) {
@@ -161,21 +165,12 @@ public class TeacherController {
 
     @UserLoginToken
     @ApiOperation(value = "删除教师信息(物理删除)")
-    @DeleteMapping(path = "/teacherId/{teacherId}")
+    @DeleteMapping(path = "/{teacherId}")
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
     public WebResult deleteByTeacherId(@PathVariable String teacherId) {
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不能为空");
+        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsByTeacherId(teacherId), DefineCode.ERR0010, "你要删除的教师信息有对应的计划课程");
         teacherService.deleteByTeacherId(teacherId);
-        return WebResult.okResult();
-    }
-
-    @UserLoginToken
-    @ApiOperation(value = "根据教师代码删除教师信息")
-    @DeleteMapping(path = "/teacherCode/{teacherCode}")
-    @ApiImplicitParam(name = "teacherCode", value = "教师代码", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteByTeacherCode(@PathVariable String teacherCode) {
-        MyAssert.isNull(teacherCode, DefineCode.ERR0010, "教师id不能为空");
-        teacherService.deleteByTeacherCode(teacherCode);
         return WebResult.okResult();
     }
 

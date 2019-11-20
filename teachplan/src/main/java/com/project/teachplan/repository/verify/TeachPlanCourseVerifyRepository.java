@@ -18,13 +18,16 @@ import java.util.List;
 public interface TeachPlanCourseVerifyRepository extends JpaRepository<TeachPlanCourseVerify, String> {
 
     @Modifying(clearAutomatically = true)
-    int deleteAllByPlanId(String planId);
+    void deleteAllByPlanId(String planId);
 
     @Transactional(readOnly = true)
     List<TeachPlanCourseVerify> findAllByPlanId(String planId);
 
     @Transactional(readOnly = true)
     List<TeachPlanCourseVerify> findAllByCourseIdAndTeacherId(String courseId, String teacherId);
+
+    @Transactional(readOnly = true)
+    List<TeachPlanCourseVerify> findAllByTeacherId(String teacherId);
 
     @Modifying
     void deleteAllByCourseIdAndTeacherId(String courseId, String teacherId);

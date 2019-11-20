@@ -5,6 +5,7 @@ import com.project.course.repository.dto.IChapterRecordDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,4 +48,7 @@ public interface CourseRecordsRepository extends JpaRepository<CourseRecords, St
 
     @Transactional(readOnly = true)
     Page<CourseRecords> findAllByIsValidatedEqualsAndCenterAreaIdAndCourseIdAndCreateTimeAfterOrderByUpdateTimeDesc(String isValidated, String centerAreaId, String courseId, String createTime, Pageable pageable);
+
+    @Modifying
+    void deleteAllByStudentId(String studentId);
 }

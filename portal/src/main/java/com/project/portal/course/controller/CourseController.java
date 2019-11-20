@@ -171,30 +171,6 @@ public class CourseController {
         return WebResult.okResult();
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "删除科目信息", notes = "删除科目对象 (物理删除)")
-    @PostMapping("/delete")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "course", value = "科目课程对象", dataTypeClass = Course.class, dataType = "string", required = true),
-    })
-    public WebResult delete(@RequestBody Course course) {
-        MyAssert.blank(course.getCourseId(), DefineCode.ERR0010, "科目ID不为空");
-        courseService.delete(course);
-        return WebResult.okResult();
-    }
-
-    @UserLoginToken
-    @ApiOperation(value = "删除课程", notes = "通过课程Id 删除科目信息(物理删除)")
-    @DeleteMapping("/deleteById")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
-    })
-    public WebResult deleteById(@ApiParam(name = "courseId", value = "根据科目ID 删除对应科目信息", type = "string", required = true) @RequestBody String courseId) {
-        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
-        courseService.deleteById(String.valueOf(JSONObject.parseObject(courseId).get("courseId")));
-        return WebResult.okResult();
-    }
-
     /**
      * 保存课程轮播图信息
      *
@@ -310,11 +286,13 @@ public class CourseController {
     }
     @ApiOperation(value = "物理全部删除课程信息和对应的计划课程")
     @DeleteMapping(path = "/{courseId}")
-    @ApiImplicitParam(name = "courseId", value = "科目/课程id", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteById(@PathVariable String courseId, HttpServletRequest httpServletRequest){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "科目/课程id", dataType = "string", required = true, paramType = "form")
+    })
+    public WebResult deleteById(@PathVariable String courseId){
         MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程id不能为空");
         Course course = courseService.getById(courseId);
-        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser()), DefineCode.ERR0010, "存在计划中的课程信息不能删除");
+        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser()), DefineCode.ERR0010, "正在计划中的课程信息不能删除");
         //删除计划上的课程
         teachPlanCourseService.deleteTeachCourseByCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser());
         //删除对应的课程资料

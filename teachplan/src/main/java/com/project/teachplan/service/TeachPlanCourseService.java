@@ -86,13 +86,32 @@ public class TeachPlanCourseService {
         }
     }
 
+    /**
+     * 查询对应的教师信息是否有正在执行的计划课程
+     * @param teacherId
+     * @return
+     */
+    public boolean isAfterOrEqualsByTeacherId(String teacherId){
+        List<TeachPlanCourseVerify> courseVerifyList = teachPlanCourseVerifyRepository.findAllByTeacherId(teacherId);
+        return isValidated(courseVerifyList);
+    }
+
+    /**
+     * 查询课程对应的计划是有正在执行的计划
+     * @param courseNumber
+     * @param teacherId
+     * @return
+     */
     public boolean isAfterOrEqualsCourseNumberAndTeacherId(String courseNumber, String teacherId) {
-        //判断是否在计划内的课程
         List<TeachPlanCourseVerify> teachPlanCourseVerifyList = teachPlanCourseVerifyRepository.findAllByCourseIdAndTeacherId(courseNumber, teacherId);
+        return isValidated(teachPlanCourseVerifyList);
+    }
 
-        Set<String> planIds = teachPlanCourseVerifyList.stream().map(TeachPlanCourseVerify::getPlanId).collect(toSet());
-
+    private boolean isValidated(List<TeachPlanCourseVerify> teachPlanCourseVerifyList){
+        Set<String> planIds = teachPlanCourseVerifyList.stream().filter(Objects::nonNull).map(TeachPlanCourseVerify::getPlanId).collect(toSet());
+        //查询对应的计划
         List<TeachPlanVerify> allById = teachPlanVerifyRepository.findAllById(planIds);
+        //循环判断有在计划内的课程返回true
         for (TeachPlanVerify t : allById) {
             if (DateUtil.parseDate(t.getEndDate()).isAfterOrEquals(new Date())) {
                 return true;

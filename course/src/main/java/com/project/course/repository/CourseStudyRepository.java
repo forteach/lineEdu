@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import java.util.Optional;
  */
 public interface CourseStudyRepository extends JpaRepository<CourseStudy, String>, JpaSpecificationExecutor<CourseStudy> {
 
+    @Modifying
+    void deleteAllByStudentId(String studentId);
     /**
      * 查询学生学习课程的状态信息
      *

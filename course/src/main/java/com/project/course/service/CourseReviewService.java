@@ -1,4 +1,4 @@
-package com.project.course.service;
+//package com.project.course.service;
 
 
 /**
@@ -8,7 +8,7 @@ package com.project.course.service;
  * @version: 1.0
  * @description:
  */
-public interface CourseReviewService {
+//public interface CourseReviewService {
     /**
      * 保存课程提交的记录
      *
@@ -38,4 +38,4 @@ public interface CourseReviewService {
      * @return
      */
 //    Page<ICourseReviewDto> findReviewListPage(CourseReviewReq reviewReq, PageRequest request);
-}
+//}

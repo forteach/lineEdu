@@ -6,10 +6,13 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.record.CourseRecords;
+import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.record.ChapterRecordsRepository;
 import com.project.course.repository.record.CourseRecordsRepository;
 import com.project.course.service.CourseRecordsService;
 import com.project.course.web.req.CourseRecordsSaveReq;
+import com.project.mongodb.repository.BigQuestionAnswerRepository;
+import com.project.mongodb.repository.QuestionListsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,10 +38,20 @@ import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 public class CourseRecordsServiceImpl implements CourseRecordsService {
     private final CourseRecordsRepository courseRecordsRepository;
     private final ChapterRecordsRepository chapterRecordsRepository;
+    private final CourseStudyRepository courseStudyRepository;
+    private final BigQuestionAnswerRepository bigQuestionAnswerRepository;
+    private final QuestionListsRepository questionListsRepository;
 
-    public CourseRecordsServiceImpl(CourseRecordsRepository courseRecordsRepository, ChapterRecordsRepository chapterRecordsRepository) {
+    public CourseRecordsServiceImpl(CourseRecordsRepository courseRecordsRepository,
+                                    CourseStudyRepository courseStudyRepository,
+                                    QuestionListsRepository questionListsRepository,
+                                    BigQuestionAnswerRepository bigQuestionAnswerRepository,
+                                    ChapterRecordsRepository chapterRecordsRepository) {
         this.courseRecordsRepository = courseRecordsRepository;
         this.chapterRecordsRepository = chapterRecordsRepository;
+        this.courseStudyRepository = courseStudyRepository;
+        this.questionListsRepository = questionListsRepository;
+        this.bigQuestionAnswerRepository = bigQuestionAnswerRepository;
     }
 
     @Override
@@ -125,5 +138,15 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
         }else {
             return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, createTime, page);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByStudentId(String studentId){
+        courseStudyRepository.deleteAllByStudentId(studentId);
+        courseRecordsRepository.deleteAllByStudentId(studentId);
+        chapterRecordsRepository.deleteAllByStudentId(studentId);
+        questionListsRepository.deleteAllByStudentId(studentId);
+        bigQuestionAnswerRepository.deleteAllByStudentId(studentId);
     }
 }

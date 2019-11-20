@@ -21,6 +21,8 @@ public interface CourseRecordsService {
 
     void taskCourseRecordsSum();
 
+    void deleteByStudentId(String studentId);
+
     ChapterRecords findChapterRecordsByStudentIdAndChapterId(String studentId, String courseId, String chapterId);
 
     CourseRecords findCourseRecordsByStudentIdAndCourseId(String studentId, String courseId);

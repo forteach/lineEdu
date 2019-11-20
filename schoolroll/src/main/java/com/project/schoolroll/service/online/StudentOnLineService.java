@@ -53,6 +53,12 @@ public class StudentOnLineService {
         this.tbClassService = tbClassService;
         this.redisTemplate = redisTemplate;
     }
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteById(String studentId){
+        Optional<StudentOnLine> optional = studentOnLineRepository.findById(studentId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的学生信息");
+        studentOnLineRepository.deleteById(studentId);
+    }
 
     public void deleteKey() {
         redisTemplate.delete(IMPORT_STUDENTS_ONLINE);

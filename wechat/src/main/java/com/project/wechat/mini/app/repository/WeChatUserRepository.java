@@ -3,6 +3,7 @@ package com.project.wechat.mini.app.repository;
 import com.project.wechat.mini.app.domain.WeChatUser;
 import com.project.wechat.mini.app.dto.IWeChatUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,4 +47,7 @@ public interface WeChatUserRepository extends JpaRepository<WeChatUser, String> 
             " where isValidated = '0' and openId = ?1 ")
     @Transactional(readOnly = true)
     IWeChatUser findAllByIsValidatedEqualsAndOpenId(String openId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteAllByStudentId(String studentId);
 }

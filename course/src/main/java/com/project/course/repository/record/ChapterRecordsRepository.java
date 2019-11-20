@@ -4,6 +4,7 @@ import com.project.course.domain.record.ChapterRecords;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface ChapterRecordsRepository extends JpaRepository<ChapterRecords, 
 
     @Transactional(readOnly = true)
     List<ChapterRecords> findAllByIsValidatedEqualsAndCourseIdAndStudentId(String isValidated, String courseId, String studentId);
+    @Modifying
+    void deleteAllByStudentId(String studentId);
 }

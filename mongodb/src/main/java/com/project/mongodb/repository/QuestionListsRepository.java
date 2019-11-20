@@ -16,4 +16,6 @@ import java.util.List;
 public interface QuestionListsRepository extends MongoRepository<QuestionsLists, String> {
     @Transactional(readOnly = true)
     List<QuestionsLists> findAllByCourseIdAndStudentId(String courseId, String studentId);
+
+    void deleteAllByStudentId(String studentId);
 }
