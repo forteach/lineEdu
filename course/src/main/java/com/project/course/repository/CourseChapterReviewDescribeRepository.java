@@ -2,12 +2,9 @@ package com.project.course.repository;
 
 import com.project.course.domain.CourseChapterReviewDescribe;
 import com.project.course.repository.dto.ICourseChapterReviewCountDto;
-import com.project.course.repository.dto.IStudentDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @author: zhangyy

@@ -416,8 +416,8 @@ public class ExcelImpServiceImpl extends AbsExcelImp<StudentImport> {
     }
 
     @Override
+    @SuppressWarnings(value = "all")
     public void setHeaderAlias(@NonNull ExcelReader reader) {
-
         reader.addHeaderAlias(studentName.getName(), studentName.name());
         reader.addHeaderAlias(gender.getName(), gender.name());
         reader.addHeaderAlias(stuBirthDate.getName(), stuBirthDate.name());

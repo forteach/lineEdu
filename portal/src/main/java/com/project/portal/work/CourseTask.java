@@ -44,7 +44,7 @@ public class CourseTask {
         if (log.isDebugEnabled()) {
             log.debug("task thread name : {}", Thread.currentThread().getName());
         }
-        courseVerifyVoService.taskRedis();
+        courseVerifyVoService.taskQuestionRedis();
         log.info(" <== end course question async ");
     }
 

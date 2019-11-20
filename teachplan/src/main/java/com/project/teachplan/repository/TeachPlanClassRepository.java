@@ -1,6 +1,5 @@
 package com.project.teachplan.repository;
 
-import com.project.course.repository.dto.IStudentDto;
 import com.project.teachplan.domain.TeachPlanClass;
 import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import org.springframework.data.domain.Page;
@@ -73,9 +72,4 @@ public interface TeachPlanClassRepository extends JpaRepository<TeachPlanClass, 
             " (select classId from TeachPlanClass where isValidated = '0' and planId = ?1) ")
     @Transactional(readOnly = true)
     List<String> findAllStudentIdByPlanId(String planeId);
-
-    @Query(value = " select studentId as studentId, studentName as studentName from StudentOnLine WHERE isValidated = '0' and classId in " +
-            " (select classId from TeachPlanClass where isValidated = '0' and planId = ?1) ")
-    @Transactional(readOnly = true)
-    List<IStudentDto> findAllByStudentDtoByPlanId(String planId);
 }

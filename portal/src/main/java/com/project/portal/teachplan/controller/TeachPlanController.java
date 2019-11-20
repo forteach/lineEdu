@@ -214,8 +214,6 @@ public class TeachPlanController {
         return WebResult.okResult(teachService.findAllPlanByCenterId(centerId));
     }
 
-
-
     @UserLoginToken
     @ApiOperation(value = "分页查询计划对应的课程学生信息")
     @PostMapping(path = "/findPlanCourseAllPage")

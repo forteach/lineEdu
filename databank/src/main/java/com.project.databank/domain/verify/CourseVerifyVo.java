@@ -63,7 +63,7 @@ public class CourseVerifyVo extends Entitys implements Serializable {
     @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '章节编号'")
     public String chapterId;
 
-    @Column(name = "file_name", columnDefinition = "VARCHAR(255) COMMENT '文件名称'")
+    @Column(name = "file_name", columnDefinition = "TEXT COMMENT '文件名称'")
     public String fileName;
 
     @Column(name = "file_type", columnDefinition = "VARCHAR(10) COMMENT '文件类型'")

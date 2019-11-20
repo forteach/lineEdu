@@ -29,7 +29,7 @@ public class FinanceDetailFile extends Entitys implements Serializable {
     @Column(name = "file_id", columnDefinition = "VARCHAR(40) COMMENT '财务凭证资料编号'")
     private String fileId;
 
-    @Column(name = "file_name", columnDefinition = "VARCHAR(60) COMMENT '财务凭证资料名称'")
+    @Column(name = "file_name", columnDefinition = "VARCHAR(255q!) COMMENT '财务凭证资料名称'")
     private String fileName;
 
     @Column(name = "file_url", columnDefinition = "VARCHAR(255) COMMENT '财务凭证资料URL'")

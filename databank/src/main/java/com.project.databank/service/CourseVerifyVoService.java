@@ -29,7 +29,7 @@ public interface CourseVerifyVoService {
 
     Optional<CourseVerifyVo> findById(String id);
 
-    void taskRedis();
+    void taskQuestionRedis();
 
     void deleteByFileId(String fileId);
 

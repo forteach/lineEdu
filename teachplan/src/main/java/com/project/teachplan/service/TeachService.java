@@ -12,9 +12,7 @@ import com.project.base.exception.MyAssert;
 import com.project.course.domain.CourseStudy;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseStudyDto;
-import com.project.course.repository.dto.IStudentDto;
 import com.project.course.service.OnLineCourseDicService;
-import com.project.course.web.vo.CourseVo;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.service.online.StudentOnLineService;
@@ -34,7 +32,6 @@ import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import com.project.teachplan.vo.*;
-import com.project.user.domain.TeacherVerify;
 import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,7 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -494,10 +490,6 @@ public class TeachService {
         if (!planList.isEmpty()){
             teachPlanRepository.saveAll(planList.stream().peek(t -> t.setCountStatus(PLAN_COUNT_STATUS_SUCCESS)).collect(toList()));
         }
-    }
-
-    public List<IStudentDto> findStudentIdByPlanId(String planId){
-        return teachPlanClassRepository.findAllByStudentDtoByPlanId(planId).stream().distinct().collect(toList());
     }
 
     private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){

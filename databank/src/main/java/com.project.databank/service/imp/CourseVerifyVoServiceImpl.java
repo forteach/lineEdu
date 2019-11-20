@@ -84,8 +84,9 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     }
 
     @Override
+    @SuppressWarnings(value = "all")
     @Transactional(rollbackFor = Exception.class)
-    public void taskRedis() {
+    public void taskQuestionRedis() {
         Set<String> set = redisTemplate.opsForSet().members(QUESTIONS_VERIFY);
         List<CourseVerifyVo> list = set.parallelStream()
                 .filter(Objects::nonNull)
@@ -100,9 +101,6 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
                         verifyVo.setVerifyStatus(VERIFY_STATUS_APPLY);
                         verifyVo.setDatumType(CHAPTER_QUESTION.getValue());
                         verifyVo.setFileName(map.get("choiceQstTxt"));
-                        //删除对应的键值信息
-                        redisTemplate.opsForSet().remove(QUESTIONS_VERIFY, questionId);
-                        redisTemplate.delete(QUESTION_CHAPTER.concat(questionId));
                         return verifyVo;
                     }
                     //删除对应的键值信息
@@ -114,6 +112,11 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
         if (!list.isEmpty()) {
             courseVerifyVoRepository.saveAll(list);
         }
+        list.forEach(c -> {
+            //删除对应的键值信息
+            redisTemplate.opsForSet().remove(QUESTIONS_VERIFY, c.getQuestionId());
+            redisTemplate.delete(QUESTION_CHAPTER.concat(c.getQuestionId()));
+        });
     }
 
     @Override

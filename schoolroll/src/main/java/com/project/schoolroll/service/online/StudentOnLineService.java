@@ -60,14 +60,17 @@ public class StudentOnLineService {
         studentOnLineRepository.deleteById(studentId);
     }
 
+    @SuppressWarnings(value = "all")
     public void deleteKey() {
         redisTemplate.delete(IMPORT_STUDENTS_ONLINE);
     }
 
+    @SuppressWarnings(value = "all")
     public void checkoutKey() {
         MyAssert.isTrue(redisTemplate.hasKey(IMPORT_STUDENTS_ONLINE), DefineCode.ERR0013, "有人操作，请稍后再试!");
     }
 
+    @SuppressWarnings(value = "all")
     private void setStudentKey() {
         redisTemplate.opsForValue().set(IMPORT_STUDENTS_ONLINE, DateUtil.now(), 30L, TimeUnit.MINUTES);
     }
@@ -134,6 +137,7 @@ public class StudentOnLineService {
         return BeanUtil.trimStrFields(studentOnLine);
     }
 
+    @SuppressWarnings(value = "all")
     private void setHeaderAlias(@NonNull ExcelReader reader) {
         // 新添加字段，对应学号信息
         reader.addHeaderAlias(studentId.getName(), stuId.name());

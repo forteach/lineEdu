@@ -29,8 +29,8 @@ import java.io.Serializable;
 public class TeachPlan extends BaseTeachPlan implements Serializable {
 
     @Column(name = "status", nullable = false, columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '计划完成状态 0 完成 1 未完成/进行中'")
-    private Integer status;
+    private Integer status = this.status == null ? 1 : this.status;
 
     @Column(name = "count_status", nullable = false, columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '统计计算完成状态 0 完成 1 未完成/进行中'")
-    private Integer countStatus;
+    private Integer countStatus = this.countStatus == null ? 1 : this.countStatus;
 }
