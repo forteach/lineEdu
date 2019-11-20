@@ -11,7 +11,10 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.CourseStudy;
 import com.project.course.repository.CourseStudyRepository;
+import com.project.course.repository.dto.ICourseStudyDto;
+import com.project.course.repository.dto.IStudentDto;
 import com.project.course.service.OnLineCourseDicService;
+import com.project.course.web.vo.CourseVo;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.service.online.StudentOnLineService;
@@ -30,9 +33,7 @@ import com.project.teachplan.repository.dto.TeachPlanDto;
 import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
-import com.project.teachplan.vo.StudyVo;
-import com.project.teachplan.vo.TeachCourseVo;
-import com.project.teachplan.vo.TeachPlanCourseVo;
+import com.project.teachplan.vo.*;
 import com.project.user.domain.TeacherVerify;
 import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -400,6 +401,30 @@ public class TeachService {
         return page;
     }
 
+    @SuppressWarnings(value = "all")
+    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String planId, String key, Pageable pageable) {
+        //查询redis缓存
+        if (redisTemplate.hasKey(key)) {
+            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
+            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
+        }
+        //设置redis缓存
+        Page<CourseScoreVo> page = findScoreAllPageByPlanId(planId, pageable);
+        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
+        return page;
+    }
+
+    private Page<CourseScoreVo> findScoreAllPageByPlanId(String planId, Pageable pageable) {
+        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+        List<CourseScoreVo> list = page.getContent()
+                .stream()
+                .map(d -> new CourseScoreVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+                        d.getCenterName(), d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate(),
+                        toListScore(d.getStudentId(), d.getCourse())))
+                .collect(toList());
+        return new PageImpl<>(list, pageable, page.getTotalElements());
+    }
+
     private Page<TeachCourseVo> findAllPageByPlanId(String planId, Pageable pageable) {
         Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
         List<TeachCourseVo> list = page.getContent()
@@ -417,7 +442,27 @@ public class TeachService {
                 .forEach(s -> {
                     String[] strings = StrUtil.split(s, "&");
                     courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
-                            .ifPresent(d -> list.add(new StudyVo(d.getCourseId(), strings[0], d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum())));
+                            .ifPresent(d -> list.add(findStudyVo(strings, d)));
+                });
+        return list;
+    }
+
+    private StudyVo findStudyVo(String[] strings, ICourseStudyDto d){
+        return new StudyVo(d.getCourseId(), strings[0], d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum());
+    }
+
+    private List<ScoreVo> toListScore(String studentId, String course) {
+        List<ScoreVo> list = CollUtil.newArrayList();
+        Arrays.asList(StrUtil.split(course, ","))
+                .forEach(s -> {
+                    String[] strings = StrUtil.split(s, "&");
+                    courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
+                            .ifPresent(d -> {
+                                //线上成绩 (学习时长/课程总时长) * 视频占比 + (习题回答正确数量/总习题数量) * 练习占比
+                                BigDecimal videoScore = NumberUtil.mul(NumberUtil.div(d.getOnLineTime(), d.getOnLineTimeSum(), 2), Double.valueOf(d.getVideoPercentage()) / 100);
+                                BigDecimal jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getCorrectSum(), 2), Double.valueOf(d.getVideoPercentage()) / 100);
+                                list.add(new ScoreVo(d.getCourseId(), strings[0], NumberUtil.add(videoScore, jobsScore).toPlainString()));
+                            });
                 });
         return list;
     }
@@ -443,6 +488,10 @@ public class TeachService {
         if (!planList.isEmpty()){
             teachPlanRepository.saveAll(planList.stream().peek(t -> t.setCountStatus(PLAN_COUNT_STATUS_SUCCESS)).collect(toList()));
         }
+    }
+
+    public List<IStudentDto> findStudentIdByPlanId(String planId){
+        return teachPlanClassRepository.findAllByStudentDtoByPlanId(planId).stream().distinct().collect(toList());
     }
 
     private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
@@ -482,5 +531,13 @@ public class TeachService {
             return studentScore;
         }
         return null;
+    }
+
+    public List<TeachPlanVerify> findAllPlan() {
+        return teachPlanVerifyRepository.findAllByIsValidatedEqualsAndVerifyStatus(TAKE_EFFECT_OPEN, VERIFY_STATUS_AGREE);
+    }
+
+    public List<TeachPlanVerify> findAllPlanByCenterId(String centerId) {
+        return teachPlanVerifyRepository.findAllByIsValidatedEqualsAndVerifyStatusAndCenterAreaId(TAKE_EFFECT_OPEN, VERIFY_STATUS_AGREE, centerId);
     }
 }

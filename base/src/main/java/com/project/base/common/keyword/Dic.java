@@ -90,6 +90,7 @@ public class Dic {
     public static final String TEACH_PLAN_CLASS_COURSEVO = "teachPlanClassCourseVo$";
 
     public static final String PLAN_COURSE_STUDENT_STUDY = "studyCourse$";
+    public static final String PLAN_COURSE_STUDENT_SCORE = "courseScore$";
     /**
      * 教学计划统计信息，计划完成 0,计划进行 1 (默认)
      */

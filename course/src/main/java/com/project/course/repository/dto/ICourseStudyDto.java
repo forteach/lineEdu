@@ -10,6 +10,10 @@ package com.project.course.repository.dto;
 public interface ICourseStudyDto {
     public String getCourseId();
 
+    public String getVideoPercentage();
+
+    public String getJobsPercentage();
+
     public Integer getOnLineTime();
 
     public Integer getOnLineTimeSum();

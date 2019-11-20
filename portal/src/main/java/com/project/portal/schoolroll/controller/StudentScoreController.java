@@ -6,10 +6,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
+import com.project.portal.schoolroll.request.ScoreFindAllPageRequest;
 import com.project.portal.schoolroll.request.StudentScoreRequest;
 import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.service.StudentScoreService;
+import com.project.schoolroll.web.vo.PlanStudentVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
+import com.project.teachplan.service.TeachService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
@@ -17,6 +20,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +28,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import static com.project.portal.request.ValideSortVo.valideSort;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -40,10 +49,14 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class StudentScoreController {
     private final StudentScoreService studentScoreService;
     private final TokenService tokenService;
+    private final TeachService teachService;
 
-    public StudentScoreController(StudentScoreService studentScoreService, TokenService tokenService) {
+    public StudentScoreController(StudentScoreService studentScoreService,
+                                  TeachService teachService,
+                                  TokenService tokenService) {
         this.studentScoreService = studentScoreService;
         this.tokenService = tokenService;
+        this.teachService = teachService;
     }
 
     @UserLoginToken

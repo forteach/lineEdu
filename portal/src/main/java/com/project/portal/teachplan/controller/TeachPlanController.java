@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_SCORE;
 import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_STUDY;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -202,6 +203,17 @@ public class TeachPlanController {
         return WebResult.okResult();
     }
 
+    @GetMapping("/findAll")
+    @ApiOperation(value = "查询全部有效的教学计划")
+    public WebResult findAllPlan(HttpServletRequest httpServletRequest){
+        String token = httpServletRequest.getHeader("token");
+        if (tokenService.isAdmin(token)){
+            return WebResult.okResult(teachService.findAllPlan());
+        }
+        String centerId = tokenService.getCenterAreaId(token);
+        return WebResult.okResult(teachService.findAllPlanByCenterId(centerId));
+    }
+
 
 
     @UserLoginToken
@@ -217,5 +229,20 @@ public class TeachPlanController {
         MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
         String key = PLAN_COURSE_STUDENT_STUDY.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
         return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getPlanId(), key, PageRequest.of(req.getPage(), req.getSize())));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "分页查询计划课程的在线学生学习成绩信息")
+    @PostMapping(path = "/findPlanCourseScoreAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
+    })
+    public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req){
+        valideSort(req.getPage(), req.getSize());
+        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
+        String key = PLAN_COURSE_STUDENT_SCORE.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
+        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getPlanId(), key, PageRequest.of(req.getPage(), req.getSize())));
     }
 }

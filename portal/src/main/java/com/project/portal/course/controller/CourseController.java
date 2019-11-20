@@ -272,8 +272,7 @@ public class CourseController {
         // 微信端获取用户学生Id,教师
         String studentId = tokenService.getStudentId(token);
         if (tokenService.isStudent(token)) {
-//            String classId = tokenService.getClassId(token);
-            String classId = "86923d3b57c1438ba699285c4c2cea5a";
+            String classId = tokenService.getClassId(token);
             List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
             if (vos != null) {
                 return WebResult.okResult(vos);
