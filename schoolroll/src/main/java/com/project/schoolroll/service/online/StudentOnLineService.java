@@ -11,17 +11,23 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.domain.online.TbClasses;
-import com.project.schoolroll.repository.online.StudentOnLineDto;
+import com.project.schoolroll.repository.dto.StudentOnLineDto;
+import com.project.schoolroll.repository.online.IStudentOnLineDto;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -38,6 +44,8 @@ public class StudentOnLineService {
     private final RedisTemplate redisTemplate;
     private final TbClassService tbClassService;
     private final StudentOnLineRepository studentOnLineRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public StudentOnLineService(StudentOnLineRepository studentOnLineRepository, RedisTemplate redisTemplate, TbClassService tbClassService) {
@@ -144,13 +152,69 @@ public class StudentOnLineService {
         return studentOnLineRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, request);
     }
 
-    public Page<StudentOnLineDto> findAllPageDtoByCenterAreaId(String centerAreaId, PageRequest request) {
-        return studentOnLineRepository.findAllByCenterAreaIdDto(centerAreaId, request);
+    public Page<StudentOnLineDto> findAllPageDtoByCenterAreaId(String centerAreaId, PageRequest request, String studentName, String isValidated) {
+        return findStudentOnLineDto(request, studentName, isValidated, centerAreaId);
     }
 
-    public Page<StudentOnLineDto> findAllPageDto(PageRequest request) {
-        return studentOnLineRepository.findAllDto(request);
+    public Page<StudentOnLineDto> findAllPageDto(PageRequest request, String studentName, String isValidated) {
+        return findStudentOnLineDto(request, studentName, isValidated, "");
     }
+
+    private Page<StudentOnLineDto> findStudentOnLineDto(PageRequest request, String studentName, String isValidated, String centerAreaId){
+        StringBuilder dataSql = new StringBuilder("select " +
+                " s.student_id as student_id, " +
+                " s.student_name as student_name, " +
+                " s.gender as gender, " +
+                " s.stu_id_card as stu_iD_card, " +
+                " s.stu_phone as stu_phone, " +
+                " s.class_id as class_id, " +
+                " s.class_name as class_name, " +
+                " s.enrollment_date as enrollment_date, " +
+                " s.nation as nation, " +
+                " s.learning_modality as learning_modality, " +
+                " s.import_status as import_status, " +
+                " s.center_area_id as center_area_id, " +
+                " lc.center_name as center_name, " +
+                " s.c_time as c_time, " +
+                " s.is_validated as is_validated " +
+                " from student_on_line as s " +
+                " left join learn_center as lc on lc.center_id = s.center_area_id ");
+        StringBuilder whereSql = new StringBuilder(" where lc.is_validated = '0' ");
+        StringBuilder countSql = new StringBuilder(" select count(1) from student_on_line as s left join learn_center as lc on lc.center_id = s.center_area_id ");
+        if (StrUtil.isNotBlank(centerAreaId)){
+            whereSql.append(" and lc.center_id = :centerAreaId");
+        }
+        if (StrUtil.isNotBlank(studentName)){
+            whereSql.append(" and s.student_name = :studentName");
+        }
+        if (StrUtil.isNotBlank(isValidated)){
+            whereSql.append(" and s.is_validated = :isValidated");
+        }
+        dataSql.append(whereSql).append(" order by s.class_Id, s.c_time desc ");
+        countSql.append(whereSql);
+        Query dataQuery = entityManager.createNativeQuery(dataSql.toString(), StudentOnLineDto.class);
+        Query countQuery = entityManager.createNativeQuery(countSql.toString());
+        if (StrUtil.isNotBlank(centerAreaId)){
+            dataQuery.setParameter("centerAreaId", centerAreaId);
+            countQuery.setParameter("centerAreaId", centerAreaId);
+        }
+        if (StrUtil.isNotBlank(studentName)){
+            dataQuery.setParameter("studentName", studentName);
+            countQuery.setParameter("studentName", studentName);
+        }
+        if (StrUtil.isNotBlank(isValidated)){
+            dataQuery.setParameter("isValidated", isValidated);
+            countQuery.setParameter("isValidated", isValidated);
+        }
+        //设置分页
+        dataQuery.setFirstResult((int)request.getOffset());
+        dataQuery.setMaxResults(request.getPageSize());
+        BigInteger count = (BigInteger) countQuery.getSingleResult();
+        long total = count.longValue();
+        List<StudentOnLineDto> content = total > request.getOffset() ? dataQuery.getResultList() : Collections.emptyList();
+        return new PageImpl<>(content, request, total);
+    }
+
 
     public List<StudentOnLine> findByStuIDCardAndStudentName(String stuIDCard, String studentName) {
         return studentOnLineRepository.findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, stuIDCard, studentName);
@@ -168,12 +232,12 @@ public class StudentOnLineService {
         return list;
     }
 
-    private List<List<String>> exportChange(List<StudentOnLineDto> list){
+    private List<List<String>> exportChange(List<IStudentOnLineDto> list){
         return list.stream().filter(Objects::nonNull).map(this::setExport).collect(toList());
     }
-    private List<String> setExport(StudentOnLineDto dto){
+    private List<String> setExport(IStudentOnLineDto dto){
         List<String> list = new ArrayList<>();
-        list.add(dto.getStudentId());
+        list.add(dto.getStuId());
         list.add(dto.getStudentName());
         list.add(dto.getGender());
         list.add(dto.getStuIDCard());

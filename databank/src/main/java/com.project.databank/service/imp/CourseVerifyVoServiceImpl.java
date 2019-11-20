@@ -143,4 +143,10 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     public List<String> findVerifyCourse() {
         return courseVerifyVoRepository.findDistinctAllByIsValidatedEqualsAndVerifyStatus();
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAllByCourseId(String courseId){
+        courseVerifyVoRepository.deleteAllByCourseId(courseId);
+    }
 }

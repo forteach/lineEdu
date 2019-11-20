@@ -93,4 +93,7 @@ public interface CourseChapterRepository extends JpaRepository<CourseChapter, St
     @Modifying(clearAutomatically = true)
     @Query(value = " update CourseChapter c set c.isValidated = :isValidated where c.chapterId in (:ids) ")
     int updateIsValidatedIds(@Param("isValidated") String isValidated, @Param("ids") Set<String> ids);
+
+    @Modifying(clearAutomatically = true)
+    void deleteAllByCourseId(String courseId);
 }

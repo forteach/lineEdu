@@ -1,7 +1,7 @@
 package com.project.course.repository;
 
 import com.project.course.domain.Specialty;
-import com.project.course.repository.dto.SpecialtyDto;
+import com.project.course.repository.dto.ISpecialtyDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,7 +29,7 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, String> {
      */
     @Transactional(readOnly = true)
     @Query(value = "SELECT specialtyId AS specialtyId, specialtyName AS specialtyName FROM Specialty WHERE isValidated = '0' ")
-    public List<SpecialtyDto> findAllByIsValidatedEqualsDto();
+    public List<ISpecialtyDto> findAllByIsValidatedEqualsDto();
 
     @Transactional(readOnly = true)
     public Specialty findBySpecialtyName(String specialtyName);

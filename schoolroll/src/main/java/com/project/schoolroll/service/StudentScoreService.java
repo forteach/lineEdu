@@ -42,7 +42,7 @@ public interface StudentScoreService {
 
     Page<StudentScore> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of);
 
-    void updateOffLineScore(OffLineScoreUpdateVo vo);
+//    void updateOffLineScore(OffLineScoreUpdateVo vo);
 
     void saveAll(List<StudentScore> list);
 

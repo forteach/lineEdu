@@ -1,7 +1,7 @@
 package com.project.course.service;
 
 import com.project.course.domain.Specialty;
-import com.project.course.repository.dto.SpecialtyDto;
+import com.project.course.repository.dto.ISpecialtyDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public interface SpecialtyService {
      *
      * @return
      */
-    public List<SpecialtyDto> findAllSpecialty();
+    public List<ISpecialtyDto> findAllSpecialty();
 
     /**
      * 删除对应的专业信息通过专业id

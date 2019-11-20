@@ -44,6 +44,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.*;
@@ -428,7 +429,7 @@ public class TeachService {
         Set<String> planIds = planList.stream().filter(Objects::nonNull).map(TeachPlan::getPlanId).collect(toSet());
         planIds.forEach(p -> teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(p)
                 .forEach(c -> {
-                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage());
+                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage(), c.getLinePercentage(), c.getVideoPercentage(), c.getJobsPercentage());
                     if (!list.isEmpty()) {
                         studentScoreService.saveAll(list);
                     }
@@ -438,15 +439,15 @@ public class TeachService {
         }
     }
 
-    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage){
+    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
         return teachPlanClassRepository.findAllStudentIdByPlanId(planeId).stream()
                 .filter(Objects::nonNull)
-                .map(s -> findSetStudentScore(s, courseId, onLinePercentage))
+                .map(s -> findSetStudentScore(s, courseId, onLinePercentage, linePercentage, videoPercentage, jobsPercentage))
                 .filter(Objects::nonNull)
                 .collect(toList());
     }
 
-    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage){
+    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
         Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
         if (optional.isPresent()) {
             CourseStudy c = optional.get();
@@ -458,14 +459,20 @@ public class TeachService {
             studentScore.setCenterAreaId(c.getCenterAreaId());
             int onLineTime = c.getOnLineTime();
             int onLineTimeSum = c.getOnLineTimeSum();
-            //计算在线学习时长对应的成绩
-            double onLineScore = NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F);
-            //转换string
-            String onLineScoreStr = NumberUtil.toStr(onLineScore);
-            //计算学习时长成绩占比课程时长
-            double courseScore = NumberUtil.mul(onLinePercentage, NumberUtil.div(onLinePercentage, 100));
-            studentScore.setOnLineScore(onLineScoreStr);
-            studentScore.setCourseScore(NumberUtil.toBigDecimal(courseScore).floatValue());
+            //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
+            double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
+            //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
+            BigDecimal jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
+            //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
+            BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
+            //计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
+            BigDecimal courseScore = NumberUtil.mul(onLineScore, NumberUtil.div(onLinePercentage, 100, 2));
+            studentScore.setOnLineScore(onLineScore.toPlainString());
+            studentScore.setCourseScore(courseScore.floatValue());
+            //线下成绩占比 %
+            studentScore.setLinePercentage(linePercentage);
+            //线上成绩占比 %
+            studentScore.setOnLinePercentage(onLinePercentage);
             return studentScore;
         }
         return null;

@@ -2,54 +2,47 @@ package com.project.teachplan.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
-import com.project.base.common.keyword.DefineCode;
-import com.project.base.exception.MyAssert;
 import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.domain.verify.TeachPlanCourseVerify;
+import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.repository.dto.CourseTeacherDto;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
+import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.project.base.common.keyword.Dic.*;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class TeachPlanCourseService {
     private final TeachPlanCourseRepository teachPlanCourseRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
     private final TeachPlanRepository teachPlanRepository;
+    private final TeachPlanVerifyRepository teachPlanVerifyRepository;
 
     @Autowired
-    public TeachPlanCourseService(TeachPlanCourseRepository teachPlanCourseRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository, TeachPlanRepository teachPlanRepository) {
+    public TeachPlanCourseService(TeachPlanCourseRepository teachPlanCourseRepository, TeachPlanVerifyRepository teachPlanVerifyRepository,
+                                  TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository, TeachPlanRepository teachPlanRepository) {
         this.teachPlanCourseRepository = teachPlanCourseRepository;
         this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
         this.teachPlanRepository = teachPlanRepository;
-    }
-
-    public TeachPlanCourse findByCourseId(String courseId, String planId) {
-        Optional<TeachPlanCourse> optionalTeachPlanCourse = teachPlanCourseRepository.findByIsValidatedEqualsAndPlanIdAndCourseId(TAKE_EFFECT_OPEN, planId, courseId);
-        if (optionalTeachPlanCourse.isPresent()) {
-            return optionalTeachPlanCourse.get();
-        } else {
-            MyAssert.isNull(null, DefineCode.ERR0010, "不存在对应课程信息");
-            return null;
-        }
+        this.teachPlanVerifyRepository = teachPlanVerifyRepository;
     }
 
     public void saveAll(@NonNull List<TeachPlanCourse> list) {
         teachPlanCourseRepository.saveAll(list);
     }
 
-    public void saveAllVerify(List<TeachPlanCourseVerify> list){
+    public void saveAllVerify(List<TeachPlanCourseVerify> list) {
         teachPlanCourseVerifyRepository.saveAll(list);
     }
 
@@ -57,12 +50,8 @@ public class TeachPlanCourseService {
         return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, planId);
     }
 
-    public List<TeachPlanCourseVerify> findAllCourseVerifyByPlanId(String planId){
+    public List<TeachPlanCourseVerify> findAllCourseVerifyByPlanId(String planId) {
         return teachPlanCourseVerifyRepository.findAllByPlanId(planId);
-    }
-
-    public List<String> findCourseIdByClassId(String classId) {
-        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndClassId(classId);
     }
 
     public List<CourseTeacherDto> findCourseIdAndTeacherIdByClassId(String classId) {
@@ -89,11 +78,32 @@ public class TeachPlanCourseService {
             teachPlanCourseVerifyRepository.saveAll(teachPlanCourseVerifyList);
         }
         //审核通过 删除原来课程信息
-        if (VERIFY_STATUS_AGREE.equals(verifyStatus)){
+        if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
             teachPlanCourseRepository.deleteAllByPlanId(planId);
         }
         if (!teachPlanCourseList.isEmpty()) {
             teachPlanCourseRepository.saveAll(teachPlanCourseList);
         }
+    }
+
+    public boolean isAfterOrEqualsCourseNumberAndTeacherId(String courseNumber, String teacherId) {
+        //判断是否在计划内的课程
+        List<TeachPlanCourseVerify> teachPlanCourseVerifyList = teachPlanCourseVerifyRepository.findAllByCourseIdAndTeacherId(courseNumber, teacherId);
+
+        Set<String> planIds = teachPlanCourseVerifyList.stream().map(TeachPlanCourseVerify::getPlanId).collect(toSet());
+
+        List<TeachPlanVerify> allById = teachPlanVerifyRepository.findAllById(planIds);
+        for (TeachPlanVerify t : allById) {
+            if (DateUtil.parseDate(t.getEndDate()).isAfterOrEquals(new Date())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteTeachCourseByCourseNumberAndTeacherId(String courseNumber, String teacherId) {
+        teachPlanCourseVerifyRepository.deleteAllByCourseIdAndTeacherId(courseNumber, teacherId);
+        teachPlanCourseRepository.deleteAllByCourseIdAndTeacherId(courseNumber, teacherId);
     }
 }

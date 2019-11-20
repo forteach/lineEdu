@@ -7,7 +7,7 @@ package com.project.course.repository.dto;
  * @Version: 1.0
  * @Description:
  */
-public interface SpecialtyDto {
+public interface ISpecialtyDto {
     /**
      * 专业id
      * @return

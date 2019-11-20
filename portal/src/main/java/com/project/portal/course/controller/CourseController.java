@@ -1,15 +1,19 @@
 package com.project.portal.course.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
+import com.project.course.service.CourseChapterService;
 import com.project.course.service.CourseService;
+import com.project.course.service.CoursewareService;
 import com.project.course.web.resp.CourseSaveResp;
 import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
+import com.project.databank.service.CourseVerifyVoService;
 import com.project.databank.web.vo.DataDatumVo;
 import com.project.portal.course.controller.verify.CourseVer;
 import com.project.portal.course.request.*;
@@ -55,6 +59,12 @@ public class CourseController {
 
     @Resource
     private TeachPlanCourseService teachPlanCourseService;
+    @Resource
+    private CoursewareService coursewareService;
+    @Resource
+    private CourseChapterService courseChapterService;
+    @Resource
+    private CourseVerifyVoService courseVerifyVoService;
 
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
@@ -297,5 +307,24 @@ public class CourseController {
             //不是学生是教师只能查看自己创建的课程信息
             return WebResult.okResult(courseService.findAllCourseVoByCreateUser(studentId));
         }
+    }
+    @ApiOperation(value = "物理全部删除课程信息和对应的计划课程")
+    @DeleteMapping(path = "/{courseId}")
+    @ApiImplicitParam(name = "courseId", value = "科目/课程id", dataType = "string", required = true, paramType = "form")
+    public WebResult deleteById(@PathVariable String courseId, HttpServletRequest httpServletRequest){
+        MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程id不能为空");
+        Course course = courseService.getById(courseId);
+        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser()), DefineCode.ERR0010, "存在计划中的课程信息不能删除");
+        //删除计划上的课程
+        teachPlanCourseService.deleteTeachCourseByCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser());
+        //删除对应的课程资料
+        coursewareService.deleteByCourseId(courseId);
+        //删除对应的章节资料
+        courseChapterService.deleteAllByCourseId(courseId);
+        //删除对应的学生学习记录
+        courseVerifyVoService.deleteAllByCourseId(courseId);
+        //删除课程信息
+        courseService.deleteById(courseId);
+        return WebResult.okResult();
     }
 }

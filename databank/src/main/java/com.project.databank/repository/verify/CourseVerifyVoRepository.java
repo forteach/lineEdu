@@ -22,9 +22,6 @@ public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, 
     void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
 
     @Transactional(readOnly = true)
-    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndCourseId(String isValidated, String courseId, Pageable pageable);
-
-    @Transactional(readOnly = true)
     Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String verifyStatus, Pageable pageable);
 
     @Transactional(readOnly = true)
@@ -35,4 +32,7 @@ public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, 
 
     @Query(value = "select distinct courseName from CourseVerifyVo where isValidated = '0' and verifyStatus = '1'")
     List<String> findDistinctAllByIsValidatedEqualsAndVerifyStatus();
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteAllByCourseId(String courseId);
 }

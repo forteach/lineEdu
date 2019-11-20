@@ -27,20 +27,6 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
     List<TeachPlanCourse> findAllByPlanId(String planId);
 
     @Transactional(readOnly = true)
-    Optional<TeachPlanCourse> findByIsValidatedEqualsAndPlanIdAndCourseId(String isValidated, String planId, String courseId);
-
-    @Query(value = "select distinct courseId from TeachPlanCourse where isValidated = '0'" +
-            " and planId in (select distinct planId from TeachPlanClass where isValidated = '0' and classId = ?1)")
-    @Transactional(readOnly = true)
-    List<String> findAllByIsValidatedEqualsAndClassId(String classId);
-
-    @Query(value = "select courseId as courseId, teacherId as teacherId from TeachPlanCourse where isValidated = '0'" +
-            " and planId in (select distinct planId from TeachPlanClass where isValidated = '0' and classId = ?1) " +
-            " order by createTime desc ")
-    @Transactional(readOnly = true)
-    List<CourseTeacherDto> findAllByIsValidatedEqualsAndClassIdDto(String classId);
-
-    @Transactional(readOnly = true)
     List<CourseTeacherDto> findAllByIsValidatedEqualsAndPlanIdIn(String isValidated, List<String> planIds);
 
     /**
@@ -48,9 +34,17 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
      * @param planId
      * @return
      */
-    @Query(value = " SELECT c.course_id as courseId, tpcv.line_percentage as linePercentage, tpcv.on_line_percentage as onLinePercentage from " +
-            " (select line_percentage, on_line_percentage, teacher_id, course_id from teach_plan_course where is_validated = '0' and plan_id = ?1) as tpcv " +
+    @Query(value = " SELECT " +
+            " c.course_id as courseId, " +
+            " tpcv.line_percentage as linePercentage, " +
+            " tpcv.on_line_percentage as onLinePercentage, " +
+            " c.video_percentage as videoPercentage, " +
+            " c.jobs_percentage as jobsPercentage " +
+            " from (select line_percentage, on_line_percentage, teacher_id, course_id from teach_plan_course where is_validated = '0' and plan_id = ?1) as tpcv " +
             " left join course as c on c.course_number = tpcv.course_id and c.c_user = tpcv.teacher_id ", nativeQuery = true)
     @Transactional(readOnly = true)
     List<IPlanCourseDto> findAllPlanCourseDtoByPlanId(String planId);
+
+    @Modifying
+    void deleteAllByCourseIdAndTeacherId(String courseId, String teacherId);
 }

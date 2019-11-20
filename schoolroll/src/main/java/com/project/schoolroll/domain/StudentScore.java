@@ -78,4 +78,12 @@ public class StudentScore extends Entitys implements Serializable {
 
     @Column(name = "off_line_score", columnDefinition = "VARCHAR(32) COMMENT '线下成绩'")
     private String offLineScore;
+
+    @Column(name = "on_line_percentage", columnDefinition = "TINYINT(4) COMMENT '线上占比'")
+    private Integer onLinePercentage;
+    /**
+     * 线下占比
+     */
+    @Column(name = "line_percentage", columnDefinition = "TINYINT(4) COMMENT '线下占比'")
+    private Integer linePercentage;
 }

@@ -38,4 +38,6 @@ public interface CourseVerifyVoService {
     void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
 
     List<String> findVerifyCourse();
+
+    void deleteAllByCourseId(String courseId);
 }

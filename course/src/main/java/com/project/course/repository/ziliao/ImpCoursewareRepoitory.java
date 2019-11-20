@@ -30,4 +30,7 @@ public interface ImpCoursewareRepoitory extends JpaRepository<ImportantCoursewar
             " where isValidated = '0' and verifyStatus = '0' and datumType = '3' and importantType = '2' and courseId = ?1")
     @Transactional(readOnly = true)
     IVideoTimeSumDto findVideoTimeSumByCourseId(String courseId);
+
+    @Modifying
+    void deleteAllByCourseId(String courseId);
 }

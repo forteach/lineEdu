@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,5 +91,6 @@ public interface IFileRepoitory<T, ID> extends JpaRepository<T, ID> {
     @Transactional(readOnly = true)
     public Page<T> findAll(Specification<T> specification, Pageable pageable);
 
-
+    @Modifying
+    void deleteAllByCourseId(String courseId);
 }

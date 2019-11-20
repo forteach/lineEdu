@@ -1,5 +1,6 @@
 package com.project.teachplan.repository.verify;
 
+import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.domain.verify.TeachPlanCourseVerify;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,4 +22,10 @@ public interface TeachPlanCourseVerifyRepository extends JpaRepository<TeachPlan
 
     @Transactional(readOnly = true)
     List<TeachPlanCourseVerify> findAllByPlanId(String planId);
+
+    @Transactional(readOnly = true)
+    List<TeachPlanCourseVerify> findAllByCourseIdAndTeacherId(String courseId, String teacherId);
+
+    @Modifying
+    void deleteAllByCourseIdAndTeacherId(String courseId, String teacherId);
 }

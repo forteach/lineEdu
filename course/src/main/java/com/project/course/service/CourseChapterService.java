@@ -40,5 +40,7 @@ public interface CourseChapterService {
 
     void saveChapterDataList(String courseId, String courseName, String chapterParentId, ChapterDataFileVo files, String teacherName, String centerName, String userId, String centerId);
 
+    void deleteAllByCourseId(String courseId);
+
 //    void verifyCourse(CourseChapterVerifyVo verifyVo);
 }

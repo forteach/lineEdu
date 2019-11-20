@@ -7,8 +7,10 @@ package com.project.schoolroll.repository.online;
  * @version: 1.0
  * @description:
  */
-public interface StudentOnLineDto {
+public interface IStudentOnLineDto {
     public String getStudentId();
+
+    public String getStuId();
 
     /**
      * 姓名

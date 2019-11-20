@@ -28,7 +28,8 @@ public interface StudentScoreRepository extends JpaRepository<StudentScore, Stri
     List<StudentScore> findAllByIsValidatedEqualsAndStudentIdOrderByUpdateTime(String isValidated, String studentId);
 
     @Query(value = " select " +
-            " ss.studentId as studentId," +
+            " ss.studentId as studentId, " +
+            " s.stuId as stuId, " +
             " s.studentName as studentName," +
             " s.gender as gender, " +
             " ss.schoolYear as schoolYear," +

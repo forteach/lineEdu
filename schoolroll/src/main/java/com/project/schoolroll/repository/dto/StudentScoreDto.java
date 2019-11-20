@@ -10,6 +10,8 @@ package com.project.schoolroll.repository.dto;
 public interface StudentScoreDto {
     /** 学号*/
     public String getStudentId();
+
+    public String getStuId();
     /** 姓名*/
     public String getStudentName();
     /** 性别*/

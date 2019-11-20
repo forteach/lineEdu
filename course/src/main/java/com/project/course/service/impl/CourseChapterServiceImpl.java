@@ -170,6 +170,11 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         int result = courseChapterRepository.updateIsValidatedIds(TAKE_EFFECT_CLOSE, stringSet);
         log.info("chapterId : {}, resoult : {}", chapterId, result);
     }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAllByCourseId(String courseId){
+        courseChapterRepository.deleteAllByCourseId(courseId);
+    }
 
     /**
      * 根据科目ID查询章节信息

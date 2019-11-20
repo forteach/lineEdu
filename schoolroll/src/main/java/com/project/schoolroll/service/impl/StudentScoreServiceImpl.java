@@ -1,7 +1,10 @@
 package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.repository.StudentScoreRepository;
@@ -18,9 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static java.util.stream.Collectors.toList;
@@ -126,15 +131,24 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         return new PageImpl<>(content2, of, total);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateOffLineScore(OffLineScoreUpdateVo vo) {
-        studentScoreRepository.findById(vo.getScoreId()).ifPresent(s -> {
-            s.setOffLineScore(vo.getOffLineScore());
-            s.setUpdateUser(vo.getUpdateUser());
-            studentScoreRepository.save(s);
-        });
-    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void updateOffLineScore(OffLineScoreUpdateVo vo) {
+//        StudentScore studentScore = findById(vo.getScoreId());
+//        studentScore.setUpdateUser(vo.getUpdateUser());
+//        studentScore.setOnLineScore(vo.getOffLineScore());
+//        //线下占比
+//        Integer linePercentage = studentScore.getLinePercentage();
+//        //计算加线下成绩后课程成绩
+//        BigDecimal courseScore = NumberUtil.add(NumberUtil.mul(Double.valueOf(vo.getOffLineScore()), linePercentage), studentScore.getCourseScore());
+//        studentScore.setCourseScore(courseScore.floatValue());
+//        studentScoreRepository.save(studentScore);
+//    }
+//    private StudentScore findById(String scoreId){
+//        Optional<StudentScore> optional = studentScoreRepository.findById(scoreId);
+//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的学生成绩");
+//        return optional.get();
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -153,14 +167,15 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
     private List<List<String>> findStudentScoreLists(String centerId){
         return studentScoreRepository.findAllByIsValidatedEqualsAndCenterAreaId(centerId)
                 .stream()
-                .map(o -> CollUtil.newArrayList(o.getStudentId(), o.getStudentName(), o.getGender(), o.getCourseName(), o.getSchoolYear(), o.getTerm(),
+                .map(o -> CollUtil.newArrayList(o.getStudentId(), o.getStudentName(), o.getStuId(), o.getGender(), o.getCourseName(), o.getSchoolYear(), o.getTerm(),
                         String.valueOf(o.getCourseScore()), o.getOnLineScore(), o.getOffLineScore(), o.getCourseType()))
                 .collect(toList());
     }
 
     private List<String> setExportHead(){
-        return CollUtil.newLinkedList("学号",
+        return CollUtil.newLinkedList("身份证号码",
                 "姓名",
+                "学号",
                 "性别",
                 "课程",
                 "学年",

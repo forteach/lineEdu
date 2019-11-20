@@ -6,11 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
-import com.project.portal.schoolroll.request.OffLineScoreUpdateRequest;
 import com.project.portal.schoolroll.request.StudentScoreRequest;
 import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.service.StudentScoreService;
-import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -98,21 +96,22 @@ public class StudentScoreController {
         return WebResult.okResult(studentScoreService.findStudentScorePageAll(pageAllVo, PageRequest.of(request.getPage(), request.getSize())));
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "更新线下成绩录入")
-    @PostMapping(path = "/updateOfflineScore")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "offLineScore", value = "线下成绩", dataType = "string", required = true, paramType = "form")
-    })
-    public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request, HttpServletRequest httpServletRequest) {
-        MyAssert.isNull(request.getScoreId(), DefineCode.ERR0010, "成绩id信息不为空");
-        MyAssert.isNull(request.getOffLineScore(), DefineCode.ERR0010, "成绩不为空");
-        String token = httpServletRequest.getHeader("token");
-        String userId = tokenService.getUserId(token);
-        studentScoreService.updateOffLineScore(new OffLineScoreUpdateVo(request.getScoreId(), request.getOffLineScore(), userId));
-        return WebResult.okResult();
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "更新线下成绩录入")
+//    @PostMapping(path = "/updateOfflineScore")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "scoreId", value = "成绩信息id", dataType = "string", required = true, paramType = "form"),
+//            @ApiImplicitParam(name = "offLineScore", value = "线下成绩", dataType = "string", required = true, paramType = "form")
+//    })
+//    public WebResult updateOfflineScore(@RequestBody OffLineScoreUpdateRequest request, HttpServletRequest httpServletRequest) {
+//        MyAssert.isNull(request.getScoreId(), DefineCode.ERR0010, "成绩id信息不为空");
+//        MyAssert.isNull(request.getOffLineScore(), DefineCode.ERR0010, "成绩不为空");
+//        MyAssert.isFalse(NumberUtil.isNumber(request.getOffLineScore()), DefineCode.ERR0010, "线下成绩不是数字");
+//        String token = httpServletRequest.getHeader("token");
+//        String userId = tokenService.getUserId(token);
+//        studentScoreService.updateOffLineScore(new OffLineScoreUpdateVo(request.getScoreId(), request.getOffLineScore(), userId));
+//        return WebResult.okResult();
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "导出学生成绩")

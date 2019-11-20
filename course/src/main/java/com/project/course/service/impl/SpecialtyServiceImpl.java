@@ -6,7 +6,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.Specialty;
 import com.project.course.repository.SpecialtyRepository;
-import com.project.course.repository.dto.SpecialtyDto;
+import com.project.course.repository.dto.ISpecialtyDto;
 import com.project.course.service.SpecialtyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     }
 
     @Override
-    public List<SpecialtyDto> findAllSpecialty() {
+    public List<ISpecialtyDto> findAllSpecialty() {
         return specialtyRepository.findAllByIsValidatedEqualsDto();
     }
 

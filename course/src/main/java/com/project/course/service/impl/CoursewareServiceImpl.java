@@ -156,6 +156,12 @@ public class CoursewareServiceImpl implements CoursewareService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void deleteByCourseId(String courseId) {
+        impCoursewareRepoitory.deleteAllByCourseId(courseId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteBathByChapterIds(Set<String> stringSet) {
         impCoursewareRepoitory.deleteAllByBathIds(stringSet);
     }
