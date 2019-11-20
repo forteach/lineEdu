@@ -1,6 +1,7 @@
 package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.TeachPlan;
+import com.project.teachplan.repository.dto.IPlanStatusDto;
 import com.project.teachplan.repository.dto.PlanCourseStudyDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +18,10 @@ import java.util.List;
  */
 public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, JpaSpecificationExecutor<TeachPlan> {
 
-    @Query(value = "select planId from TeachPlan where isValidated = '0' " +
+    @Query(value = "select planId AS planId, status as status, countStatus as countStatus from TeachPlan where isValidated = '0' " +
             " and startDate <= ?1 and endDate >= ?1 and planId in (select planId from TeachPlanClass where isValidated = '0' and classId = ?2)")
     @Transactional(readOnly = true)
-    List<String> findAllByClassId(String nowDate, String classId);
+    List<IPlanStatusDto> findAllByClassId(String nowDate, String classId);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "update TeachPlan set isValidated = ?1 where planId = ?2")

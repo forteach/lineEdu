@@ -239,18 +239,22 @@ public class CourseServiceImpl implements CourseService {
                 }
                 vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
                         iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
-                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName(), chapterId, chapterName, "1"));
+                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName(), chapterId, chapterName, String.valueOf(v.getStatus())));
             }
         }
-        stringRedisTemplate.opsForValue().set(TEACH_PLAN_CLASS_COURSEVO.concat(classId), JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
+        if (!vos.isEmpty()) {
+            stringRedisTemplate.opsForValue().set(TEACH_PLAN_CLASS_COURSEVO.concat(classId), JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
+        }
         return vos;
     }
 
     @Override
     public List<CourseVo> findCourseVoByClassId(String classId) {
-        String key = TEACH_PLAN_CLASS_COURSEVO.concat(classId);
-        if (stringRedisTemplate.hasKey(key)) {
-            return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), CourseVo.class);
+        if (StrUtil.isNotBlank(classId)) {
+            String key = TEACH_PLAN_CLASS_COURSEVO.concat(classId);
+            if (stringRedisTemplate.hasKey(key)) {
+                return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), CourseVo.class);
+            }
         }
         return null;
     }

@@ -158,7 +158,7 @@ public class StudentOnLineController {
     @ApiOperation(value = "物理删除学生信息和对应学习的学习记录和回答问题信息")
     @DeleteMapping("/{studentId}")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteById(@PathVariable String studentId){
+    public WebResult deleteById(@PathVariable(value = "studentId") String studentId){
         MyAssert.isTrue(StrUtil.isBlank(studentId), DefineCode.ERR0010, "学生Id为空");
         //删除学生信息
         studentOnLineService.deleteById(studentId);

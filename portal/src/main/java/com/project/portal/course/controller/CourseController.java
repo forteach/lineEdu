@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
@@ -246,7 +247,7 @@ public class CourseController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findCourseStudyPage(@RequestBody CourseStudyFindPage req, HttpServletRequest request){
+    public WebResult findCourseStudyPage(@RequestBody CourseStudyFindPage req, HttpServletRequest request) {
         valideSort(req.getPage(), req.getSize());
         MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不是空");
         return WebResult.okResult(courseService.findCourseStudyPageAll(req.getCourseId(), req.getStudentId(),
@@ -271,25 +272,28 @@ public class CourseController {
         // 微信端获取用户学生Id,教师
         String studentId = tokenService.getStudentId(token);
         if (tokenService.isStudent(token)) {
-            String classId = tokenService.getClassId(token);
+//            String classId = tokenService.getClassId(token);
+            String classId = "86923d3b57c1438ba699285c4c2cea5a";
             List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
             if (vos != null) {
                 return WebResult.okResult(vos);
             }
-            List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId).stream()
-                    .map(dto -> new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId())).collect(toList());
+            List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId)
+                    .stream().filter(Objects::nonNull)
+                    .map(vo -> new CourseTeacherVo(vo.getCourseId(), vo.getTeacherId(), vo.getStatus(), vo.getCountStatus())).collect(toList());
             return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, studentId));
-        }else {
+        } else {
             //不是学生是教师只能查看自己创建的课程信息
             return WebResult.okResult(courseService.findAllCourseVoByCreateUser(studentId));
         }
     }
+
     @ApiOperation(value = "物理全部删除课程信息和对应的计划课程")
     @DeleteMapping(path = "/{courseId}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目/课程id", dataType = "string", required = true, paramType = "form")
     })
-    public WebResult deleteById(@PathVariable String courseId){
+    public WebResult deleteById(@PathVariable String courseId) {
         MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程id不能为空");
         Course course = courseService.getById(courseId);
         MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser()), DefineCode.ERR0010, "正在计划中的课程信息不能删除");

@@ -8,18 +8,20 @@ import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.repository.dto.CourseTeacherDto;
+import com.project.teachplan.repository.dto.IPlanStatusDto;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
+import com.project.teachplan.vo.CourseTeacherVo;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -54,11 +56,25 @@ public class TeachPlanCourseService {
         return teachPlanCourseVerifyRepository.findAllByPlanId(planId);
     }
 
-    public List<CourseTeacherDto> findCourseIdAndTeacherIdByClassId(String classId) {
+    public List<CourseTeacherVo> findCourseIdAndTeacherIdByClassId(String classId) {
         //查询计划Id
-        List<String> planIds = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
+        List<IPlanStatusDto> dtos = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
+        List<String> planIds = dtos.stream().filter(Objects::nonNull).map(IPlanStatusDto::getPlanId).collect(toList());
+        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(d -> findCourseTeacherVo(d, dtos))
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
 
-        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds);
+    private CourseTeacherVo findCourseTeacherVo(CourseTeacherDto dto, List<IPlanStatusDto> dtos) {
+        for (IPlanStatusDto i : dtos) {
+            if (dto.getPlanId().equals(i.getPlanId())) {
+                return new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId(), i.getStatus(), i.getCountStatus());
+            }
+        }
+        return null;
     }
 
     void updateVerifyPlanCourse(String planId, String verifyStatus, String remark, String userId) {
@@ -73,7 +89,7 @@ public class TeachPlanCourseService {
                         BeanUtil.copyProperties(t, p);
                         teachPlanCourseList.add(p);
                     }
-                }).collect(Collectors.toList());
+                }).collect(toList());
         if (!teachPlanCourseVerifyList.isEmpty()) {
             teachPlanCourseVerifyRepository.saveAll(teachPlanCourseVerifyList);
         }
@@ -88,16 +104,18 @@ public class TeachPlanCourseService {
 
     /**
      * 查询对应的教师信息是否有正在执行的计划课程
+     *
      * @param teacherId
      * @return
      */
-    public boolean isAfterOrEqualsByTeacherId(String teacherId){
+    public boolean isAfterOrEqualsByTeacherId(String teacherId) {
         List<TeachPlanCourseVerify> courseVerifyList = teachPlanCourseVerifyRepository.findAllByTeacherId(teacherId);
         return isValidated(courseVerifyList);
     }
 
     /**
      * 查询课程对应的计划是有正在执行的计划
+     *
      * @param courseNumber
      * @param teacherId
      * @return
@@ -107,7 +125,7 @@ public class TeachPlanCourseService {
         return isValidated(teachPlanCourseVerifyList);
     }
 
-    private boolean isValidated(List<TeachPlanCourseVerify> teachPlanCourseVerifyList){
+    private boolean isValidated(List<TeachPlanCourseVerify> teachPlanCourseVerifyList) {
         Set<String> planIds = teachPlanCourseVerifyList.stream().filter(Objects::nonNull).map(TeachPlanCourseVerify::getPlanId).collect(toSet());
         //查询对应的计划
         List<TeachPlanVerify> allById = teachPlanVerifyRepository.findAllById(planIds);

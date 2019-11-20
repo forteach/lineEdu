@@ -1,21 +1,16 @@
-package com.project.course.web.vo;
+package com.project.teachplan.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 /**
- * @Auther: zhangyy
- * @Email: zhang10092009@hotmail.com
- * @Date: 2019/10/13 21:34
- * @Version: 1.0
- * @Description:
+ * @author: zhangyy
+ * @email: zhang10092009@hotmail.com
+ * @date: 19-11-20 12:13
+ * @version: 1.0
+ * @description:
  */
 @Data
-@NoArgsConstructor
-public class CourseTeacherVo implements Serializable {
+public class CourseTeacherVo {
     private String courseId;
     private String teacherId;
     private Integer status;
