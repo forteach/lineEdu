@@ -459,8 +459,14 @@ public class TeachService {
                     courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
                             .ifPresent(d -> {
                                 //线上成绩 (学习时长/课程总时长) * 视频占比 + (习题回答正确数量/总习题数量) * 练习占比
-                                BigDecimal videoScore = NumberUtil.mul(NumberUtil.div(d.getOnLineTime(), d.getOnLineTimeSum(), 2), Double.valueOf(d.getVideoPercentage()) / 100);
-                                BigDecimal jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getCorrectSum(), 2), Double.valueOf(d.getVideoPercentage()) / 100);
+                                BigDecimal videoScore = new BigDecimal("0");
+                                BigDecimal jobsScore = new BigDecimal("0");
+                                if (0 != d.getOnLineTimeSum()){
+                                    videoScore = NumberUtil.mul(NumberUtil.div(d.getOnLineTime(), d.getOnLineTimeSum(), 2), Double.valueOf(d.getVideoPercentage()) / 100);
+                                }
+                                if (0 != d.getAnswerSum()){
+                                    jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getCorrectSum(), 2), Double.valueOf(d.getVideoPercentage()) / 100);
+                                }
                                 list.add(new ScoreVo(d.getCourseId(), strings[0], NumberUtil.add(videoScore, jobsScore).toPlainString()));
                             });
                 });
