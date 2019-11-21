@@ -8,7 +8,6 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.token.annotation.PassToken;
 import com.project.token.service.TokenService;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.method.HandlerMethod;
@@ -28,7 +27,6 @@ import static com.project.token.constant.TokenKey.USER_TOKEN_PREFIX;
  * @date: 2018/10/30 15:27
  */
 @Slf4j
-@NoArgsConstructor
 public class SysUserLoginInterceptor implements HandlerInterceptor {
 
     @Resource
@@ -37,6 +35,7 @@ public class SysUserLoginInterceptor implements HandlerInterceptor {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @SuppressWarnings(value = "all")
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
         // 如果不是映射到方法直接通过
