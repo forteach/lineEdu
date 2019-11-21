@@ -95,7 +95,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                 weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
                 weChatUser.setCreateUser(bindingUserReq.getStuIDCard());
                 weChatUserRepository.save(weChatUser);
-                setTokenRedis(weChatUser, key, TOKEN_STUDENT);
+                //setTokenRedis(weChatUser, key, TOKEN_STUDENT);
                 return "绑定成功";
             }
             return "身份信息不符, 认证失败!";
@@ -111,9 +111,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     private String bindTeacher(BindingUserRequest bindingUserReq) {
         List<WeChatUser> list = weChatUserRepository.findByStudentId(bindingUserReq.getStuIDCard());
         String openId = bindingUserReq.getOpenId();
-        if (list.isEmpty()) {
-            MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "您注册的手机号码，不是教师手机号码，请联系管理员");
-        }
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "您注册的手机号码，不是教师手机号码，请联系管理员");
         WeChatUser weChatUser = list.get(0);
         String key = USER_PREFIX.concat(openId);
         updateWeChatUser(key, bindingUserReq, weChatUser);
@@ -121,18 +119,18 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         weChatUser.setBinding(WX_INFO_BINDIND_0);
         weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
         weChatUserRepository.save(weChatUser);
-        setTokenRedis(weChatUser, key, TOKEN_TEACHER);
+        //setTokenRedis(weChatUser, key, TOKEN_TEACHER);
         return "绑定成功";
     }
 
-    private void setTokenRedis(WeChatUser weChatUser, String key, String type) {
-        //保存redis 设置有效期7天
-        Map<String, Object> map = BeanUtil.beanToMap(weChatUser);
-        //设置token类型为学生微信登录
-        map.put("type", type);
-        stringRedisTemplate.opsForHash().putAll(key, map);
-        stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
-    }
+//    private void setTokenRedis(WeChatUser weChatUser, String key, String type) {
+//        //保存redis 设置有效期7天
+//        Map<String, Object> map = BeanUtil.beanToMap(weChatUser);
+//        //设置token类型为学生微信登录
+//        map.put("type", type);
+//        stringRedisTemplate.opsForHash().putAll(key, map);
+//        stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
+//    }
 
     private void updateWeChatUser(String key, BindingUserRequest bindingUserReq, WeChatUser weChatUser) {
         String sessionKey = tokenService.getSessionKey(key);
