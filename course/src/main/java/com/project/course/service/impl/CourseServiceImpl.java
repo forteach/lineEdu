@@ -273,7 +273,8 @@ public class CourseServiceImpl implements CourseService {
     public void taskCourseStudy() {
         //查询学生近一年学习时长并计算学习情况
         courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
-                .parallelStream()
+                .stream()
+                .filter(Objects::nonNull)
                 .forEach(r -> courseRepository.findById(r.getCourseId())
                         .ifPresent(c -> {
                             CourseStudy courseStudy = findCourseStudy(c.getCourseId(), r.getStudentId());

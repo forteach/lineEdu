@@ -142,7 +142,8 @@ public class ExportServiceImpl implements ExportService {
     private void setStudentExpand(StudentExport studentExpand, String studentId) {
         Map<String, String> map = MapUtil.newHashMap();
         studentExpandRepository.findByIsValidatedEqualsAndStudentId(studentId)
-                .parallelStream()
+                .stream()
+                .filter(Objects::nonNull)
                 .forEach(dto -> {
                     map.put(dto.getExpandName(), dto.getExpandValue());
                 });
@@ -239,7 +240,7 @@ public class ExportServiceImpl implements ExportService {
         List<String> list = CollUtil.newArrayList();
         //学生信息
         viewStudentExportRepository.findAllByIsValidatedEqualsDto(TAKE_EFFECT_OPEN)
-                .parallelStream()
+                .stream()
                 .filter(Objects::nonNull)
                 .forEach(dto -> {
                     redisTemplate.opsForHash().putAll(dto.get("studentId").concat(EXPORT_EXCEL_PREFIX), dto);
@@ -247,7 +248,7 @@ public class ExportServiceImpl implements ExportService {
                     list.add(dto.get("studentId"));
                 });
         //扩展信息
-        studentExpandRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN).parallelStream()
+        studentExpandRepository.findAllByIsValidatedEquals(TAKE_EFFECT_OPEN).stream()
                 .filter(Objects::nonNull)
                 .filter(dto -> StrUtil.isNotBlank(dto.getStudentId()))
                 .filter(dto -> StrUtil.isNotBlank(dto.getExpandName()) && StrUtil.isNotBlank(dto.getExpandValue()))
@@ -257,7 +258,7 @@ public class ExportServiceImpl implements ExportService {
                 });
         //家庭成员信息
         familyRepository.findByIsValidatedEqualsDto(TAKE_EFFECT_OPEN)
-                .parallelStream()
+                .stream()
                 .filter(Objects::nonNull)
                 .forEach(dto -> {
                     setFamilyRedis(dto);

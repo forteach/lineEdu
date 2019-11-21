@@ -141,7 +141,7 @@ public class TeachService {
     }
 
     private void saveTeachPlanClass(String planId, TeachPlanVerify teachPlan, List<String> classIds, String remark, String centerAreaId, String userId) {
-        List<TeachPlanClassVerify> planClassList = classIds.parallelStream().filter(Objects::nonNull)
+        List<TeachPlanClassVerify> planClassList = classIds.stream().filter(Objects::nonNull)
                 .map(c -> new TeachPlanClassVerify(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c), centerAreaId, remark, userId, VERIFY_STATUS_APPLY))
                 .collect(toList());
         teachPlanClassVerifyRepository.saveAll(planClassList);

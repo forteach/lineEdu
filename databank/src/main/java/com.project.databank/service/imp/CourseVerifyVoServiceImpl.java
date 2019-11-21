@@ -88,7 +88,7 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     @Transactional(rollbackFor = Exception.class)
     public void taskQuestionRedis() {
         Set<String> set = redisTemplate.opsForSet().members(QUESTIONS_VERIFY);
-        List<CourseVerifyVo> list = set.parallelStream()
+        List<CourseVerifyVo> list = set.stream()
                 .filter(Objects::nonNull)
                 .map(questionId -> {
                     Map<String, String> map = hashOperations.entries(QUESTION_CHAPTER.concat(questionId));

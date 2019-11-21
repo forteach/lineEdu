@@ -102,7 +102,7 @@ public class StudentOnLineService {
 
     private void checkImportStudentData(List<StudentOnLine> list){
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "导入数据不存在");
-        list.parallelStream().forEach(s -> {
+        list.parallelStream().filter(Objects::nonNull).forEach(s -> {
             MyAssert.isTrue(StrUtil.isBlank(s.getStudentName()), DefineCode.ERR0010, "姓名不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getGender()), DefineCode.ERR0010, "性别不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getClassName()), DefineCode.ERR0010, "班级名称不能为空");

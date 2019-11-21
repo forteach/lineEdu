@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -129,7 +130,7 @@ public class CatalogueServiceImpl implements CatalogueService {
         Set<String> stringSet = lists.stream().filter(courseChapter -> !COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId()))
                 .map(Catalogue::getChapterId)
                 .collect(Collectors.toSet());
-        stringSet.parallelStream().map(s -> {
+        stringSet.stream().filter(Objects::nonNull).map(s -> {
             //查询对应的目录集合
             return findLists(s, courseId);
         });
