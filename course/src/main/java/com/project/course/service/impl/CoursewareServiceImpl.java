@@ -115,6 +115,7 @@ public class CoursewareServiceImpl implements CoursewareService {
                     .videoTime(i.getVideoTime())
                     .remark(i.getRemark())
                     .verifyStatus(i.getVerifyStatus())
+                    .duration(chapterRecords.getSumTime())
                     .locationTime(chapterRecords.getLocationTime())
                     .videoDuration(chapterRecords.getVideoDuration())
                     .build();

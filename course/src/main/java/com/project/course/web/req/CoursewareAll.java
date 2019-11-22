@@ -38,4 +38,6 @@ public class CoursewareAll implements Serializable {
     private Long videoDuration;
     /** 观看位置时间*/
     private String locationTime;
+    /** 观看视频时间长度*/
+    private Integer duration;
 }
