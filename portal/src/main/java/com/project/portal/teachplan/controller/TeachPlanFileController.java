@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version: 1.0
  * @description:
  */
+@Slf4j
 @RestController
 @Api(value = "在线教学计划资料管理", tags = {"在线教学计划资料管理"})
 @RequestMapping(path = "/TeachPlanFile", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -92,8 +94,11 @@ public class TeachPlanFileController {
     @ApiOperation(value = "删除计划对应的资料信息")
     @DeleteMapping(path = "/planId/{planId}")
     @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true)
-    public WebResult deleteAllByPlanId(@PathVariable String planId) {
+    public WebResult deleteAllByPlanId(@PathVariable String planId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        log.info("delete teachPlanFile planId : [{}], userId : [{}]", planId, userId);
         teachPlanFileService.deleteByPlanId(planId);
         return WebResult.okResult();
     }

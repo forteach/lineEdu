@@ -180,6 +180,7 @@ public class StudentOnLineController {
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
+        log.info("delete student studentId : [{}], userId : [{}]", studentId, userId);
         userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除学生信息", "删除", MapUtil.builder("studentId", studentId)));
         return WebResult.okResult();
     }

@@ -20,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
@@ -30,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_SCORE;
 import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_STUDY;
 import static com.project.portal.request.ValideSortVo.valideSort;
-
+@Slf4j
 @RestController
 @RequestMapping(path = "/teachPlan", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Api(value = "在线计划管理", tags = {"在线计划管理"})
@@ -155,9 +156,10 @@ public class TeachPlanController {
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form")
     public WebResult deleteByPlanId(@PathVariable String planId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
-        teachService.deleteByPlanId(planId);
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
+        log.info("delete plan planId : [{}], userId : [{}]", planId, userId);
+        teachService.deleteByPlanId(planId);
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();

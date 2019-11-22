@@ -318,6 +318,7 @@ public class CourseController {
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
+        log.info("delete course courseId : [{}], userId : [{}]", courseId, userId);
         userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除课程信息", "删除", course));
         return WebResult.okResult();
     }

@@ -98,6 +98,7 @@ public class WeChatUserController {
     @GetMapping("/restart/{studentId}")
     public WebResult restart(@PathVariable("studentId") String studentId){
         MyAssert.isNull(studentId, DefineCode.ERR0010, "学生id不为空");
+        log.info("restart weChat studentId : [{}]", studentId);
         weChatUserService.restart(studentId);
         return WebResult.okResult();
     }

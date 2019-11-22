@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import static com.project.portal.request.ValideSortVo.valideSort;
  * @Version: 1.0
  * @Description:
  */
+@Slf4j
 @RestController
 @Api(value = "在线项目课程字典管理", tags = {"在线项目课程字典管理"})
 @RequestMapping(path = "/onLineCourseDic", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -98,7 +100,9 @@ public class OnLineCourseDicController {
     @ApiImplicitParam(name = "courseId", dataType = "string", required = true, paramType = "form")
     public WebResult deleteByCourseId(@RequestBody String courseId) {
         MyAssert.isNull(courseId, DefineCode.ERR0010, "课程id不为空");
-        onLineCourseDicService.deleteByCourseId(JSONObject.parseObject(courseId).getString("courseId"));
+        String courseIdStr = JSONObject.parseObject(courseId).getString("courseId");
+        log.info("delete course dic courseId : [{}]", courseIdStr);
+        onLineCourseDicService.deleteByCourseId(courseIdStr);
         return WebResult.okResult();
     }
 

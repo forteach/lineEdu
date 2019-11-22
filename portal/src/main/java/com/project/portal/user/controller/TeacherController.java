@@ -176,11 +176,12 @@ public class TeacherController {
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
     public WebResult deleteByTeacherId(@PathVariable String teacherId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不能为空");
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        log.info("delete teacher teacherId : [{}], userId : [{}]", teacherId, userId);
         MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsByTeacherId(teacherId), DefineCode.ERR0010, "你要删除的教师信息有对应的计划课程");
         TeacherVerify teacher = teacherService.findByTeacherId(teacherId);
         teacherService.deleteByTeacherId(teacherId);
-        String token = httpServletRequest.getHeader("token");
-        String userId = tokenService.getUserId(token);
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
