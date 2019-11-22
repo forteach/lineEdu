@@ -68,6 +68,9 @@ public interface TokenService {
      */
     String getClassId(String token);
 
+    /** 获取用户名*/
+    String getUserName(String token);
+
     /**
      * 保存token 到redis
      *

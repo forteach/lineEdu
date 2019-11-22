@@ -15,11 +15,14 @@ import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
 import com.project.databank.service.CourseVerifyVoService;
 import com.project.databank.web.vo.DataDatumVo;
+import com.project.mongodb.domain.UserRecord;
+import com.project.mongodb.service.UserRecordService;
 import com.project.portal.course.controller.verify.CourseVer;
 import com.project.portal.course.request.*;
 import com.project.portal.course.response.CourseListResp;
 import com.project.portal.course.vo.RCourse;
 import com.project.portal.response.WebResult;
+import com.project.schoolroll.service.LearnCenterService;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -66,6 +69,10 @@ public class CourseController {
     private CourseChapterService courseChapterService;
     @Resource
     private CourseVerifyVoService courseVerifyVoService;
+    @Resource
+    private UserRecordService userRecordService;
+    @Resource
+    private LearnCenterService learnCenterService;
 
     @UserLoginToken
     @ApiOperation(value = "保存课程科目信息", notes = "保存科目课程信息")
@@ -292,7 +299,7 @@ public class CourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目/课程id", dataType = "string", required = true, paramType = "form")
     })
-    public WebResult deleteById(@PathVariable String courseId) {
+    public WebResult deleteById(@PathVariable String courseId, HttpServletRequest httpServletRequest) {
         MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程id不能为空");
         Course course = courseService.getById(courseId);
         MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser()), DefineCode.ERR0010, "正在计划中的课程信息不能删除");
@@ -306,6 +313,12 @@ public class CourseController {
         courseVerifyVoService.deleteAllByCourseId(courseId);
         //删除课程信息
         courseService.deleteById(courseId);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String userName = tokenService.getUserName(token);
+        String centerId = tokenService.getCenterAreaId(token);
+        String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除课程信息", "删除", course));
         return WebResult.okResult();
     }
 }

@@ -34,6 +34,8 @@ public interface TeacherService {
 
     Teacher findById(String teacherId);
 
+    TeacherVerify findByTeacherId(String teacherId);
+
     Page<TeacherDto> findAllPageDto(PageRequest pageRequest);
 
     Page<TeacherDto> findAllPageDtoByVerifyStatus(String verifyStatus, PageRequest pageRequest);

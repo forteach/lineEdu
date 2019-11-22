@@ -7,11 +7,14 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.mongodb.domain.UserRecord;
+import com.project.mongodb.service.UserRecordService;
 import com.project.portal.response.WebResult;
 import com.project.portal.user.request.TeacherFindAllPageRequest;
 import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.portal.util.MyExcleUtil;
+import com.project.schoolroll.service.LearnCenterService;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
@@ -53,13 +56,17 @@ public class TeacherController {
     private final TokenService tokenService;
     private final WeChatUserService weChatUserService;
     private final TeachPlanCourseService teachPlanCourseService;
+    private final UserRecordService userRecordService;
+    private final LearnCenterService learnCenterService;
 
-    public TeacherController(TeacherService teacherService, TokenService tokenService,
+    public TeacherController(TeacherService teacherService, TokenService tokenService, UserRecordService userRecordService,LearnCenterService learnCenterService,
                              WeChatUserService weChatUserService, TeachPlanCourseService teachPlanCourseService) {
         this.teacherService = teacherService;
         this.tokenService = tokenService;
         this.weChatUserService = weChatUserService;
         this.teachPlanCourseService = teachPlanCourseService;
+        this.learnCenterService = learnCenterService;
+        this.userRecordService = userRecordService;
     }
 
     private void validator(TeacherSaveUpdateRequest request) {
@@ -167,10 +174,17 @@ public class TeacherController {
     @ApiOperation(value = "删除教师信息(物理删除)")
     @DeleteMapping(path = "/{teacherId}")
     @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteByTeacherId(@PathVariable String teacherId) {
+    public WebResult deleteByTeacherId(@PathVariable String teacherId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(teacherId, DefineCode.ERR0010, "教师id不能为空");
         MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsByTeacherId(teacherId), DefineCode.ERR0010, "你要删除的教师信息有对应的计划课程");
+        TeacherVerify teacher = teacherService.findByTeacherId(teacherId);
         teacherService.deleteByTeacherId(teacherId);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String userName = tokenService.getUserName(token);
+        String centerId = tokenService.getCenterAreaId(token);
+        String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除教师信息", "删除", teacher));
         return WebResult.okResult();
     }
 

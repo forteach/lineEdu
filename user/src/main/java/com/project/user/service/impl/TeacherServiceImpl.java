@@ -17,6 +17,7 @@ import com.project.user.service.TeacherService;
 import com.project.user.service.UserService;
 import com.project.user.web.vo.RegisterTeacherVo;
 import com.project.user.web.vo.TeacherVerifyVo;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -150,7 +151,15 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByTeacherId(String teacherId) {
+        teacherVerifyRepository.deleteById(teacherId);
         teacherRepository.deleteById(teacherId);
+    }
+
+    @Override
+    public TeacherVerify findByTeacherId(String teacherId){
+        Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(teacherId);
+        MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "不存在对应的教师信息");
+        return optionalTeacher.get();
     }
 
     @Override

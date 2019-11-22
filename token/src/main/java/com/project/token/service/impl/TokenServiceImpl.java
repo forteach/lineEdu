@@ -129,6 +129,14 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public String getUserName(String token){
+        if (TOKEN_TEACHER.equals(getValue(token, 1))){
+            return hashOperations.get(getKey(getUserId(token)), "userName");
+        }
+        return "";
+    }
+
+    @Override
     public void saveRedis(String key, Map<String, Object> map) {
         stringRedisTemplate.opsForHash().putAll(key, map);
         //设置有效期7天

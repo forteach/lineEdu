@@ -1,12 +1,16 @@
 package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.mongodb.domain.UserRecord;
+import com.project.mongodb.service.UserRecordService;
 import com.project.portal.response.WebResult;
 import com.project.portal.teachplan.request.*;
+import com.project.schoolroll.service.LearnCenterService;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.teachplan.service.TeachService;
@@ -35,13 +39,19 @@ public class TeachPlanController {
     private final TeachService teachService;
     private final TokenService tokenService;
 
+    private final UserRecordService userRecordService;
+    private final LearnCenterService learnCenterService;
+
     private final TeachPlanCourseService teachPlanCourseService;
 
     @Autowired
-    public TeachPlanController(TeachService teachService, TeachPlanCourseService teachPlanCourseService, TokenService tokenService) {
+    public TeachPlanController(TeachService teachService, TeachPlanCourseService teachPlanCourseService,
+                               TokenService tokenService, UserRecordService userRecordService, LearnCenterService learnCenterService) {
         this.teachService = teachService;
         this.teachPlanCourseService = teachPlanCourseService;
         this.tokenService = tokenService;
+        this.userRecordService = userRecordService;
+        this.learnCenterService = learnCenterService;
     }
 
     @UserLoginToken
@@ -143,9 +153,15 @@ public class TeachPlanController {
     @ApiOperation(value = "删除(物理)对应计划的信息")
     @DeleteMapping(path = "/{planId}")
     @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "form")
-    public WebResult deleteByPlanId(@PathVariable String planId) {
+    public WebResult deleteByPlanId(@PathVariable String planId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         teachService.deleteByPlanId(planId);
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String userName = tokenService.getUserName(token);
+        String centerId = tokenService.getCenterAreaId(token);
+        String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除计划信息", "删除", MapUtil.builder("planId", planId)));
         return WebResult.okResult();
     }
 

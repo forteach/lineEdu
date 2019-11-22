@@ -1,15 +1,19 @@
 package com.project.portal.schoolroll.controller;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.service.CourseRecordsService;
+import com.project.mongodb.domain.UserRecord;
+import com.project.mongodb.service.UserRecordService;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.StudentOnLineFindAllPageRequest;
 import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
+import com.project.schoolroll.service.LearnCenterService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
@@ -48,17 +52,21 @@ public class StudentOnLineController {
     private final WeChatUserService weChatUserService;
     private final StudentOnLineRepository studentOnLineRepository;
     private final CourseRecordsService courseRecordsService;
+    private final UserRecordService userRecordService;
+    private final LearnCenterService learnCenterService;
 
 
     @Autowired
     public StudentOnLineController(StudentOnLineService studentOnLineService, TokenService tokenService,
-                                   CourseRecordsService courseRecordsService,
+                                   CourseRecordsService courseRecordsService, UserRecordService userRecordService, LearnCenterService learnCenterService,
                                    WeChatUserService weChatUserService, StudentOnLineRepository studentOnLineRepository) {
         this.studentOnLineService = studentOnLineService;
         this.tokenService = tokenService;
         this.studentOnLineRepository = studentOnLineRepository;
         this.weChatUserService = weChatUserService;
         this.courseRecordsService = courseRecordsService;
+        this.userRecordService = userRecordService;
+        this.learnCenterService = learnCenterService;
     }
 
     @PassToken
@@ -158,7 +166,7 @@ public class StudentOnLineController {
     @ApiOperation(value = "物理删除学生信息和对应学习的学习记录和回答问题信息")
     @DeleteMapping("/{studentId}")
     @ApiImplicitParam(name = "studentId", value = "学生id", dataType = "string", required = true, paramType = "form")
-    public WebResult deleteById(@PathVariable(value = "studentId") String studentId){
+    public WebResult deleteById(@PathVariable(value = "studentId") String studentId, HttpServletRequest httpServletRequest){
         MyAssert.isTrue(StrUtil.isBlank(studentId), DefineCode.ERR0010, "学生Id为空");
         //删除学生信息
         studentOnLineService.deleteById(studentId);
@@ -166,6 +174,13 @@ public class StudentOnLineController {
         courseRecordsService.deleteByStudentId(studentId);
         //删除学生微信登录信息
         weChatUserService.deleteByStudentId(studentId);
+        //添加记录
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        String userName = tokenService.getUserName(token);
+        String centerId = tokenService.getCenterAreaId(token);
+        String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除学生信息", "删除", MapUtil.builder("studentId", studentId)));
         return WebResult.okResult();
     }
 
