@@ -35,7 +35,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
 import static com.project.portal.request.ValideSortVo.valideSort;
@@ -180,12 +182,13 @@ public class TeacherController {
         String userId = tokenService.getUserId(token);
         log.info("delete teacher teacherId : [{}], userId : [{}]", teacherId, userId);
         MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsByTeacherId(teacherId), DefineCode.ERR0010, "你要删除的教师信息有对应的计划课程");
-        TeacherVerify teacher = teacherService.findByTeacherId(teacherId);
         teacherService.deleteByTeacherId(teacherId);
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
-        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除教师信息", "删除", teacher));
+        Map<String,String> map = new HashMap<>(2);
+        map.put("teacherId", teacherId);
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除教师信息", "删除", map));
         return WebResult.okResult();
     }
 

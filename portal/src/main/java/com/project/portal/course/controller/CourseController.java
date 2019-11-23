@@ -34,7 +34,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
@@ -319,7 +321,11 @@ public class CourseController {
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
         log.info("delete course courseId : [{}], userId : [{}]", courseId, userId);
-        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除课程信息", "删除", course));
+        Map<String, String> map = new HashMap<>(6);
+        map.put("courseId", courseId);
+        map.put("courseNumber", course.getCourseNumber());
+        map.put("courseName", course.getCourseName());
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除课程信息", "删除", map));
         return WebResult.okResult();
     }
 }

@@ -34,7 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
@@ -181,7 +183,9 @@ public class StudentOnLineController {
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
         log.info("delete student studentId : [{}], userId : [{}]", studentId, userId);
-        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除学生信息", "删除", MapUtil.builder("studentId", studentId)));
+        Map<String, String> map = new HashMap<>(2);
+        map.put("studentId", studentId);
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除学生信息", "删除", map));
         return WebResult.okResult();
     }
 
