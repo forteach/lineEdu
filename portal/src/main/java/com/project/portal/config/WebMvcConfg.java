@@ -124,7 +124,7 @@ public class WebMvcConfg implements WebMvcConfigurer {
         registry.addInterceptor(sysUserLoginInterceptor())
                 .excludePathPatterns("*.css", "*.js").addPathPatterns("/**")
                 .excludePathPatterns("*").addPathPatterns("/error")
-                .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/swagger-ui.html/**")
+                .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/swagger-ui.html/**", "/error")
                 .excludePathPatterns("/actuator/**");
         registry.addInterceptor(new ReqInterceptor()).addPathPatterns("/**");
     }
