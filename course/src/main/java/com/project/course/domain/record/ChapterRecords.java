@@ -33,7 +33,7 @@ import java.io.Serializable;
 public class ChapterRecords extends AbstractRecord implements Serializable {
 
     @Column(name = "video_duration", columnDefinition = "INT(11) DEFAULT 0 COMMENT '视频时长(单位秒)'", nullable = false)
-    private Long videoDuration = this.videoDuration == null ? 0 : this.videoDuration;
+    private Integer videoDuration = this.videoDuration == null ? 0 : this.videoDuration;
 
     @Column(name = "location_time", columnDefinition = "VARCHAR(32) COMMENT '观看位置时间'")
     private String locationTime;

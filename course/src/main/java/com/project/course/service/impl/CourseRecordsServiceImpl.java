@@ -68,8 +68,7 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
     public void saveChapterRecord(CourseRecordsSaveReq req) {
         ChapterRecords chapterRecords = findChapterRecordsByStudentIdAndChapterId(req.getStudentId(), req.getCourseId(), req.getChapterId());
         BeanUtil.copyProperties(req, chapterRecords);
-        int length = req.getDuration() + chapterRecords.getSumTime();
-        int sumLength = length > req.getVideoDuration() ? req.getVideoDuration() : length;
+        int sumLength = req.getDuration() > chapterRecords.getVideoDuration() ? chapterRecords.getVideoDuration() : req.getDuration();
         chapterRecords.setSumTime(sumLength);
         chapterRecords.setUpdateUser(req.getCreateUser());
         chapterRecordsRepository.save(chapterRecords);

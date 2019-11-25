@@ -35,7 +35,7 @@ public class CoursewareAll implements Serializable {
     private String verifyStatus;
 
     /** 视频时长(单位秒)*/
-    private Long videoDuration;
+    private Integer videoDuration;
     /** 观看位置时间*/
     private String locationTime;
     /** 观看视频时间长度*/
