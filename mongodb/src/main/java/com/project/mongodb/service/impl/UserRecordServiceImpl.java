@@ -34,11 +34,11 @@ public class UserRecordServiceImpl implements UserRecordService {
 
     @Override
     public Page<UserRecord> findAllPageByCenterId(String centerId, PageRequest request) {
-        return userRecordRepository.findAllByCenterAreaIdOrderByUDate(centerId, request);
+        return userRecordRepository.findAllByCenterAreaIdOrderByIdDesc(centerId, request);
     }
 
     @Override
     public Page<UserRecord> findAllPage(PageRequest request) {
-        return userRecordRepository.findAllByOrderByUDate(request);
+        return userRecordRepository.findAllByOrderByIdDesc(request);
     }
 }

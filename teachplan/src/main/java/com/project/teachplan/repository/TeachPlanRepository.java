@@ -18,6 +18,9 @@ import java.util.List;
  */
 public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, JpaSpecificationExecutor<TeachPlan> {
 
+    @Modifying
+    void deleteAllByPlanId(String planId);
+
     @Query(value = "select planId AS planId, status as status, countStatus as countStatus from TeachPlan where isValidated = '0' " +
             " and startDate <= ?1 and endDate >= ?1 and planId in (select planId from TeachPlanClass where isValidated = '0' and classId = ?2)")
     @Transactional(readOnly = true)

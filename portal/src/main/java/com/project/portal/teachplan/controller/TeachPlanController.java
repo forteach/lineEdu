@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_SCORE;
 import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_STUDY;
 import static com.project.portal.request.ValideSortVo.valideSort;
@@ -163,7 +166,9 @@ public class TeachPlanController {
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
-        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除计划信息", "删除", MapUtil.builder("planId", planId)));
+        Map<String,String> map = new HashMap<>(2);
+        map.put("planId", planId);
+        userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除计划信息", "删除", map));
         return WebResult.okResult();
     }
 

@@ -192,7 +192,7 @@ public class TeachService {
         MyAssert.isTrue(DateUtil.parseDate(teachPlanVerify.getEndDate()).isAfterOrEquals(new Date()), DefineCode.ERR0010, "正在进行的计划不能删除");
         teachPlanCourseRepository.deleteAllByPlanId(planId);
         teachPlanClassRepository.deleteAllByPlanId(planId);
-        teachPlanRepository.deleteById(planId);
+        teachPlanRepository.deleteAllByPlanId(planId);
         teachPlanVerifyRepository.deleteById(planId);
         teachPlanCourseVerifyRepository.deleteAllByPlanId(planId);
         teachPlanClassVerifyRepository.deleteAllByPlanId(planId);

@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface UserRecordRepository extends MongoRepository<UserRecord, String> {
 
     @Transactional(readOnly = true)
-    Page<UserRecord> findAllByOrderByUDate(PageRequest pageRequest);
+    Page<UserRecord> findAllByOrderByIdDesc(PageRequest pageRequest);
     @Transactional(readOnly = true)
-    Page<UserRecord> findAllByCenterAreaIdOrderByUDate(String centerAreaId, PageRequest pageRequest);
+    Page<UserRecord> findAllByCenterAreaIdOrderByIdDesc(String centerAreaId, PageRequest pageRequest);
 }
