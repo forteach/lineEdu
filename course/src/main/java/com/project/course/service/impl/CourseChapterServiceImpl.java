@@ -135,7 +135,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         Set<String> stringSet = findLists(courseChapter.getCourseId(), chapterId);
         stringSet.add(chapterId);
         int result = courseChapterRepository.deleteBathIds(stringSet);
-        log.info("chapterId : {}, deleteBath : {}", result);
+        log.info("chapterId : [{}], courseId : [{}], result : [{}] ", chapterId, courseId, result);
         //重新计算课程总时长
         coursewareService.deleteBathByChapterIds(stringSet);
         int videoTimeSum = coursewareService.findVideoTimeSum(courseId);

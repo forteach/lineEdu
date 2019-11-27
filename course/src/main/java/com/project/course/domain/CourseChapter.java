@@ -17,7 +17,10 @@ import javax.persistence.*;
 @Entity
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "course_chapter", indexes = {@Index(columnList = "chapter_id", name = "chapter_id_index"), @Index(columnList = "course_id", name = "course_id_index")})
+@Table(name = "course_chapter", indexes = {
+        @Index(columnList = "chapter_id", name = "chapter_id_index"),
+        @Index(columnList = "course_id", name = "course_id_index")
+})
 @org.hibernate.annotations.Table(appliesTo = "course_chapter", comment = "课程讲课目录")
 @GenericGenerator(name = "system-uuid", strategy = "uuid")
 @AllArgsConstructor

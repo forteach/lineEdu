@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface ImpCoursewareRepoitory extends JpaRepository<ImportantCourseware, String> {
@@ -29,7 +30,7 @@ public interface ImpCoursewareRepoitory extends JpaRepository<ImportantCoursewar
     @Query(value = "select sum(videoTime) as videoTimeSum from ImportantCourseware " +
             " where isValidated = '0' and verifyStatus = '0' and datumType = '3' and importantType = '2' and courseId = ?1")
     @Transactional(readOnly = true)
-    IVideoTimeSumDto findVideoTimeSumByCourseId(String courseId);
+    Optional<IVideoTimeSumDto> findVideoTimeSumByCourseId(String courseId);
 
     @Modifying
     void deleteAllByCourseId(String courseId);

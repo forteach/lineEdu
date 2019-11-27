@@ -7,6 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.record.ChapterRecords;
 import com.project.course.domain.ziliao.ImportantCourseware;
+import com.project.course.repository.dto.IVideoTimeSumDto;
 import com.project.course.repository.ziliao.ImpCoursewareRepoitory;
 import com.project.course.service.CourseRecordsService;
 import com.project.course.service.CoursewareService;
@@ -152,7 +153,11 @@ public class CoursewareServiceImpl implements CoursewareService {
 
     @Override
     public int findVideoTimeSum(String courseId) {
-        return impCoursewareRepoitory.findVideoTimeSumByCourseId(courseId).getVideoTimeSum();
+         Optional<IVideoTimeSumDto> optional = impCoursewareRepoitory.findVideoTimeSumByCourseId(courseId);
+         if (optional.isPresent()){
+             return optional.get().getVideoTimeSum();
+         }
+         return 0;
     }
 
     @Override
