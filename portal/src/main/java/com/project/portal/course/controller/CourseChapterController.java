@@ -119,9 +119,11 @@ public class CourseChapterController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "章节id", required = true, dataType = "string", paramType = "query")
     })
-    public WebResult findByCourseId(@ApiParam(name = "courseId", value = "根据章节ID 查询对应上层科目信息", required = true) @RequestBody String courseId) {
+    public WebResult findByCourseId(@RequestBody String courseId, HttpServletRequest httpServletRequest) {
         MyAssert.blank(courseId, DefineCode.ERR0010, "科目id不为空");
-        return WebResult.okResult(courseChapterService.findByCourseId(JSONObject.parseObject(courseId).getString("courseId")));
+        String courseIdStr = JSONObject.parseObject(courseId).getString("courseId");
+        String studentId = tokenService.getStudentId(httpServletRequest.getHeader("token"));
+        return WebResult.okResult(courseChapterService.findByCourseId(courseIdStr, studentId));
     }
 
     @UserLoginToken

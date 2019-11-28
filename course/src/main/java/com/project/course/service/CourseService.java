@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Auther: zhangyy
@@ -32,8 +31,6 @@ public interface CourseService {
 
     public void delete(Course course);
 
-    public Course findByCourseId(String courseId);
-
     public List<ICourseListDto> findAll(PageRequest page);
 
     public List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus);
@@ -50,9 +47,9 @@ public interface CourseService {
 
     public int deleteImagesByCourseId(String courseId);
 
-    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId);
+    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId, String key);
 
-    List<CourseVo> findCourseVoByClassId(String classId);
+    List<CourseVo> findCourseVoByClassId(String classId, String key);
 
     List<Course> findAllCourseVoByCreateUser(String createUser);
 

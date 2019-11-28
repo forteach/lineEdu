@@ -109,11 +109,6 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findByIsValidated(TAKE_EFFECT_OPEN, page).getContent();
     }
 
-    @Override
-    public Course findByCourseId(String courseId) {
-        return courseRepository.findByCourseId(courseId);
-    }
-
     /**
      * 分页查询我的课程科目
      *
@@ -225,7 +220,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId) {
+    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId, String key) {
         List<CourseVo> vos = new ArrayList<>();
         for (CourseTeacherVo v : courseIds) {
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
@@ -243,15 +238,14 @@ public class CourseServiceImpl implements CourseService {
             }
         }
         if (!vos.isEmpty()) {
-            stringRedisTemplate.opsForValue().set(TEACH_PLAN_CLASS_COURSEVO.concat(classId), JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
+            stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
         }
         return vos;
     }
 
     @Override
-    public List<CourseVo> findCourseVoByClassId(String classId) {
+    public List<CourseVo> findCourseVoByClassId(String classId, String key) {
         if (StrUtil.isNotBlank(classId)) {
-            String key = TEACH_PLAN_CLASS_COURSEVO.concat(classId);
             if (stringRedisTemplate.hasKey(key)) {
                 return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), CourseVo.class);
             }

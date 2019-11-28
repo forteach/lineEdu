@@ -39,8 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
-import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
+import static com.project.base.common.keyword.Dic.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
 import static java.util.stream.Collectors.toList;
 
@@ -282,14 +281,15 @@ public class CourseController {
         String studentId = tokenService.getStudentId(token);
         if (tokenService.isStudent(token)) {
             String classId = tokenService.getClassId(token);
-            List<CourseVo> vos = courseService.findCourseVoByClassId(classId);
+            String key = TEACH_PLAN_CLASS_COURSEVO.concat(classId);
+            List<CourseVo> vos = courseService.findCourseVoByClassId(classId, key);
             if (vos != null) {
                 return WebResult.okResult(vos);
             }
             List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId)
                     .stream().filter(Objects::nonNull)
                     .map(vo -> new CourseTeacherVo(vo.getCourseId(), vo.getTeacherId(), vo.getStatus(), vo.getCountStatus())).collect(toList());
-            return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, studentId));
+            return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, studentId, key));
         } else {
             //不是学生是教师只能查看自己创建的课程信息
             return WebResult.okResult(courseService.findAllCourseVoByCreateUser(studentId));

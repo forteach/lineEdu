@@ -32,7 +32,7 @@ public interface CourseChapterService {
 
     public void deleteIsValidById(String chapterId);
 
-    public List<CourseTreeResp> findByCourseId(String courseId);
+    public List<CourseTreeResp> findByCourseId(String courseId, String studentId);
 
     public List<ICourseChapterDto> findByChapterParentId(String isValidated, String chapterParentId);
 

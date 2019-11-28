@@ -87,7 +87,10 @@ public class Dic {
     public static final String QUESTION_CHAPTER = "questionChapter$";
     public static final String QUESTIONS_VERIFY = "questionsVerify";
 
+    /** 根据班级查询对应的计划课程章节信息*/
     public static final String TEACH_PLAN_CLASS_COURSEVO = "teachPlanClassCourseVo$";
+    /** 查询课程对应的章节和学习记录 */
+    public static final String COURSE_STUDENT = "courseStudentId$";
 
     public static final String PLAN_COURSE_STUDENT_STUDY = "studyCourse$";
     public static final String PLAN_COURSE_STUDENT_SCORE = "courseScore$";

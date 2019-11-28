@@ -4,13 +4,16 @@ package com.project.course.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.CourseChapter;
+import com.project.course.domain.record.ChapterRecords;
 import com.project.course.repository.CourseChapterRepository;
 import com.project.course.repository.dto.ICourseChapterDto;
 import com.project.course.service.CourseChapterService;
+import com.project.course.service.CourseRecordsService;
 import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CourseChapterEditReq;
@@ -21,10 +24,12 @@ import com.project.course.web.resp.CourseTreeResp;
 import com.project.course.web.vo.ChapterDataFileVo;
 import com.project.course.web.vo.CourseChapterVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +56,10 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     private CoursewareService coursewareService;
     @Resource
     private CourseService courseService;
+    @Resource
+    private CourseRecordsService courseRecordsService;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
 
     @Override
@@ -184,9 +193,21 @@ public class CourseChapterServiceImpl implements CourseChapterService {
      * @return
      */
     @Override
-    public List<CourseTreeResp> findByCourseId(String courseId) {
-        List<ICourseChapterDto> dtoList = courseChapterRepository.findByCourseId(courseId);
+    public List<CourseTreeResp> findByCourseId(String courseId, String studentId) {
+        String key = COURSE_STUDENT.concat(courseId).concat(studentId);
+        if (stringRedisTemplate.hasKey(key)) {
+            return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), CourseTreeResp.class);
+        }
         List<CourseTreeResp> courseTreeResps = new ArrayList<>();
+        builderCourseTreeRespList(courseId, studentId, courseTreeResps);
+        if (!courseTreeResps.isEmpty()){
+            stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(courseTreeResps), Duration.ofSeconds(5));
+        }
+        return courseTreeResps;
+    }
+
+    private List<CourseTreeResp> builderCourseTreeRespList(String courseId, String studentId, List<CourseTreeResp> courseTreeResps){
+        List<ICourseChapterDto> dtoList = courseChapterRepository.findByCourseId(courseId);
         for (int i = 0; i < dtoList.size(); i++) {
             State state = new State();
             ICourseChapterDto courseChapterDto = dtoList.get(i);
@@ -196,12 +217,19 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             courseTreeResp.setParent(courseChapterDto.getChapterParentId());
             courseTreeResp.setRandomQuestionsNumber(courseChapterDto.getRandomQuestionsNumber());
             courseTreeResp.setVideoTime(courseChapterDto.getVideoTime());
+            ChapterRecords chapterRecords = courseRecordsService.findChapterRecordsByStudentIdAndChapterId(studentId, courseId, courseChapterDto.getChapterId());
+            if (null != chapterRecords.getSumTime()){
+                courseTreeResp.setDuration(chapterRecords.getSumTime());
+            }
+            if (null != chapterRecords.getLocationTime()){
+                courseTreeResp.setLocationTime(chapterRecords.getLocationTime());
+            }
             if (PUBLISH_YES.equals(courseChapterDto.getPublish())) {
                 courseTreeResp.setIcon("fa fa-briefcase icon-state-success");
             } else if (PUBLISH_NO.equals(courseChapterDto.getPublish())) {
                 courseTreeResp.setIcon("fa fa-send-o icon-state-success");
             }
-            if (i == 0) {
+            if (0 == i) {
                 state.setSelected(true);
             }
             courseTreeResp.setState(state);
