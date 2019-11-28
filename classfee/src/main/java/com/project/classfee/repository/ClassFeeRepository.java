@@ -11,4 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository("classFeeRepository")
 public interface ClassFeeRepository extends JpaRepository<ClassFee, String>, JpaSpecificationExecutor<ClassFee> {
 
+    public boolean existsByFeeYearIdAndCenterAreaIdAndCreateMonth(String feeYearId,String cengterId,int month);
+
+    public ClassFee findByFeeYearIdAndCenterAreaIdAndCreateMonth(String feeYearId,String cengterId,int month);
 }

@@ -1,19 +1,17 @@
 package com.project.classfee.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.classfee.domain.ClassFee;
-import com.project.classfee.domain.ClassFeeInfo;
-import com.project.classfee.repository.ClassFeeInfoRepository;
 import com.project.classfee.repository.ClassFeeRepository;
-import com.project.classfee.repository.ClassStandardRepository;
 import com.project.mysql.service.BaseMySqlService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -34,32 +32,34 @@ public class ClassFeeService extends BaseMySqlService {
      * 课时费管理
      * @param createYear     创建年份
      * @param classFeeSum    课时费总金额
-     * @param create_month  创建月份
+     * @param createMonth  创建月份
      * @param classSum   课时总数量
      * @param balanceState  课时费结算状态 no 未结算，part部分结算、all全部结算
      * @param balanceSum  课时费已结算金额
      * @param centerId
      * @return
      */
-    public ClassFee save( String createYear, int classFeeSum, int create_month, int classSum, int balanceState, int balanceSum, String centerId){
-        ClassFee classFeeInfo=new ClassFee(IdUtil.fastSimpleUUID(),createYear,classFeeSum,balanceState,create_month,classSum,balanceSum,centerId);
-        return classFeeRepository.save(classFeeInfo);
+    @Transactional(rollbackFor = Exception.class)
+    public ClassFee save( String createYear, int classFeeSum, int createMonth, int classSum, String balanceState, int balanceSum, String centerId){
+        ClassFee classFee=new ClassFee(IdUtil.fastSimpleUUID(),createYear,classFeeSum,createMonth,classSum,balanceState,balanceSum,centerId);
+        return classFeeRepository.save(classFee);
     }
 
 
     /**
      * 修改按月导入的课时费信息
      * @param classFeeId
-     * @param calssFeeSum
+     * @param classFeeSum
      * @param classSum
      * @param balanceState
      * @param balanceSum
      * @return
      */
-    public ClassFee update(String classFeeId,int classFeeSum, int classSum, int balanceState, int balanceSum){
+    @Transactional(rollbackFor = Exception.class)
+    public ClassFee update(String classFeeId,int classFeeSum, int classSum, String balanceState, int balanceSum){
         ClassFee obj= findId(classFeeId);
         ClassFee classFee=new ClassFee();
-        UpdateUtil.copyProperties(obj,classFee);
+        BeanUtil.copyProperties(obj,classFee);
         classFee.setClassFeeSum(classFeeSum);
         classFee.setClassSum(classSum);
         classFee.setBalanceState(balanceState);

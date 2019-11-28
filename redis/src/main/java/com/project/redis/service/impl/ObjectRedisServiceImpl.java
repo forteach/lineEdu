@@ -3,7 +3,9 @@ package com.project.redis.service.impl;
 import com.project.redis.service.ObjectRedisService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description:
@@ -33,4 +35,13 @@ public class ObjectRedisServiceImpl implements ObjectRedisService {
         return redisTemplate.opsForValue().get(key);
     }
 
+    @Override
+    public void setKeyValueExpire(String key, String value, long timeout, TimeUnit unit) {
+        redisTemplate.opsForValue().set(key, value, timeout, unit);
+    }
+
+    @Override
+    public boolean hasKey(String key) {
+        return redisTemplate.hasKey(key).booleanValue();
+    }
 }

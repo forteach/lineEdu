@@ -2,7 +2,9 @@ package com.project.mysql.domain;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
@@ -19,6 +21,8 @@ import javax.persistence.MappedSuperclass;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class Entitys{
 
     @Column(name = "is_validated", columnDefinition = "CHAR(1) DEFAULT 0 COMMENT '生效标识 0生效 1失效'", nullable = false)
@@ -40,8 +44,15 @@ public abstract class Entitys{
     @Column(name = "u_user", columnDefinition = "VARCHAR(32) COMMENT '修改人'")
     public String updateUser;
 
-    //在线教育公共字段
+    /**
+     * 在线教育公共字段
+     */
     @Column(name = "center_area_id", columnDefinition = "VARCHAR(40) COMMENT '归属的学习中心编号'")
     public String centerAreaId;
 
+    public Entitys(String createUser, String updateUser, String centerAreaId) {
+        this.createUser = createUser;
+        this.updateUser = updateUser;
+        this.centerAreaId = centerAreaId;
+    }
 }

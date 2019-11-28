@@ -29,5 +29,4 @@ public abstract class BaseMySqlService {
         predicatesList.add(criteriaBuilder.equal(root.get("isValidated"), MyKey.VAL_OPEN));
         return criteriaBuilder.and(predicatesList.toArray(new Predicate[predicatesList.size()]));
     }
-
 }

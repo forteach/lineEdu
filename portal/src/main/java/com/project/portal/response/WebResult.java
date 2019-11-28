@@ -21,6 +21,7 @@ import java.util.Map;
 @Slf4j
 @ApiModel(value = "返回数据对象", description = "统一的数据返回对象")
 public class WebResult implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(required = true, value = "返回码", dataType = "int", example = "0", position = 0)
     private int ret;

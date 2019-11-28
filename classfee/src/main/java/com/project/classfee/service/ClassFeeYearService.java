@@ -1,9 +1,9 @@
 package com.project.classfee.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.classfee.domain.ClassFeeYear;
 import com.project.classfee.repository.ClassFeeYearRepository;
 import com.project.mysql.service.BaseMySqlService;
@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -30,7 +32,7 @@ public class ClassFeeYearService extends BaseMySqlService {
      * 年度课时费汇总记录
      * @param createYear
      * @param classFeeSum
-     * @param create_month
+     * @param createMonth
      * @param classSum   课时数量'
      * @param outMonth   课时费超出那个月份超出
      * @param outFee     课时费超出金额
@@ -38,8 +40,9 @@ public class ClassFeeYearService extends BaseMySqlService {
      * @param centerId
      * @return
      */
-    public ClassFeeYear save( String createYear, int classFeeSum, int create_month, int classSum, int outMonth, int outFee,String outState, String centerId){
-        ClassFeeYear classFeeInfo=new ClassFeeYear(IdUtil.fastSimpleUUID(),createYear,classFeeSum,create_month,classSum,outMonth,outFee,outState,centerId);
+    @Transactional(rollbackFor = Exception.class)
+    public ClassFeeYear save( String createYear,String specialtyIds, int classFeeSum, int createMonth, int classSum, int outMonth, int outFee,String outState, String centerId){
+        ClassFeeYear classFeeInfo=new ClassFeeYear(IdUtil.fastSimpleUUID(),createYear,specialtyIds,classFeeSum,createMonth,classSum,outMonth,outFee,outState,centerId);
         return classFeeYearRepository.save(classFeeInfo);
     }
 
@@ -54,10 +57,11 @@ public class ClassFeeYearService extends BaseMySqlService {
      * @param outState
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public ClassFeeYear update(String feeYearId,int classFeeSum, int classSum, int outMonth, int outFee,String outState){
         ClassFeeYear obj= findId(feeYearId);
         ClassFeeYear classFee=new ClassFeeYear();
-        UpdateUtil.copyProperties(obj,classFee);
+        BeanUtil.copyProperties(obj,classFee);
         classFee.setOutMonth(outMonth);
         classFee.setOutFee(outFee);
         classFee.setOutState(outState);

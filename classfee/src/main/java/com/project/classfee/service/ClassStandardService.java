@@ -1,9 +1,9 @@
 package com.project.classfee.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.classfee.domain.ClassStandard;
 import com.project.classfee.repository.ClassStandardRepository;
 import com.project.mysql.service.BaseMySqlService;
@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -28,11 +30,11 @@ public class ClassStandardService extends BaseMySqlService {
      * @param studentSum
      * @param studentSubsidies
      * @param subsidiesSum
-     * @param class_fee
      * @return
      */
-    public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,int class_fee,String centerId){
-        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,class_fee,centerId);
+    @Transactional(rollbackFor = Exception.class)
+    public ClassStandard save(String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,String centerId, String createUser){
+        ClassStandard classStandard=new ClassStandard(IdUtil.fastSimpleUUID(),createYear,specialtyIds,studentSum,studentSubsidies,subsidiesSum,centerId, createUser);
         return classStandardRepository.save(classStandard);
     }
 
@@ -43,19 +45,19 @@ public class ClassStandardService extends BaseMySqlService {
      * @param studentSum
      * @param studentSubsidies
      * @param subsidiesSum
-     * @param class_fee
      * @return
      */
-    public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum,int class_fee){
+    @Transactional(rollbackFor = Exception.class)
+    public ClassStandard update(String standardId,String createYear,String specialtyIds,int studentSum,int studentSubsidies,int subsidiesSum, String updateUser){
         ClassStandard obj= findId(standardId);
         ClassStandard classStandard=new ClassStandard();
-        UpdateUtil.copyProperties(obj,classStandard);
+        BeanUtil.copyProperties(obj,classStandard);
         classStandard.setCreateYear(createYear);
         classStandard.setSpecialtyIds(specialtyIds);
         classStandard.setStudentSum(studentSum);
         classStandard.setStudentSubsidies(studentSubsidies);
         classStandard.setSubsidiesSum(subsidiesSum);
-        classStandard.setClass_fee(class_fee);
+        classStandard.setUpdateUser(updateUser);
         return classStandardRepository.save(classStandard);
     }
 

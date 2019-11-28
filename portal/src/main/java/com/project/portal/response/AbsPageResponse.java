@@ -19,5 +19,8 @@ public class AbsPageResponse<T1> {
     /**总记录数**/
     private long recordCount;
 
+    /**
+     * 查询的结果集
+     */
     private List<T1> resList;
 }

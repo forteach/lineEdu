@@ -1,7 +1,6 @@
 package com.project.teachplan.domain;
 
-
-import com.project.mysql.domain.Entitys;
+import com.project.teachplan.domain.base.BaseTeachPlan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,38 +10,27 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * 教学计划
+ * 培训项目计划列表管理
  */
 @Data
 @Entity
 @DynamicUpdate
 @DynamicInsert
-@org.hibernate.annotations.Table(appliesTo = "teach_plan", comment = "教学计划")
-@Table(name = "teach_plan")
+@org.hibernate.annotations.Table(appliesTo = "teach_plan", comment = "在线培训项目管理")
+@Table(name = "teach_plan", indexes = {@Index(columnList = "plan_id", name = "plan_id_index")})
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 @NoArgsConstructor
-public class TeachPlan extends Entitys implements Serializable {
+@AllArgsConstructor
+public class TeachPlan extends BaseTeachPlan implements Serializable {
 
-    @Id
-    @Column(name = "plan_id", columnDefinition = "VARCHAR(32) COMMENT '计划编号'")
-    private String planId;
+    @Column(name = "status", nullable = false, columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '计划完成状态 0 完成 1 未完成/进行中'")
+    private Integer status = this.status == null ? 1 : this.status;
 
-    @Column(name = "grade_id", columnDefinition = "VARCHAR(32) COMMENT '年级编号'")
-    private String gradeId;
-
-    @Column(name = "specialty_ids", columnDefinition = "VARCHAR(32) COMMENT '所属专业'")
-    private String specialtyIds;
-
-    public TeachPlan(String planId, String gradeId, String specialtyIds,String centerId) {
-        this.planId = planId;
-        this.gradeId = gradeId;
-        this.specialtyIds = specialtyIds;
-        super.centerAreaId=centerId;
-    }
+    @Column(name = "count_status", nullable = false, columnDefinition = "TINYINT(2) DEFAULT 1 COMMENT '统计计算完成状态 0 完成 1 未完成/进行中'")
+    private Integer countStatus = this.countStatus == null ? 1 : this.countStatus;
 }
