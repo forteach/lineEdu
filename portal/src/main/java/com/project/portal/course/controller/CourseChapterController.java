@@ -1,12 +1,14 @@
 package com.project.portal.course.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.CourseChapter;
 import com.project.course.service.CourseChapterService;
 import com.project.portal.course.request.ChapterDataListReq;
+import com.project.portal.course.request.CourseChapterIdDeleteReq;
 import com.project.portal.course.request.CourseChapterReq;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
@@ -64,6 +66,9 @@ public class CourseChapterController {
         cs.setCreateUser(createUser);
         cs.setUpdateUser(createUser);
         cs.setCenterAreaId(centerAreaId);
+        if (req.getRandomQuestionsNumber() == null){
+            cs.setRandomQuestionsNumber(5);
+        }
         return WebResult.okResult(courseChapterService.save(cs));
     }
 
@@ -84,9 +89,9 @@ public class CourseChapterController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterId", value = "科目id", required = true, dataType = "string", paramType = "query")
     })
-    public WebResult deleteById(@ApiParam(name = "chapterId", value = "根据章节ID删除对应的信息(物理删除)", required = true) @RequestBody String chapterId) {
-        MyAssert.blank(chapterId, DefineCode.ERR0010, "科目id不为空");
-        courseChapterService.deleteById(String.valueOf(JSONObject.parseObject(chapterId).getString("chapterId")));
+    public WebResult deleteById(@RequestBody CourseChapterIdDeleteReq req) {
+        MyAssert.isTrue(StrUtil.isBlank(req.getChapterId()), DefineCode.ERR0010, "科目id不为空");
+        courseChapterService.deleteById(req.getChapterId());
         return WebResult.okResult();
     }
 

@@ -17,7 +17,10 @@ import javax.persistence.*;
 @Entity
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "course_chapter", indexes = {@Index(columnList = "chapter_id", name = "chapter_id_index"), @Index(columnList = "course_id", name = "course_id_index")})
+@Table(name = "course_chapter", indexes = {
+        @Index(columnList = "chapter_id", name = "chapter_id_index"),
+        @Index(columnList = "course_id", name = "course_id_index")
+})
 @org.hibernate.annotations.Table(appliesTo = "course_chapter", comment = "课程讲课目录")
 @GenericGenerator(name = "system-uuid", strategy = "uuid")
 @AllArgsConstructor
@@ -51,9 +54,8 @@ public class CourseChapter extends Entitys {
     public String publish;
 
     @Column(name = "random_questions_number", nullable = false, columnDefinition = "INT(3) DEFAULT 5 COMMENT '随机题目数量'")
-    private Integer randomQuestionsNumber;
+    private Integer randomQuestionsNumber = this.randomQuestionsNumber == null ? 5 : this.randomQuestionsNumber;
 
-    @Column(name = "video_time", columnDefinition = "INT(6) DEFAULT 0 COMMENT '需要观看视频长度(秒)'")
-    private Integer videoTime;
-
+    @Column(name = "video_time", nullable = false, columnDefinition = "INT(6) DEFAULT 0 COMMENT '需要观看视频长度(秒)'")
+    private Integer videoTime = this.videoTime == null ? 0 : this.videoTime;
 }
