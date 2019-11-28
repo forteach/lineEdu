@@ -515,7 +515,10 @@ public class TeachService {
             //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
             double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
             //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
-            BigDecimal jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
+            BigDecimal jobScore = new BigDecimal("0");
+            if (0 != c.getAnswerSum()){
+                jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
+            }
             //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
             BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
             //计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
