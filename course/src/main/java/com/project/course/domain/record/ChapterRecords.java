@@ -1,7 +1,9 @@
 package com.project.course.domain.record;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -30,6 +32,8 @@ import java.io.Serializable;
         @Index(columnList = "chapter_id", name = "chapter_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChapterRecords extends AbstractRecord implements Serializable {
 
     @Column(name = "video_duration", columnDefinition = "INT(11) DEFAULT 0 COMMENT '视频时长(单位秒)'", nullable = false)

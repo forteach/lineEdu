@@ -193,6 +193,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
      * @return
      */
     @Override
+    @SuppressWarnings(value = "all")
     public List<CourseTreeResp> findByCourseId(String courseId, String studentId) {
         String key = COURSE_STUDENT.concat(courseId).concat(studentId);
         if (stringRedisTemplate.hasKey(key)) {
@@ -206,6 +207,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         return courseTreeResps;
     }
 
+    @SuppressWarnings(value = "all")
     private List<CourseTreeResp> builderCourseTreeRespList(String courseId, String studentId, List<CourseTreeResp> courseTreeResps){
         List<ICourseChapterDto> dtoList = courseChapterRepository.findByCourseId(courseId);
         for (int i = 0; i < dtoList.size(); i++) {

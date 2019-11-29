@@ -115,9 +115,10 @@ public class CourseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
     })
-    public WebResult getCourseByCourseId(@ApiParam(name = "courseId", value = "根据科目ID 查询对应科目信息", type = "string", required = true) @RequestBody String courseId) {
-        MyAssert.blank(courseId, DefineCode.ERR0010, "科目ID不为空");
-        return WebResult.okResult(courseService.getById(JSONObject.parseObject(courseId).getString("courseId")));
+    public WebResult getCourseByCourseId(@RequestBody String courseId) {
+        MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "科目ID不为空");
+        String courseIdStr = String.valueOf(JSONObject.parseObject(courseId).getString("courseId"));
+        return WebResult.okResult(courseService.getById(courseIdStr));
     }
 
     @UserLoginToken
