@@ -109,7 +109,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getStudentId(String token) {
-        return hashOperations.get(getKey(getUserId(token)), "studentId");
+        String str = hashOperations.get(getKey(getUserId(token)), "studentId");
+        return str == null ? "" : str;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class TokenServiceImpl implements TokenService {
         if (TOKEN_TEACHER.equals(getValue(token, 1))) {
             return getKey(getUserId(token));
         }
-        return null;
+        return "";
     }
 
     @Override
@@ -125,7 +126,7 @@ public class TokenServiceImpl implements TokenService {
         if (TOKEN_STUDENT.equals(getValue(token, 1))) {
             return hashOperations.get(getKey(getUserId(token)), "classId");
         }
-        return null;
+        return "";
     }
 
     @Override

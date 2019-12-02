@@ -219,12 +219,14 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             courseTreeResp.setParent(courseChapterDto.getChapterParentId());
             courseTreeResp.setRandomQuestionsNumber(courseChapterDto.getRandomQuestionsNumber());
             courseTreeResp.setVideoTime(courseChapterDto.getVideoTime());
-            ChapterRecords chapterRecords = courseRecordsService.findChapterRecordsByStudentIdAndChapterId(studentId, courseId, courseChapterDto.getChapterId());
-            if (null != chapterRecords.getSumTime()){
-                courseTreeResp.setDuration(chapterRecords.getSumTime());
-            }
-            if (null != chapterRecords.getLocationTime()){
-                courseTreeResp.setLocationTime(chapterRecords.getLocationTime());
+            if (StrUtil.isNotBlank(studentId )){
+                ChapterRecords chapterRecords = courseRecordsService.findChapterRecordsByStudentIdAndChapterId(studentId, courseId, courseChapterDto.getChapterId());
+                if (null != chapterRecords.getSumTime()) {
+                    courseTreeResp.setDuration(chapterRecords.getSumTime());
+                }
+                if (null != chapterRecords.getLocationTime()) {
+                    courseTreeResp.setLocationTime(chapterRecords.getLocationTime());
+                }
             }
             if (PUBLISH_YES.equals(courseChapterDto.getPublish())) {
                 courseTreeResp.setIcon("fa fa-briefcase icon-state-success");
