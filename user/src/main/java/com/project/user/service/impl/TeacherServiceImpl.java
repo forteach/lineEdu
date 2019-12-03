@@ -72,6 +72,7 @@ public class TeacherServiceImpl implements TeacherService {
         MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "没有要修改的数据");
         TeacherVerify t = optionalTeacher.get();
         if (!t.getPhone().equals(teacherVerify.getPhone())){
+            MyAssert.isNull(null, DefineCode.ERR0010, "手机号码不能修改");
             MyAssert.isTrue(teacherVerifyRepository.existsById(teacherVerify.getPhone()), DefineCode.ERR0010, "您添加的手机号码已经注册");
         }
         String centerId = t.getCenterAreaId();
