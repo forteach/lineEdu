@@ -7,7 +7,9 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.CourseChapter;
 import com.project.course.service.CourseChapterService;
+import com.project.course.web.vo.ChapterSortVo;
 import com.project.portal.course.request.ChapterDataListReq;
+import com.project.portal.course.request.ChapterSortReq;
 import com.project.portal.course.request.CourseChapterIdDeleteReq;
 import com.project.portal.course.request.CourseChapterReq;
 import com.project.portal.response.WebResult;
@@ -81,6 +83,18 @@ public class CourseChapterController {
     public WebResult getCourseChapterById(@ApiParam(value = "根据科目ID 查询对应上层科目信息", name = "chapterId", required = true) @RequestBody String chapterId) {
         MyAssert.blank(chapterId, DefineCode.ERR0010, "科目id不为空");
         return WebResult.okResult(courseChapterService.getCourseChapterById(JSONObject.parseObject(chapterId).getString("chapterId")));
+    }
+
+    @ApiOperation(value = "修改要修改章节的顺序")
+    @PostMapping(path = "/updateChapterSort")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "chapterIdVos", value = "章节信息和顺序位置数组列表", dataType = "list", dataTypeClass = ChapterSortVo.class, required = true)
+    })
+    public WebResult updateChapterSort(@RequestBody ChapterSortReq req, HttpServletRequest httpServletRequest){
+        MyAssert.isTrue(req.getChapterIdVos().isEmpty(), DefineCode.ERR0010, "要修改的章节信息不能是空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        courseChapterService.updateChapterSort(req.getChapterIdVos(), userId);
+        return WebResult.okResult();
     }
 
     @UserLoginToken

@@ -460,13 +460,15 @@ public class TeachService {
                                 BigDecimal videoScore = new BigDecimal("0");
                                 BigDecimal jobsScore = new BigDecimal("0");
                                 String videoPercentage = d.getVideoPercentage() == null ? "0" : d.getVideoPercentage();
+                                String jobsPercentage = d.getJobsPercentage() == null ? "0" : d.getJobsPercentage();
                                 if (0 != d.getOnLineTimeSum()){
                                     videoScore = NumberUtil.mul(NumberUtil.div(d.getOnLineTime(), d.getOnLineTimeSum(), 2), Double.valueOf(videoPercentage) / 100);
                                 }
                                 if (0 != d.getAnswerSum()){
-                                    jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getCorrectSum(), 2), Double.valueOf(videoPercentage) / 100);
+                                    jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getAnswerSum(), 2), Double.valueOf(jobsPercentage) / 100);
                                 }
-                                list.add(new ScoreVo(d.getCourseId(), strings[0], NumberUtil.add(videoScore, jobsScore).toPlainString()));
+                                String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
+                                list.add(new ScoreVo(d.getCourseId(), strings[0], score));
                             });
                 });
         return list;

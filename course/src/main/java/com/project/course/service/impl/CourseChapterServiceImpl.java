@@ -22,6 +22,7 @@ import com.project.course.web.req.State;
 import com.project.course.web.resp.CourseChapterSaveResp;
 import com.project.course.web.resp.CourseTreeResp;
 import com.project.course.web.vo.ChapterDataFileVo;
+import com.project.course.web.vo.ChapterSortVo;
 import com.project.course.web.vo.CourseChapterVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -34,9 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @Auther: zhangyy
@@ -162,7 +163,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         List<CourseChapter> lists = courseChapterRepository.findByCourseIdAndAndChapterParentId(courseId, chapterParentId);
         Set<String> stringSet = lists.stream().filter(courseChapter -> !COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId()))
                 .map(CourseChapter::getChapterId)
-                .collect(Collectors.toSet());
+                .collect(toSet());
         stringSet.stream().map(s -> {
             //查询对应的目录集合
             return findLists(s, courseId);
@@ -264,6 +265,16 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     @Override
     public List<ICourseChapterDto> findAllCourseChapter(CourseChapterVo vo) {
         return courseChapterRepository.findCourseId(vo.getIsValidated(), vo.getCourseId());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateChapterSort(List<ChapterSortVo> list, String userId) {
+        list.forEach(v -> courseChapterRepository.findById(v.getChapterId()).ifPresent(c -> {
+                c.setSort(v.getSort());
+                c.setUpdateUser(userId);
+                courseChapterRepository.save(c);
+            }));
     }
 
     @Override

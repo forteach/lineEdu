@@ -7,6 +7,7 @@ import com.project.course.web.req.CourseChapterEditReq;
 import com.project.course.web.resp.CourseChapterSaveResp;
 import com.project.course.web.resp.CourseTreeResp;
 import com.project.course.web.vo.ChapterDataFileVo;
+import com.project.course.web.vo.ChapterSortVo;
 import com.project.course.web.vo.CourseChapterVo;
 
 import java.util.List;
@@ -25,6 +26,8 @@ public interface CourseChapterService {
     public CourseChapterSaveResp edit(CourseChapterEditReq courseChapterEditReq);
 
     public CourseChapterSaveResp getCourseChapterById(String chapterId);
+
+    void updateChapterSort(List<ChapterSortVo> list, String userId);
 
     public void delete(CourseChapter courseChapter);
 
