@@ -115,11 +115,17 @@ public class TeachService {
             Optional<TeachPlanVerify> optional = teachPlanVerifyRepository.findById(teachPlan.getPlanId());
             MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的计划不存在");
             TeachPlanVerify t = optional.get();
+            Integer classNumber = t.getClassNumber();
+            Integer courseNumber = t.getCourseNumber();
+            Integer sumNumber = t.getSumNumber();
             //修改计划名称需要判断是否存在同名计划存在不能修改
             if (!t.getPlanName().equals(teachPlan.getPlanName())){
                 MyAssert.isTrue(teachPlanVerifyRepository.existsByPlanName(teachPlan.getPlanName()), DefineCode.ERR0010, "已经存在同名计划,请修改");
             }
             BeanUtil.copyProperties(teachPlan, t);
+            t.setSumNumber(sumNumber);
+            t.setClassNumber(classNumber);
+            t.setCourseNumber(courseNumber);
             return teachPlanVerifyRepository.save(t);
         }
     }
