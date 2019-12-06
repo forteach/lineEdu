@@ -1,6 +1,7 @@
 package com.project.train.domain;
 
 import com.project.mysql.domain.Entitys;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Table(name = "finance_detail", indexes = {@Index(columnList = "detail_id", name = "detail_id_index")})
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class FinanceDetail extends Entitys implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -59,18 +61,4 @@ public class FinanceDetail extends Entitys implements Serializable {
 
     @Column(name = "happen_time", columnDefinition = "VARCHAR(20) COMMENT '培训财务发生时间'")
     private String happenTime;
-
-    public FinanceDetail(String detailId, String financeTypeId, String trainClassId, String pjPlanId, String financeTypeName, String inOut, String money, String batches, String createYear, String createMonth, String centerId) {
-        this.detailId = detailId;
-        this.financeTypeId = financeTypeId;
-        this.trainClassId = trainClassId;
-        this.pjPlanId = pjPlanId;
-        this.financeTypeName = financeTypeName;
-        this.inOut = inOut;
-        this.money = money;
-        this.batches = batches;
-        this.createYear = createYear;
-        this.createMonth = createMonth;
-        super.centerAreaId = centerId;
-    }
 }

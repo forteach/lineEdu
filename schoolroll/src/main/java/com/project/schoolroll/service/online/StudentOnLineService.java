@@ -162,15 +162,7 @@ public class StudentOnLineService {
         return studentOnLineRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, request);
     }
 
-    public Page<StudentOnLineDto> findAllPageDtoByCenterAreaId(String centerAreaId, PageRequest request, String studentName, String isValidated) {
-        return findStudentOnLineDto(request, studentName, isValidated, centerAreaId);
-    }
-
-    public Page<StudentOnLineDto> findAllPageDto(PageRequest request, String studentName, String isValidated) {
-        return findStudentOnLineDto(request, studentName, isValidated, "");
-    }
-
-    private Page<StudentOnLineDto> findStudentOnLineDto(PageRequest request, String studentName, String isValidated, String centerAreaId){
+    public Page<StudentOnLineDto> findStudentOnLineDto(PageRequest request, String studentName, String isValidated, String centerAreaId, String grade, String specialtyName, String className){
         StringBuilder dataSql = new StringBuilder("select " +
                 " s.student_id as student_id, " +
                 " s.student_name as student_name, " +
@@ -186,6 +178,9 @@ public class StudentOnLineService {
                 " s.center_area_id as center_area_id, " +
                 " lc.center_name as center_name, " +
                 " s.c_time as c_time, " +
+                " s.specialty_name as specialty_name, " +
+                " s.grade as grade, " +
+                " s.educational_system as educational_system, " +
                 " s.is_validated as is_validated " +
                 " from student_on_line as s " +
                 " left join learn_center as lc on lc.center_id = s.center_area_id ");
@@ -196,6 +191,15 @@ public class StudentOnLineService {
         }
         if (StrUtil.isNotBlank(studentName)){
             whereSql.append(" and s.student_name = :studentName");
+        }
+        if (StrUtil.isNotBlank(grade)){
+            whereSql.append(" and s.grade = :grade");
+        }
+        if (StrUtil.isNotBlank(specialtyName)){
+            whereSql.append(" and s.specialty_name = :specialtyName");
+        }
+        if (StrUtil.isNotBlank(className)){
+            whereSql.append(" and s.class_name = :className");
         }
         if (StrUtil.isNotBlank(isValidated)){
             whereSql.append(" and s.is_validated = :isValidated");
@@ -211,6 +215,18 @@ public class StudentOnLineService {
         if (StrUtil.isNotBlank(studentName)){
             dataQuery.setParameter("studentName", studentName);
             countQuery.setParameter("studentName", studentName);
+        }
+        if (StrUtil.isNotBlank(grade)){
+            dataQuery.setParameter("grade", grade);
+            countQuery.setParameter("grade", grade);
+        }
+        if (StrUtil.isNotBlank(specialtyName)){
+            dataQuery.setParameter("specialtyName", specialtyName);
+            countQuery.setParameter("specialtyName", specialtyName);
+        }
+        if (StrUtil.isNotBlank(className)){
+            dataQuery.setParameter("className", className);
+            countQuery.setParameter("className", className);
         }
         if (StrUtil.isNotBlank(isValidated)){
             dataQuery.setParameter("isValidated", isValidated);
@@ -273,5 +289,15 @@ public class StudentOnLineService {
                 "学习中心名称",
                 "是否有效"
         );
+    }
+
+    public Optional<StudentOnLine> findById(String id){
+        return studentOnLineRepository.findById(id);
+    }
+    /** 根基班级Id查询对应的年级*/
+    public String getGradeByClassId(String classId){
+        List<StudentOnLine> list = studentOnLineRepository.findAllByClassId(classId);
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "班级对应的级别不存在");
+        return list.stream().filter(Objects::nonNull).map(StudentOnLine::getGrade).findFirst().orElse("");
     }
 }

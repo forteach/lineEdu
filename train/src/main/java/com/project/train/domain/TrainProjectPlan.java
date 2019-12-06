@@ -56,5 +56,4 @@ public class TrainProjectPlan extends Entitys implements Serializable {
 
     @Column(name = "train_admin", columnDefinition = "VARCHAR(60) COMMENT '计划负责人'")
     private String trainAdmin;
-
 }

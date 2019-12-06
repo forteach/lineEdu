@@ -47,13 +47,4 @@ public class TrainPlanCourse extends Entitys implements Serializable {
 
     @Column(name = "credit", columnDefinition = "VARCHAR(60) COMMENT '培训课程学分'")
     private String credit;
-
-    public TrainPlanCourse(String courseId, String pjPlanId, String courseName, String teacherName, String credit,String centerId) {
-        this.courseId = courseId;
-        this.pjPlanId = pjPlanId;
-        this.courseName = courseName;
-        this.teacherName = teacherName;
-        this.credit = credit;
-        super.centerAreaId=centerId;
-    }
 }

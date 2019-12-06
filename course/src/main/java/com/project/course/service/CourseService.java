@@ -60,4 +60,6 @@ public interface CourseService {
     void taskCourseQuestions();
 
     Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
+
+    void updatePublish(String courseId, String userId);
 }

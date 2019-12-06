@@ -49,11 +49,13 @@ public class TeachPlanFileController {
             @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "资料名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileType", value = "资料类型", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "资料类型，上传分类 1.大纲、2，教材库,3，课表", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", required = true, paramType = "form")
     })
     public WebResult save(@RequestBody TeachPlanFileSaveRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件地址不能为空");
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不能为空");
+        MyAssert.isNull(request.getType(), DefineCode.ERR0010, "文件类型不能为空");
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         String centerAreaId = tokenService.getCenterAreaId(token);
@@ -75,7 +77,7 @@ public class TeachPlanFileController {
     public WebResult findAllByPlanId(@RequestBody TeachPlanFileFinaAllRequest request) {
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
         if (StrUtil.isBlank(request.getVerifyStatus())) {
-            return WebResult.okResult(teachPlanFileService.findAllByPlanId(request.getPlanId()));
+            return WebResult.okResult(teachPlanFileService.findAllByPlanIdGroupByType(request.getPlanId()));
         }
         return WebResult.okResult(teachPlanFileService.findAllByPlanIdAndVerifyStatus(request.getPlanId(), request.getVerifyStatus()));
     }

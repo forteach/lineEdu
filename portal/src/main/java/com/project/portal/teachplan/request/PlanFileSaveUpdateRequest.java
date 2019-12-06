@@ -40,6 +40,9 @@ public class PlanFileSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "courseId", value = "课程id", dataType = "string")
     private String courseId;
 
+    @ApiModelProperty(name = "type", value = "资料类型，上传分类 1.签到 2.教材、3.日志、4.照片", dataType = "string")
+    private String type;
+
     @ApiModelProperty(name = "createDate", value = "上课日期", dataType = "string")
     private String createDate;
 }

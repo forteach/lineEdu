@@ -49,6 +49,9 @@ public class RCourse implements Serializable {
     @ApiModelProperty(name = "jobsPercentage", value = "平时作业占百分比", dataType = "string")
     private String jobsPercentage;
 
+    @ApiModelProperty(name = "courseType", value = "课程类型 1 线上 2，线下 3 混合", dataType = "int")
+    private int courseType;
+
     @ApiModelProperty(name = "createUser", value = "创建人", hidden = true)
     private String createUser;
 }

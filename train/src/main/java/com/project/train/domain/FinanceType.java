@@ -31,10 +31,4 @@ public class FinanceType extends Entitys implements Serializable {
 
     @Column(name = "finance_type_name", columnDefinition = "VARCHAR(40) COMMENT '培训财务类型名称'")
     private String financeTypeName;
-
-    public FinanceType(String financeTypeId, String financeTypeName,String centerId) {
-        this.financeTypeId = financeTypeId;
-        this.financeTypeName = financeTypeName;
-        super.centerAreaId=centerId;
-    }
 }

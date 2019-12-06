@@ -89,6 +89,7 @@ public class CourseController {
             @ApiImplicitParam(name = "learningTime", value = "需要学习的总时长(小时)", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "videoPercentage", value = "观看视频占百分比", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "jobsPercentage", value = "平时作业占百分比", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "courseType", value = "课程类型 1 线上 2，线下 3 混合", dataType = "int", paramType = "form")
     })
     public WebResult save(@RequestBody RCourse req, HttpServletRequest request) {
         //验证请求信息
@@ -178,6 +179,16 @@ public class CourseController {
         MyAssert.blank(req.getCourseId(), DefineCode.ERR0010, "科目ID不为空");
         MyAssert.blank(req.getUserId(), DefineCode.ERR0010, "用户ID不为空");
         courseService.updateStatusById(req.getCourseId(), req.getUserId());
+        return WebResult.okResult();
+    }
+
+    @ApiOperation(value = "修改课程发布")
+    @PostMapping(path = "/publish/{courseId}")
+    @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
+    public WebResult updatePublish(@PathVariable String courseId, HttpServletRequest httpServletRequest){
+        MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程Id不为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        courseService.updatePublish(courseId, userId);
         return WebResult.okResult();
     }
 

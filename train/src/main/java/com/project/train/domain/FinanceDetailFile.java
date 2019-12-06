@@ -37,5 +37,4 @@ public class FinanceDetailFile extends Entitys implements Serializable {
 
     @Column(name = "pj_plan_id", columnDefinition = "VARCHAR(60) COMMENT '财务凭证计划编号'")
     private String pjPlanId;
-
 }

@@ -29,10 +29,4 @@ public class RoleColActFundPrimarykey implements Serializable {
 
     public RoleColActFundPrimarykey() {
     }
-
-    public RoleColActFundPrimarykey(String colId, String sysActId, String roleId) {
-        this.colId = colId;
-        this.sysActId = sysActId;
-        this.roleId = roleId;
-    }
 }

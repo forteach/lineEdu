@@ -50,4 +50,11 @@ public abstract class BaseTeachPlan extends Entitys {
 
     @Column(name = "sum_number", nullable = false, columnDefinition = "TINYINT (4) DEFAULT 0 COMMENT '总人数'")
     private Integer sumNumber = this.sumNumber == null ? 0 : this.sumNumber;
+
+    /** 专业名称*/
+    @Column(name = "specialty_name", columnDefinition = "VARCHAR(32) COMMENT '专业名称'")
+    private String specialtyName;
+
+    @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '年级'")
+    private String grade;
 }

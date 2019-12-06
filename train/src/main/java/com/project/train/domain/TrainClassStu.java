@@ -50,9 +50,6 @@ public class TrainClassStu extends Entitys implements Serializable {
     @Column(name = "stu_name", columnDefinition = "VARCHAR(60) COMMENT '姓名'")
     private String stuName;
 
-//    @Column(name = "marriage", columnDefinition = "VARCHAR(60) COMMENT '民族'")
-//    private String marriage;
-
     @Column(name = "nation", columnDefinition = "VARCHAR(60) COMMENT '民族'")
     private String nation;
 
@@ -64,6 +61,4 @@ public class TrainClassStu extends Entitys implements Serializable {
 
     @Column(name = "stu_phone", columnDefinition = "VARCHAR(60) COMMENT '联系方式'")
     private String stuPhone;
-
-
 }

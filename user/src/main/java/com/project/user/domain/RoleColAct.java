@@ -46,4 +46,3 @@ public class RoleColAct extends Entitys implements Serializable {
     private String roleId;
 
 }
-

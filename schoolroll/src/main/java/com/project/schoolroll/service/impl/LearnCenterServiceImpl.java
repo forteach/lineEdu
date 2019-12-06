@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -66,8 +68,9 @@ public class LearnCenterServiceImpl implements LearnCenterService {
     }
 
     @Override
-    public List<CenterFile> findAll(String centerId) {
-        return centerFileRepository.findAllByIsValidatedEqualsAndCenterId(TAKE_EFFECT_OPEN, centerId);
+    public Map<String, List<CenterFile>> findAll(String centerId) {
+        return centerFileRepository.findAllByIsValidatedEqualsAndCenterId(TAKE_EFFECT_OPEN, centerId).stream()
+                .filter(Objects::nonNull).collect(Collectors.groupingBy(CenterFile::getType));
     }
 
     @Override

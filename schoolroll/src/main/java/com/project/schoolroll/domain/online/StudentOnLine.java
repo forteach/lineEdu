@@ -17,7 +17,8 @@ import java.io.Serializable;
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "student_on_line", comment = "线上学生信息")
 @Table(name = "student_on_line", indexes = {
-        @Index(columnList = "student_id", name = "student_id_index")
+        @Index(columnList = "student_id", name = "student_id_index"),
+        @Index(columnList = "stu_id", name = "stu_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
@@ -87,4 +88,19 @@ public class StudentOnLine extends Entitys implements Serializable {
      */
     @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学号ID信息'")
     private String stuId;
+
+    /** 专业简称*/
+    @Column(name = "specialty_name", columnDefinition = "VARCHAR(32) COMMENT '专业简称'")
+    private String specialtyName;
+
+    /** 年级 入学年的 也是学生级别 如： 2019级*/
+    @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '年级'")
+    private String grade;
+
+    /**
+     * 学制
+     * 三年制，四年制，五年制，一年制
+     */
+    @Column(name = "educational_system", columnDefinition = "VARCHAR(32) COMMENT '学制'")
+    private String educationalSystem;
 }

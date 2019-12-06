@@ -30,7 +30,4 @@ public interface OperationInfoVo {
      * @return
      */
     String getColName();
-
 }
-
-

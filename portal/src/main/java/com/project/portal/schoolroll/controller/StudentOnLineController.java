@@ -100,20 +100,25 @@ public class StudentOnLineController {
     @ApiOperation(value = "分页查询在线学生信息(暂无查询条件)")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query"),
             @ApiImplicitParam(name = "studentName", value = "学生姓名", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "isValidated", value = "学生状态 0生效 1失效", dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "className", dataType = "string", value = "班级名称", paramType = "query"),
+            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "specialtyName", value = "专业", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "isValidated", value = "学生状态 0生效 1失效", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
     public WebResult findPageAll(@RequestBody StudentOnLineFindAllPageRequest request, HttpServletRequest httpServletRequest) {
         valideSort(request.getPage(), request.getSize());
         String token = httpServletRequest.getHeader("token");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (tokenService.isAdmin(token)) {
-            return WebResult.okResult(studentOnLineService.findAllPageDto(pageRequest, request.getStudentName(), request.getIsValidated()));
+            return WebResult.okResult(studentOnLineService.findStudentOnLineDto(pageRequest, request.getStudentName(), request.getIsValidated(), "",
+                    request.getGrade(), request.getSpecialtyName(), request.getClassName()));
         }
         String centerAreaId = tokenService.getCenterAreaId(token);
-        return WebResult.okResult(studentOnLineService.findAllPageDtoByCenterAreaId(centerAreaId, pageRequest, request.getStudentName(), request.getIsValidated()));
+        return WebResult.okResult(studentOnLineService.findStudentOnLineDto(pageRequest, request.getStudentName(),
+                request.getIsValidated(), centerAreaId, request.getGrade(), request.getSpecialtyName(), request.getClassName()));
     }
 
     @UserLoginToken

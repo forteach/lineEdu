@@ -43,4 +43,7 @@ public class TeacherFile extends Entitys implements Serializable {
 
     @Column(name = "teacher_id", columnDefinition = "VARCHAR(40) COMMENT '教师信息id'")
     private String teacherId;
+
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '文件资料类型，文件资料，法人信息，其它'")
+    private String type;
 }

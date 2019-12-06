@@ -53,6 +53,7 @@ public class PlanFileController {
             @ApiImplicitParam(name = "fileType", value = "资料类型", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "资料类型，上传分类 1.签到 2.教材、3.日志、4.照片", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "createDate", value = "上课日期", dataType = "string", paramType = "form")
     })
@@ -68,14 +69,14 @@ public class PlanFileController {
             MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级id不为空");
             MyAssert.isNull(request.getCourseId(), DefineCode.ERR0010, "课程id不为空");
             MyAssert.isNull(request.getCreateDate(), DefineCode.ERR0010, "上课日期不为空");
+            MyAssert.isNull(request.getType(), DefineCode.ERR0010, "资料类型不为空");
             MyAssert.isTrue(DateUtil.parse(request.getCreateDate()).isAfter(new Date()), DefineCode.ERR0010, "不能选择提交今天日期之后的文件");
             String centerAreaId = tokenService.getCenterAreaId(token);
             planFile.setCenterAreaId(centerAreaId);
             planFile.setCreateUser(userId);
             return WebResult.okResult(planFileService.save(planFile));
-        } else {
-            return WebResult.okResult(planFileService.update(planFile));
         }
+        return WebResult.okResult(planFileService.update(planFile));
     }
 
     @UserLoginToken
@@ -92,9 +93,8 @@ public class PlanFileController {
         String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         if (StrUtil.isNotBlank(request.getClassId())) {
             return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
-        } else {
-            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaId(centerAreaId, pageRequest));
         }
+        return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaId(centerAreaId, pageRequest));
     }
 
     @UserLoginToken

@@ -23,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
@@ -107,8 +110,11 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
     }
 
-    public List<PlanFile> findAllPlanIdAndClassId(String planId, String classId) {
-        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId);
+    private Map<String, List<PlanFile>> groupByType(List<PlanFile> list){
+        return list.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(PlanFile::getType));
+    }
+    public Map<String, List<PlanFile>> findAllPlanIdAndClassId(String planId, String classId) {
+        return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId));
     }
 
 
@@ -168,11 +174,11 @@ public class PlanFileService extends BaseMySqlService {
         return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateDateDesc(TAKE_EFFECT_OPEN, planId, classId, pageable);
     }
 
-    public List<PlanFile> findAllByCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate) {
-        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate);
+    public Map<String, List<PlanFile>> findAllByCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate) {
+        return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate));
     }
 
-    public List<PlanFile> findAllByCourseIdAndCreateDateAndVerifyStatus(String planId, String classId, String courseId, String createDate, String verifyStatus) {
-        return planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate, verifyStatus);
+    public Map<String, List<PlanFile>> findAllByCourseIdAndCreateDateAndVerifyStatus(String planId, String classId, String courseId, String createDate, String verifyStatus) {
+        return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate, verifyStatus));
     }
 }

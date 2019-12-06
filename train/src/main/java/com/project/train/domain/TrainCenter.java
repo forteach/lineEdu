@@ -40,6 +40,4 @@ public class TrainCenter extends Entitys implements Serializable {
 
     @Column(name = "is_all_admin", columnDefinition = "VARCHAR(60) COMMENT '是否有总部培训中心管理权力'")
     private String isAllAdmin;
-
-
 }

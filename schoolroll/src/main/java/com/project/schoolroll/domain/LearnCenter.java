@@ -90,6 +90,15 @@ public class LearnCenter extends Entitys implements Serializable {
     @Column(name = "company_name", columnDefinition = "VARCHAR(32) COMMENT '公司名称'")
     private String companyName;
 
+    @Column(name = "school_admin", columnDefinition = "varchar(32) comment '学校校内联系人'")
+    private String schoolAdmin;
+
+    @Column(name = "school_plone", columnDefinition = "VARCHAR(32) COMMENT '学校联系人电话'")
+    private String schoolPhone;
+
+    @Column(name = "end_date", columnDefinition = "VARCHAR(32) COMMENT '学习中心结束时间'")
+    private String endDate;
+
     @Column(name = "role_id", columnDefinition = "INT(11) DEFAULT 1 COMMENT '0 总部 1 分中心'", nullable = false)
     private Integer roleId = this.roleId == null ? 1 : this.roleId;
 }

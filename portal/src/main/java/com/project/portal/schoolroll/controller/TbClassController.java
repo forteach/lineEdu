@@ -1,8 +1,11 @@
 package com.project.portal.schoolroll.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.TbClassFindAllPageRequest;
+import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -12,10 +15,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,10 +27,12 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class TbClassController {
     private final TbClassService tbClassService;
     private final TokenService tokenService;
+    private final StudentOnLineService studentOnLineService;
 
-    public TbClassController(TbClassService tbClassService, TokenService tokenService) {
+    public TbClassController(TbClassService tbClassService, TokenService tokenService, StudentOnLineService studentOnLineService) {
         this.tbClassService = tbClassService;
         this.tokenService = tokenService;
+        this.studentOnLineService = studentOnLineService;
     }
 
     @UserLoginToken
@@ -39,6 +41,14 @@ public class TbClassController {
     public WebResult findAll(HttpServletRequest httpServletRequest) {
         String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         return WebResult.okResult(tbClassService.findAllByCenterAreaId(centerAreaId));
+    }
+
+    @GetMapping(path = "/grade/{classId}")
+    @ApiOperation(value = "根据班级Id获取年级")
+    @ApiImplicitParam(name = "classId", value = "班级Id", required = true, paramType = "query")
+    public WebResult findAllByClassId(@PathVariable String classId){
+        MyAssert.isTrue(StrUtil.isBlank(classId), DefineCode.ERR0010, "班级Id不能为空");
+        return WebResult.okResult(studentOnLineService.getGradeByClassId(classId));
     }
 
     @UserLoginToken

@@ -64,9 +64,6 @@ public class TeacherVerify extends Entitys implements Serializable {
     private String bankCardAccount;
     @Column(name = "bank_card_bank", columnDefinition = "VARCHAR(32) COMMENT '银行卡开户行'")
     private String bankCardBank;
-
-
-
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
     @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")

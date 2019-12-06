@@ -25,10 +25,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
@@ -211,8 +209,9 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<TeacherFile> findTeacherFile(String teacherId) {
-        return teacherFileRepository.findAllByTeacherId(teacherId);
+    public Map<String, List<TeacherFile>> findTeacherFile(String teacherId) {
+        return teacherFileRepository.findAllByTeacherId(teacherId).stream()
+                .collect(Collectors.groupingBy(TeacherFile::getType));
     }
 
     @Override

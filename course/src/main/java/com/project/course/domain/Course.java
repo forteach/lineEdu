@@ -56,4 +56,10 @@ public class Course extends Entitys {
 
     @Column(name = "jobs_percentage", columnDefinition = "VARCHAR(32) COMMENT '平时作业占百分比'")
     private String jobsPercentage;
+
+    @Column(name = "course_type", columnDefinition = "TINYINT(3) DEFAULT 1 COMMENT '课程类型 1 线上 2，线下 3 混合'")
+    private int courseType;
+
+    @Column(name = "publish", columnDefinition = "CHAR(1) DEFAULT N COMMENT '是否发布 Y/N'")
+    public String publish;
 }

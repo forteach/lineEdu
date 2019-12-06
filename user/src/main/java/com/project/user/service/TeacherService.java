@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: zhangyy
@@ -46,7 +47,7 @@ public interface TeacherService {
 
     TeacherFile saveFile(TeacherFile teacherFile);
 
-    List<TeacherFile> findTeacherFile(String teacherId);
+    Map<String, List<TeacherFile>> findTeacherFile(String teacherId);
 
     void deleteTeacherFile(String fileId);
 

@@ -34,11 +34,4 @@ public class TrainCourse extends Entitys implements Serializable {
 
     @Column(name = "train_area_id", columnDefinition = "VARCHAR(60) COMMENT '培训项目领域'")
     private String trainAreaId;
-
-    public TrainCourse(String courseId, String courseName, String trainAreaId,String centerId) {
-        this.courseId = courseId;
-        this.courseName = courseName;
-        this.trainAreaId = trainAreaId;
-        super.centerAreaId=centerId;
-    }
 }

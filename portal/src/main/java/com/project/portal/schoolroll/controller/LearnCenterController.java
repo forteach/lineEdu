@@ -72,7 +72,9 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "accountHolderPhone", value = "开户人电话", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccountAddress", value = "开户行地址", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "companyAddress", value = "公司地址", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "companyName", value = "企业名称", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "schoolAdmin", value = "校内联系人", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "schoolPhone", value = "学校联系人电话", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "endDate", value = "结束时间", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
@@ -83,8 +85,10 @@ public class LearnCenterController {
                     List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());
                     MyAssert.isFalse(learnCenters.isEmpty(), DefineCode.ERR0011, "已经存在同名学习中心");
                 }
+                Integer roleId = learnCenter.getRoleId();
                 BeanUtils.copyProperties(request, learnCenter);
                 learnCenter.setUpdateUser(userId);
+                learnCenter.setRoleId(roleId);
                 learnCenterRepository.save(learnCenter);
                 if (StrUtil.isNotBlank(request.getCenterName()) && !learnCenter.getCenterName().equals(request.getCenterName())) {
                     //修改学习中心名称并且名字不同
@@ -155,12 +159,14 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "文件名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "fileType", value = "文件类型", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "fileType", value = "文件类型", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "资料类型，企业资质，法人信息，其它", dataType = "string", paramType = "form")
     })
     @PostMapping("/saveFiles")
     public WebResult saveFile(@RequestBody LearnCenterFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件url不能为空");
         MyAssert.isNull(request.getCenterId(), DefineCode.ERR0010, "学习中心不能为空");
+        MyAssert.isNull(request.getType(), DefineCode.ERR0010, "资料类型不能为空");
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         String centerAreaId = tokenService.getCenterAreaId(token);

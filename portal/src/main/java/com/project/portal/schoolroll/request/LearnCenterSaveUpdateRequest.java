@@ -72,4 +72,13 @@ public class LearnCenterSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "companyName", value = "公司企业名称", dataType = "string")
     private String companyName;
+
+    @ApiModelProperty(name = "schoolAdmin", value = "校内联系人", dataType = "string")
+    private String schoolAdmin;
+
+    @ApiModelProperty(name = "schoolPhone", value = "校内联系人电话", dataType = "string")
+    private String schoolPhone;
+
+    @ApiModelProperty(name = "endDate", value = "结束时间", dataType = "string")
+    private String endDate;
 }

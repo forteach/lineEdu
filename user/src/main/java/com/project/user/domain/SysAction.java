@@ -38,6 +38,4 @@ public class SysAction extends Entitys implements Serializable {
 
     @Column(name = "is_validated", columnDefinition = "CHAR(1) COMMENT '生效标记'")
     private String isValidated;
-
-
 }

@@ -5,6 +5,7 @@ import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.repository.dto.LearnCenterDto;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: zhangyy
@@ -27,7 +28,7 @@ public interface LearnCenterService {
 
     void deleteByFileId(String fileId);
 
-    List<CenterFile> findAll(String centerId);
+    Map<String, List<CenterFile>> findAll(String centerId);
 
     LearnCenter findByCenterId(String centerId);
 

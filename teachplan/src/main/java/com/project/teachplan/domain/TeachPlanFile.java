@@ -53,6 +53,9 @@ public class TeachPlanFile extends Entitys implements Serializable {
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '资料类型，上传分类 1.大纲、2.教材库、3.课表'")
+    private String type;
+
     @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
     private String verifyStatus  = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 }

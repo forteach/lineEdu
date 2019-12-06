@@ -2,9 +2,7 @@ package com.project.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.mysql.domain.Entitys;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -26,6 +24,8 @@ import javax.persistence.*;
         @Index(columnList = "role_id", name = "role_id_index"),
         @Index(name = "user_id_index", columnList = "user_id")
 })
+@AllArgsConstructor
+@NoArgsConstructor
 @IdClass(UserRoleFundPrimarykey.class)
 @org.hibernate.annotations.Table(appliesTo = "user_role", comment = "用户角色")
 public class UserRole extends Entitys {
@@ -39,13 +39,4 @@ public class UserRole extends Entitys {
     private String userId;
 
     private String roleId;
-
-    public UserRole() {
-    }
-
-    public UserRole(UserRoleFundPrimarykey userRoleFundPrimarykey, String userId, String roleId) {
-        this.userRoleFundPrimarykey = userRoleFundPrimarykey;
-        this.userId = userId;
-        this.roleId = roleId;
-    }
 }

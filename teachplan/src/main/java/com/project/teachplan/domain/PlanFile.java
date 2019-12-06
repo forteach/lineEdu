@@ -55,6 +55,9 @@ public class PlanFile extends Entitys implements Serializable {
     @Column(name = "remark", columnDefinition = "VARCHAR(256) COMMENT '备注说明'")
     private String remark;
 
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '资料类型，上传分类 1.签到 2.教材、3.日志、4.照片'")
+    private String type;
+
     @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
     private String verifyStatus = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 }

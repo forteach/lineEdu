@@ -341,4 +341,19 @@ public class CourseServiceImpl implements CourseService {
         }
         return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, studentId, pageRequest);
     }
+
+    @Override
+    public void updatePublish(String courseId, String userId) {
+        Optional<Course> optional =courseRepository.findById(courseId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的课程不存在");
+        optional.ifPresent(c -> {
+            if (PUBLISH_NO.equals(c.getPublish())){
+                c.setPublish(PUBLISH_YES);
+            }else {
+                c.setPublish(PUBLISH_NO);
+            }
+            c.setUpdateUser(userId);
+            courseRepository.save(c);
+        });
+    }
 }

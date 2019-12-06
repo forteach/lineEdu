@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Auther: zhangyy
@@ -46,7 +47,7 @@ public interface WeChatUserRepository extends JpaRepository<WeChatUser, String> 
             " from WeChatUser " +
             " where isValidated = '0' and openId = ?1 ")
     @Transactional(readOnly = true)
-    IWeChatUser findAllByIsValidatedEqualsAndOpenId(String openId);
+    Optional<IWeChatUser> findAllByIsValidatedEqualsAndOpenId(String openId);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     void deleteAllByStudentId(String studentId);

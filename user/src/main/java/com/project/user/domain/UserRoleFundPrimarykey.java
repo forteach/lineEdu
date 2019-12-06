@@ -26,9 +26,4 @@ public class UserRoleFundPrimarykey implements Serializable {
 
     public UserRoleFundPrimarykey() {
     }
-
-    public UserRoleFundPrimarykey(String userId, String roleId) {
-        this.userId = userId;
-        this.roleId = roleId;
-    }
 }

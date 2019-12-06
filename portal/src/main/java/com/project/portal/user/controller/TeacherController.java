@@ -198,11 +198,14 @@ public class TeacherController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "fileName", value = "文件名称", dataType = "string", required = true, paramType = "form")
+            @ApiImplicitParam(name = "fileName", value = "文件名称", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "文件资料类型，文件资料，法人信息，其它", required = true, paramType = "form")
     })
     public WebResult uploadFile(@RequestBody TeacherUploadFileRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");
-        MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件不为空");
+        MyAssert.isNull(request.getFileUrl(), DefineCode.ERR0010, "文件地址不为空");
+        MyAssert.isNull(request.getFileName(), DefineCode.ERR0010, "文件名不为空");
+        MyAssert.isNull(request.getType(), DefineCode.ERR0010, "文件类型不为空");
         String token = httpServletRequest.getHeader("token");
         String centerAreaId = tokenService.getCenterAreaId(token);
         String userId = tokenService.getUserId(token);

@@ -190,21 +190,24 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                 })
         );
 
-        //获取登陆用户信息
-        IWeChatUser iWeChatUser = weChatUserRepository.findAllByIsValidatedEqualsAndOpenId(openId);
         LoginResponse loginResp = new LoginResponse();
-        if (iWeChatUser != null) {
-            loginResp.setClassId(iWeChatUser.getClassId());
-            loginResp.setClassName(iWeChatUser.getClassName());
-            loginResp.setPortrait(iWeChatUser.getPortrait());
-            loginResp.setStudentId(iWeChatUser.getStudentId());
-            loginResp.setStudentName(iWeChatUser.getStudentName());
-            loginResp.setCenterAreaId(iWeChatUser.getCenterAreaId());
-            loginResp.setRoleId(iWeChatUser.getRoleId());
-
+        //获取登陆用户信息
+        weChatUserRepository.findAllByIsValidatedEqualsAndOpenId(openId).ifPresent(i -> {
+            String roleId = i.getRoleId();
+            if (WECHAT_ROLE_ID_STUDENT.equals(roleId)) {
+                //是学生登陆，查询学生的对应信息
+                studentOnLineService.findById(roleId).ifPresent(s -> BeanUtil.copyProperties(s, loginResp));
+            }
+            loginResp.setRoleId(roleId);
+            loginResp.setClassId(i.getClassId());
+            loginResp.setClassName(i.getClassName());
+            loginResp.setPortrait(i.getPortrait());
+            loginResp.setStudentId(i.getStudentId());
+            loginResp.setStudentName(i.getStudentName());
+            loginResp.setCenterAreaId(i.getCenterAreaId());
             //添加异步登陆日志
-            saveLoginLog(iWeChatUser, ip);
-        }
+            saveLoginLog(i, ip);
+        });
         loginResp.setBinding(binding);
         loginResp.setToken(token);
         return loginResp;

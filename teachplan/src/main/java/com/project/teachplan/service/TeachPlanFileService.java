@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
@@ -36,8 +39,16 @@ public class TeachPlanFileService {
         return teachPlanFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
     }
 
-    public List<TeachPlanFile> findAllByPlanIdAndVerifyStatus(String planId, String verifyStatus) {
-        return teachPlanFileRepository.findAllByIsValidatedEqualsAndPlanIdAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, verifyStatus);
+    public Map<String, List<TeachPlanFile>> findAllByPlanIdGroupByType(String planId) {
+        return groupByType(findAllByPlanId(planId));
+    }
+
+    public Map<String, List<TeachPlanFile>> findAllByPlanIdAndVerifyStatus(String planId, String verifyStatus) {
+        return groupByType(teachPlanFileRepository.findAllByIsValidatedEqualsAndPlanIdAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, verifyStatus));
+    }
+
+    private Map<String, List<TeachPlanFile>> groupByType(List<TeachPlanFile> list) {
+        return list.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(TeachPlanFile::getType));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -52,12 +63,14 @@ public class TeachPlanFileService {
 
     @Transactional(rollbackFor = Exception.class)
     public void verifyTeachPlan(String planId, String verifyStatus, String remark, String userId) {
-        List<TeachPlanFile> list = findAllByPlanId(planId).stream().peek(p -> {
-            p.setVerifyStatus(verifyStatus);
-            p.setRemark(remark);
-            p.setUpdateUser(userId);
-        }).collect(toList());
-
+        List<TeachPlanFile> list = findAllByPlanId(planId)
+                .stream()
+                .filter(Objects::nonNull)
+                .peek(p -> {
+                    p.setVerifyStatus(verifyStatus);
+                    p.setRemark(remark);
+                    p.setUpdateUser(userId);
+                }).collect(toList());
         teachPlanFileRepository.saveAll(list);
     }
 }

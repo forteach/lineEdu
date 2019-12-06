@@ -66,7 +66,9 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "planName", dataType = "string", value = "计划名称", paramType = "form"),
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
-            @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form")
+            @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form"),
+            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");

@@ -12,6 +12,9 @@ import java.util.List;
 
 public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, String> {
 
+    @Transactional(readOnly = true)
+    List<StudentOnLine> findAllByClassId(String classId);
+
     int countAllByIsValidatedEqualsAndClassId(String isValidated, String classId);
 
     @Transactional(readOnly = true)

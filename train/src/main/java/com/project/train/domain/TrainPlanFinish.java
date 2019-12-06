@@ -47,6 +47,4 @@ public class TrainPlanFinish extends Entitys implements Serializable {
 
     @Column(name = "is_all", columnDefinition = "tinyint(2) COMMENT '是否全部添加'")
     private int isAll;
-
-
 }
