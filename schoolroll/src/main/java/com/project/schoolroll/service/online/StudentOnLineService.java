@@ -75,7 +75,9 @@ public class StudentOnLineService {
         redisTemplate.opsForValue().set(IMPORT_STUDENTS_ONLINE, DateUtil.now(), 30L, TimeUnit.MINUTES);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    /**
+     * TODO 统一学习中心的学生导入后不能在另一学习中心导入了
+     * */
     public int importStudent(InputStream inputStream, String centerAreaId, String userId) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
@@ -83,21 +85,28 @@ public class StudentOnLineService {
 
         //校验数据完整性
         checkImportStudentData(list);
-        //设置键操作
-        setStudentKey();
-
         Map<String, List<StudentOnLine>> stringListMap = list.stream()
                 .filter(s -> StrUtil.isNotBlank(s.getClassName()))
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
-        //判断班级信息存在则设值，不存在新建
-        Map<String, String> classIds = getClass(stringListMap.keySet(), centerAreaId, userId);
-        stringListMap.forEach((k, v) -> {
-            List<StudentOnLine> lineList = setClassId(classIds, v, centerAreaId, userId);
-            studentOnLineRepository.saveAll(lineList);
+        //同一班的学生入学时间必须相同。
+        stringListMap.forEach((k, v) ->{
+            long count = v.stream().filter(Objects::nonNull).map(StudentOnLine::getEnrollmentDate).distinct().count();
+            MyAssert.isTrue(count > 1, DefineCode.ERR0010, "同一班的学生入学时间必须相同");
         });
+        //设置键操作
+        setStudentKey();
+        //保存对应班级和学生信息
+        saveClassAndStudent(stringListMap, centerAreaId, userId);
         //删除键值操作
         deleteKey();
         return list.size();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveClassAndStudent(Map<String, List<StudentOnLine>> stringListMap, String centerAreaId, String userId){
+        //判断班级信息存在则设值，不存在新建
+        Map<String, String> classIds = getClass(stringListMap.keySet(), centerAreaId, userId);
+        stringListMap.forEach((k, v) -> studentOnLineRepository.saveAll(setClassId(classIds, v, centerAreaId, userId)));
     }
 
     private void checkImportStudentData(List<StudentOnLine> list){
@@ -112,7 +121,10 @@ public class StudentOnLineService {
             MyAssert.isTrue(StrUtil.isBlank(s.getEnrollmentDate()), DefineCode.ERR0010, "入学年月不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getLearningModality()), DefineCode.ERR0010, "学习形式不能为空");
             MyAssert.isTrue(StrUtil.isBlank(s.getNation()), DefineCode.ERR0010, "民族不能为空");
+            MyAssert.isTrue(StrUtil.length(s.getEnrollmentDate()) < 4, DefineCode.ERR0010, "入学时间不正确");
             s.setStudentId(s.getStuIDCard());
+            //设置年级/届 取入学时间前4位 当年
+            s.setGrade(StrUtil.subWithLength(s.getEnrollmentDate(), 0, 4));
         });
     }
 
@@ -151,13 +163,18 @@ public class StudentOnLineService {
         reader.addHeaderAlias(enrollmentDate.getName(), enrollmentDate.name());
         reader.addHeaderAlias(nation.getName(), nation.name());
         reader.addHeaderAlias(learningModality.getName(), learningModality.name());
+        //专业简称
+        reader.addHeaderAlias(specialtyName.getName(), specialtyName.name());
+        //学制
+        reader.addHeaderAlias(educationalSystem.getName(), educationalSystem.name());
     }
 
+    /** 统计计算班级有效的学生人数*/
     public int countByClassId(String classId) {
         return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
     }
 
-    /* 查询*/
+    /** 分页查询有效的全部学生信息*/
     public Page<StudentOnLine> findAllPage(PageRequest request) {
         return studentOnLineRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, request);
     }
@@ -294,10 +311,10 @@ public class StudentOnLineService {
     public Optional<StudentOnLine> findById(String id){
         return studentOnLineRepository.findById(id);
     }
-    /** 根基班级Id查询对应的年级*/
+    /** 根据班级Id查询对应的年级*/
     public String getGradeByClassId(String classId){
         List<StudentOnLine> list = studentOnLineRepository.findAllByClassId(classId);
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "班级对应的级别不存在");
-        return list.stream().filter(Objects::nonNull).map(StudentOnLine::getGrade).findFirst().orElse("");
+        return list.stream().filter(Objects::nonNull).map(StudentOnLine::getGrade).findFirst().orElseGet(String::new);
     }
 }
