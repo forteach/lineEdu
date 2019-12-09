@@ -123,7 +123,7 @@ public class StudentOnLineService {
             MyAssert.isTrue(StrUtil.isBlank(s.getNation()), DefineCode.ERR0010, "民族不能为空");
             MyAssert.isTrue(StrUtil.length(s.getEnrollmentDate()) < 4, DefineCode.ERR0010, "入学时间不正确");
             s.setStudentId(s.getStuIDCard());
-            //设置年级/届 取入学时间前4位 当年
+            //设置年级/届 取（入学时间前4位） 例如 2019/9 取 2019
             s.setGrade(StrUtil.subWithLength(s.getEnrollmentDate(), 0, 4));
         });
     }

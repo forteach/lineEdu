@@ -44,5 +44,6 @@ public interface WeChatUserService {
 
     void deleteByStudentId(String studentId);
 
+    /** 学生端微信用户自己解绑微信登陆的帐号*/
     void untying(String openId);
 }
