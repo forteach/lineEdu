@@ -223,15 +223,26 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void restart(String string) {
         List<WeChatUser> list = weChatUserRepository.findByStudentId(string);
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "不存要删除的用户");
+        updateWeChat(list);
+    }
+
+    @Override
+    public void untying(String openId) {
+        List<WeChatUser> list = weChatUserRepository.findByOpenId(openId);
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "不存要解绑的用户");
+        updateWeChat(list);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateWeChat(List<WeChatUser> list){
         //删除token登录信息
         list.forEach(weChatUser -> tokenService.removeToken(weChatUser.getOpenId()));
         //删除微信登录信息
         list.forEach(weChatUser -> {
-            if (Validator.isMobile(weChatUser.getStudentId())) {
+            if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())) {
                 //是电话号码是教师绑定,绑定信息重置
                 weChatUser.setBinding(WX_INFO_BINDIND_1);
                 weChatUser.setOpenId("");

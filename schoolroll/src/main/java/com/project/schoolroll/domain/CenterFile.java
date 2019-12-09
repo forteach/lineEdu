@@ -51,6 +51,6 @@ public class CenterFile extends Entitys implements Serializable {
     @Column(name = "center_id", columnDefinition = "VARCHAR(32) COMMENT '学习中心编号'")
     private String centerId;
 
-    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '资料类型，企业资质，法人信息，其它'")
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '资料类型，1企业资质，2法人信息，3其它'")
     private String type;
 }

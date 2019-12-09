@@ -24,7 +24,7 @@ public class LearnCenterFileSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "fileType", value = "文件类型", dataType = "string")
     private String fileType;
 
-    @ApiModelProperty(name = "type", value = "文件资料类型，企业资质，法人身份信息，其他")
+    @ApiModelProperty(name = "type", value = "文件资料类型，1企业资质，2法人身份信息，3其他")
     private String type;
 
     @ApiModelProperty(name = "centerId", value = "学习中心id", dataType = "string")

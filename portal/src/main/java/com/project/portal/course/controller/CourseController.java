@@ -182,7 +182,7 @@ public class CourseController {
         return WebResult.okResult();
     }
 
-    @ApiOperation(value = "修改课程发布")
+    @ApiOperation(value = "修改课程发布状态")
     @PostMapping(path = "/publish/{courseId}")
     @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
     public WebResult updatePublish(@PathVariable String courseId, HttpServletRequest httpServletRequest){

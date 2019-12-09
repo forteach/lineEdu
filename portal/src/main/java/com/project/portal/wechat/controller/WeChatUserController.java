@@ -88,6 +88,14 @@ public class WeChatUserController {
         return WebResult.okResult(weChatUserService.bindingUser(bindingUser));
     }
 
+    @ApiOperation(value = "解绑微信登录用户")
+    @PostMapping(path = "/untying")
+    public WebResult untying(HttpServletRequest httpServletRequest){
+        String openId = tokenService.getOpenId(httpServletRequest.getHeader("token"));
+        weChatUserService.untying(openId);
+        return WebResult.okResult();
+    }
+
     /**
      * todo delete
      * @param studentId

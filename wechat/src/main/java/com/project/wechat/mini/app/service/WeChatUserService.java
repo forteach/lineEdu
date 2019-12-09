@@ -43,4 +43,6 @@ public interface WeChatUserService {
     void saveTeacher(String phone, String teacherName, String gender, String centerId, String userId);
 
     void deleteByStudentId(String studentId);
+
+    void untying(String openId);
 }
