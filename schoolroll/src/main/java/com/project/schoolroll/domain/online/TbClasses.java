@@ -34,9 +34,19 @@ public class TbClasses extends Entitys implements Serializable {
     @Column(name = "class_name", columnDefinition = "VARCHAR(32) COMMENT '班级名称'")
     private String className;
 
-    public TbClasses(String centerAreaId, String classId, String className, String userId) {
+    /** 专业简称*/
+    @Column(name = "specialty_name", columnDefinition = "VARCHAR(32) COMMENT '专业简称'")
+    private String specialtyName;
+
+    /** 年级 入学年的 也是学生级别 如： 2019级*/
+    @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '年级'")
+    private String grade;
+
+    public TbClasses(String centerAreaId, String classId, String className, String userId, String specialtyName, String grade) {
         super(userId, userId, centerAreaId);
         this.classId = classId;
         this.className = className;
+        this.specialtyName = specialtyName;
+        this.grade = grade;
     }
 }

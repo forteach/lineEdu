@@ -144,20 +144,17 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseListResp> myCourseList(String classId) {
         List<CourseListResp> listRespList = CollUtil.newArrayList();
         courseRepository.findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(classId)
-                .stream()
-                .forEach(iCourseChapterListDto -> {
-                    listRespList.add(CourseListResp.builder()
-                            .courseId(iCourseChapterListDto.getCourseId())
-                            .courseName(iCourseChapterListDto.getCourseName())
-                            .alias(iCourseChapterListDto.getAlias())
-                            .topPicSrc(iCourseChapterListDto.getTopPicSrc())
-                            .courseDescribe(iCourseChapterListDto.getCourseDescribe())
-                            .joinChapterId(iCourseChapterListDto.getChapterId())
-                            .joinChapterName(iCourseChapterListDto.getChapterName())
-                            .teacherId(iCourseChapterListDto.getTeacherId())
-                            .teacherName(iCourseChapterListDto.getTeacherName())
-                            .build());
-                });
+                .forEach(iCourseChapterListDto -> listRespList.add(CourseListResp.builder()
+                        .courseId(iCourseChapterListDto.getCourseId())
+                        .courseName(iCourseChapterListDto.getCourseName())
+                        .alias(iCourseChapterListDto.getAlias())
+                        .topPicSrc(iCourseChapterListDto.getTopPicSrc())
+                        .courseDescribe(iCourseChapterListDto.getCourseDescribe())
+                        .joinChapterId(iCourseChapterListDto.getChapterId())
+                        .joinChapterName(iCourseChapterListDto.getChapterName())
+                        .teacherId(iCourseChapterListDto.getTeacherId())
+                        .teacherName(iCourseChapterListDto.getTeacherName())
+                        .build()));
         return listRespList;
     }
 
@@ -166,9 +163,9 @@ public class CourseServiceImpl implements CourseService {
     public void updateStatusById(String courseId, String userId) {
         courseRepository.findById(courseId)
                 .ifPresent(course -> {
-                    if (TAKE_EFFECT_CLOSE.equals(course.getIsValidated())){
+                    if (TAKE_EFFECT_CLOSE.equals(course.getIsValidated())) {
                         course.setIsValidated(TAKE_EFFECT_OPEN);
-                    }else {
+                    } else {
                         course.setIsValidated(TAKE_EFFECT_CLOSE);
                     }
                     course.setUpdateUser(userId);
@@ -224,7 +221,7 @@ public class CourseServiceImpl implements CourseService {
         List<CourseVo> vos = new ArrayList<>();
         for (CourseTeacherVo v : courseIds) {
             List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
-            for (ICourseDto iCourseDto: list) {
+            for (ICourseDto iCourseDto : list) {
                 String chapterId = null;
                 String chapterName = null;
                 IChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
@@ -252,8 +249,9 @@ public class CourseServiceImpl implements CourseService {
         }
         return null;
     }
+
     @Override
-    public List<Course> findAllCourseVoByCreateUser(String createUser){
+    public List<Course> findAllCourseVoByCreateUser(String createUser) {
         return courseRepository.findAllByCreateUserOrderByCreateTimeDesc(createUser);
     }
 
@@ -267,8 +265,6 @@ public class CourseServiceImpl implements CourseService {
     public void taskCourseStudy() {
         //查询学生近一年学习时长并计算学习情况
         courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfter(TAKE_EFFECT_OPEN, DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -1)))
-                .stream()
-                .filter(Objects::nonNull)
                 .forEach(r -> courseRepository.findById(r.getCourseId())
                         .ifPresent(c -> {
                             CourseStudy courseStudy = findCourseStudy(c.getCourseId(), r.getStudentId());
@@ -344,12 +340,12 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void updatePublish(String courseId, String userId) {
-        Optional<Course> optional =courseRepository.findById(courseId);
+        Optional<Course> optional = courseRepository.findById(courseId);
         MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的课程不存在");
         optional.ifPresent(c -> {
-            if (PUBLISH_NO.equals(c.getPublish())){
+            if (PUBLISH_NO.equals(c.getPublish())) {
                 c.setPublish(PUBLISH_YES);
-            }else {
+            } else {
                 c.setPublish(PUBLISH_NO);
             }
             c.setUpdateUser(userId);

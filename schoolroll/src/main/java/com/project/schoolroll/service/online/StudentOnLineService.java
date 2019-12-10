@@ -37,6 +37,7 @@ import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS_ONLINE;
 import static com.project.schoolroll.domain.excel.Dic.STUDENT_ON_LINE_IMPORT_STATUS_IMPORT;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class StudentOnLineService {
@@ -53,8 +54,9 @@ public class StudentOnLineService {
         this.tbClassService = tbClassService;
         this.redisTemplate = redisTemplate;
     }
+
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(String studentId){
+    public void deleteById(String studentId) {
         Optional<StudentOnLine> optional = studentOnLineRepository.findById(studentId);
         MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的学生信息");
         studentOnLineRepository.deleteById(studentId);
@@ -76,8 +78,8 @@ public class StudentOnLineService {
     }
 
     /**
-     * TODO 统一学习中心的学生导入后不能在另一学习中心导入了
-     * */
+     *
+     */
     public int importStudent(InputStream inputStream, String centerAreaId, String userId) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         setHeaderAlias(reader);
@@ -89,7 +91,7 @@ public class StudentOnLineService {
                 .filter(s -> StrUtil.isNotBlank(s.getClassName()))
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
         //同一班的学生入学时间必须相同。
-        stringListMap.forEach((k, v) ->{
+        stringListMap.forEach((k, v) -> {
             long count = v.stream().filter(Objects::nonNull).map(StudentOnLine::getEnrollmentDate).distinct().count();
             MyAssert.isTrue(count > 1, DefineCode.ERR0010, "同一班的学生入学时间必须相同");
         });
@@ -106,13 +108,13 @@ public class StudentOnLineService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void saveClassAndStudent(Map<String, List<StudentOnLine>> stringListMap, String centerAreaId, String userId){
+    public void saveClassAndStudent(Map<String, List<StudentOnLine>> stringListMap, String centerAreaId, String userId) {
         //判断班级信息存在则设值，不存在新建
-        Map<String, String> classIds = getClass(stringListMap.keySet(), centerAreaId, userId);
+        Map<String, String> classIds = getClass(stringListMap, centerAreaId, userId);
         stringListMap.forEach((k, v) -> studentOnLineRepository.saveAll(setClassId(classIds, v, centerAreaId, userId)));
     }
 
-    private void checkImportStudentData(List<StudentOnLine> list){
+    private void checkImportStudentData(List<StudentOnLine> list) {
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "导入数据不存在");
         list.parallelStream().filter(Objects::nonNull).forEach(s -> {
             MyAssert.isTrue(StrUtil.isBlank(s.getStudentName()), DefineCode.ERR0010, "姓名不能为空");
@@ -131,10 +133,15 @@ public class StudentOnLineService {
         });
     }
 
-    private Map<String, String> getClass(Set<String> set, String centerAreaId, String userId) {
-        return set.stream()
+    private Map<String, String> getClass(Map<String, List<StudentOnLine>> stringListMap, String centerAreaId, String userId) {
+        return stringListMap.keySet().stream()
                 .filter(Objects::nonNull)
-                .map(className -> tbClassService.getClassIdByClassName(className, centerAreaId, userId))
+                .map(className -> {
+                    List<StudentOnLine> lines = stringListMap.get(className);
+                    String grade = lines.stream().filter(Objects::nonNull).map(StudentOnLine::getGrade).findFirst().orElseGet(String::new);
+                    String specialtyName = lines.stream().filter(Objects::nonNull).map(StudentOnLine::getSpecialtyName).findFirst().orElseGet(String::new);
+                    return tbClassService.getClassIdByClassName(className, centerAreaId, userId, specialtyName, grade);
+                })
                 .collect(Collectors.toMap(TbClasses::getClassName, TbClasses::getClassId));
     }
 
@@ -172,17 +179,21 @@ public class StudentOnLineService {
         reader.addHeaderAlias(educationalSystem.getName(), educationalSystem.name());
     }
 
-    /** 统计计算班级有效的学生人数*/
+    /**
+     * 统计计算班级有效的学生人数
+     */
     public int countByClassId(String classId) {
         return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
     }
 
-    /** 分页查询有效的全部学生信息*/
+    /**
+     * 分页查询有效的全部学生信息
+     */
     public Page<StudentOnLine> findAllPage(PageRequest request) {
         return studentOnLineRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, request);
     }
 
-    public Page<StudentOnLineDto> findStudentOnLineDto(PageRequest request, String studentName, String isValidated, String centerAreaId, String grade, String specialtyName, String className){
+    public Page<StudentOnLineDto> findStudentOnLineDto(PageRequest request, String studentName, String isValidated, String centerAreaId, String grade, String specialtyName, String className) {
         StringBuilder dataSql = new StringBuilder("select " +
                 " s.student_id as student_id, " +
                 " s.student_name as student_name, " +
@@ -206,54 +217,54 @@ public class StudentOnLineService {
                 " left join learn_center as lc on lc.center_id = s.center_area_id ");
         StringBuilder whereSql = new StringBuilder(" where lc.is_validated = '0' ");
         StringBuilder countSql = new StringBuilder(" select count(1) from student_on_line as s left join learn_center as lc on lc.center_id = s.center_area_id ");
-        if (StrUtil.isNotBlank(centerAreaId)){
+        if (StrUtil.isNotBlank(centerAreaId)) {
             whereSql.append(" and lc.center_id = :centerAreaId");
         }
-        if (StrUtil.isNotBlank(studentName)){
+        if (StrUtil.isNotBlank(studentName)) {
             whereSql.append(" and s.student_name = :studentName");
         }
-        if (StrUtil.isNotBlank(grade)){
+        if (StrUtil.isNotBlank(grade)) {
             whereSql.append(" and s.grade = :grade");
         }
-        if (StrUtil.isNotBlank(specialtyName)){
+        if (StrUtil.isNotBlank(specialtyName)) {
             whereSql.append(" and s.specialty_name = :specialtyName");
         }
-        if (StrUtil.isNotBlank(className)){
+        if (StrUtil.isNotBlank(className)) {
             whereSql.append(" and s.class_name = :className");
         }
-        if (StrUtil.isNotBlank(isValidated)){
+        if (StrUtil.isNotBlank(isValidated)) {
             whereSql.append(" and s.is_validated = :isValidated");
         }
         dataSql.append(whereSql).append(" order by s.class_Id, s.c_time desc ");
         countSql.append(whereSql);
         Query dataQuery = entityManager.createNativeQuery(dataSql.toString(), StudentOnLineDto.class);
         Query countQuery = entityManager.createNativeQuery(countSql.toString());
-        if (StrUtil.isNotBlank(centerAreaId)){
+        if (StrUtil.isNotBlank(centerAreaId)) {
             dataQuery.setParameter("centerAreaId", centerAreaId);
             countQuery.setParameter("centerAreaId", centerAreaId);
         }
-        if (StrUtil.isNotBlank(studentName)){
+        if (StrUtil.isNotBlank(studentName)) {
             dataQuery.setParameter("studentName", studentName);
             countQuery.setParameter("studentName", studentName);
         }
-        if (StrUtil.isNotBlank(grade)){
+        if (StrUtil.isNotBlank(grade)) {
             dataQuery.setParameter("grade", grade);
             countQuery.setParameter("grade", grade);
         }
-        if (StrUtil.isNotBlank(specialtyName)){
+        if (StrUtil.isNotBlank(specialtyName)) {
             dataQuery.setParameter("specialtyName", specialtyName);
             countQuery.setParameter("specialtyName", specialtyName);
         }
-        if (StrUtil.isNotBlank(className)){
+        if (StrUtil.isNotBlank(className)) {
             dataQuery.setParameter("className", className);
             countQuery.setParameter("className", className);
         }
-        if (StrUtil.isNotBlank(isValidated)){
+        if (StrUtil.isNotBlank(isValidated)) {
             dataQuery.setParameter("isValidated", isValidated);
             countQuery.setParameter("isValidated", isValidated);
         }
         //设置分页
-        dataQuery.setFirstResult((int)request.getOffset());
+        dataQuery.setFirstResult((int) request.getOffset());
         dataQuery.setMaxResults(request.getPageSize());
         BigInteger count = (BigInteger) countQuery.getSingleResult();
         long total = count.longValue();
@@ -266,7 +277,7 @@ public class StudentOnLineService {
         return studentOnLineRepository.findAllByIsValidatedEqualsAndStuIDCardAndStudentNameOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, stuIDCard, studentName);
     }
 
-    public List<List<String>> findAllStudent(String isValidated){
+    public List<List<String>> findAllStudent(String isValidated) {
         List<List<String>> list = exportChange(studentOnLineRepository.findAllIsValidatedDto(isValidated));
         list.add(0, setTitle());
         return list;
@@ -278,10 +289,11 @@ public class StudentOnLineService {
         return list;
     }
 
-    private List<List<String>> exportChange(List<IStudentOnLineDto> list){
+    private List<List<String>> exportChange(List<IStudentOnLineDto> list) {
         return list.stream().filter(Objects::nonNull).map(this::setExport).collect(toList());
     }
-    private List<String> setExport(IStudentOnLineDto dto){
+
+    private List<String> setExport(IStudentOnLineDto dto) {
         List<String> list = new ArrayList<>();
         list.add(dto.getStuId());
         list.add(dto.getStudentName());
@@ -296,6 +308,7 @@ public class StudentOnLineService {
         list.add(TAKE_EFFECT_OPEN.equals(dto.getIsValidated()) ? "是" : "否");
         return list;
     }
+
     private List<String> setTitle() {
         return CollUtil.newArrayList(studentId.getName(),
                 studentName.getName(),
@@ -311,13 +324,7 @@ public class StudentOnLineService {
         );
     }
 
-    public Optional<StudentOnLine> findById(String id){
+    public Optional<StudentOnLine> findById(String id) {
         return studentOnLineRepository.findById(id);
-    }
-    /** 根据班级Id查询对应的年级*/
-    public String getGradeByClassId(String classId){
-        List<StudentOnLine> list = studentOnLineRepository.findAllByClassId(classId);
-        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "班级对应的级别不存在");
-        return list.stream().filter(Objects::nonNull).map(StudentOnLine::getGrade).findFirst().orElseGet(String::new);
     }
 }

@@ -5,7 +5,6 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.TbClassFindAllPageRequest;
-import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -27,12 +26,10 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class TbClassController {
     private final TbClassService tbClassService;
     private final TokenService tokenService;
-    private final StudentOnLineService studentOnLineService;
 
-    public TbClassController(TbClassService tbClassService, TokenService tokenService, StudentOnLineService studentOnLineService) {
+    public TbClassController(TbClassService tbClassService, TokenService tokenService) {
         this.tbClassService = tbClassService;
         this.tokenService = tokenService;
-        this.studentOnLineService = studentOnLineService;
     }
 
     @UserLoginToken
@@ -43,12 +40,12 @@ public class TbClassController {
         return WebResult.okResult(tbClassService.findAllByCenterAreaId(centerAreaId));
     }
 
-    @GetMapping(path = "/grade/{classId}")
+    @GetMapping(path = "/{classId}")
     @ApiOperation(value = "根据班级Id获取年级")
     @ApiImplicitParam(name = "classId", value = "班级Id", required = true, paramType = "query")
-    public WebResult findAllByClassId(@PathVariable String classId){
+    public WebResult findAllByClassId(@PathVariable String classId) {
         MyAssert.isTrue(StrUtil.isBlank(classId), DefineCode.ERR0010, "班级Id不能为空");
-        return WebResult.okResult(studentOnLineService.getGradeByClassId(classId));
+        return WebResult.okResult(tbClassService.findById(classId));
     }
 
     @UserLoginToken
@@ -59,10 +56,10 @@ public class TbClassController {
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody TbClassFindAllPageRequest request){
+    public WebResult findAllPage(@RequestBody TbClassFindAllPageRequest request) {
         valideSort(request.getPage(), request.getSize());
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        if (StrUtil.isNotBlank(request.getCenterAreaId())){
+        if (StrUtil.isNotBlank(request.getCenterAreaId())) {
             return WebResult.okResult(tbClassService.findAllPageByCenterAreaId(request.getCenterAreaId(), pageRequest));
         }
         return WebResult.okResult(tbClassService.findAllPage(pageRequest));

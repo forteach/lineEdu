@@ -26,9 +26,15 @@ public class TbClassService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    TbClasses getClassIdByClassName(String className, String centerAreaId, String userId){
+    TbClasses getClassIdByClassName(String className, String centerAreaId, String userId, String specialtyName, String grade){
         return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId)
-                .orElseGet(() -> tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId)));
+                .orElseGet(() -> tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId, specialtyName, grade)));
+    }
+
+    public TbClasses findById(String classId){
+        Optional<TbClasses> classesOptional = tbClassesRepository.findById(classId);
+        MyAssert.isFalse(classesOptional.isPresent(), DefineCode.ERR0010, "不存在对应的班级信息");
+        return classesOptional.get();
     }
 
 
