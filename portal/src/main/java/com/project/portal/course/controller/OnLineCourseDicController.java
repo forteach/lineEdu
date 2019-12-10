@@ -50,8 +50,8 @@ public class OnLineCourseDicController {
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "课程编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "form")
-            //@ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "课程类型", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody OnLineCourseDicSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         OnLineCourseDic onLineCourseDic = new OnLineCourseDic();
