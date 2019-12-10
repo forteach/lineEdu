@@ -93,6 +93,9 @@ public class StudentOnLineService {
             long count = v.stream().filter(Objects::nonNull).map(StudentOnLine::getEnrollmentDate).distinct().count();
             MyAssert.isTrue(count > 1, DefineCode.ERR0010, "同一班的学生入学时间必须相同");
         });
+        //判断是否是同一个学习中心，是同一个学习中心则覆盖，否则不予导入并提示
+        list.forEach(s -> studentOnLineRepository.findById(s.getStudentId())
+                .ifPresent(o -> MyAssert.isFalse(centerAreaId.equals(o.getCenterAreaId()), DefineCode.ERR0010, "您添加的学生: " + s.getStudentId() + " 已经在别的学习中心注册")));
         //设置键操作
         setStudentKey();
         //保存对应班级和学生信息
