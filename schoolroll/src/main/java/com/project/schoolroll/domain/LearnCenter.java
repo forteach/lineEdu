@@ -49,9 +49,9 @@ public class LearnCenter extends Entitys implements Serializable {
     @Column(name = "address", columnDefinition = "VARCHAR(64) COMMENT '学校地址'")
     private String address;
     /**
-     * 负责人
+     * 企业负责人
      */
-    @Column(name = "principal", columnDefinition = "VARCHAR(32) COMMENT '负责人'")
+    @Column(name = "principal", columnDefinition = "VARCHAR(32) COMMENT '企业负责人'")
     private String principal;
     /**
      * 联系电话
@@ -81,7 +81,7 @@ public class LearnCenter extends Entitys implements Serializable {
     /**
      * 开户行地址
      */
-    @Column(name = "banking_account_address", columnDefinition = "VARCHAR(128) COMMENT '开户行地址'")
+    @Column(name = "banking_account_address", columnDefinition = "VARCHAR(255) COMMENT '开户行地址'")
     private String bankingAccountAddress;
 
     @Column(name = "company_address", columnDefinition = "VARCHAR(32) COMMENT '公司地址'")
@@ -99,6 +99,6 @@ public class LearnCenter extends Entitys implements Serializable {
     @Column(name = "end_date", columnDefinition = "VARCHAR(32) COMMENT '学习中心结束时间'")
     private String endDate;
 
-    @Column(name = "role_id", columnDefinition = "INT(11) DEFAULT 1 COMMENT '0 总部 1 分中心'", nullable = false)
+    @Column(name = "role_id", columnDefinition = "TINYINT(3) DEFAULT 1 COMMENT '0 总部 1 分中心'", nullable = false)
     private Integer roleId = this.roleId == null ? 1 : this.roleId;
 }

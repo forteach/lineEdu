@@ -62,19 +62,19 @@ public class LearnCenterController {
     @PostMapping("/saveOrUpdate")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "centerName", value = "学习中心名称", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "address", value = "学习中心地址", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "principal", value = "负责人", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "phone", value = "负责人联系电话", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerName", value = "学习中心名称", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "address", value = "学习中心地址", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "principal", value = "企业负责人", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "phone", value = "负责人联系电话", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "bankName", value = "银行名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccount", value = "银行账户", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "accountHolder", value = "开户人", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "accountHolderPhone", value = "开户人电话", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "bankingAccountAddress", value = "开户行地址", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "companyAddress", value = "公司地址", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "schoolAdmin", value = "校内联系人", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "schoolPhone", value = "学校联系人电话", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "endDate", value = "结束时间", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "schoolAdmin", value = "校内联系人", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "schoolPhone", value = "学校联系人电话", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "endDate", value = "结束时间", dataType = "string", paramType = "form", required = true)
     })
     public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
@@ -103,8 +103,11 @@ public class LearnCenterController {
         } else {
             MyAssert.isNull(request.getCenterName(), DefineCode.ERR0010, "学习中心名称不为空");
             MyAssert.isNull(request.getPhone(), DefineCode.ERR0010, "学习中心联系人电话不为空");
-            MyAssert.isNull(request.getPrincipal(), DefineCode.ERR0010, "学习中心负责人不为空");
+            MyAssert.isNull(request.getPrincipal(), DefineCode.ERR0010, "企业负责人不为空");
             MyAssert.isNull(request.getAddress(), DefineCode.ERR0010, "学习中心地址不为空");
+            MyAssert.isNull(request.getSchoolAdmin(), DefineCode.ERR0010, "校内负责人不能为空");
+            MyAssert.isNull(request.getSchoolPhone(), DefineCode.ERR0010, "校内负责人电话不能为空");
+            MyAssert.isNull(request.getEndDate(), DefineCode.ERR0010, "结束时间不能为空");
             MyAssert.isFalse(Validator.isMobile(request.getPhone()), DefineCode.ERR0002, "联系电话不是手机号码");
 
             List<LearnCenter> learnCenters = learnCenterRepository.findByCenterName(request.getCenterName());

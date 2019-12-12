@@ -20,9 +20,9 @@ public interface LearnCenterService {
      *
      * @return
      */
-    public List<LearnCenterDto> findAllDto();
+    List<LearnCenterDto> findAllDto();
 
-    public void removeById(String centerId);
+    void removeById(String centerId);
 
     void saveFile(CenterFile centerFile);
 
@@ -33,4 +33,6 @@ public interface LearnCenterService {
     LearnCenter findByCenterId(String centerId);
 
     void updateFileStatus(String centerId, String status, String userId);
+
+    List<LearnCenter> findCenterListByEndDate();
 }

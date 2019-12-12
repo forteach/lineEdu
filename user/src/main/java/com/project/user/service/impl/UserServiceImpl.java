@@ -31,11 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.token.constant.TokenKey.*;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @Auther: zhangyy
@@ -57,8 +59,8 @@ public class UserServiceImpl implements UserService {
     /**
      * 初始化的用户密码
      */
-    @Value("${initialization.password:123456}")
-    private String initPassWord;
+//    @Value("${initialization.password:123456}")
+//    private String initPassWord;
 
     @Resource
     private UserRepository userRepository;
@@ -252,6 +254,19 @@ public class UserServiceImpl implements UserService {
         user.setUpdateUser(createUser);
         user.setCreateUser(createUser);
         userRepository.save(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCenterUsers(List<String> list){
+        List<SysUsers> collect = userRepository.findAllById(list)
+                .stream()
+                .filter(Objects::nonNull)
+                .peek(c -> c.setIsValidated(TAKE_EFFECT_CLOSE))
+                .collect(toList());
+        if (!collect.isEmpty()){
+            userRepository.saveAll(collect);
+        }
     }
 
     @Async

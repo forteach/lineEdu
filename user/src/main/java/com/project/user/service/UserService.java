@@ -6,6 +6,8 @@ import com.project.user.web.req.UserLoginReq;
 import com.project.user.web.resp.LoginResponse;
 import com.project.user.web.vo.RegisterTeacherVo;
 
+import java.util.List;
+
 /**
  * @Auther: zhangyy
  * @Email: zhang10092009@hotmail.com
@@ -26,6 +28,7 @@ public interface UserService {
 
     /**
      * 教师端用户注册
+     *
      * @param registerUserReq
      * @return
      */
@@ -33,6 +36,7 @@ public interface UserService {
 
     /**
      * 重置用户密码
+     *
      * @param teacherCode
      * @return
      */
@@ -71,4 +75,6 @@ public interface UserService {
     void updateStatus(String id, String status, String userId);
 
     void updateCenterPhone(String centerName, String phone, String userId);
+
+    void updateCenterUsers(List<String> list);
 }

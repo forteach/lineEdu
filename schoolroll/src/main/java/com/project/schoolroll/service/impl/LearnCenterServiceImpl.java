@@ -1,5 +1,6 @@
 package com.project.schoolroll.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.schoolroll.domain.CenterFile;
@@ -19,8 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -90,5 +90,24 @@ public class LearnCenterServiceImpl implements LearnCenterService {
                     c.setIsValidated(status);
                 }).collect(toList());
         centerFileRepository.saveAll(centerFiles);
+    }
+
+    /**
+     * 修改有效期已经到的学习中心状态
+     * @return 需要修改的学习中心集合
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<LearnCenter> findCenterListByEndDate(){
+        List<LearnCenter> collect = learnCenterRepository
+                .findAllByIsValidatedEqualsAndRoleIdAndEndDateBefore(TAKE_EFFECT_OPEN, CENTER_ROLE_ID, DateUtil.today())
+                .stream()
+                .filter(Objects::nonNull)
+                .peek(l -> l.setIsValidated(TAKE_EFFECT_CLOSE))
+                .collect(toList());
+        if (!collect.isEmpty()){
+            learnCenterRepository.saveAll(collect);
+        }
+        return collect;
     }
 }

@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -25,23 +24,23 @@ public class LearnCenterSaveUpdateRequest implements Serializable {
     /**
      * 学习中心名称
      */
-    @ApiModelProperty(name = "centerName", value = "学习中心名称", dataType = "string")
+    @ApiModelProperty(name = "centerName", value = "学习中心名称", dataType = "string", required = true)
     private String centerName;
 
     /**
      * 学习中心地址
      */
-    @ApiModelProperty(name = "address", value = "地址", dataType = "string")
+    @ApiModelProperty(name = "address", value = "地址", dataType = "string", required = true)
     private String address;
     /**
      * 负责人
      */
-    @ApiModelProperty(name = "principal", value = "负责人", dataType = "string")
+    @ApiModelProperty(name = "principal", value = "企业负责人", dataType = "string", required = true)
     private String principal;
     /**
      * 联系电话
      */
-    @ApiModelProperty(name = "phone", value = "负责人电话", dataType = "string")
+    @ApiModelProperty(name = "phone", value = "负责人电话", dataType = "string", required = true)
     private String phone;
 
     @ApiModelProperty(name = "bankName", value = "银行名称", dataType = "string")
@@ -73,12 +72,12 @@ public class LearnCenterSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "companyName", value = "公司企业名称", dataType = "string")
     private String companyName;
 
-    @ApiModelProperty(name = "schoolAdmin", value = "校内联系人", dataType = "string")
+    @ApiModelProperty(name = "schoolAdmin", value = "校内联系人", dataType = "string", required = true)
     private String schoolAdmin;
 
-    @ApiModelProperty(name = "schoolPhone", value = "校内联系人电话", dataType = "string")
+    @ApiModelProperty(name = "schoolPhone", value = "校内联系人电话", dataType = "string", required = true)
     private String schoolPhone;
 
-    @ApiModelProperty(name = "endDate", value = "结束时间", dataType = "string")
+    @ApiModelProperty(name = "endDate", value = "结束时间", dataType = "string", required = true)
     private String endDate;
 }

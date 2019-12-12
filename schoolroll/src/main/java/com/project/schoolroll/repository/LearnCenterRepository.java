@@ -27,11 +27,22 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
             " phone as phone, bankingAccount as bankingAccount, accountHolder as accountHolder, accountHolderPhone as accountHolderPhone, " +
             " bankingAccountAddress as bankingAccountAddress, companyAddress as companyAddress, companyName as companyName " +
             " FROM LearnCenter WHERE isValidated = '0' and roleId = 1 order by createTime desc ")
-    public List<LearnCenterDto> findAllByIsValidatedEquals();
+    List<LearnCenterDto> findAllByIsValidatedEquals();
 
     @Transactional(readOnly = true)
-    public List<LearnCenter> findByCenterName(String centerName);
+    List<LearnCenter> findByCenterName(String centerName);
 
     @Transactional(readOnly = true)
     Page<LearnCenter> findAllByRoleId(Integer roleId, Pageable pageable);
+
+    /**
+     * 查询有效的是分中心的已经过了有效期的学习中心
+     *
+     * @param isValidated
+     * @param roleId
+     * @param endDate
+     * @return
+     */
+    @Transactional(readOnly = true)
+    List<LearnCenter> findAllByIsValidatedEqualsAndRoleIdAndEndDateBefore(String isValidated, Integer roleId, String endDate);
 }
