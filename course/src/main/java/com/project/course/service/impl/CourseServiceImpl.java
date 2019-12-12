@@ -304,8 +304,8 @@ public class CourseServiceImpl implements CourseService {
     private CourseStudy setStudyValue(CourseStudy courseStudy) {
         // 查询课程学生对应的习题信息
         List<QuestionsLists> list = questionListsRepository.findAllByCourseIdAndStudentId(courseStudy.getCourseId(), courseStudy.getStudentId());
-        //计算全部回答习题数量
-        int answerSum = list.stream().filter(Objects::nonNull).map(QuestionsLists::getQuestionIds).filter(Objects::nonNull).mapToInt(List::size).sum();
+        //计算全部生成的习题数量和
+        int answerSum = list.stream().filter(Objects::nonNull).map(QuestionsLists::getBigQuestions).filter(Objects::nonNull).mapToInt(List::size).sum();
         //过滤回答正确的习题数量
         long correctSum = list.stream()
                 .map(QuestionsLists::getBigQuestions)
