@@ -2,25 +2,33 @@ package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.teachplan.request.*;
+import com.project.portal.util.MyExcleUtil;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.service.PlanFileService;
 import com.project.teachplan.vo.TeachFileVerifyVo;
+import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.IOUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
@@ -203,6 +211,22 @@ public class PlanFileController {
         TeachFileVerifyVo verifyVo = new TeachFileVerifyVo();
         BeanUtil.copyProperties(request, verifyVo);
         planFileService.verifyTeachFile(verifyVo, userId);
+        return WebResult.okResult();
+    }
+
+    @PassToken
+    @ApiOperation(value = "导出非全日制日常教学项目模版")
+    @GetMapping(path = "/exportTemplate")
+    public WebResult leadingOutStudentTemplate(HttpServletResponse response, HttpServletRequest request) throws IOException {
+        String fileName = "非全日制日常教学项目模板（全）.xlsx";
+        InputStream inputStream = new ClassPathResource("template/非全日制日常教学项目模板（全）.xlsx").getStream();
+        OutputStream outputStream = response.getOutputStream();
+        //设置内容类型为下载类型
+        MyExcleUtil.setResponse(response, request, fileName);
+        //用 common-io 工具 将输入流拷贝到输出流
+        IOUtils.copy(inputStream, outputStream);
+        outputStream.flush();
+        outputStream.close();
         return WebResult.okResult();
     }
 }
