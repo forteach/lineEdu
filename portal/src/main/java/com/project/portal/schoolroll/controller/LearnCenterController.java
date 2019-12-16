@@ -163,7 +163,7 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "fileName", value = "文件名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileType", value = "文件类型", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "type", value = "资料类型，1 企业资质，2 法人信息，3 其它", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "type", value = "资料类型，A企业资质，B法人信息，C其它", dataType = "string", paramType = "form")
     })
     @PostMapping("/saveFiles")
     public WebResult saveFile(@RequestBody LearnCenterFileSaveUpdateRequest request, HttpServletRequest httpServletRequest) {

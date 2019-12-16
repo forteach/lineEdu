@@ -49,13 +49,16 @@ public class CourseListResp implements Serializable {
     private String joinChapterName;
     @ApiModelProperty(name = "isValidated", value = "生效标识 0生效 1失效生效标识 0生效 1失效")
     private String isValidated;
+    @ApiModelProperty(name = "createTime", value = "创建时间 yyyy-MM-dd HH:mm:ss")
+    private String createTime;
 
-    public CourseListResp(String courseId, String courseName, String topPicSrc, String alias, String isValidated) {
+    public CourseListResp(String courseId, String courseName, String topPicSrc, String alias, String isValidated, String createTime) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.topPicSrc = topPicSrc;
         this.alias = alias;
         this.isValidated = isValidated;
+        this.createTime = createTime;
     }
 
     public CourseListResp() {

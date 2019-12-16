@@ -199,7 +199,7 @@ public class TeacherController {
             @ApiImplicitParam(name = "teacherId", value = "教师id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "文件url", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "文件名称", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "type", value = "资料类型 1.身份信息,2.学历信息,3.职称信息,4.其它", required = true, paramType = "form")
+            @ApiImplicitParam(name = "type", value = "资料类型 A.身份信息,B.学历信息,C.职称信息,D.其它", required = true, paramType = "form")
     })
     public WebResult uploadFile(@RequestBody TeacherUploadFileRequest request, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(request.getTeacherId(), DefineCode.ERR0010, "教师id不为空");

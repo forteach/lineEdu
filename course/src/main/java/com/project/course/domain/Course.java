@@ -61,6 +61,6 @@ public class Course extends Entitys {
     @Column(name = "course_type", columnDefinition = "TINYINT(3) DEFAULT 1 COMMENT '课程类型 1 线上 2，线下 3 混合'")
     private int courseType;
 
-    @Column(name = "publish", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N' COMMENT '是否发布 Y/N'")
-    public String publish = StrUtil.isBlank(this.publish) ? "N" : this.publish;
+//    @Column(name = "publish", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N' COMMENT '是否发布 Y/N'")
+//    public String publish = StrUtil.isBlank(this.publish) ? "N" : this.publish;
 }

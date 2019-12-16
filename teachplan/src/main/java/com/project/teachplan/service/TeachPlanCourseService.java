@@ -59,7 +59,7 @@ public class TeachPlanCourseService {
     public List<CourseTeacherVo> findCourseIdAndTeacherIdByClassId(String classId) {
         //查询计划Id
         List<IPlanStatusDto> dtos = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
-        List<String> planIds = dtos.stream().filter(Objects::nonNull).map(IPlanStatusDto::getPlanId).collect(toList());
+        List<String> planIds = dtos.stream().filter(Objects::nonNull).map(IPlanStatusDto::getPlanId).distinct().collect(toList());
         return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds)
                 .stream()
                 .filter(Objects::nonNull)

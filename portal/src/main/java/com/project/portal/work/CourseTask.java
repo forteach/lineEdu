@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Schedules;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
@@ -153,6 +154,7 @@ public class CourseTask {
         //修改学习中心状态
         List<String> centerList = learnCenterService.findCenterListByEndDate()
                 .stream()
+                .filter(Objects::nonNull)
                 .map(LearnCenter::getCenterName)
                 .collect(toList());
         //使学习中心的登录账号失效

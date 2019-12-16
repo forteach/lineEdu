@@ -78,7 +78,7 @@ public class CourseServiceImpl implements CourseService {
      * 保存课程基本信息
      *
      * @param course 课程基本信息
-     *               //     * @param teachers 集体备课教师信息
+//     * @param teachers 集体备课教师信息
      * @return 课程编号和集体备课资源编号
      */
     @Override
@@ -87,11 +87,14 @@ public class CourseServiceImpl implements CourseService {
         //1、保存课程基本信息
         if (StrUtil.isBlank(course.getCourseId())) {
             course.setCourseId(IdUtil.fastSimpleUUID());
+            //设置默认状态，初始课程状态无效
+            course.setIsValidated(TAKE_EFFECT_CLOSE);
             return courseRepository.save(course).getCourseId();
         } else {
             courseRepository.findById(course.getCourseId()).ifPresent(c -> {
                 UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
+                course.setIsValidated(TAKE_EFFECT_CLOSE);
                 courseRepository.save(c);
             });
         }
@@ -106,7 +109,7 @@ public class CourseServiceImpl implements CourseService {
      */
     @Override
     public List<ICourseListDto> findAll(PageRequest page) {
-        return courseRepository.findByIsValidated(TAKE_EFFECT_OPEN, page).getContent();
+        return courseRepository.findAllByIsValidatedNotNull(page).getContent();
     }
 
     /**
@@ -139,8 +142,8 @@ public class CourseServiceImpl implements CourseService {
      * @param classId
      * @return
      */
+//    @Cacheable(value = "myCourseList", key = "#classId", sync = true, unless = "#result eq null")
     @Override
-    @Cacheable(value = "myCourseList", key = "#classId", sync = true, unless = "#result eq null")
     public List<CourseListResp> myCourseList(String classId) {
         List<CourseListResp> listRespList = CollUtil.newArrayList();
         courseRepository.findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(classId)
@@ -241,6 +244,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @SuppressWarnings(value = "all")
     public List<CourseVo> findCourseVoByClassId(String classId, String key) {
         if (StrUtil.isNotBlank(classId)) {
             if (stringRedisTemplate.hasKey(key)) {
@@ -293,7 +297,9 @@ public class CourseServiceImpl implements CourseService {
                 .filter(Objects::nonNull)
                 .map(this::setStudyValue)
                 .collect(toList());
-        courseStudyRepository.saveAll(list);
+        if (!list.isEmpty()){
+            courseStudyRepository.saveAll(list);
+        }
     }
 
     /**
@@ -305,9 +311,13 @@ public class CourseServiceImpl implements CourseService {
         // 查询课程学生对应的习题信息
         List<QuestionsLists> list = questionListsRepository.findAllByCourseIdAndStudentId(courseStudy.getCourseId(), courseStudy.getStudentId());
         //计算全部生成的习题数量和
-        int answerSum = list.stream().filter(Objects::nonNull).map(QuestionsLists::getBigQuestions).filter(Objects::nonNull).mapToInt(List::size).sum();
+        int answerSum = list.stream().filter(Objects::nonNull)
+                .map(QuestionsLists::getBigQuestions)
+                .filter(Objects::nonNull)
+                .mapToInt(List::size)
+                .sum();
         //过滤回答正确的习题数量
-        long correctSum = list.stream()
+        long correctSum = list.stream().filter(Objects::nonNull)
                 .map(QuestionsLists::getBigQuestions)
                 .filter(Objects::nonNull)
                 .mapToLong(this::countRightQuestion)
@@ -338,18 +348,18 @@ public class CourseServiceImpl implements CourseService {
         return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, studentId, pageRequest);
     }
 
-    @Override
-    public void updatePublish(String courseId, String userId) {
-        Optional<Course> optional = courseRepository.findById(courseId);
-        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的课程不存在");
-        optional.ifPresent(c -> {
-            if (PUBLISH_NO.equals(c.getPublish())) {
-                c.setPublish(PUBLISH_YES);
-            } else {
-                c.setPublish(PUBLISH_NO);
-            }
-            c.setUpdateUser(userId);
-            courseRepository.save(c);
-        });
-    }
+//    @Override
+//    public void updatePublish(String courseId, String userId) {
+//        Optional<Course> optional = courseRepository.findById(courseId);
+//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的课程不存在");
+//        optional.ifPresent(c -> {
+//            if (PUBLISH_NO.equals(c.getPublish())) {
+//                c.setPublish(PUBLISH_YES);
+//            } else {
+//                c.setPublish(PUBLISH_NO);
+//            }
+//            c.setUpdateUser(userId);
+//            courseRepository.save(c);
+//        });
+//    }
 }

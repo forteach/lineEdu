@@ -26,7 +26,7 @@ public class TeachPlanFileSaveRequest implements Serializable {
     @ApiModelProperty(name = "fileType", value = "资料类型", dataType = "string")
     private String fileType;
 
-    @ApiModelProperty(name = "type", value = "资料类型，上传分类 1.大纲、2.教材库、3.课表", dataType = "string")
+    @ApiModelProperty(name = "type", value = "资料类型，上传分类 A.大纲、B.教材库、C.课表,D 素材库", dataType = "string")
     private String type;
 
     /**

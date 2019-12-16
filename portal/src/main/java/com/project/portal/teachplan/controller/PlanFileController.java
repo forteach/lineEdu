@@ -61,7 +61,7 @@ public class PlanFileController {
             @ApiImplicitParam(name = "fileType", value = "资料类型", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级编号", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "type", value = "资料类型，上传分类 1.签到 2.教材、3.日志、4.照片", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "资料类型，上传分类 A.签到 B.教材、C.日志、D.照片", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "createDate", value = "上课日期", dataType = "string", paramType = "form")
     })
@@ -186,6 +186,17 @@ public class PlanFileController {
     public WebResult deleteFile(@PathVariable String fileId) {
         MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
         planFileService.deleteByFileId(fileId);
+        return WebResult.okResult();
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "通过资料Id修改单个文件的资料状态")
+    @PostMapping("/status/{fileId}")
+    @ApiImplicitParam(name = "fileId", value = "文件id", dataType = "string", required = true, paramType = "form")
+    public WebResult updateFileStatus(@PathVariable String fileId, HttpServletRequest httpServletRequest) {
+        MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
+        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+        planFileService.updateStatus(fileId, userId);
         return WebResult.okResult();
     }
 

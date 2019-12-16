@@ -42,6 +42,8 @@ public interface ICourseListDto {
      * @return
      */
     public String getCourseDescribe();
-
+    /** 有效，无效状态*/
     public String getIsValidated();
+    /** 创建时间 */
+    public String getCreateTime();
 }

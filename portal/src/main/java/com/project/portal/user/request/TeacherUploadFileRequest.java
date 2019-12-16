@@ -21,6 +21,6 @@ public class TeacherUploadFileRequest implements Serializable {
     private String fileUrl;
     @ApiModelProperty(name = "fileName", value = "文件名称", dataType = "string")
     private String fileName;
-    @ApiModelProperty(name = "type", value = "文件资料类型: 1.身份信息,2.学历信息,3.职称信息,4.其它")
+    @ApiModelProperty(name = "type", value = "文件资料类型: A.身份信息,B.学历信息,C.职称信息,D.其它")
     private String type;
 }

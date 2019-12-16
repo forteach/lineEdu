@@ -76,5 +76,6 @@ public interface UserService {
 
     void updateCenterPhone(String centerName, String phone, String userId);
 
+    /** 批量修改管理端用户状态为无效*/
     void updateCenterUsers(List<String> list);
 }

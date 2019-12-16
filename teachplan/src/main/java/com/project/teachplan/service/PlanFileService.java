@@ -28,8 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
-import static com.project.base.common.keyword.Dic.VERIFY_STATUS_APPLY;
+import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -65,6 +64,18 @@ public class PlanFileService extends BaseMySqlService {
         saveTeachPlanFileList(classFile);
         classFile.setVerifyStatus(VERIFY_STATUS_APPLY);
         return planFileRepository.save(classFile);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(String fileId, String userId) {
+        planFileRepository.findById(fileId).ifPresent(p -> {
+            if (TAKE_EFFECT_OPEN.equals(p.getIsValidated())) {
+                p.setIsValidated(TAKE_EFFECT_CLOSE);
+            } else {
+                p.setIsValidated(TAKE_EFFECT_OPEN);
+            }
+            planFileRepository.save(p);
+        });
     }
 
     @Async

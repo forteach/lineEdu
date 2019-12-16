@@ -21,17 +21,20 @@ import java.util.List;
  */
 public interface CourseRepository extends JpaRepository<Course, String> {
 
-    public Course findByCourseId(String courseId);
+//    public Course findByCourseId(String courseId);
 
     /**
      * 分页查询所有有效课程
      *
-     * @param isValidated
+//     * @param isValidated
      * @param pageable
      * @return
      */
+//    @Transactional(readOnly = true)
+//    Page<ICourseListDto> findByIsValidated(String isValidated, Pageable pageable);
+
     @Transactional(readOnly = true)
-    Page<ICourseListDto> findByIsValidated(String isValidated, Pageable pageable);
+    Page<ICourseListDto> findAllByIsValidatedNotNull(Pageable pageable);
 
     /**
      * 分页查询我的课程科目
@@ -53,7 +56,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
             "  c.courseId       as courseId, " +
             "  c.courseName     as courseName, " +
             "  c.alias          as alias, " +
-            "  c.topPicSrc     as topPicSrc, " +
+            "  c.topPicSrc      as topPicSrc, " +
             "  c.courseDescribe as courseDescribe, " +
             "  t.teacherId      as teacherId, " +
             "  t.teacherName    as teacherName " +

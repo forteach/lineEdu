@@ -61,5 +61,5 @@ public interface CourseService {
 
     Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
 
-    void updatePublish(String courseId, String userId);
+//    void updatePublish(String courseId, String userId);
 }

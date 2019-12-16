@@ -92,6 +92,7 @@ public class StudentOnLineService {
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
         //同一班的学生入学时间必须相同。
         stringListMap.forEach((k, v) -> {
+            //判断同一班级的学生入学日期是否是相同，大于１,则有不同的
             long count = v.stream().filter(Objects::nonNull).map(StudentOnLine::getEnrollmentDate).distinct().count();
             MyAssert.isTrue(count > 1, DefineCode.ERR0010, "同一班的学生入学时间必须相同");
         });
@@ -146,7 +147,7 @@ public class StudentOnLineService {
     }
 
     private List<StudentOnLine> setClassId(Map<String, String> classIds, List<StudentOnLine> list, String centerAreaId, String userId) {
-        return list.stream().map(s -> setStudentOnLine(s, classIds, centerAreaId, userId)).collect(toList());
+        return list.stream().filter(Objects::nonNull).map(s -> setStudentOnLine(s, classIds, centerAreaId, userId)).collect(toList());
     }
 
     private StudentOnLine setStudentOnLine(StudentOnLine studentOnLine, Map<String, String> classIds, String centerAreaId, String userId) {
