@@ -103,7 +103,9 @@ public class TeachService {
     public TeachPlanVerify saveUpdatePlan(TeachPlanVerify teachPlan) {
         teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
         if (StrUtil.isBlank(teachPlan.getPlanId())) {
-            MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanName()), DefineCode.ERR0010, "计划名称不能为空");
+
+//            MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanName()), DefineCode.ERR0010, "计划名称不能为空");
+
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getStartDate()), DefineCode.ERR0010, "计划开始时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getEndDate()), DefineCode.ERR0010, "计划结束时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanAdmin()), DefineCode.ERR0010, "负责人不能为空");
@@ -148,6 +150,7 @@ public class TeachService {
         teachPlan.setClassName(tbClass.getClassName());
         teachPlan.setSpecialtyName(tbClass.getSpecialtyName());
         teachPlan.setGrade(tbClass.getGrade());
+        teachPlan.setPlanName(tbClass.getSpecialtyName() + tbClass.getGrade());
     }
     private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses, String remark, String centerAreaId, String userId) {
         List<TeachPlanCourseVerify> planCourseList = courses.parallelStream().filter(Objects::nonNull)

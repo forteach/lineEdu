@@ -62,15 +62,15 @@ public class TeachPlanController {
     @ApiOperation(value = "保存修改教学计划")
     @PostMapping(path = "/saveUpdate")
     @ApiImplicitParams({
+//            @ApiImplicitParam(name = "planName", dataType = "string", value = "计划名称", paramType = "form"),
+//            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "className", value = "班级名称", dataType = "string", required = true, paramType = "form"),
+//            @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
             @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form"),
-            @ApiImplicitParam(name = "planName", dataType = "string", value = "计划名称", paramType = "form"),
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "form")
-//            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "form"),
-//            @ApiImplicitParam(name = "className", value = "班级名称", dataType = "string", required = true, paramType = "form"),
-//            @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");

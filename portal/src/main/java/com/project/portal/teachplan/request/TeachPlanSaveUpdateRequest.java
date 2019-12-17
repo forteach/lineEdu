@@ -12,8 +12,8 @@ public class TeachPlanSaveUpdateRequest implements Serializable {
     @ApiModelProperty(name = "planId", dataType = "string", value = "计划id")
     private String planId;
 
-    @ApiModelProperty(name = "planName", dataType = "string", value = "计划名称")
-    private String planName;
+//    @ApiModelProperty(name = "planName", dataType = "string", value = "计划名称")
+//    private String planName;
 
     @ApiModelProperty(name = "planAdmin", dataType = "string", value = "计划负责人")
     private String planAdmin;
