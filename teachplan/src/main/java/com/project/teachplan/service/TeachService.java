@@ -395,6 +395,7 @@ public class TeachService {
         //查询redis缓存
         if (redisTemplate.hasKey(key)) {
             JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
+            //分页数据保存json转换为分页信息返回显示
             return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
         }
         //设置redis缓存

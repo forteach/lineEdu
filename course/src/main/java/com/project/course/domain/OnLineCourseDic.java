@@ -33,6 +33,6 @@ public class OnLineCourseDic extends Entitys implements Serializable {
     @Column(name = "course_name", columnDefinition = "VARCHAR(40) COMMENT '课程名称'")
     private String courseName;
 
-    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '课程类型　线上，线下'")
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '课程类型　1.线上，2.线下,3.混合'")
     private String type;
 }

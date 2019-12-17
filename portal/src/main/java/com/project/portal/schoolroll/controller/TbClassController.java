@@ -41,7 +41,7 @@ public class TbClassController {
     }
 
     @GetMapping(path = "/{classId}")
-    @ApiOperation(value = "根据班级Id获取年级")
+    @ApiOperation(value = "根据班级Id获取年级,专业信息和年级")
     @ApiImplicitParam(name = "classId", value = "班级Id", required = true, paramType = "query")
     public WebResult findAllByClassId(@PathVariable String classId) {
         MyAssert.isTrue(StrUtil.isBlank(classId), DefineCode.ERR0010, "班级Id不能为空");

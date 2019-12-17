@@ -141,8 +141,8 @@ public class CourseTask {
      * 统计学习课程占比
      */
     @Schedules({
-            @Scheduled(cron = "0 10 3 * * ?")
-//            @Scheduled(cron = "0 0 0/1 * * ?")
+//            @Scheduled(cron = "0 10 3 * * ?")
+            @Scheduled(cron = "0 0 0/1 * * ?")
     })
     @Async
     public void asyncCenter() {

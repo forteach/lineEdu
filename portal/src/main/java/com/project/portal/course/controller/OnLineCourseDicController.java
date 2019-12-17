@@ -7,8 +7,8 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.OnLineCourseDic;
 import com.project.course.service.OnLineCourseDicService;
+import com.project.portal.course.request.CourseDicfindAllPageReq;
 import com.project.portal.course.request.OnLineCourseDicSaveUpdateRequest;
-import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -51,7 +51,7 @@ public class OnLineCourseDicController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "课程编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "type", value = "课程类型", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "type", value = "课程类型　1.线上，2.线下,3.混合", dataType = "string", paramType = "form")
     })
     public WebResult saveOrUpdate(@RequestBody OnLineCourseDicSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         OnLineCourseDic onLineCourseDic = new OnLineCourseDic();
@@ -64,6 +64,7 @@ public class OnLineCourseDicController {
         onLineCourseDic.setCenterAreaId(centerId);
         if (StrUtil.isBlank(request.getCourseId())) {
             MyAssert.isNull(request.getCourseName(), DefineCode.ERR0010, "课程名称不为空");
+            MyAssert.isNull(request.getType(), DefineCode.ERR0010, "课程类型不为空");
             String centerAreaId = tokenService.getCenterAreaId(token);
             onLineCourseDic.setCenterAreaId(centerAreaId);
             return WebResult.okResult(onLineCourseDicService.save(onLineCourseDic));
@@ -72,17 +73,19 @@ public class OnLineCourseDicController {
         }
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "在线项目课程字典列表")
-    @PostMapping(path = "/findAll")
-    @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, example = "没有此参数查询全部", paramType = "query")
-    public WebResult findAll(@RequestBody String centerAreaId) {
-        String centerId = JSONObject.parseObject(centerAreaId).getString("centerAreaId");
-        if (StrUtil.isBlank(centerId)) {
-            return WebResult.okResult(onLineCourseDicService.findAll());
-        }
-        return WebResult.okResult(onLineCourseDicService.findAllByCenterAreaId(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "在线项目课程字典列表")
+//    @PostMapping(path = "/findAll")
+//    @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, example = "没有此参数查询全部", paramType = "query")
+//    public WebResult findAll(@RequestBody CourseDicReq req) {
+//        MyAssert.isNull(req.getType(), DefineCode.ERR0010, "");
+//        String centerId = JSONObject.parseObject(centerAreaId).getString("centerAreaId");
+//        if (StrUtil.isBlank(centerId)) {
+//            return WebResult.okResult(onLineCourseDicService.findAll());
+//        }
+//        return WebResult.okResult(onLineCourseDicService.findAllByCenterAreaId(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
+//    }
+
 
     @UserLoginToken
     @PostMapping(path = "/removeByCourseId")
@@ -121,11 +124,17 @@ public class OnLineCourseDicController {
     @UserLoginToken
     @ApiImplicitParams({
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", required = true, example = "0", paramType = "query"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", required = true, example = "15", paramType = "query")
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", required = true, example = "15", paramType = "query"),
+            @ApiImplicitParam(name = "type", value = "课程类型　1.线上，2.线下,3.混合", dataType = "string", example = "1", paramType = "query")
     })
     @PostMapping(path = "/findAllPage")
-    public WebResult findAllPage(@RequestBody SortVo sortVo){
-        valideSort(sortVo.getPage(), sortVo.getSize());
-        return WebResult.okResult(onLineCourseDicService.findAllPage(PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+    public WebResult findAllPage(@RequestBody CourseDicfindAllPageReq req){
+        valideSort(req.getPage(), req.getSize());
+        PageRequest of = PageRequest.of(req.getPage(), req.getSize());
+        if (StrUtil.isBlank(req.getType())){
+            return WebResult.okResult(onLineCourseDicService.findAllPage(of));
+        }else {
+            return WebResult.okResult(onLineCourseDicService.findAllPageByType(of, req.getType()));
+        }
     }
 }

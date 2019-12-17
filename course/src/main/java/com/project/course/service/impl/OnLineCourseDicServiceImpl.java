@@ -1,6 +1,7 @@
 package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
@@ -18,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 
 /**
  * 财务类型明细
@@ -43,16 +43,13 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OnLineCourseDic save(OnLineCourseDic onLineCourseDic) {
-        Optional<OnLineCourseDic> optional = findByCourseName(onLineCourseDic.getCourseName());
-        if (optional.isPresent()) {
-            MyAssert.isNull(null, DefineCode.ERR0013, "已经存同名的课程信息");
-        }
+        existsAllCourseNameAndType(onLineCourseDic.getCourseName(), onLineCourseDic.getType());
         onLineCourseDic.setCourseId(IdUtil.fastSimpleUUID());
         return onLineCourseDicRepository.save(onLineCourseDic);
     }
 
-    private Optional<OnLineCourseDic> findByCourseName(String courseName) {
-        return onLineCourseDicRepository.findByCourseName(courseName);
+    private void existsAllCourseNameAndType(String courseName, String type) {
+        MyAssert.isTrue(onLineCourseDicRepository.existsAllByCourseNameAndType(courseName, type), DefineCode.ERR0013, "已经存相同名称和类型的课程信息");
     }
 
     /**
@@ -62,11 +59,11 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Transactional(rollbackFor = Exception.class)
     public OnLineCourseDic update(OnLineCourseDic onLineCourseDic) {
         OnLineCourseDic obj = findId(onLineCourseDic.getCourseId());
-        if (StrUtil.isNotBlank(onLineCourseDic.getCourseName()) && !obj.getCourseName().equals(onLineCourseDic.getCourseName())) {
-            Optional<OnLineCourseDic> optional = findByCourseName(onLineCourseDic.getCourseName());
-            if (optional.isPresent()) {
-                MyAssert.isNull(null, DefineCode.ERR0013, "已经存同名的课程信息");
-            }
+        if (StrUtil.isNotBlank(onLineCourseDic.getCourseName()) && !obj.getCourseName().equals(onLineCourseDic.getCourseName())){
+            existsAllCourseNameAndType(onLineCourseDic.getCourseName(), obj.getType());
+        }
+        if (StrUtil.isNotBlank(onLineCourseDic.getType()) && !obj.getType().equals(onLineCourseDic.getType())) {
+            existsAllCourseNameAndType(obj.getCourseName(), onLineCourseDic.getType());
         }
         BeanUtil.copyProperties(onLineCourseDic, obj);
         return onLineCourseDicRepository.save(obj);
@@ -86,14 +83,14 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
         return obj.get();
     }
 
-    /**
-     * @param centerAreaId 财务类型明细，不分页
-     * @return
-     */
-    @Override
-    public List<OnLineCourseDic> findAllByCenterAreaId(String centerAreaId) {
-        return onLineCourseDicRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerAreaId);
-    }
+//    /**
+//     * @param centerAreaId 财务类型明细，不分页
+//     * @return
+//     */
+//    @Override
+//    public List<OnLineCourseDic> findAllByCenterAreaId(String centerAreaId) {
+//        return onLineCourseDicRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerAreaId);
+//    }
 
     @Override
     public List<OnLineCourseDic> findAll() {
@@ -138,5 +135,14 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Override
     public Page<OnLineCourseDic> findAllPage(PageRequest pageRequest) {
         return onLineCourseDicRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public Page<OnLineCourseDic> findAllPageByType(PageRequest pageRequest, String type) {
+        if (COURSE_TYPE_4.equals(type)) {
+            List<String> list = CollUtil.toList(COURSE_TYPE_1, COURSE_TYPE_3);
+            return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeIn(TAKE_EFFECT_OPEN, list, pageRequest);
+        }
+        return onLineCourseDicRepository.findAllByIsValidatedEqualsAndType(TAKE_EFFECT_OPEN, type, pageRequest);
     }
 }
