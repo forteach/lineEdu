@@ -20,7 +20,7 @@ public interface OnLineCourseDicService {
 
     public OnLineCourseDic findId(String courseId);
 
-//    public List<OnLineCourseDic> findAllByCenterAreaId(String centerAreaId);
+    public List<OnLineCourseDic> findAllByCenterAreaId(String centerAreaId);
 
     public List<OnLineCourseDic> findAll();
 

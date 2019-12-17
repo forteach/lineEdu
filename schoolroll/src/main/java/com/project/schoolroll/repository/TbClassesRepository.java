@@ -24,6 +24,9 @@ public interface TbClassesRepository extends JpaRepository<TbClasses, String> {
     @Transactional(readOnly = true)
     List<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId);
 
+//    @Transactional(readOnly = true)
+//    List<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdAndClassIdInOrderByCreateTimeDesc(String isValidated, String centerAreaId);
+
     @Transactional(readOnly = true)
     Page<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId, Pageable pageable);
 

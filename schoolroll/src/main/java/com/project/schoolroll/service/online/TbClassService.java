@@ -12,9 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class TbClassService {
@@ -50,6 +54,21 @@ public class TbClassService {
 
     public List<TbClasses> findAllByCenterAreaId(String centerAreaId){
         return tbClassesRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId);
+    }
+
+    public List<TbClasses> findAllByCenterAreaId(String centerAreaId, Set<String> classIds){
+        return findAllByCenterAreaId(centerAreaId)
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(o -> filterClass(classIds, o.getClassId()))
+                .collect(toList());
+    }
+
+    private boolean filterClass(Set<String> classIds, String classId){
+        if (classIds.isEmpty()){
+            return true;
+        }
+        return !classIds.contains(classId);
     }
 
     public Page<TbClasses> findAllPage(Pageable pageable){

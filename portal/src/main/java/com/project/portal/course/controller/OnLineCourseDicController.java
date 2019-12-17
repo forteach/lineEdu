@@ -73,18 +73,16 @@ public class OnLineCourseDicController {
         }
     }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "在线项目课程字典列表")
-//    @PostMapping(path = "/findAll")
-//    @ApiImplicitParam(name = "centerAreaId", value = "归属的学习中心编号", dataType = "string", required = true, example = "没有此参数查询全部", paramType = "query")
-//    public WebResult findAll(@RequestBody CourseDicReq req) {
-//        MyAssert.isNull(req.getType(), DefineCode.ERR0010, "");
-//        String centerId = JSONObject.parseObject(centerAreaId).getString("centerAreaId");
-//        if (StrUtil.isBlank(centerId)) {
-//            return WebResult.okResult(onLineCourseDicService.findAll());
-//        }
-//        return WebResult.okResult(onLineCourseDicService.findAllByCenterAreaId(JSONObject.parseObject(centerAreaId).getString("centerAreaId")));
-//    }
+    @UserLoginToken
+    @ApiOperation(value = "在线项目课程字典列表")
+    @PostMapping(path = "/findAll")
+    public WebResult findAll(HttpServletRequest httpServletRequest) {
+        String centerId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        if (StrUtil.isBlank(centerId)) {
+            return WebResult.okResult(onLineCourseDicService.findAll());
+        }
+        return WebResult.okResult(onLineCourseDicService.findAllByCenterAreaId(centerId));
+    }
 
 
     @UserLoginToken

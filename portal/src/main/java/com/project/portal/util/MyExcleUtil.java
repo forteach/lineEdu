@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Slf4j
 public class MyExcleUtil {
-    public static void getExcel(HttpServletResponse response, HttpServletRequest request, List list, String fileName) {
+    public static void getExcel(HttpServletResponse response, HttpServletRequest request, List<?> list, String fileName) {
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "没有要导出的数据");
         try {
             ExcelWriter writer = ExcelUtil.getWriter(true);

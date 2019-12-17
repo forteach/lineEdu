@@ -67,8 +67,10 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form"),
-            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "form")
+//            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "className", value = "班级名称", dataType = "string", required = true, paramType = "form"),
+//            @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
@@ -81,22 +83,22 @@ public class TeachPlanController {
         return WebResult.okResult(teachService.saveUpdatePlan(teachPlan));
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "保存修改计划对应的班级接口")
-    @PostMapping(path = "/saveUpdateClass")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form"),
-            @ApiImplicitParam(name = "remark", value = "备注说明", dataType = "string", paramType = "form")
-    })
-    public WebResult saveUpdateClass(@RequestBody TeachPlanClassSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
-        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
-        MyAssert.isTrue(request.getClassIds().isEmpty(), DefineCode.ERR0010, "班级信息不为空");
-        String token = httpServletRequest.getHeader("token");
-        String centerAreaId = tokenService.getCenterAreaId(token);
-        String userId = tokenService.getUserId(token);
-        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds(), request.getRemark(), centerAreaId, userId));
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "保存修改计划对应的班级接口")
+//    @PostMapping(path = "/saveUpdateClass")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form"),
+//            @ApiImplicitParam(name = "classIds", dataType = "list", value = "班级id集合", paramType = "form"),
+//            @ApiImplicitParam(name = "remark", value = "备注说明", dataType = "string", paramType = "form")
+//    })
+//    public WebResult saveUpdateClass(@RequestBody TeachPlanClassSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
+//        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+//        MyAssert.isTrue(request.getClassIds().isEmpty(), DefineCode.ERR0010, "班级信息不为空");
+//        String token = httpServletRequest.getHeader("token");
+//        String centerAreaId = tokenService.getCenterAreaId(token);
+//        String userId = tokenService.getUserId(token);
+//        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds(), request.getRemark(), centerAreaId, userId));
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "保存修改计划对应的课程接口")
@@ -187,19 +189,19 @@ public class TeachPlanController {
         }
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "查询计划对应班级信息")
-    @PostMapping(path = "/class/{planId}")
-    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "query")
-    public WebResult findAllClassByPlanId(@PathVariable String planId, HttpServletRequest request) {
-        MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
-        String token = request.getHeader("token");
-        if (tokenService.isStudent(token)) {
-            return WebResult.okResult(teachService.findAllClassByPlanId(planId));
-        }else {
-            return WebResult.okResult(teachService.findAllClassVerifyByPlanId(planId));
-        }
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "查询计划对应班级信息")
+//    @PostMapping(path = "/class/{planId}")
+//    @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", required = true, paramType = "query")
+//    public WebResult findAllClassByPlanId(@PathVariable String planId, HttpServletRequest request) {
+//        MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
+//        String token = request.getHeader("token");
+//        if (tokenService.isStudent(token)) {
+//            return WebResult.okResult(teachService.findAllClassByPlanId(planId));
+//        }else {
+//            return WebResult.okResult(teachService.findAllClassVerifyByPlanId(planId));
+//        }
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "更新教学计划状态")

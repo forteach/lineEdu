@@ -28,6 +28,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
     @Transactional(readOnly = true)
     List<TeachPlanVerify> findAllByIsValidatedEqualsAndVerifyStatusAndCenterAreaId(String isValidated, String verifyStatus, String centerAreaId);
 
+    @Transactional(readOnly = true)
+    List<TeachPlanVerify> findAllByCenterAreaId(String centerAreaId);
+
+
     @Query(value = "select " +
             " tp.planId as planId, " +
             " tp.planName as planName," +
@@ -35,8 +39,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
@@ -56,8 +62,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
@@ -77,8 +85,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
@@ -98,8 +108,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
@@ -119,8 +131,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
@@ -140,8 +154,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
@@ -161,8 +177,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +
@@ -182,8 +200,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.endDate as endDate," +
             " tp.planAdmin as planAdmin," +
             " tp.courseNumber as courseNumber, " +
-            " tp.classNumber as classNumber, " +
-            " tp.sumNumber as sumNumber, " +
+//            " tp.classNumber as classNumber, " +
+//            " tp.sumNumber as sumNumber, " +
+            " tp.classId as classId, " +
+            " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
             " lc.centerName as centerName, " +
             " tp.isValidated as isValidated, " +

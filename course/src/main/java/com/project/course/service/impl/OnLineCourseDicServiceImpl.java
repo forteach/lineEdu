@@ -83,14 +83,14 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
         return obj.get();
     }
 
-//    /**
-//     * @param centerAreaId 财务类型明细，不分页
-//     * @return
-//     */
-//    @Override
-//    public List<OnLineCourseDic> findAllByCenterAreaId(String centerAreaId) {
-//        return onLineCourseDicRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerAreaId);
-//    }
+    /**
+     * @param centerAreaId 财务类型明细，不分页
+     * @return
+     */
+    @Override
+    public List<OnLineCourseDic> findAllByCenterAreaId(String centerAreaId) {
+        return onLineCourseDicRepository.findAllByIsValidatedEqualsAndCenterAreaId(TAKE_EFFECT_OPEN, centerAreaId);
+    }
 
     @Override
     public List<OnLineCourseDic> findAll() {

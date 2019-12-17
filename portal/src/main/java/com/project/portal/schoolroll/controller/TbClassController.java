@@ -6,6 +6,7 @@ import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.TbClassFindAllPageRequest;
 import com.project.schoolroll.service.online.TbClassService;
+import com.project.teachplan.service.TeachService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 @RestController
@@ -26,10 +31,12 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class TbClassController {
     private final TbClassService tbClassService;
     private final TokenService tokenService;
+    private final TeachService teachService;
 
-    public TbClassController(TbClassService tbClassService, TokenService tokenService) {
+    public TbClassController(TbClassService tbClassService, TeachService teachService, TokenService tokenService) {
         this.tbClassService = tbClassService;
         this.tokenService = tokenService;
+        this.teachService = teachService;
     }
 
     @UserLoginToken
@@ -38,6 +45,16 @@ public class TbClassController {
     public WebResult findAll(HttpServletRequest httpServletRequest) {
         String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
         return WebResult.okResult(tbClassService.findAllByCenterAreaId(centerAreaId));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "查询所有有效班级信息(根据学习中心查询过滤当前学习中心已经选则过得班级信息)")
+    @GetMapping(path = "/filter")
+    public WebResult findAllFilter(HttpServletRequest httpServletRequest) {
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        //查询当前学习中心所有已经选择过的班级id
+        Set<String> set = teachService.findAllClassIdAndPlanByCenterId(centerAreaId);
+        return WebResult.okResult(tbClassService.findAllByCenterAreaId(centerAreaId, set));
     }
 
     @GetMapping(path = "/{classId}")

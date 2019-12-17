@@ -21,8 +21,7 @@ import java.util.*;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 
 @Service
 public class TeachPlanCourseService {
@@ -58,14 +57,15 @@ public class TeachPlanCourseService {
 
     public List<CourseTeacherVo> findCourseIdAndTeacherIdByClassId(String classId) {
         //查询计划Id
-        List<IPlanStatusDto> dtos = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
-        List<String> planIds = dtos.stream().filter(Objects::nonNull).map(IPlanStatusDto::getPlanId).distinct().collect(toList());
-        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds)
-                .stream()
-                .filter(Objects::nonNull)
-                .map(d -> findCourseTeacherVo(d, dtos))
-                .filter(Objects::nonNull)
-                .collect(toList());
+//        List<IPlanStatusDto> dtos = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
+//        List<String> planIds = dtos.stream().filter(Objects::nonNull).map(IPlanStatusDto::getPlanId).distinct().collect(toList());
+//        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds)
+//                .stream()
+//                .filter(Objects::nonNull)
+//                .map(d -> findCourseTeacherVo(d, dtos))
+//                .filter(Objects::nonNull)
+//                .collect(toList());
+        return new ArrayList<>();
     }
 
     private CourseTeacherVo findCourseTeacherVo(CourseTeacherDto dto, List<IPlanStatusDto> dtos) {

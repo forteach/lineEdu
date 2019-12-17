@@ -45,11 +45,16 @@ public abstract class BaseTeachPlan extends Entitys {
     @Column(name = "course_number", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的课程数量'")
     private Integer courseNumber = this.courseNumber == null ? 0 : this.courseNumber;
 
-    @Column(name = "class_number", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的班级数'")
-    private Integer classNumber = this.classNumber == null ? 0 : this.classNumber;
+    @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '班级id'")
+    private String classId;
 
-    @Column(name = "sum_number", nullable = false, columnDefinition = "TINYINT (4) DEFAULT 0 COMMENT '总人数'")
-    private Integer sumNumber = this.sumNumber == null ? 0 : this.sumNumber;
+    @Column(name = "class_Name", columnDefinition = "VARCHAR(32) COMMENT '班级名称'")
+    private String className;
+//    @Column(name = "class_number", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的班级数'")
+//    private Integer classNumber = this.classNumber == null ? 0 : this.classNumber;
+
+//    @Column(name = "sum_number", nullable = false, columnDefinition = "TINYINT (4) DEFAULT 0 COMMENT '总人数'")
+//    private Integer sumNumber = this.sumNumber == null ? 0 : this.sumNumber;
 
     /** 专业名称*/
     @Column(name = "specialty_name", columnDefinition = "VARCHAR(32) COMMENT '专业名称'")

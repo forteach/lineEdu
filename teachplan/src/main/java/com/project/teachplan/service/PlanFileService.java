@@ -10,9 +10,7 @@ import com.project.mysql.service.BaseMySqlService;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.domain.TeachPlanFileList;
 import com.project.teachplan.repository.PlanFileRepository;
-import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.TeachPlanFileListRepository;
-import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import com.project.teachplan.vo.TeachFileVerifyVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +38,16 @@ import static java.util.stream.Collectors.toList;
 public class PlanFileService extends BaseMySqlService {
 
     private final PlanFileRepository planFileRepository;
-    private final TeachPlanClassRepository teachPlanClassRepository;
+//    private final TeachPlanClassRepository teachPlanClassRepository;
     private final OnLineCourseDicService onLineCourseDicService;
     private final TeachPlanFileListRepository teachPlanFileListRepository;
 
     @Autowired
     public PlanFileService(PlanFileRepository planFileRepository, OnLineCourseDicService onLineCourseDicService,
-                           TeachPlanClassRepository teachPlanClassRepository, TeachPlanFileListRepository teachPlanFileListRepository) {
+//                           TeachPlanClassRepository teachPlanClassRepository,
+                           TeachPlanFileListRepository teachPlanFileListRepository) {
+//        this.teachPlanClassRepository = teachPlanClassRepository;
         this.planFileRepository = planFileRepository;
-        this.teachPlanClassRepository = teachPlanClassRepository;
         this.onLineCourseDicService = onLineCourseDicService;
         this.teachPlanFileListRepository = teachPlanFileListRepository;
     }
@@ -74,6 +73,7 @@ public class PlanFileService extends BaseMySqlService {
             } else {
                 p.setIsValidated(TAKE_EFFECT_OPEN);
             }
+            p.setUpdateUser(userId);
             planFileRepository.save(p);
         });
     }
@@ -129,13 +129,13 @@ public class PlanFileService extends BaseMySqlService {
     }
 
 
-    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable) {
-        return teachPlanClassRepository.findAllByCenterAreaIdDto(centerAreaId, pageable);
-    }
+//    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaId(String centerAreaId, Pageable pageable) {
+//        return teachPlanClassRepository.findAllByCenterAreaIdDto(centerAreaId, pageable);
+//    }
 
-    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable) {
-        return teachPlanClassRepository.findAllByCenterAreaIdAndClassIdDto(centerAreaId, classId, pageable);
-    }
+//    public Page<TeachPlanClassDto> findAllPagePlanFileDtoByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable) {
+//        return teachPlanClassRepository.findAllByCenterAreaIdAndClassIdDto(centerAreaId, classId, pageable);
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteByFileId(String fileId) {

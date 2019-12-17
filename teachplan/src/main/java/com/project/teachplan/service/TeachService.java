@@ -14,21 +14,17 @@ import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.domain.online.TbClasses;
 import com.project.schoolroll.service.StudentScoreService;
-import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
 import com.project.teachplan.domain.TeachPlan;
-import com.project.teachplan.domain.TeachPlanClass;
 import com.project.teachplan.domain.TeachPlanCourse;
-import com.project.teachplan.domain.verify.TeachPlanClassVerify;
 import com.project.teachplan.domain.verify.TeachPlanCourseVerify;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
-import com.project.teachplan.repository.TeachPlanClassRepository;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.repository.dto.PlanCourseStudyDto;
 import com.project.teachplan.repository.dto.TeachPlanDto;
-import com.project.teachplan.repository.verify.TeachPlanClassVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import com.project.teachplan.vo.*;
@@ -57,11 +53,11 @@ import static java.util.stream.Collectors.toSet;
  */
 @Service
 public class TeachService {
-    private final StudentOnLineService studentOnLineService;
+//    private final StudentOnLineService studentOnLineService;
     private final TeachPlanCourseService teachPlanCourseService;
     private final TeachPlanRepository teachPlanRepository;
     private final TbClassService tbClassService;
-    private final TeachPlanClassRepository teachPlanClassRepository;
+//    private final TeachPlanClassRepository teachPlanClassRepository;
     private final TeachPlanCourseRepository teachPlanCourseRepository;
     private final OnLineCourseDicService onLineCourseDicService;
     private final TeacherService teacherService;
@@ -69,30 +65,34 @@ public class TeachService {
     private final CourseStudyRepository courseStudyRepository;
     private final StringRedisTemplate redisTemplate;
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
-    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
+//    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
     private final StudentScoreService studentScoreService;
 
     @Autowired
-    public TeachService(StudentOnLineService studentOnLineService, TeachPlanRepository teachPlanRepository,
+    public TeachService(
+//            StudentOnLineService studentOnLineService,
+                        TeachPlanRepository teachPlanRepository,
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
-                        TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,StudentScoreService studentScoreService,
+//                        TeachPlanClassRepository teachPlanClassRepository,
+                        TeacherService teacherService,StudentScoreService studentScoreService,
                         PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService, StringRedisTemplate redisTemplate,
                         OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
-                        TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository,
-                        TeachPlanClassVerifyRepository teachPlanClassVerifyRepository) {
-        this.studentOnLineService = studentOnLineService;
+                        TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository
+//                        TeachPlanClassVerifyRepository teachPlanClassVerifyRepository
+    ) {
+//        this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
         this.teacherService = teacherService;
-        this.teachPlanClassRepository = teachPlanClassRepository;
+//        this.teachPlanClassRepository = teachPlanClassRepository;
         this.teachPlanCourseService = teachPlanCourseService;
         this.teachPlanCourseRepository = teachPlanCourseRepository;
         this.onLineCourseDicService = onLineCourseDicService;
         this.planFileService = planFileService;
         this.teachPlanVerifyRepository = teachPlanVerifyRepository;
         this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
-        this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
+//        this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
         this.courseStudyRepository = courseStudyRepository;
         this.redisTemplate = redisTemplate;
         this.studentScoreService = studentScoreService;
@@ -107,29 +107,48 @@ public class TeachService {
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getStartDate()), DefineCode.ERR0010, "计划开始时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getEndDate()), DefineCode.ERR0010, "计划结束时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanAdmin()), DefineCode.ERR0010, "负责人不能为空");
+            MyAssert.isNull(teachPlan.getClassId(), DefineCode.ERR0010, "班级id不能为空");
             MyAssert.isTrue(teachPlanVerifyRepository.existsByPlanName(teachPlan.getPlanName()), DefineCode.ERR0010, "已经存在同名计划,请修改");
             String planId = IdUtil.fastSimpleUUID();
             teachPlan.setPlanId(planId);
+            //设置对应的班级和专业对应的属性
+            setPlan(teachPlan);
             return teachPlanVerifyRepository.save(teachPlan);
         } else {
             Optional<TeachPlanVerify> optional = teachPlanVerifyRepository.findById(teachPlan.getPlanId());
             MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的计划不存在");
             TeachPlanVerify t = optional.get();
-            Integer classNumber = t.getClassNumber();
+            String classId = t.getClassId();
             Integer courseNumber = t.getCourseNumber();
-            Integer sumNumber = t.getSumNumber();
+
+//            Integer sumNumber = t.getSumNumber();
+//            Integer classNumber = t.getClassNumber();
+
             //修改计划名称需要判断是否存在同名计划存在不能修改
             if (!t.getPlanName().equals(teachPlan.getPlanName())){
                 MyAssert.isTrue(teachPlanVerifyRepository.existsByPlanName(teachPlan.getPlanName()), DefineCode.ERR0010, "已经存在同名计划,请修改");
             }
             BeanUtil.copyProperties(teachPlan, t);
-            t.setSumNumber(sumNumber);
-            t.setClassNumber(classNumber);
+            if (!classId.equals(teachPlan.getClassId())){
+                //修改了班级id需要重新判断
+                setPlan(t);
+            }
+
+//            t.setSumNumber(sumNumber);
+//            t.setClassNumber(classNumber);
+
             t.setCourseNumber(courseNumber);
             return teachPlanVerifyRepository.save(t);
         }
     }
 
+
+    private void setPlan(TeachPlanVerify teachPlan){
+        TbClasses tbClass = tbClassService.findById(teachPlan.getClassId());
+        teachPlan.setClassName(tbClass.getClassName());
+        teachPlan.setSpecialtyName(tbClass.getSpecialtyName());
+        teachPlan.setGrade(tbClass.getGrade());
+    }
     private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses, String remark, String centerAreaId, String userId) {
         List<TeachPlanCourseVerify> planCourseList = courses.parallelStream().filter(Objects::nonNull)
                 .map(t -> createTeachPlanCourse(planId, t, remark, centerAreaId, userId))
@@ -146,28 +165,28 @@ public class TeachService {
                 centerAreaId, remark, userId, VERIFY_STATUS_APPLY);
     }
 
-    private void saveTeachPlanClass(String planId, TeachPlanVerify teachPlan, List<String> classIds, String remark, String centerAreaId, String userId) {
-        List<TeachPlanClassVerify> planClassList = classIds.stream().filter(Objects::nonNull)
-                .map(c -> new TeachPlanClassVerify(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c), centerAreaId, remark, userId, VERIFY_STATUS_APPLY))
-                .collect(toList());
-        teachPlanClassVerifyRepository.saveAll(planClassList);
-        int sumNumber = planClassList.stream().mapToInt(TeachPlanClassVerify::getClassNumber).sum();
-        teachPlan.setSumNumber(sumNumber);
-    }
+//    private void saveTeachPlanClass(String planId, TeachPlanVerify teachPlan, List<String> classIds, String remark, String centerAreaId, String userId) {
+//        List<TeachPlanClassVerify> planClassList = classIds.stream().filter(Objects::nonNull)
+//                .map(c -> new TeachPlanClassVerify(c, planId, tbClassService.findClassByClassId(c).getClassName(), teachPlan.getPlanName(), studentOnLineService.countByClassId(c), centerAreaId, remark, userId, VERIFY_STATUS_APPLY))
+//                .collect(toList());
+//        teachPlanClassVerifyRepository.saveAll(planClassList);
+//        int sumNumber = planClassList.stream().mapToInt(TeachPlanClassVerify::getClassNumber).sum();
+//        teachPlan.setSumNumber(sumNumber);
+//    }
 
-    @Transactional(rollbackFor = Exception.class)
-    public TeachPlanVerify saveUpdatePlanClass(String planId, List<String> classIds, String remark, String centerAreaId, String userId) {
-        Optional<TeachPlanVerify> teachPlanOptional = teachPlanVerifyRepository.findById(planId);
-        MyAssert.isFalse(teachPlanOptional.isPresent(), DefineCode.ERR0010, "不存在对应的计划编号");
-        TeachPlanVerify teachPlan = teachPlanOptional.get();
-        teachPlanClassVerifyRepository.deleteAllByPlanId(planId);
-        saveTeachPlanClass(planId, teachPlan, classIds, remark, centerAreaId, userId);
-        if (!classIds.isEmpty()) {
-            teachPlan.setClassNumber(classIds.size());
-        }
-        teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
-        return teachPlanVerifyRepository.save(teachPlan);
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    public TeachPlanVerify saveUpdatePlanClass(String planId, List<String> classIds, String remark, String centerAreaId, String userId) {
+//        Optional<TeachPlanVerify> teachPlanOptional = teachPlanVerifyRepository.findById(planId);
+//        MyAssert.isFalse(teachPlanOptional.isPresent(), DefineCode.ERR0010, "不存在对应的计划编号");
+//        TeachPlanVerify teachPlan = teachPlanOptional.get();
+//        teachPlanClassVerifyRepository.deleteAllByPlanId(planId);
+//        saveTeachPlanClass(planId, teachPlan, classIds, remark, centerAreaId, userId);
+//        if (!classIds.isEmpty()) {
+//            teachPlan.setClassNumber(classIds.size());
+//        }
+//        teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
+//        return teachPlanVerifyRepository.save(teachPlan);
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public TeachPlanVerify saveUpdatePlanCourse(String planId, List<TeachPlanCourseVo> courses, String remark, String centerAreaId, String userId) {
@@ -185,9 +204,9 @@ public class TeachService {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByPlanId(String planId) {
-        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
+//        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
         teachPlanRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
-        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
+//        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -197,20 +216,20 @@ public class TeachService {
         TeachPlanVerify teachPlanVerify = optional.get();
         MyAssert.isTrue(DateUtil.parseDate(teachPlanVerify.getEndDate()).isAfterOrEquals(new Date()), DefineCode.ERR0010, "正在进行的计划不能删除");
         teachPlanCourseRepository.deleteAllByPlanId(planId);
-        teachPlanClassRepository.deleteAllByPlanId(planId);
+//        teachPlanClassRepository.deleteAllByPlanId(planId);
         teachPlanRepository.deleteAllByPlanId(planId);
         teachPlanVerifyRepository.deleteById(planId);
         teachPlanCourseVerifyRepository.deleteAllByPlanId(planId);
-        teachPlanClassVerifyRepository.deleteAllByPlanId(planId);
+//        teachPlanClassVerifyRepository.deleteAllByPlanId(planId);
     }
 
-    public List<TeachPlanClass> findAllClassByPlanId(String planId) {
-        return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
-    }
-
-    public List<TeachPlanClassVerify> findAllClassVerifyByPlanId(String planId) {
-        return teachPlanClassVerifyRepository.findAllByPlanId(planId);
-    }
+//    public List<TeachPlanClass> findAllClassByPlanId(String planId) {
+//        return teachPlanClassRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId);
+//    }
+//
+//    public List<TeachPlanClassVerify> findAllClassVerifyByPlanId(String planId) {
+//        return teachPlanClassVerifyRepository.findAllByPlanId(planId);
+//    }
 
     public Page<TeachPlanDto> findAllPageByPlanIdAndVerifyStatus(String planId, String verifyStatus, Pageable pageable) {
         if (StrUtil.isNotBlank(planId) && StrUtil.isNotBlank(verifyStatus)) {
@@ -241,15 +260,15 @@ public class TeachService {
         }
     }
 
-    @Async
-    @Transactional(rollbackFor = Exception.class)
-    void updateClassByPlanId(String planId, String status, String userId) {
-        List<TeachPlanClass> list = teachPlanClassRepository.findAllByPlanId(planId).stream().peek(c -> {
-            c.setIsValidated(status);
-            c.setUpdateUser(userId);
-        }).collect(Collectors.toList());
-        teachPlanClassRepository.saveAll(list);
-    }
+//    @Async
+//    @Transactional(rollbackFor = Exception.class)
+//    void updateClassByPlanId(String planId, String status, String userId) {
+//        List<TeachPlanClass> list = teachPlanClassRepository.findAllByPlanId(planId).stream().peek(c -> {
+//            c.setIsValidated(status);
+//            c.setUpdateUser(userId);
+//        }).collect(Collectors.toList());
+//        teachPlanClassRepository.saveAll(list);
+//    }
 
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -269,7 +288,7 @@ public class TeachService {
             if (TAKE_EFFECT_CLOSE.equals(status)) {
                 t.setIsValidated(TAKE_EFFECT_OPEN);
                 // 修改班级计划状态
-                updateClassByPlanId(planId, TAKE_EFFECT_OPEN, userId);
+//                updateClassByPlanId(planId, TAKE_EFFECT_OPEN, userId);
                 //修改课程计划状态
                 updateCourseByPlanId(planId, TAKE_EFFECT_OPEN, userId);
                 //修改计划文件状态
@@ -278,7 +297,7 @@ public class TeachService {
                 setVerifyStatus(planId, TAKE_EFFECT_OPEN, userId);
             } else {
                 t.setIsValidated(TAKE_EFFECT_CLOSE);
-                updateClassByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
+//                updateClassByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
                 updateCourseByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
                 planFileService.updateStatus(planId, TAKE_EFFECT_CLOSE, userId);
                 //修改审核的计划信息
@@ -293,7 +312,7 @@ public class TeachService {
         //修改教学计划
         updateTeachPlanVerify(planId, status, userId);
         //修改教学计划班级
-        updateClassVerifyByPlanId(planId, status, userId);
+//        updateClassVerifyByPlanId(planId, status, userId);
         //修改教学计划课程
         updateVerfyCourseByPlanId(planId, status, userId);
     }
@@ -320,54 +339,54 @@ public class TeachService {
         }
     }
 
-    @Async
-    @Transactional(rollbackFor = Exception.class)
-    void updateClassVerifyByPlanId(String planId, String status, String userId) {
-        List<TeachPlanClassVerify> list = teachPlanClassVerifyRepository.findAllByPlanId(planId).stream().peek(c -> {
-            c.setIsValidated(status);
-            c.setUpdateUser(userId);
-        }).collect(Collectors.toList());
-        if (!list.isEmpty()) {
-            teachPlanClassVerifyRepository.saveAll(list);
-        }
-    }
+//    @Async
+//    @Transactional(rollbackFor = Exception.class)
+//    void updateClassVerifyByPlanId(String planId, String status, String userId) {
+//        List<TeachPlanClassVerify> list = teachPlanClassVerifyRepository.findAllByPlanId(planId).stream().peek(c -> {
+//            c.setIsValidated(status);
+//            c.setUpdateUser(userId);
+//        }).collect(Collectors.toList());
+//        if (!list.isEmpty()) {
+//            teachPlanClassVerifyRepository.saveAll(list);
+//        }
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public void verifyTeachPlan(String planId, String verifyStatus, String remark, String userId) {
         //修改对应的计划信息
         updateVerifyTeachPlan(planId, verifyStatus, remark, userId);
         //修改对应的班级信息
-        updateVerifyPlanClass(planId, verifyStatus, remark, userId);
+//        updateVerifyPlanClass(planId, verifyStatus, remark, userId);
         //修改对应的课程信息
         teachPlanCourseService.updateVerifyPlanCourse(planId, verifyStatus, remark, userId);
     }
 
 
-    private void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
+//    private void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
         // 审核通过 删除原来的班级
-        if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
-            teachPlanClassRepository.deleteAllByPlanId(planId);
-        }
-        List<TeachPlanClass> teachPlanClassList = new ArrayList<>();
-        List<TeachPlanClassVerify> teachPlanClassVerifyList = teachPlanClassVerifyRepository.findAllByPlanId(planId).stream().filter(Objects::nonNull)
-                .peek(t -> {
-                    t.setRemark(remark);
-                    t.setVerifyStatus(verifyStatus);
-                    t.setUpdateUser(userId);
-                    if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
-                        TeachPlanClass p = new TeachPlanClass();
-                        BeanUtil.copyProperties(t, p);
-                        p.setUpdateUser(userId);
-                        teachPlanClassList.add(p);
-                    }
-                }).collect(Collectors.toList());
-        if (!teachPlanClassVerifyList.isEmpty()) {
-            teachPlanClassVerifyRepository.saveAll(teachPlanClassVerifyList);
-        }
-        if (!teachPlanClassList.isEmpty()) {
-            teachPlanClassRepository.saveAll(teachPlanClassList);
-        }
-    }
+//        if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
+//            teachPlanClassRepository.deleteAllByPlanId(planId);
+//        }
+//        List<TeachPlanClass> teachPlanClassList = new ArrayList<>();
+//        List<TeachPlanClassVerify> teachPlanClassVerifyList = teachPlanClassVerifyRepository.findAllByPlanId(planId).stream().filter(Objects::nonNull)
+//                .peek(t -> {
+//                    t.setRemark(remark);
+//                    t.setVerifyStatus(verifyStatus);
+//                    t.setUpdateUser(userId);
+//                    if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
+//                        TeachPlanClass p = new TeachPlanClass();
+//                        BeanUtil.copyProperties(t, p);
+//                        p.setUpdateUser(userId);
+//                        teachPlanClassList.add(p);
+//                    }
+//                }).collect(Collectors.toList());
+//        if (!teachPlanClassVerifyList.isEmpty()) {
+//            teachPlanClassVerifyRepository.saveAll(teachPlanClassVerifyList);
+//        }
+//        if (!teachPlanClassList.isEmpty()) {
+//            teachPlanClassRepository.saveAll(teachPlanClassList);
+//        }
+//    }
 
     /**
      * 修改计划信息
@@ -494,57 +513,57 @@ public class TeachService {
         Set<String> planIds = planList.stream().filter(Objects::nonNull).map(TeachPlan::getPlanId).collect(toSet());
         planIds.forEach(p -> teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(p)
                 .forEach(c -> {
-                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage(), c.getLinePercentage(), c.getVideoPercentage(), c.getJobsPercentage());
-                    if (!list.isEmpty()) {
-                        studentScoreService.saveAll(list);
-                    }
+//                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage(), c.getLinePercentage(), c.getVideoPercentage(), c.getJobsPercentage());
+//                    if (!list.isEmpty()) {
+//                        studentScoreService.saveAll(list);
+//                    }
                 }));
         if (!planList.isEmpty()){
             teachPlanRepository.saveAll(planList.stream().peek(t -> t.setCountStatus(PLAN_COUNT_STATUS_SUCCESS)).collect(toList()));
         }
     }
 
-    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
-        return teachPlanClassRepository.findAllStudentIdByPlanId(planeId).stream()
-                .filter(Objects::nonNull)
-                .map(s -> findSetStudentScore(s, courseId, onLinePercentage, linePercentage, videoPercentage, jobsPercentage))
-                .filter(Objects::nonNull)
-                .collect(toList());
-    }
+//    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
+//        return teachPlanClassRepository.findAllStudentIdByPlanId(planeId).stream()
+//                .filter(Objects::nonNull)
+//                .map(s -> findSetStudentScore(s, courseId, onLinePercentage, linePercentage, videoPercentage, jobsPercentage))
+//                .filter(Objects::nonNull)
+//                .collect(toList());
+//    }
 
-    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
-        Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
-        if (optional.isPresent()) {
-            CourseStudy c = optional.get();
-            StudentScore studentScore = studentScoreService.findByStudentIdAndCourseId(studentId, courseId);
-            studentScore.setCourseId(courseId);
-            studentScore.setStudentId(studentId);
-            studentScore.setUpdateUser(c.getStudentId());
-            studentScore.setCreateUser(c.getStudentId());
-            studentScore.setCenterAreaId(c.getCenterAreaId());
-            int onLineTime = c.getOnLineTime();
-            int onLineTimeSum = c.getOnLineTimeSum();
-            //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
-            double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
-            //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
-            BigDecimal jobScore = new BigDecimal("0");
-            if (0 != c.getAnswerSum()){
-                jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
-            }
-            //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
-            BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
-            //计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
-            BigDecimal courseScore = NumberUtil.mul(onLineScore, NumberUtil.div(onLinePercentage, 100, 2));
-            studentScore.setOnLineScore(onLineScore.toPlainString());
-            studentScore.setCourseScore(courseScore.floatValue());
-            //线下成绩占比 %
-            studentScore.setLinePercentage(linePercentage);
-            //线上成绩占比 %
-            studentScore.setOnLinePercentage(onLinePercentage);
-            return studentScore;
-        }
-        return null;
-    }
+//    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
+//        Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
+//        if (optional.isPresent()) {
+//            CourseStudy c = optional.get();
+//            StudentScore studentScore = studentScoreService.findByStudentIdAndCourseId(studentId, courseId);
+//            studentScore.setCourseId(courseId);
+//            studentScore.setStudentId(studentId);
+//            studentScore.setUpdateUser(c.getStudentId());
+//            studentScore.setCreateUser(c.getStudentId());
+//            studentScore.setCenterAreaId(c.getCenterAreaId());
+//            int onLineTime = c.getOnLineTime();
+//            int onLineTimeSum = c.getOnLineTimeSum();
+//            //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
+//            double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
+//            //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
+//            BigDecimal jobScore = new BigDecimal("0");
+//            if (0 != c.getAnswerSum()){
+//                jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
+//            }
+//            //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
+//            BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
+//            //计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
+//            BigDecimal courseScore = NumberUtil.mul(onLineScore, NumberUtil.div(onLinePercentage, 100, 2));
+//            studentScore.setOnLineScore(onLineScore.toPlainString());
+//            studentScore.setCourseScore(courseScore.floatValue());
+//            //线下成绩占比 %
+//            studentScore.setLinePercentage(linePercentage);
+//            //线上成绩占比 %
+//            studentScore.setOnLinePercentage(onLinePercentage);
+//            return studentScore;
+//        }
+//        return null;
+//    }
 
     public List<TeachPlanVerify> findAllPlan() {
         return teachPlanVerifyRepository.findAllByIsValidatedEqualsAndVerifyStatus(TAKE_EFFECT_OPEN, VERIFY_STATUS_AGREE);
@@ -552,5 +571,12 @@ public class TeachService {
 
     public List<TeachPlanVerify> findAllPlanByCenterId(String centerId) {
         return teachPlanVerifyRepository.findAllByIsValidatedEqualsAndVerifyStatusAndCenterAreaId(TAKE_EFFECT_OPEN, VERIFY_STATUS_AGREE, centerId);
+    }
+
+    public Set<String> findAllClassIdAndPlanByCenterId(String centerId) {
+        return teachPlanVerifyRepository.findAllByCenterAreaId(centerId)
+                .stream().filter(Objects::nonNull)
+                .map(TeachPlanVerify::getClassId)
+                .collect(toSet());
     }
 }

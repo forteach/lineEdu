@@ -20,9 +20,13 @@ public interface TeachPlanDto {
 
     public Integer getCourseNumber();
 
-    public Integer getClassNumber();
+//    public Integer getClassNumber();
 
-    public Integer getSumNumber();
+//    public Integer getSumNumber();
+
+    public String getClassId();
+
+    public String getClassName();
 
     public String getCenterAreaId();
 
@@ -31,8 +35,8 @@ public interface TeachPlanDto {
     public String getIsValidated();
 
     public String getCreateTime();
-    //审核状态
+    /**审核状态 */
     public String getVerifyStatus();
-    //审核意见备注
+    /**审核意见备注 */
     public String getRemark();
 }
