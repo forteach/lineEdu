@@ -35,16 +35,17 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
      * @return
      */
     @Query(value = " SELECT " +
-            " c.course_id as courseId, " +
+            " c.course_id as courseId," +
+            " c.course_name as courseName, " +
             " tpcv.line_percentage as linePercentage, " +
             " tpcv.on_line_percentage as onLinePercentage, " +
             " c.video_percentage as videoPercentage, " +
             " c.jobs_percentage as jobsPercentage " +
-            " from (select line_percentage, on_line_percentage, teacher_id, course_id from teach_plan_course where is_validated = '0' and plan_id = ?1) as tpcv " +
-            " left join course as c on c.course_number = tpcv.course_id and c.c_user = tpcv.teacher_id ", nativeQuery = true)
+            " from (select line_percentage, on_line_percentage, course_id from teach_plan_course where is_validated = '0' and plan_id = ?1) as tpcv " +
+            " left join course as c on c.course_number = tpcv.course_id ", nativeQuery = true)
     @Transactional(readOnly = true)
     List<IPlanCourseDto> findAllPlanCourseDtoByPlanId(String planId);
 
     @Modifying
-    void deleteAllByCourseIdAndTeacherId(String courseId, String teacherId);
+    void deleteAllByCourseId(String courseId);
 }

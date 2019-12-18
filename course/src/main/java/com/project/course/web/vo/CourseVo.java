@@ -22,8 +22,10 @@ public class CourseVo implements Serializable {
     public String learningTime;
     public String videoPercentage;
     public String jobsPercentage;
-    public String createUser;
-    public String createUserName;
+
+//    public String createUser;
+//    public String createUserName;
+
     public String chapterId;
     public String chapterName;
     /**是否学完 0完成 1 进行中*/
@@ -33,8 +35,9 @@ public class CourseVo implements Serializable {
     }
 
     public CourseVo(String courseId, String courseName, String courseNumber, String alias, String topPicSrc, String courseDescribe,
-                    String learningTime, String videoPercentage, String jobsPercentage, String createUser,
-                    String createUserName, String chapterId, String chapterName, String finish) {
+                    String learningTime, String videoPercentage, String jobsPercentage,
+//                    String createUser, String createUserName,
+                    String chapterId, String chapterName, String finish) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseNumber = courseNumber;
@@ -44,10 +47,10 @@ public class CourseVo implements Serializable {
         this.learningTime = learningTime;
         this.videoPercentage = videoPercentage;
         this.jobsPercentage = jobsPercentage;
-        this.createUser = createUser;
-        this.createUserName = createUserName;
         this.chapterId = chapterId;
         this.chapterName = chapterName;
         this.finish = finish;
+//        this.createUser = createUser;
+//        this.createUserName = createUserName;
     }
 }

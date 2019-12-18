@@ -12,13 +12,15 @@ import lombok.Data;
 @Data
 public class CourseTeacherVo {
     private String courseId;
-    private String teacherId;
+//    private String teacherId;
     private Integer status;
     private Integer countStatus;
 
-    public CourseTeacherVo(String courseId, String teacherId, Integer status, Integer countStatus) {
+    public CourseTeacherVo(String courseId,
+//                           String teacherId,
+                           Integer status, Integer countStatus) {
         this.courseId = courseId;
-        this.teacherId = teacherId;
+//        this.teacherId = teacherId;
         this.status = status;
         this.countStatus = countStatus;
     }

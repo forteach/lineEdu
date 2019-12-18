@@ -51,8 +51,12 @@ public class TeachPlanCourseVerify extends BaseTeachPlanCourse implements Serial
     private String verifyStatus = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
 
     public TeachPlanCourseVerify(String planId, String courseId, String courseName, String credit, Integer onLinePercentage,
-                                 Integer linePercentage, String teacherId, String teacherName, String centerAreaId, String remark, String userId, String verifyStatus) {
-        super(planId, courseId, courseName, credit, onLinePercentage, linePercentage, teacherId, teacherName, centerAreaId, userId);
+                                 Integer linePercentage,
+//                                 String teacherId, String teacherName,
+                                 String centerAreaId, String remark, String userId, String verifyStatus, String type) {
+        super(planId, courseId, courseName, credit, onLinePercentage, linePercentage,
+//                teacherId, teacherName,
+                centerAreaId, userId, type);
         this.remark = remark;
         this.verifyStatus = verifyStatus;
     }

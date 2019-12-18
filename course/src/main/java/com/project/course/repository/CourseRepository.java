@@ -36,6 +36,9 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Transactional(readOnly = true)
     Page<ICourseListDto> findAllByIsValidatedNotNull(Pageable pageable);
 
+    @Transactional(readOnly = true)
+    Page<ICourseListDto> findAllByCourseType(Integer courseType, Pageable pageable);
+
     /**
      * 分页查询我的课程科目
      *
@@ -58,6 +61,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
             "  c.alias          as alias, " +
             "  c.topPicSrc      as topPicSrc, " +
             "  c.courseDescribe as courseDescribe, " +
+            "  c.courseType     as courseType, " +
             "  t.teacherId      as teacherId, " +
             "  t.teacherName    as teacherName " +
             " from Course as c " +
@@ -72,26 +76,36 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     List<ICourseChapterListDto> findByIsValidatedEqualsAndCourseIdInOrderByCreateTime(String classId);
 
-    @Query(value = "select " +
-            " c.courseId as courseId, " +
-            " c.courseName as courseName, " +
-            " c.courseNumber as courseNumber, " +
-            " c.alias as alias, " +
-            " c.topPicSrc as topPicSrc, " +
-            " c.courseDescribe as courseDescribe, " +
-            " c.learningTime as learningTime, " +
-            " c.videoPercentage as videoPercentage, " +
-            " c.jobsPercentage as jobsPercentage, " +
-            " c.createUser as createUser, " +
-            " t.teacherName as createUserName " +
-            " from Course as c " +
-            " left join Teacher as t on t.teacherId = c.createUser " +
-            " where c.isValidated = '0' " +
-            " and c.courseNumber = ?1 " +
-            " and c.createUser = ?2 order by c.createTime desc")
-    @Transactional(readOnly = true)
-    List<ICourseDto> findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(String courseNumber, String cUser);
+//    @Query(value = "select " +
+//            " c.courseId as courseId, " +
+//            " c.courseName as courseName, " +
+//            " c.courseNumber as courseNumber, " +
+//            " c.alias as alias, " +
+//            " c.topPicSrc as topPicSrc, " +
+//            " c.courseDescribe as courseDescribe, " +
+//            " c.learningTime as learningTime, " +
+//            " c.videoPercentage as videoPercentage, " +
+//            " c.jobsPercentage as jobsPercentage, " +
+//            " c.createUser as createUser, " +
+//            " c.courseType as courseType, " +
+//            " t.teacherName as createUserName " +
+//            " from Course as c " +
+//            " left join Teacher as t on t.teacherId = c.createUser " +
+//            " where c.isValidated = '0' " +
+//            " and c.courseNumber = ?1 " +
+//            " and c.createUser = ?2 order by c.createTime desc")
+//    @Transactional(readOnly = true)
+//    List<ICourseDto> findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(String courseNumber, String cUser);
 
     @Transactional(readOnly = true)
-    List<Course> findAllByCreateUserOrderByCreateTimeDesc(String cUser);
+    List<ICourseDto> findAllByIsValidatedEqualsAndCourseNumberOrderByCreateTimeDesc(String isValidated, String courseNumber);
+
+    @Transactional(readOnly = true)
+    List<ICourseDto> findAllByIsValidatedEqualsAndCourseNumberAndCourseTypeOrderByCreateTimeDesc(String isValidated, String courseNumber, Integer courseType);
+
+//    @Transactional(readOnly = true)
+//    List<Course> findAllByCreateUserOrderByCreateTimeDesc(String cUser);
+
+    @Transactional(readOnly = true)
+    List<Course> findAllByOrderByCreateTimeDesc();
 }

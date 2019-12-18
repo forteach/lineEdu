@@ -1,21 +1,13 @@
 package com.project.teachplan.repository.dto;
 
-public interface PlanCourseStudyDto {
-    /**
-     * 学生Id
-     */
-    public String getStudentId();
-
-    /**
-     * 学生名称
-     */
-    public String getStudentName();
-
-    /**
-     * 电话
-     */
-    public String getStuPhone();
-
+/**
+ * @author: zhangyy
+ * @email: zhang10092009@hotmail.com
+ * @date: 2019/12/18 18:00
+ * @version: 1.0
+ * @description:
+ */
+public interface TeachCenterDto {
     /**
      * 学习中心Id
      */
@@ -46,9 +38,5 @@ public interface PlanCourseStudyDto {
      */
     public String getEndDate();
 
-    public String getCourse();
-
-//    public String getCourseId();
-
-//    public String getCourseName();
+    public String getClassId();
 }

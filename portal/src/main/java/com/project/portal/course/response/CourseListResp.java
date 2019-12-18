@@ -2,8 +2,6 @@ package com.project.portal.course.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,8 +14,6 @@ import java.io.Serializable;
  * @Description:
  */
 @Data
-@Builder
-@AllArgsConstructor
 @ApiModel(value = "课程添加成功", description = "课程信息")
 public class CourseListResp implements Serializable {
 
@@ -51,14 +47,17 @@ public class CourseListResp implements Serializable {
     private String isValidated;
     @ApiModelProperty(name = "createTime", value = "创建时间 yyyy-MM-dd HH:mm:ss")
     private String createTime;
+    @ApiModelProperty(name = "courseType", value = "课程类型 1 线上 2，线下 3 混合", dataType = "int")
+    private Integer courseType;
 
-    public CourseListResp(String courseId, String courseName, String topPicSrc, String alias, String isValidated, String createTime) {
+    public CourseListResp(String courseId, String courseName, String topPicSrc, String alias, String isValidated, String createTime, Integer courseType) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.topPicSrc = topPicSrc;
         this.alias = alias;
         this.isValidated = isValidated;
         this.createTime = createTime;
+        this.courseType = courseType;
     }
 
     public CourseListResp() {

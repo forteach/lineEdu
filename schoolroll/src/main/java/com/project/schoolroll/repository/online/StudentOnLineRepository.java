@@ -12,8 +12,14 @@ import java.util.List;
 
 public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, String> {
 
+//    @Transactional(readOnly = true)
+//    List<StudentOnLine> findAllByClassId(String classId);
+
     @Transactional(readOnly = true)
-    List<StudentOnLine> findAllByClassId(String classId);
+    List<StudentOnLine> findAllByIsValidatedEqualsAndClassId(String isValidated, String classId);
+
+    @Transactional(readOnly = true)
+    Page<StudentOnLine> findAllByIsValidatedEqualsAndClassId(String isValidated, String classId, Pageable pageable);
 
     int countAllByIsValidatedEqualsAndClassId(String isValidated, String classId);
 

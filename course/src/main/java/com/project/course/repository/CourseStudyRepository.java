@@ -111,18 +111,32 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
     @Transactional(readOnly = true)
     Page<ICourseStudyDto> findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(String isValidated, String courseId, String studentId, Pageable pageable);
 
+//    @Query(value = "select " +
+//            " cs.course_Id as courseId, " +
+//            " cs.on_line_time as onLineTime, " +
+//            " cs.on_line_time_sum as onLineTimeSum, " +
+//            " cs.answer_sum as answerSum, " +
+//            " cs.correct_sum as correctSum, " +
+//            " vo.video_percentage as videoPercentage, " +
+//            " vo.jobs_percentage as jobsPercentage " +
+//            " from (select distinct course_id, jobs_percentage, video_percentage from lineEdu.course " +
+//            " where course_number = ?2 and course.c_user = ?3) as vo " +
+//            " left join lineEdu.course_study as cs on vo.course_id = cs.course_id where cs.is_validated = '0' " +
+//            " and cs.student_id = ?1", nativeQuery = true)
+//    @Transactional(readOnly = true)
+//    Optional<ICourseStudyDto> findStudyDto(String studentId, String courseNumber, String teacherId);
+
+
     @Query(value = "select " +
-            " cs.course_Id as courseId, " +
-            " cs.on_line_time as onLineTime, " +
-            " cs.on_line_time_sum as onLineTimeSum, " +
-            " cs.answer_sum as answerSum, " +
-            " cs.correct_sum as correctSum, " +
-            " vo.video_percentage as videoPercentage, " +
-            " vo.jobs_percentage as jobsPercentage " +
-            " from (select distinct course_id, jobs_percentage, video_percentage from lineEdu.course " +
-            " where course_number = ?2 and course.c_user = ?3) as vo " +
-            " left join lineEdu.course_study as cs on vo.course_id = cs.course_id where cs.is_validated = '0' " +
-            " and cs.student_id = ?1", nativeQuery = true)
+            " cs.courseId as courseId, " +
+            " cs.onLineTime as onLineTime, " +
+            " cs.onLineTimeSum as onLineTimeSum, " +
+            " cs.answerSum as answerSum, " +
+            " cs.correctSum as correctSum, " +
+            " c.videoPercentage as videoPercentage, " +
+            " c.jobsPercentage as jobsPercentage " +
+            " from CourseStudy AS cs left join Course as c on c.courseId = cs.courseId " +
+            " where c.isValidated = '0' and cs.isValidated = '0' and cs.studentId = ?1 and cs.courseId =?2 ")
     @Transactional(readOnly = true)
-    Optional<ICourseStudyDto> findStudyDto(String studentId, String courseNumber, String teacherId);
+    Optional<ICourseStudyDto> findStudyDto(String studentId, String courseId);
 }

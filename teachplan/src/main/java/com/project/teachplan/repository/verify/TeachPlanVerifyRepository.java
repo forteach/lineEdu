@@ -20,7 +20,7 @@ import java.util.List;
 public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify, String> {
 
     @Transactional(readOnly = true)
-    boolean existsByPlanName(String planName);
+    boolean existsAllByPlanName(String planName);
 
     @Transactional(readOnly = true)
     List<TeachPlanVerify> findAllByIsValidatedEqualsAndVerifyStatus(String isValidated, String verifyStatus);
@@ -41,6 +41,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
@@ -64,6 +66,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
@@ -87,6 +91,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
@@ -110,6 +116,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
@@ -133,6 +141,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
@@ -156,6 +166,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
@@ -179,6 +191,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +
@@ -202,6 +216,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
             " tp.courseNumber as courseNumber, " +
 //            " tp.classNumber as classNumber, " +
 //            " tp.sumNumber as sumNumber, " +
+            " tp.grade as grade, " +
+            " tp.specialtyName as specialtyName, " +
             " tp.classId as classId, " +
             " tp.className as className, " +
             " tp.centerAreaId as centerAreaId, " +

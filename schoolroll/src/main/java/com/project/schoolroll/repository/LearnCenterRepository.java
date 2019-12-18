@@ -25,7 +25,8 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
     @Transactional(readOnly = true)
     @Query(value = "SELECT centerId AS centerId, centerName AS centerName, address as address, principal as principal, " +
             " phone as phone, bankingAccount as bankingAccount, accountHolder as accountHolder, accountHolderPhone as accountHolderPhone, " +
-            " bankingAccountAddress as bankingAccountAddress, companyAddress as companyAddress, companyName as companyName " +
+            " bankingAccountAddress as bankingAccountAddress, companyAddress as companyAddress, companyName as companyName," +
+            " schoolAdmin AS schoolAdmin, schoolPhone AS schoolPhone " +
             " FROM LearnCenter WHERE isValidated = '0' and roleId = 1 order by createTime desc ")
     List<LearnCenterDto> findAllByIsValidatedEquals();
 

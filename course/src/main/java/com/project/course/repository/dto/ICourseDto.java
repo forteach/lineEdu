@@ -27,7 +27,10 @@ public interface ICourseDto {
 
     public String getJobsPercentage();
 
-    public String getCreateUser();
+//    public String getCreateUser();
 
-    public String getCreateUserName();
+//    public String getCreateUserName();
+
+    /** 课程类型*/
+    public Integer getCourseType();
 }

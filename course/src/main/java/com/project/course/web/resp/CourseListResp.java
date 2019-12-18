@@ -3,6 +3,7 @@ package com.project.course.web.resp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class CourseListResp implements Serializable {
 
     private String courseId;
@@ -25,8 +27,6 @@ public class CourseListResp implements Serializable {
     private String courseName;
 
     private String courseNumber;
-
-//    private String lessonPreparationType;
 
     private String topPicSrc;
 
@@ -44,15 +44,5 @@ public class CourseListResp implements Serializable {
 
     private String teacherName;
 
-    public CourseListResp(String courseId, String courseName, String courseNumber, String topPicSrc, String alias) {
-        this.courseId = courseId;
-        this.courseName = courseName;
-        this.courseNumber = courseNumber;
-//        this.lessonPreparationType = lessonPreparationType;
-        this.topPicSrc = topPicSrc;
-        this.alias = alias;
-    }
-
-    public CourseListResp() {
-    }
+    private Integer courseType;
 }

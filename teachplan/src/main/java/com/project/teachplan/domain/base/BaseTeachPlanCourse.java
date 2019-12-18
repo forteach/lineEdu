@@ -49,14 +49,19 @@ public abstract class BaseTeachPlanCourse extends Entitys {
     @Column(name = "line_percentage", columnDefinition = "TINYINT(4) COMMENT '线下占比'")
     private Integer linePercentage;
 
-    @Column(name = "teacher_Id", columnDefinition = "VARCHAR(32) COMMENT '创建教师id'")
-    private String teacherId;
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '课程类型　1.线上，2.线下,3.混合'")
+    private String type;
 
-    @Column(name = "teacherName", columnDefinition = "VARCHAR(32) COMMENT '教师名称'")
-    private String teacherName;
+//    @Column(name = "teacher_Id", columnDefinition = "VARCHAR(32) COMMENT '创建教师id'")
+//    private String teacherId;
+
+//    @Column(name = "teacherName", columnDefinition = "VARCHAR(32) COMMENT '教师名称'")
+//    private String teacherName;
 
     public BaseTeachPlanCourse(String planId, String courseId, String courseName, String credit, Integer onLinePercentage,
-                               Integer linePercentage, String teacherId, String teacherName, String centerAreaId, String userId) {
+                               Integer linePercentage,
+//                               String teacherId, String teacherName,
+                               String centerAreaId, String userId, String type) {
         super(userId, userId, centerAreaId);
         this.planId = planId;
         this.courseId = courseId;
@@ -64,7 +69,8 @@ public abstract class BaseTeachPlanCourse extends Entitys {
         this.credit = credit;
         this.onLinePercentage = onLinePercentage;
         this.linePercentage = linePercentage;
-        this.teacherId = teacherId;
-        this.teacherName = teacherName;
+        this.type = type;
+//        this.teacherId = teacherId;
+//        this.teacherName = teacherName;
     }
 }

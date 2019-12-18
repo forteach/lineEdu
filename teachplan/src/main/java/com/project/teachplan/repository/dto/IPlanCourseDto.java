@@ -14,6 +14,8 @@ public interface IPlanCourseDto {
     public Integer getOnLinePercentage();
     /** 课程ID*/
     public String getCourseId();
+    /** 课程名称*/
+    public String getCourseName();
     /** 平时作业占百分比*/
     public String getJobsPercentage();
     /** 观看视频占百分比*/

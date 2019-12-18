@@ -9,6 +9,8 @@ package com.project.teachplan.repository.dto;
  */
 public interface CourseTeacherDto {
     public String getCourseId();
-    public String getTeacherId();
+
+//    public String getTeacherId();
+
     public String getPlanId();
 }

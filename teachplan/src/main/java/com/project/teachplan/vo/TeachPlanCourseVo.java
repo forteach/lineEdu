@@ -33,7 +33,7 @@ public class TeachPlanCourseVo implements Serializable {
     /**
     * 教师id
     */
-    private String teacherId;
+//    private String teacherId;
     /** 教师名称*/
 //    private String teacherName;
 }

@@ -11,6 +11,7 @@ import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.domain.TeachPlanFileList;
 import com.project.teachplan.repository.PlanFileRepository;
 import com.project.teachplan.repository.TeachPlanFileListRepository;
+import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import com.project.teachplan.vo.TeachFileVerifyVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ import static java.util.stream.Collectors.toList;
 public class PlanFileService extends BaseMySqlService {
 
     private final PlanFileRepository planFileRepository;
-//    private final TeachPlanClassRepository teachPlanClassRepository;
     private final OnLineCourseDicService onLineCourseDicService;
     private final TeachPlanFileListRepository teachPlanFileListRepository;
+//    private final TeachPlanClassRepository teachPlanClassRepository;
 
     @Autowired
     public PlanFileService(PlanFileRepository planFileRepository, OnLineCourseDicService onLineCourseDicService,

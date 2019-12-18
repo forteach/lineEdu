@@ -9,13 +9,17 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.base.util.UpdateUtil;
 import com.project.course.domain.CourseStudy;
+import com.project.course.domain.OnLineCourseDic;
 import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.domain.online.TbClasses;
 import com.project.schoolroll.service.StudentScoreService;
+import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
 import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.domain.TeachPlanCourse;
@@ -24,6 +28,7 @@ import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
 import com.project.teachplan.repository.dto.PlanCourseStudyDto;
+import com.project.teachplan.repository.dto.TeachCenterDto;
 import com.project.teachplan.repository.dto.TeachPlanDto;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
@@ -53,7 +58,7 @@ import static java.util.stream.Collectors.toSet;
  */
 @Service
 public class TeachService {
-//    private final StudentOnLineService studentOnLineService;
+    private final StudentOnLineService studentOnLineService;
     private final TeachPlanCourseService teachPlanCourseService;
     private final TeachPlanRepository teachPlanRepository;
     private final TbClassService tbClassService;
@@ -71,7 +76,7 @@ public class TeachService {
 
     @Autowired
     public TeachService(
-//            StudentOnLineService studentOnLineService,
+            StudentOnLineService studentOnLineService,
                         TeachPlanRepository teachPlanRepository,
                         TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
 //                        TeachPlanClassRepository teachPlanClassRepository,
@@ -81,7 +86,7 @@ public class TeachService {
                         TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository
 //                        TeachPlanClassVerifyRepository teachPlanClassVerifyRepository
     ) {
-//        this.studentOnLineService = studentOnLineService;
+        this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
         this.teacherService = teacherService;
@@ -102,40 +107,30 @@ public class TeachService {
     @Transactional(rollbackFor = Exception.class)
     public TeachPlanVerify saveUpdatePlan(TeachPlanVerify teachPlan) {
         teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
+        MyAssert.isNull(teachPlan.getClassId(), DefineCode.ERR0010, "班级id不能为空");
         if (StrUtil.isBlank(teachPlan.getPlanId())) {
-
-//            MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanName()), DefineCode.ERR0010, "计划名称不能为空");
-
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getStartDate()), DefineCode.ERR0010, "计划开始时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getEndDate()), DefineCode.ERR0010, "计划结束时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanAdmin()), DefineCode.ERR0010, "负责人不能为空");
-            MyAssert.isNull(teachPlan.getClassId(), DefineCode.ERR0010, "班级id不能为空");
-            MyAssert.isTrue(teachPlanVerifyRepository.existsByPlanName(teachPlan.getPlanName()), DefineCode.ERR0010, "已经存在同名计划,请修改");
+            setPlan(teachPlan);
             String planId = IdUtil.fastSimpleUUID();
             teachPlan.setPlanId(planId);
             //设置对应的班级和专业对应的属性
-            setPlan(teachPlan);
             return teachPlanVerifyRepository.save(teachPlan);
         } else {
             Optional<TeachPlanVerify> optional = teachPlanVerifyRepository.findById(teachPlan.getPlanId());
             MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的计划不存在");
             TeachPlanVerify t = optional.get();
-            String classId = t.getClassId();
             Integer courseNumber = t.getCourseNumber();
-
+//            String classId = t.getClassId();
 //            Integer sumNumber = t.getSumNumber();
 //            Integer classNumber = t.getClassNumber();
 
-            //修改计划名称需要判断是否存在同名计划存在不能修改
-            if (!t.getPlanName().equals(teachPlan.getPlanName())){
-                MyAssert.isTrue(teachPlanVerifyRepository.existsByPlanName(teachPlan.getPlanName()), DefineCode.ERR0010, "已经存在同名计划,请修改");
-            }
             BeanUtil.copyProperties(teachPlan, t);
-            if (!classId.equals(teachPlan.getClassId())){
+            setPlan(t);
+//            if (!classId.equals(teachPlan.getClassId())){
                 //修改了班级id需要重新判断
-                setPlan(t);
-            }
-
+//            }
 //            t.setSumNumber(sumNumber);
 //            t.setClassNumber(classNumber);
 
@@ -147,13 +142,16 @@ public class TeachService {
 
     private void setPlan(TeachPlanVerify teachPlan){
         TbClasses tbClass = tbClassService.findById(teachPlan.getClassId());
+        //修改计划名称需要判断是否存在同名计划存在不能修改
+        String planName = tbClass.getSpecialtyName() + tbClass.getGrade() + "级";
+        MyAssert.isTrue(teachPlanVerifyRepository.existsAllByPlanName(planName), DefineCode.ERR0010, "已经存在同名计划,请修改");
         teachPlan.setClassName(tbClass.getClassName());
         teachPlan.setSpecialtyName(tbClass.getSpecialtyName());
         teachPlan.setGrade(tbClass.getGrade());
-        teachPlan.setPlanName(tbClass.getSpecialtyName() + tbClass.getGrade());
+        teachPlan.setPlanName(planName);
     }
     private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses, String remark, String centerAreaId, String userId) {
-        List<TeachPlanCourseVerify> planCourseList = courses.parallelStream().filter(Objects::nonNull)
+        List<TeachPlanCourseVerify> planCourseList = courses.stream().filter(Objects::nonNull)
                 .map(t -> createTeachPlanCourse(planId, t, remark, centerAreaId, userId))
                 .collect(toList());
         if (!planCourseList.isEmpty()) {
@@ -162,10 +160,12 @@ public class TeachService {
     }
 
     private TeachPlanCourseVerify createTeachPlanCourse(String planId, TeachPlanCourseVo vo, String remark, String centerAreaId, String userId) {
-        String teacherName = teacherService.findById(vo.getTeacherId()).getTeacherName();
+//        String teacherName = teacherService.findById(vo.getTeacherId()).getTeacherName();
+        OnLineCourseDic onLineCourseDic = onLineCourseDicService.findId(vo.getCourseId());
         return new TeachPlanCourseVerify(planId, vo.getCourseId(), onLineCourseDicService.findId(vo.getCourseId()).getCourseName(),
-                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(), vo.getTeacherId(), teacherName,
-                centerAreaId, remark, userId, VERIFY_STATUS_APPLY);
+                vo.getCredit(), vo.getOnLinePercentage(), vo.getLinePercentage(),
+                // vo.getTeacherId(), teacherName,
+                centerAreaId, remark, userId, VERIFY_STATUS_APPLY, onLineCourseDic.getType());
     }
 
 //    private void saveTeachPlanClass(String planId, TeachPlanVerify teachPlan, List<String> classIds, String remark, String centerAreaId, String userId) {
@@ -207,8 +207,8 @@ public class TeachService {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByPlanId(String planId) {
-//        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
         teachPlanRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
+//        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
 //        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
     }
 
@@ -219,7 +219,10 @@ public class TeachService {
         TeachPlanVerify teachPlanVerify = optional.get();
         MyAssert.isTrue(DateUtil.parseDate(teachPlanVerify.getEndDate()).isAfterOrEquals(new Date()), DefineCode.ERR0010, "正在进行的计划不能删除");
         teachPlanCourseRepository.deleteAllByPlanId(planId);
+
 //        teachPlanClassRepository.deleteAllByPlanId(planId);
+
+
         teachPlanRepository.deleteAllByPlanId(planId);
         teachPlanVerifyRepository.deleteById(planId);
         teachPlanCourseVerifyRepository.deleteAllByPlanId(planId);
@@ -428,62 +431,68 @@ public class TeachService {
 
     @SuppressWarnings(value = "all")
     public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String planId, String key, Pageable pageable) {
+        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByPlanId(planId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
         //查询redis缓存
+        TeachCenterDto teachCenterDto = optional.get();
         if (redisTemplate.hasKey(key)) {
             JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
             return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
         }
         //设置redis缓存
-        Page<CourseScoreVo> page = findScoreAllPageByPlanId(planId, pageable);
+        Page<CourseScoreVo> page = findScoreAllPageByPlanId(teachCenterDto, pageable);
         redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
         return page;
     }
 
-    private Page<CourseScoreVo> findScoreAllPageByPlanId(String planId, Pageable pageable) {
-        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+    private Page<CourseScoreVo> findScoreAllPageByPlanId(TeachCenterDto teachCenterDto, Pageable pageable) {
+//        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+        Page<StudentOnLine> page = studentOnLineService.findAllPageByClassId(teachCenterDto.getClassId(), pageable);
         List<CourseScoreVo> list = page.getContent()
                 .stream()
                 .filter(Objects::nonNull)
                 .map(d -> new CourseScoreVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                        d.getCenterName(), d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate(),
-                        toListScore(d.getStudentId(), d.getCourse())))
+                        teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+                        toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
                 .collect(toList());
         return new PageImpl<>(list, pageable, page.getTotalElements());
     }
 
     private Page<TeachCourseVo> findAllPageByPlanId(String planId, Pageable pageable) {
-        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+//        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByPlanId(planId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+        //查询redis缓存
+        TeachCenterDto teachCenterDto = optional.get();
+        Page<StudentOnLine> page = studentOnLineService.findAllPageByClassId(teachCenterDto.getClassId(), pageable);
         List<TeachCourseVo> list = page.getContent()
                 .stream()
                 .filter(Objects::nonNull)
                 .map(d -> new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                        d.getCenterName(), d.getPlanId(), d.getPlanName(), d.getStartDate(), d.getEndDate(),
-                        toListStudy(d.getStudentId(), d.getCourse())))
+                        teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+                        toListStudy(d.getStudentId(), planId)))
                 .collect(toList());
         return new PageImpl<>(list, pageable, page.getTotalElements());
     }
 
-    private List<StudyVo> toListStudy(String studentId, String course) {
+    private List<StudyVo> toListStudy(String studentId, String planId) {
         List<StudyVo> list = CollUtil.newArrayList();
-        Arrays.asList(StrUtil.split(course, ","))
+        teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(planId)
                 .forEach(s -> {
-                    String[] strings = StrUtil.split(s, "&");
-                    courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
-                            .ifPresent(d -> list.add(findStudyVo(strings, d)));
+                    courseStudyRepository.findStudyDto(studentId, s.getCourseId())
+                            .ifPresent(d ->
+                                    list.add(new StudyVo(d.getCourseId(), d.getCourseName(),
+                                            d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(),
+                                            d.getCorrectSum())));
                 });
         return list;
     }
 
-    private StudyVo findStudyVo(String[] strings, ICourseStudyDto d){
-        return new StudyVo(d.getCourseId(), strings[0], d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum());
-    }
-
-    private List<ScoreVo> toListScore(String studentId, String course) {
+    private List<ScoreVo> toListScore(String studentId, String planId) {
         List<ScoreVo> list = CollUtil.newArrayList();
-        Arrays.asList(StrUtil.split(course, ","))
+        teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(planId)
                 .forEach(s -> {
-                    String[] strings = StrUtil.split(s, "&");
-                    courseStudyRepository.findStudyDto(studentId, strings[1], strings[2])
+                    courseStudyRepository.findStudyDto(studentId, s.getCourseId())
                             .ifPresent(d -> {
                                 //线上成绩 (学习时长/课程总时长) * 视频占比 + (习题回答正确数量/总习题数量) * 练习占比
                                 BigDecimal videoScore = new BigDecimal("0");
@@ -497,7 +506,7 @@ public class TeachService {
                                     jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getAnswerSum(), 2), Double.valueOf(jobsPercentage) / 100);
                                 }
                                 String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
-                                list.add(new ScoreVo(d.getCourseId(), strings[0], score));
+                                list.add(new ScoreVo(d.getCourseId(), d.getCourseName(), score));
                             });
                 });
         return list;
@@ -516,57 +525,58 @@ public class TeachService {
         Set<String> planIds = planList.stream().filter(Objects::nonNull).map(TeachPlan::getPlanId).collect(toSet());
         planIds.forEach(p -> teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(p)
                 .forEach(c -> {
-//                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage(), c.getLinePercentage(), c.getVideoPercentage(), c.getJobsPercentage());
-//                    if (!list.isEmpty()) {
-//                        studentScoreService.saveAll(list);
-//                    }
+                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage(), c.getLinePercentage(), c.getVideoPercentage(), c.getJobsPercentage());
+                    if (!list.isEmpty()) {
+                        studentScoreService.saveAll(list);
+                    }
                 }));
         if (!planList.isEmpty()){
             teachPlanRepository.saveAll(planList.stream().peek(t -> t.setCountStatus(PLAN_COUNT_STATUS_SUCCESS)).collect(toList()));
         }
     }
 
-//    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
-//        return teachPlanClassRepository.findAllStudentIdByPlanId(planeId).stream()
-//                .filter(Objects::nonNull)
-//                .map(s -> findSetStudentScore(s, courseId, onLinePercentage, linePercentage, videoPercentage, jobsPercentage))
-//                .filter(Objects::nonNull)
-//                .collect(toList());
-//    }
+    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
+        return teachPlanRepository.findAllStudentIdsByPlanId(planeId)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(s -> findSetStudentScore(s, courseId, onLinePercentage, linePercentage, videoPercentage, jobsPercentage))
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
 
-//    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
-//        Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
-//        if (optional.isPresent()) {
-//            CourseStudy c = optional.get();
-//            StudentScore studentScore = studentScoreService.findByStudentIdAndCourseId(studentId, courseId);
-//            studentScore.setCourseId(courseId);
-//            studentScore.setStudentId(studentId);
-//            studentScore.setUpdateUser(c.getStudentId());
-//            studentScore.setCreateUser(c.getStudentId());
-//            studentScore.setCenterAreaId(c.getCenterAreaId());
-//            int onLineTime = c.getOnLineTime();
-//            int onLineTimeSum = c.getOnLineTimeSum();
-//            //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
-//            double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
-//            //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
-//            BigDecimal jobScore = new BigDecimal("0");
-//            if (0 != c.getAnswerSum()){
-//                jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
-//            }
-//            //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
-//            BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
-//            //计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
-//            BigDecimal courseScore = NumberUtil.mul(onLineScore, NumberUtil.div(onLinePercentage, 100, 2));
-//            studentScore.setOnLineScore(onLineScore.toPlainString());
-//            studentScore.setCourseScore(courseScore.floatValue());
-//            //线下成绩占比 %
-//            studentScore.setLinePercentage(linePercentage);
-//            //线上成绩占比 %
-//            studentScore.setOnLinePercentage(onLinePercentage);
-//            return studentScore;
-//        }
-//        return null;
-//    }
+    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
+        Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
+        if (optional.isPresent()) {
+            CourseStudy c = optional.get();
+            StudentScore studentScore = studentScoreService.findByStudentIdAndCourseId(studentId, courseId);
+            studentScore.setCourseId(courseId);
+            studentScore.setStudentId(studentId);
+            studentScore.setUpdateUser(c.getStudentId());
+            studentScore.setCreateUser(c.getStudentId());
+            studentScore.setCenterAreaId(c.getCenterAreaId());
+            int onLineTime = c.getOnLineTime();
+            int onLineTimeSum = c.getOnLineTimeSum();
+            //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
+            double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
+            //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
+            BigDecimal jobScore = new BigDecimal("0");
+            if (0 != c.getAnswerSum()){
+                jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
+            }
+            //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
+            BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
+            //计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
+            BigDecimal courseScore = NumberUtil.mul(onLineScore, NumberUtil.div(onLinePercentage, 100, 2));
+            studentScore.setOnLineScore(onLineScore.toPlainString());
+            studentScore.setCourseScore(courseScore.floatValue());
+            //线下成绩占比 %
+            studentScore.setLinePercentage(linePercentage);
+            //线上成绩占比 %
+            studentScore.setOnLinePercentage(onLinePercentage);
+            return studentScore;
+        }
+        return null;
+    }
 
     public List<TeachPlanVerify> findAllPlan() {
         return teachPlanVerifyRepository.findAllByIsValidatedEqualsAndVerifyStatus(TAKE_EFFECT_OPEN, VERIFY_STATUS_AGREE);
@@ -581,5 +591,13 @@ public class TeachService {
                 .stream().filter(Objects::nonNull)
                 .map(TeachPlanVerify::getClassId)
                 .collect(toSet());
+    }
+
+    public Page<TeachPlan> findAllByCenterId(String centerId, Pageable pageable){
+        return teachPlanRepository.findAllByCenterAreaId(centerId, pageable);
+    }
+
+    public Page<TeachPlan> findAllByCenterIdAndClassId(String centerId, String classId, Pageable pageable){
+        return teachPlanRepository.findAllByCenterAreaIdAndClassId(centerId, classId, pageable);
     }
 }

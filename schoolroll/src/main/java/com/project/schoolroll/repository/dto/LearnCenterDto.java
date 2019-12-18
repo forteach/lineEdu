@@ -82,4 +82,7 @@ public interface LearnCenterDto {
      * 企业名称
      */
     public String getCompanyName();
+
+    public String getSchoolPhone();
+    public String getSchoolAdmin();
 }

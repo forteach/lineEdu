@@ -57,16 +57,20 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final TokenService tokenService;
     private final WeChatUserService weChatUserService;
-    private final TeachPlanCourseService teachPlanCourseService;
+
+//    private final TeachPlanCourseService teachPlanCourseService;
+
     private final UserRecordService userRecordService;
     private final LearnCenterService learnCenterService;
 
     public TeacherController(TeacherService teacherService, TokenService tokenService, UserRecordService userRecordService,LearnCenterService learnCenterService,
-                             WeChatUserService weChatUserService, TeachPlanCourseService teachPlanCourseService) {
+                             WeChatUserService weChatUserService
+//            , TeachPlanCourseService teachPlanCourseService
+    ) {
         this.teacherService = teacherService;
         this.tokenService = tokenService;
         this.weChatUserService = weChatUserService;
-        this.teachPlanCourseService = teachPlanCourseService;
+//        this.teachPlanCourseService = teachPlanCourseService;
         this.learnCenterService = learnCenterService;
         this.userRecordService = userRecordService;
     }
@@ -181,7 +185,7 @@ public class TeacherController {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         log.info("delete teacher teacherId : [{}], userId : [{}]", teacherId, userId);
-        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsByTeacherId(teacherId), DefineCode.ERR0010, "你要删除的教师信息有对应的计划课程");
+//        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsByTeacherId(teacherId), DefineCode.ERR0010, "你要删除的教师信息有对应的计划课程");
         teacherService.deleteByTeacherId(teacherId);
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);

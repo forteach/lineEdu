@@ -10,6 +10,8 @@ package com.project.course.repository.dto;
 public interface ICourseStudyDto {
     public String getCourseId();
 
+    public String getCourseName();
+
     public String getVideoPercentage();
 
     public String getJobsPercentage();

@@ -39,4 +39,8 @@ public interface TeachPlanDto {
     public String getVerifyStatus();
     /**审核意见备注 */
     public String getRemark();
+
+    public String getSpecialtyName();
+
+    public String getGrade();
 }

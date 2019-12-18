@@ -46,4 +46,6 @@ public interface ICourseListDto {
     public String getIsValidated();
     /** 创建时间 */
     public String getCreateTime();
+    /** 课程类型*/
+    public Integer getCourseType();
 }

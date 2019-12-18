@@ -24,11 +24,11 @@ public interface TeachPlanCourseVerifyRepository extends JpaRepository<TeachPlan
     List<TeachPlanCourseVerify> findAllByPlanId(String planId);
 
     @Transactional(readOnly = true)
-    List<TeachPlanCourseVerify> findAllByCourseIdAndTeacherId(String courseId, String teacherId);
+    List<TeachPlanCourseVerify> findAllByCourseId(String courseId);
 
-    @Transactional(readOnly = true)
-    List<TeachPlanCourseVerify> findAllByTeacherId(String teacherId);
+//    @Transactional(readOnly = true)
+//    List<TeachPlanCourseVerify> findAllByTeacherId(String teacherId);
 
     @Modifying
-    void deleteAllByCourseIdAndTeacherId(String courseId, String teacherId);
+    void deleteAllByCourseId(String courseId);
 }

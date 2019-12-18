@@ -57,21 +57,20 @@ public class TeachPlanCourseService {
 
     public List<CourseTeacherVo> findCourseIdAndTeacherIdByClassId(String classId) {
         //查询计划Id
-//        List<IPlanStatusDto> dtos = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
-//        List<String> planIds = dtos.stream().filter(Objects::nonNull).map(IPlanStatusDto::getPlanId).distinct().collect(toList());
-//        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds)
-//                .stream()
-//                .filter(Objects::nonNull)
-//                .map(d -> findCourseTeacherVo(d, dtos))
-//                .filter(Objects::nonNull)
-//                .collect(toList());
-        return new ArrayList<>();
+        List<IPlanStatusDto> dtos = teachPlanRepository.findAllByClassId(DateUtil.today(), classId);
+        List<String> planIds = dtos.stream().filter(Objects::nonNull).map(IPlanStatusDto::getPlanId).distinct().collect(toList());
+        return teachPlanCourseRepository.findAllByIsValidatedEqualsAndPlanIdIn(TAKE_EFFECT_OPEN, planIds)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(d -> findCourseTeacherVo(d, dtos))
+                .filter(Objects::nonNull)
+                .collect(toList());
     }
 
     private CourseTeacherVo findCourseTeacherVo(CourseTeacherDto dto, List<IPlanStatusDto> dtos) {
         for (IPlanStatusDto i : dtos) {
             if (dto.getPlanId().equals(i.getPlanId())) {
-                return new CourseTeacherVo(dto.getCourseId(), dto.getTeacherId(), i.getStatus(), i.getCountStatus());
+                return new CourseTeacherVo(dto.getCourseId(), i.getStatus(), i.getCountStatus());
             }
         }
         return null;
@@ -108,20 +107,20 @@ public class TeachPlanCourseService {
      * @param teacherId
      * @return
      */
-    public boolean isAfterOrEqualsByTeacherId(String teacherId) {
-        List<TeachPlanCourseVerify> courseVerifyList = teachPlanCourseVerifyRepository.findAllByTeacherId(teacherId);
-        return isValidated(courseVerifyList);
-    }
+//    public boolean isAfterOrEqualsByTeacherId(String teacherId) {
+//        List<TeachPlanCourseVerify> courseVerifyList = teachPlanCourseVerifyRepository.findAllByTeacherId(teacherId);
+//        return isValidated(courseVerifyList);
+//    }
 
     /**
      * 查询课程对应的计划是有正在执行的计划
      *
      * @param courseNumber
-     * @param teacherId
+//     * @param teacherId
      * @return
      */
-    public boolean isAfterOrEqualsCourseNumberAndTeacherId(String courseNumber, String teacherId) {
-        List<TeachPlanCourseVerify> teachPlanCourseVerifyList = teachPlanCourseVerifyRepository.findAllByCourseIdAndTeacherId(courseNumber, teacherId);
+    public boolean isAfterOrEqualsCourseNumberAndTeacherId(String courseNumber) {
+        List<TeachPlanCourseVerify> teachPlanCourseVerifyList = teachPlanCourseVerifyRepository.findAllByCourseId(courseNumber);
         return isValidated(teachPlanCourseVerifyList);
     }
 
@@ -139,8 +138,8 @@ public class TeachPlanCourseService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteTeachCourseByCourseNumberAndTeacherId(String courseNumber, String teacherId) {
-        teachPlanCourseVerifyRepository.deleteAllByCourseIdAndTeacherId(courseNumber, teacherId);
-        teachPlanCourseRepository.deleteAllByCourseIdAndTeacherId(courseNumber, teacherId);
+    public void deleteTeachCourseByCourseNumber(String courseNumber) {
+        teachPlanCourseVerifyRepository.deleteAllByCourseId(courseNumber);
+        teachPlanCourseRepository.deleteAllByCourseId(courseNumber);
     }
 }

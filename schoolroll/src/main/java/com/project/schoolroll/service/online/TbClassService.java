@@ -30,33 +30,33 @@ public class TbClassService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    TbClasses getClassIdByClassName(String className, String centerAreaId, String userId, String specialtyName, String grade){
+    TbClasses getClassIdByClassName(String className, String centerAreaId, String userId, String specialtyName, String grade) {
         return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId)
                 .orElseGet(() -> tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId, specialtyName, grade)));
     }
 
-    public TbClasses findById(String classId){
+    public TbClasses findById(String classId) {
         Optional<TbClasses> classesOptional = tbClassesRepository.findById(classId);
         MyAssert.isFalse(classesOptional.isPresent(), DefineCode.ERR0010, "不存在对应的班级信息");
         return classesOptional.get();
     }
 
 
-    public TbClasses findClassByClassId(String classId){
+    public TbClasses findClassByClassId(String classId) {
         Optional<TbClasses> optionalTbClasses = tbClassesRepository.findById(classId);
-        if (optionalTbClasses.isPresent()){
+        if (optionalTbClasses.isPresent()) {
             return optionalTbClasses.get();
-        }else {
+        } else {
             MyAssert.isNull(null, DefineCode.ERR0010, "不存在对应班级信息");
             return null;
         }
     }
 
-    public List<TbClasses> findAllByCenterAreaId(String centerAreaId){
+    public List<TbClasses> findAllByCenterAreaId(String centerAreaId) {
         return tbClassesRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId);
     }
 
-    public List<TbClasses> findAllByCenterAreaId(String centerAreaId, Set<String> classIds){
+    public List<TbClasses> findAllByCenterAreaId(String centerAreaId, Set<String> classIds) {
         return findAllByCenterAreaId(centerAreaId)
                 .stream()
                 .filter(Objects::nonNull)
@@ -64,18 +64,21 @@ public class TbClassService {
                 .collect(toList());
     }
 
-    private boolean filterClass(Set<String> classIds, String classId){
-        if (classIds.isEmpty()){
+    /**
+     * 过滤已经添加过的班级id
+     */
+    private boolean filterClass(Set<String> classIds, String classId) {
+        if (classIds.isEmpty()) {
             return true;
         }
         return !classIds.contains(classId);
     }
 
-    public Page<TbClasses> findAllPage(Pageable pageable){
+    public Page<TbClasses> findAllPage(Pageable pageable) {
         return tbClassesRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
     }
 
-    public Page<TbClasses> findAllPageByCenterAreaId(String centerAreaId, Pageable pageable){
+    public Page<TbClasses> findAllPageByCenterAreaId(String centerAreaId, Pageable pageable) {
         return tbClassesRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageable);
     }
 }

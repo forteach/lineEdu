@@ -11,6 +11,7 @@ import com.project.portal.teachplan.request.*;
 import com.project.portal.util.MyExcleUtil;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.service.PlanFileService;
+import com.project.teachplan.service.TeachService;
 import com.project.teachplan.vo.TeachFileVerifyVo;
 import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
@@ -46,9 +47,11 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class PlanFileController {
     private final PlanFileService planFileService;
     private final TokenService tokenService;
+    private final TeachService teachService;
 
-    public PlanFileController(PlanFileService planFileService, TokenService tokenService) {
+    public PlanFileController(PlanFileService planFileService, TeachService teachService, TokenService tokenService) {
         this.planFileService = planFileService;
+        this.teachService = teachService;
         this.tokenService = tokenService;
     }
 
@@ -87,23 +90,23 @@ public class PlanFileController {
         return WebResult.okResult(planFileService.update(planFile));
     }
 
-//    @UserLoginToken
-//    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
-//    @PostMapping(path = "/findByCenterAreaIdAllPage")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
-//            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-//            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
-//    })
-//    public WebResult findByCenterAreaIdAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
-//        valideSort(request.getPage(), request.getPage());
-//        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-//        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-//        if (StrUtil.isNotBlank(request.getClassId())) {
-//            return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
-//        }
-//        return WebResult.okResult(planFileService.findAllPagePlanFileDtoByCenterAreaId(centerAreaId, pageRequest));
-//    }
+    @UserLoginToken
+    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
+    @PostMapping(path = "/findByCenterAreaIdAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+    })
+    public WebResult findByCenterAreaIdAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
+        valideSort(request.getPage(), request.getPage());
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
+        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+        if (StrUtil.isNotBlank(request.getClassId())) {
+            return WebResult.okResult(teachService.findAllByCenterIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
+        }
+        return WebResult.okResult(teachService.findAllByCenterId(centerAreaId, pageRequest));
+    }
 
     @UserLoginToken
     @ApiOperation(value = "班级资料明细列表分页查询")

@@ -81,4 +81,6 @@ public interface ICourseChapterListDto {
      * @return
      */
     public String getTeacherId();
+    /** 课程类型*/
+    public Integer getCourseType();
 }

@@ -49,7 +49,7 @@ public class TeachPlanFileController {
             @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", required = true, paramType = "form"),
             @ApiImplicitParam(name = "fileName", value = "资料名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileType", value = "资料类型", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "type", value = "资料类型，上传分类 A.大纲、B，教材库,C，课表,D 素材库", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "资料类型，上传分类 A.教学大纲、B.教学计划、C.课程表 D, 教材库", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "fileUrl", value = "资料URL", dataType = "string", required = true, paramType = "form")
     })
     public WebResult save(@RequestBody TeachPlanFileSaveRequest request, HttpServletRequest httpServletRequest) {

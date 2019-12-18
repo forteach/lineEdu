@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -323,6 +324,14 @@ public class StudentOnLineService {
                 "学习中心名称",
                 "是否有效"
         );
+    }
+
+    public List<StudentOnLine> findAllByClassId(String classId){
+        return studentOnLineRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
+    }
+
+    public Page<StudentOnLine> findAllPageByClassId(String classId, Pageable pageable){
+        return studentOnLineRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId, pageable);
     }
 
     public Optional<StudentOnLine> findById(String id) {

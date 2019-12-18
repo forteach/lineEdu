@@ -78,7 +78,6 @@ public class CourseServiceImpl implements CourseService {
      * 保存课程基本信息
      *
      * @param course 课程基本信息
-//     * @param teachers 集体备课教师信息
      * @return 课程编号和集体备课资源编号
      */
     @Override
@@ -86,6 +85,8 @@ public class CourseServiceImpl implements CourseService {
     public String saveUpdate(Course course) {
         //1、保存课程基本信息
         if (StrUtil.isBlank(course.getCourseId())) {
+            MyAssert.isNull(course.getCourseType(), DefineCode.ERR0010, "课程类型不为空");
+//            MyAssert.isNull(course.getAlias(), DefineCode.ERR0010, "别名不为空");
             course.setCourseId(IdUtil.fastSimpleUUID());
             //设置默认状态，初始课程状态无效
             course.setIsValidated(TAKE_EFFECT_CLOSE);
@@ -94,7 +95,7 @@ public class CourseServiceImpl implements CourseService {
             courseRepository.findById(course.getCourseId()).ifPresent(c -> {
                 UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
-                course.setIsValidated(TAKE_EFFECT_CLOSE);
+                c.setIsValidated(TAKE_EFFECT_CLOSE);
                 courseRepository.save(c);
             });
         }
@@ -102,7 +103,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     /**
-     * 获得所有可用课程列表
+     * 获得所有课程列表
      *
      * @param page
      * @return
@@ -110,6 +111,17 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<ICourseListDto> findAll(PageRequest page) {
         return courseRepository.findAllByIsValidatedNotNull(page).getContent();
+    }
+
+    /**
+     * 获得所有课程列表
+     *
+     * @param page
+     * @return
+     */
+    @Override
+    public List<ICourseListDto> findAllByCourseType(Integer courseType, PageRequest page) {
+        return courseRepository.findAllByCourseType(courseType, page).getContent();
     }
 
     /**
@@ -142,7 +154,6 @@ public class CourseServiceImpl implements CourseService {
      * @param classId
      * @return
      */
-//    @Cacheable(value = "myCourseList", key = "#classId", sync = true, unless = "#result eq null")
     @Override
     public List<CourseListResp> myCourseList(String classId) {
         List<CourseListResp> listRespList = CollUtil.newArrayList();
@@ -157,6 +168,7 @@ public class CourseServiceImpl implements CourseService {
                         .joinChapterName(iCourseChapterListDto.getChapterName())
                         .teacherId(iCourseChapterListDto.getTeacherId())
                         .teacherName(iCourseChapterListDto.getTeacherName())
+                        .courseType(iCourseChapterListDto.getCourseType())
                         .build()));
         return listRespList;
     }
@@ -220,27 +232,38 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId, String key) {
+    public List<CourseVo> findByCourseNumber(List<CourseTeacherVo> courseIds, String courseType, String classId, String studentId, String key) {
         List<CourseVo> vos = new ArrayList<>();
         for (CourseTeacherVo v : courseIds) {
-            List<ICourseDto> list = courseRepository.findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(v.getCourseId(), v.getTeacherId());
-            for (ICourseDto iCourseDto : list) {
-                String chapterId = null;
-                String chapterName = null;
-                IChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(userId, iCourseDto.getCourseId());
-                if (dto != null) {
-                    chapterId = dto.getChapterId();
-                    chapterName = dto.getChapterName();
-                }
-                vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
-                        iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
-                        iCourseDto.getJobsPercentage(), iCourseDto.getCreateUser(), iCourseDto.getCreateUserName(), chapterId, chapterName, String.valueOf(v.getStatus())));
+            List<ICourseDto> list;
+            if (StrUtil.isNotBlank(courseType)){
+                list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberAndCourseTypeOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, v.getCourseId(), Integer.valueOf(courseType));
+            }else {
+                list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, v.getCourseId());
+            }
+            if (!list.isEmpty()){
+                builderVo(vos, String.valueOf(v.getStatus()), studentId, list);
             }
         }
         if (!vos.isEmpty()) {
             stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(vos), Duration.ofSeconds(10));
         }
         return vos;
+    }
+
+    private void builderVo(List<CourseVo> vos, String status, String studentId, List<ICourseDto> list){
+        for (ICourseDto iCourseDto : list) {
+            String chapterId = null;
+            String chapterName = null;
+            IChapterRecordDto dto = courseRecordsRepository.findDtoByStudentIdAndCourseId(studentId, iCourseDto.getCourseId());
+            if (dto != null) {
+                chapterId = dto.getChapterId();
+                chapterName = dto.getChapterName();
+            }
+            vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
+                    iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
+                    iCourseDto.getJobsPercentage(), chapterId, chapterName, status));
+        }
     }
 
     @Override
@@ -254,9 +277,14 @@ public class CourseServiceImpl implements CourseService {
         return null;
     }
 
+//    @Override
+//    public List<Course> findAllCourseVoByCreateUser(String createUser) {
+//        return courseRepository.findAllByCreateUserOrderByCreateTimeDesc(createUser);
+//    }
+
     @Override
-    public List<Course> findAllCourseVoByCreateUser(String createUser) {
-        return courseRepository.findAllByCreateUserOrderByCreateTimeDesc(createUser);
+    public List<Course> findAll(){
+        return courseRepository.findAllByOrderByCreateTimeDesc();
     }
 
     @Override

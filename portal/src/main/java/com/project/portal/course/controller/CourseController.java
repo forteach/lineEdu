@@ -1,12 +1,14 @@
 package com.project.portal.course.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
+import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.service.CourseChapterService;
 import com.project.course.service.CourseService;
 import com.project.course.service.CoursewareService;
@@ -34,10 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.project.base.common.keyword.Dic.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
@@ -125,16 +124,24 @@ public class CourseController {
     @UserLoginToken
     @ApiOperation(value = "分页查询", notes = "分页查询分页科目信息")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseType", value = "课程类型 1 线上 2，线下 3 混合", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     @PostMapping("/findAll")
-    public WebResult findAll(@ApiParam(name = "sortVo", value = "分页查科目信息") @RequestBody CourseFindAllReq req, HttpServletRequest request) {
+    public WebResult findAll(@RequestBody CourseFindAllReq req, HttpServletRequest request) {
         valideSort(req.getPage(), req.getSize());
         req.setUserId(tokenService.getTeacherId(request.getHeader("token")));
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
-        return WebResult.okResult(courseService.findAll(page).stream().filter(Objects::nonNull)
-                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(), item.getCreateTime()))
+        List<ICourseListDto> list;
+        if (StrUtil.isNotBlank(req.getCourseType())){
+            MyAssert.isFalse(NumberUtil.isNumber(req.getCourseType()), DefineCode.ERR0010, "课程类型不正确");
+            list = courseService.findAllByCourseType(Integer.parseInt(req.getCourseType()), page);
+        }else {
+            list = courseService.findAll(page);
+        }
+        return WebResult.okResult(list.stream().filter(Objects::nonNull)
+                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(), item.getCreateTime(), item.getCourseType()))
                 .collect(toList()));
     }
 
@@ -150,8 +157,10 @@ public class CourseController {
         valideSort(req.getPage(), req.getSize());
         String userId = tokenService.getUserId(request.getHeader("token"));
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
-        return WebResult.okResult(courseService.findMyCourse(userId, page).stream().filter(Objects::nonNull)
-                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(), item.getCreateTime()))
+        return WebResult.okResult(courseService.findMyCourse(userId, page)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(), item.getCreateTime(), item.getCourseType()))
                 .collect(toList()));
     }
 
@@ -286,8 +295,9 @@ public class CourseController {
 
     @UserLoginToken
     @ApiOperation(value = "学生端登录后加载对应的课程信息")
-    @GetMapping("/studentCourseList")
-    public WebResult findCourseStudent(HttpServletRequest request) {
+    @GetMapping("/studentCourseList/{courseType}")
+    @ApiImplicitParam(name = "courseType", value = "课程类型 1 线上 2，线下 3 混合", dataType = "string", paramType = "query")
+    public WebResult findCourseStudent(@PathVariable String courseType, HttpServletRequest request) {
         String token = request.getHeader("token");
         // 微信端获取用户学生Id,教师
         String studentId = tokenService.getStudentId(token);
@@ -299,12 +309,13 @@ public class CourseController {
                 return WebResult.okResult(vos);
             }
             List<CourseTeacherVo> courseIds = teachPlanCourseService.findCourseIdAndTeacherIdByClassId(classId)
-                    .stream().filter(Objects::nonNull)
-                    .map(vo -> new CourseTeacherVo(vo.getCourseId(), vo.getTeacherId(), vo.getStatus(), vo.getCountStatus())).collect(toList());
-            return WebResult.okResult(courseService.findByCourseNumberAndTeacherId(courseIds, classId, studentId, key));
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(vo -> new CourseTeacherVo(vo.getCourseId(), vo.getStatus(), vo.getCountStatus())).collect(toList());
+            return WebResult.okResult(courseService.findByCourseNumber(courseIds, courseType, classId, studentId, key));
         } else {
             //不是学生是教师只能查看自己创建的课程信息
-            return WebResult.okResult(courseService.findAllCourseVoByCreateUser(studentId));
+            return WebResult.okResult(courseService.findAll());
         }
     }
 
@@ -316,9 +327,9 @@ public class CourseController {
     public WebResult deleteById(@PathVariable String courseId, HttpServletRequest httpServletRequest) {
         MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程id不能为空");
         Course course = courseService.getById(courseId);
-        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser()), DefineCode.ERR0010, "正在计划中的课程信息不能删除");
+        MyAssert.isTrue(teachPlanCourseService.isAfterOrEqualsCourseNumberAndTeacherId(course.getCourseNumber()), DefineCode.ERR0010, "正在计划中的课程信息不能删除");
         //删除计划上的课程
-        teachPlanCourseService.deleteTeachCourseByCourseNumberAndTeacherId(course.getCourseNumber(), course.getCreateUser());
+        teachPlanCourseService.deleteTeachCourseByCourseNumber(course.getCourseNumber());
         //删除对应的课程资料
         coursewareService.deleteByCourseId(courseId);
         //删除对应的章节资料

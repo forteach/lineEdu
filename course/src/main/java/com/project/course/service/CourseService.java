@@ -33,6 +33,8 @@ public interface CourseService {
 
     public List<ICourseListDto> findAll(PageRequest page);
 
+    List<ICourseListDto> findAllByCourseType(Integer courseType, PageRequest page);
+
     public List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus);
 
     public void saveCourseImages(CourseImagesReq courseImagesReq);
@@ -47,17 +49,19 @@ public interface CourseService {
 
     public int deleteImagesByCourseId(String courseId);
 
-    List<CourseVo> findByCourseNumberAndTeacherId(List<CourseTeacherVo> courseIds, String classId, String userId, String key);
+    List<CourseVo> findByCourseNumber(List<CourseTeacherVo> courseIds, String courseType, String classId, String studentId, String key);
 
     List<CourseVo> findCourseVoByClassId(String classId, String key);
 
-    List<Course> findAllCourseVoByCreateUser(String createUser);
+//    List<Course> findAllCourseVoByCreateUser(String createUser);
 
     void updateCourseTime(String courseId, Integer videoTimeNum);
 
     void taskCourseStudy();
 
     void taskCourseQuestions();
+
+    List<Course> findAll();
 
     Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
 
