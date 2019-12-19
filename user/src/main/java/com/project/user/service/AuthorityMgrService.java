@@ -19,7 +19,7 @@ public interface AuthorityMgrService {
      *
      * @return
      */
-    List treeMenu();
+    List<ActionColumn> treeMenu();
 
     /**
      * 根据叶节点获取栏目操作
@@ -35,7 +35,7 @@ public interface AuthorityMgrService {
      * @param roleId
      * @return
      */
-    List findColumnByRoleId(String roleId);
+    List<ActionColumn> findColumnByRoleId(String roleId);
 
     /**
      * 根据权限id获取栏目的id集合
@@ -59,14 +59,14 @@ public interface AuthorityMgrService {
      * @param userId
      * @return
      */
-    List findColumnOperationListByUserId(String userId);
+    List<Map<String, Object>> findColumnOperationListByUserId(String userId);
 
     /**
      * 查询没有父节点的顶级节点
      *
      * @return
      */
-    List findTreeTop();
+    List<ActionColumn> findTreeTop();
 
     /**
      * 获取所有的树
@@ -97,7 +97,7 @@ public interface AuthorityMgrService {
      * @param list
      * @return
      */
-    List getInfoColChild(List<ActionColumn> list);
+    List<ActionColumn> getInfoColChild(List<ActionColumn> list);
 
-    List findInfoColChild(List<ActionColumn> topColumnList, List<ActionColumn> childrenList);
+    List<Map<String, Object>> findInfoColChild(List<ActionColumn> topColumnList, List<ActionColumn> childrenList);
 }

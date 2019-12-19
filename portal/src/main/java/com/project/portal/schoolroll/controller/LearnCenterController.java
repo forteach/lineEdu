@@ -9,6 +9,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
+import com.project.portal.schoolroll.request.FindCenterRequest;
 import com.project.portal.schoolroll.request.LearnCenterFileSaveUpdateRequest;
 import com.project.portal.schoolroll.request.LearnCenterSaveUpdateRequest;
 import com.project.schoolroll.domain.CenterFile;
@@ -138,12 +139,17 @@ public class LearnCenterController {
     @ApiOperation(value = "分页查询学习中心")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "centerName", dataType = "string", value = "学习中心名称", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", required = true, example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", required = true, example = "15", paramType = "query")
     })
-    public WebResult findAllPage(@RequestBody SortVo sortVo) {
-        valideSort(sortVo.getPage(), sortVo.getSize());
-        return WebResult.okResult(learnCenterRepository.findAllByRoleId(CENTER_ROLE_ID, PageRequest.of(sortVo.getPage(), sortVo.getSize())));
+    public WebResult findAllPage(@RequestBody FindCenterRequest request) {
+        valideSort(request.getPage(), request.getSize());
+        PageRequest of = PageRequest.of(request.getPage(), request.getSize());
+        if (StrUtil.isBlank(request.getCenterName())) {
+            return WebResult.okResult(learnCenterRepository.findAllByRoleId(CENTER_ROLE_ID, of));
+        }
+        return WebResult.okResult(learnCenterRepository.findAllByRoleIdAndCenterNameLike(CENTER_ROLE_ID, "%" + request.getCenterName() + "%", of));
     }
 
     @UserLoginToken

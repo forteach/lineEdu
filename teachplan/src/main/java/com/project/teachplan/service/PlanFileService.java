@@ -187,10 +187,10 @@ public class PlanFileService extends BaseMySqlService {
     }
 
     public Map<String, List<PlanFile>> findAllByCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate) {
-        return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate));
+        return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeAsc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate));
     }
 
     public Map<String, List<PlanFile>> findAllByCourseIdAndCreateDateAndVerifyStatus(String planId, String classId, String courseId, String createDate, String verifyStatus) {
-        return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate, verifyStatus));
+        return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeAsc(TAKE_EFFECT_OPEN, planId, classId, courseId, createDate, verifyStatus));
     }
 }

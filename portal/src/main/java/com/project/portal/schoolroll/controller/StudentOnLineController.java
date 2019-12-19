@@ -97,7 +97,7 @@ public class StudentOnLineController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "分页查询在线学生信息(暂无查询条件)")
+    @ApiOperation(value = "分页查询在线学生信息")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentName", value = "学生姓名", dataType = "string", paramType = "query"),

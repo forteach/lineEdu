@@ -47,12 +47,12 @@ public class LinkLine extends Entitys implements Serializable {
     @Column(name = "act_name", columnDefinition = "VARCHAR(32) COMMENT '节点角色名称'")
     private String actName;
 
-    public LinkLine(NodeRolePk nodeRolePk, String nodeId, String actId, String nodeName, String actName,String centerId) {
-        this.nodeRolePk = nodeRolePk;
-        this.nodeId = nodeId;
-        this.actId = actId;
-        this.nodeName = nodeName;
-        this.actName = actName;
-        super.centerAreaId=centerId;
-    }
+//    public LinkLine(NodeRolePk nodeRolePk, String nodeId, String actId, String nodeName, String actName,String centerId) {
+//        this.nodeRolePk = nodeRolePk;
+//        this.nodeId = nodeId;
+//        this.actId = actId;
+//        this.nodeName = nodeName;
+//        this.actName = actName;
+//        super.centerAreaId=centerId;
+//    }
 }

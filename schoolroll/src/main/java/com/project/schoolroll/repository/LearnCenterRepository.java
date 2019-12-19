@@ -36,6 +36,9 @@ public interface LearnCenterRepository extends JpaRepository<LearnCenter, String
     @Transactional(readOnly = true)
     Page<LearnCenter> findAllByRoleId(Integer roleId, Pageable pageable);
 
+    @Transactional(readOnly = true)
+    Page<LearnCenter> findAllByRoleIdAndCenterNameLike(Integer roleId, String centerName, Pageable pageable);
+
     /**
      * 查询有效的是分中心的已经过了有效期的学习中心
      *

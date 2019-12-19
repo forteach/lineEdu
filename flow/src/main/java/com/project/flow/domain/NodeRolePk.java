@@ -32,8 +32,8 @@ public class NodeRolePk implements Serializable {
 
     }
 
-    public NodeRolePk(String nodeId, String roleId) {
-        this.nodeId = nodeId;
-        this.roleId = roleId;
-    }
+//    public NodeRolePk(String nodeId, String roleId) {
+//        this.nodeId = nodeId;
+//        this.roleId = roleId;
+//    }
 }

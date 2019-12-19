@@ -85,7 +85,7 @@ public class CourseChapterController {
         return WebResult.okResult(courseChapterService.getCourseChapterById(JSONObject.parseObject(chapterId).getString("chapterId")));
     }
 
-    @ApiOperation(value = "修改要修改章节的顺序")
+    @ApiOperation(value = "修改课程章节的顺序")
     @PostMapping(path = "/updateChapterSort")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "chapterIdVos", value = "章节信息和顺序位置数组列表", dataType = "list", dataTypeClass = ChapterSortVo.class, required = true)
@@ -161,6 +161,7 @@ public class CourseChapterController {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         String centerId = tokenService.getCenterAreaId(token);
+        //循环保存章节信息
         req.getFiles().forEach(v -> courseChapterService.saveChapterDataList(req.getCourseId(), req.getCourseName(), req.getChapterParentId(), v, req.getTeacherName(), req.getCenterName(), userId, centerId));
         return WebResult.okResult();
     }

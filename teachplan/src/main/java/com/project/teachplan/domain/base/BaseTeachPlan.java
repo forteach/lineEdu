@@ -48,7 +48,7 @@ public abstract class BaseTeachPlan extends Entitys {
     @Column(name = "class_id", columnDefinition = "VARCHAR(32) COMMENT '班级id'")
     private String classId;
 
-    @Column(name = "class_Name", columnDefinition = "VARCHAR(32) COMMENT '班级名称'")
+    @Column(name = "class_name", columnDefinition = "VARCHAR(32) COMMENT '班级名称'")
     private String className;
 //    @Column(name = "class_number", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的班级数'")
 //    private Integer classNumber = this.classNumber == null ? 0 : this.classNumber;
@@ -62,4 +62,7 @@ public abstract class BaseTeachPlan extends Entitys {
 
     @Column(name = "grade", columnDefinition = "VARCHAR(32) COMMENT '年级'")
     private String grade;
+
+    @Column(name = "center_name", columnDefinition = "VARCHAR(64) COMMENT '学习中心名称'")
+    private String centerName;
 }

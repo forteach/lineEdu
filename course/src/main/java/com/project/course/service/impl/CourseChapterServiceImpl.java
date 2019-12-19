@@ -3,6 +3,7 @@ package com.project.course.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.project.base.common.keyword.DefineCode;
@@ -31,10 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toSet;
@@ -161,12 +159,13 @@ public class CourseChapterServiceImpl implements CourseChapterService {
      */
     private Set<String> findLists(String courseId, String chapterParentId) {
         List<CourseChapter> lists = courseChapterRepository.findByCourseIdAndAndChapterParentId(courseId, chapterParentId);
-        Set<String> stringSet = lists.stream().filter(courseChapter -> !COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId()))
+        Set<String> stringSet = lists.stream()
+                .filter(courseChapter -> !COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId()))
                 .map(CourseChapter::getChapterId)
                 .collect(toSet());
-        stringSet.stream().map(s -> {
+        stringSet.stream().filter(Objects::nonNull).map(s -> {
             //查询对应的目录集合
-            return findLists(s, courseId);
+            return findLists(courseId, s);
         });
         return stringSet;
     }
@@ -180,9 +179,10 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         int result = courseChapterRepository.updateIsValidatedIds(TAKE_EFFECT_CLOSE, stringSet);
         log.info("chapterId : {}, resoult : {}", chapterId, result);
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAllByCourseId(String courseId){
+    public void deleteAllByCourseId(String courseId) {
         courseChapterRepository.deleteAllByCourseId(courseId);
     }
 
@@ -202,14 +202,14 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         }
         List<CourseTreeResp> courseTreeResps = new ArrayList<>();
         builderCourseTreeRespList(courseId, studentId, courseTreeResps);
-        if (!courseTreeResps.isEmpty()){
+        if (!courseTreeResps.isEmpty()) {
             stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(courseTreeResps), Duration.ofSeconds(5));
         }
         return courseTreeResps;
     }
 
     @SuppressWarnings(value = "all")
-    private List<CourseTreeResp> builderCourseTreeRespList(String courseId, String studentId, List<CourseTreeResp> courseTreeResps){
+    private List<CourseTreeResp> builderCourseTreeRespList(String courseId, String studentId, List<CourseTreeResp> courseTreeResps) {
         List<ICourseChapterDto> dtoList = courseChapterRepository.findByCourseId(courseId);
         for (int i = 0; i < dtoList.size(); i++) {
             State state = new State();
@@ -220,7 +220,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             courseTreeResp.setParent(courseChapterDto.getChapterParentId());
             courseTreeResp.setRandomQuestionsNumber(courseChapterDto.getRandomQuestionsNumber());
             courseTreeResp.setVideoTime(courseChapterDto.getVideoTime());
-            if (StrUtil.isNotBlank(studentId )){
+            if (StrUtil.isNotBlank(studentId)) {
                 ChapterRecords chapterRecords = courseRecordsService.findChapterRecordsByStudentIdAndChapterId(studentId, courseId, courseChapterDto.getChapterId());
                 if (null != chapterRecords.getSumTime()) {
                     courseTreeResp.setDuration(chapterRecords.getSumTime());
@@ -271,10 +271,11 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     @Transactional(rollbackFor = Exception.class)
     public void updateChapterSort(List<ChapterSortVo> list, String userId) {
         list.forEach(v -> courseChapterRepository.findById(v.getChapterId()).ifPresent(c -> {
-                c.setSort(v.getSort());
-                c.setUpdateUser(userId);
-                courseChapterRepository.save(c);
-            }));
+            MyAssert.isFalse(NumberUtil.isNumber(v.getSort()), DefineCode.ERR0010, "顺序必须是数字");
+            c.setSort(v.getSort());
+            c.setUpdateUser(userId);
+            courseChapterRepository.save(c);
+        }));
     }
 
     @Override

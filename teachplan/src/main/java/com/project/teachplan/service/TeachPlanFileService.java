@@ -47,6 +47,7 @@ public class TeachPlanFileService {
         return groupByType(teachPlanFileRepository.findAllByIsValidatedEqualsAndPlanIdAndVerifyStatusOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, verifyStatus));
     }
 
+    /** 将查出来的文件资料数据进行分组返回*/
     private Map<String, List<TeachPlanFile>> groupByType(List<TeachPlanFile> list) {
         return list.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(TeachPlanFile::getType));
     }
@@ -71,6 +72,8 @@ public class TeachPlanFileService {
                     p.setRemark(remark);
                     p.setUpdateUser(userId);
                 }).collect(toList());
-        teachPlanFileRepository.saveAll(list);
+        if (!list.isEmpty()) {
+            teachPlanFileRepository.saveAll(list);
+        }
     }
 }

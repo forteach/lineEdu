@@ -143,6 +143,9 @@ public class TeacherController {
     @ApiOperation(value = "分页查询教师信息")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "teacherName", value = "教师姓名", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "phone", value = "电话", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "教师状态 0 (已经审核) 1 (未提交) 2 (已经拒绝)", dataType = "string", name = "verifyStatus", example = "0", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
@@ -151,19 +154,25 @@ public class TeacherController {
         valideSort(request.getPage(), request.getSize());
         String token = httpServletRequest.getHeader("token");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        if (!tokenService.isAdmin(token)) {
-            //是学习中心员工
-            String centerAreaId = tokenService.getCenterAreaId(token);
-            if (StrUtil.isNotBlank(request.getVerifyStatus())) {
-                return WebResult.okResult(teacherService.findAllPageDtoByVerifyStatusAndCenterAreaId(request.getVerifyStatus(), centerAreaId, pageRequest));
-            }
-            return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(centerAreaId, pageRequest));
-        } else {
-            if (StrUtil.isBlank(request.getVerifyStatus())) {
-                return WebResult.okResult(teacherService.findAllPageDto(pageRequest));
-            }
-            return WebResult.okResult(teacherService.findAllPageDtoByVerifyStatus(request.getVerifyStatus(), pageRequest));
+        String centerAreaId = request.getCenterAreaId();
+        if (!tokenService.isAdmin(token)){
+            centerAreaId = tokenService.getCenterAreaId(token);
         }
+        return WebResult.okResult(teacherService.findAllPage(request.getTeacherName(), centerAreaId,
+                request.getVerifyStatus(), request.getPhone(), pageRequest));
+//        if (!tokenService.isAdmin(token)) {
+//            //是学习中心员工
+//            String centerAreaId = tokenService.getCenterAreaId(token);
+//            if (StrUtil.isNotBlank(request.getVerifyStatus())) {
+//                return WebResult.okResult(teacherService.findAllPageDtoByVerifyStatusAndCenterAreaId(request.getVerifyStatus(), centerAreaId, pageRequest));
+//            }
+//            return WebResult.okResult(teacherService.findAllPageByCenterAreaIdDto(centerAreaId, pageRequest));
+//        } else {
+//            if (StrUtil.isBlank(request.getVerifyStatus())) {
+//                return WebResult.okResult(teacherService.findAllPageDto(pageRequest));
+//            }
+//            return WebResult.okResult(teacherService.findAllPageDtoByVerifyStatus(request.getVerifyStatus(), pageRequest));
+//        }
     }
 
     @UserLoginToken

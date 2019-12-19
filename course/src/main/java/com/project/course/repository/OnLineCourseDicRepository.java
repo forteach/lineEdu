@@ -33,8 +33,17 @@ public interface OnLineCourseDicRepository extends JpaRepository<OnLineCourseDic
     boolean existsAllByCourseNameAndType(String courseName, String type);
 
     @Transactional(readOnly = true)
+    Page<OnLineCourseDic> findAllByCourseNameLike(String courseName, Pageable pageable);
+
+    @Transactional(readOnly = true)
     Page<OnLineCourseDic> findAllByIsValidatedEqualsAndType(String isValidated, String type, Pageable pageable);
 
     @Transactional(readOnly = true)
+    Page<OnLineCourseDic> findAllByIsValidatedEqualsAndTypeAndCourseNameLike(String isValidated, String type, String courseName, Pageable pageable);
+
+    @Transactional(readOnly = true)
     Page<OnLineCourseDic> findAllByIsValidatedEqualsAndTypeIn(String isValidated, List<String> type, Pageable pageable);
+
+    @Transactional(readOnly = true)
+    Page<OnLineCourseDic> findAllByIsValidatedEqualsAndTypeInAndCourseNameLike(String isValidated, List<String> type, String courseName, Pageable pageable);
 }

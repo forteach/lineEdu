@@ -123,16 +123,17 @@ public class OnLineCourseDicController {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", required = true, example = "0", paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", required = true, example = "15", paramType = "query"),
-            @ApiImplicitParam(name = "type", value = "课程类型　1.线上，2.线下,3.混合", dataType = "string", example = "1", paramType = "query")
+            @ApiImplicitParam(name = "type", value = "课程类型　1.线上，2.线下,3.混合", dataType = "string", example = "1", paramType = "query"),
+            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "query")
     })
     @PostMapping(path = "/findAllPage")
     public WebResult findAllPage(@RequestBody CourseDicfindAllPageReq req){
         valideSort(req.getPage(), req.getSize());
         PageRequest of = PageRequest.of(req.getPage(), req.getSize());
         if (StrUtil.isBlank(req.getType())){
-            return WebResult.okResult(onLineCourseDicService.findAllPage(of));
+            return WebResult.okResult(onLineCourseDicService.findAllPage(of, req.getCourseName()));
         }else {
-            return WebResult.okResult(onLineCourseDicService.findAllPageByType(of, req.getType()));
+            return WebResult.okResult(onLineCourseDicService.findAllPageByType(of, req.getType(), req.getCourseName()));
         }
     }
 }

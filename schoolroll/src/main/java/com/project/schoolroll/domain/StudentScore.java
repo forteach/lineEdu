@@ -86,4 +86,7 @@ public class StudentScore extends Entitys implements Serializable {
      */
     @Column(name = "line_percentage", columnDefinition = "TINYINT(4) COMMENT '线下占比'")
     private Integer linePercentage;
+
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '课程类型　1.线上，2.线下,3.混合'")
+    private String type;
 }

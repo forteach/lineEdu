@@ -49,14 +49,14 @@ public class NodeAct extends Entitys implements Serializable {
     @Column(name = "flow_id", columnDefinition = "VARCHAR(32) COMMENT '流程编号'")
     private String flowId;
 
-    public NodeAct(String actId, String actName, String nowNodeId, String nowNodeName, String nextNodeId, String nextNodeName, String flowId,String centerId) {
-        this.actId = actId;
-        this.actName = actName;
-        this.nowNodeId = nowNodeId;
-        this.nowNodeName = nowNodeName;
-        this.nextNodeId = nextNodeId;
-        this.nextNodeName = nextNodeName;
-        this.flowId = flowId;
-        super.centerAreaId=centerId;
-    }
+//    public NodeAct(String actId, String actName, String nowNodeId, String nowNodeName, String nextNodeId, String nextNodeName, String flowId,String centerId) {
+//        this.actId = actId;
+//        this.actName = actName;
+//        this.nowNodeId = nowNodeId;
+//        this.nowNodeName = nowNodeName;
+//        this.nextNodeId = nextNodeId;
+//        this.nextNodeName = nextNodeName;
+//        this.flowId = flowId;
+//        super.centerAreaId=centerId;
+//    }
 }

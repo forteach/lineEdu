@@ -133,15 +133,24 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     }
 
     @Override
-    public Page<OnLineCourseDic> findAllPage(PageRequest pageRequest) {
+    public Page<OnLineCourseDic> findAllPage(PageRequest pageRequest, String courseName) {
+        if (StrUtil.isNotBlank(courseName)){
+            return onLineCourseDicRepository.findAllByCourseNameLike("%" + courseName + "%", pageRequest);
+        }
         return onLineCourseDicRepository.findAll(pageRequest);
     }
 
     @Override
-    public Page<OnLineCourseDic> findAllPageByType(PageRequest pageRequest, String type) {
+    public Page<OnLineCourseDic> findAllPageByType(PageRequest pageRequest, String type, String courseName) {
         if (COURSE_TYPE_4.equals(type)) {
             List<String> list = CollUtil.toList(COURSE_TYPE_1, COURSE_TYPE_3);
+            if (StrUtil.isNotBlank(courseName)){
+                return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeInAndCourseNameLike(TAKE_EFFECT_OPEN, list, "%" + courseName + "%", pageRequest);
+            }
             return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeIn(TAKE_EFFECT_OPEN, list, pageRequest);
+        }
+        if (StrUtil.isNotBlank(courseName)){
+            return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeAndCourseNameLike(TAKE_EFFECT_OPEN, type,"%" + courseName + "%", pageRequest);
         }
         return onLineCourseDicRepository.findAllByIsValidatedEqualsAndType(TAKE_EFFECT_OPEN, type, pageRequest);
     }

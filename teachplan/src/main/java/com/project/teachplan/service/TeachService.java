@@ -9,11 +9,9 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.base.util.UpdateUtil;
 import com.project.course.domain.CourseStudy;
 import com.project.course.domain.OnLineCourseDic;
 import com.project.course.repository.CourseStudyRepository;
-import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.domain.online.StudentOnLine;
@@ -27,9 +25,7 @@ import com.project.teachplan.domain.verify.TeachPlanCourseVerify;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.repository.TeachPlanCourseRepository;
 import com.project.teachplan.repository.TeachPlanRepository;
-import com.project.teachplan.repository.dto.PlanCourseStudyDto;
 import com.project.teachplan.repository.dto.TeachCenterDto;
-import com.project.teachplan.repository.dto.TeachPlanDto;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import com.project.teachplan.vo.*;
@@ -43,7 +39,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,11 +58,13 @@ import static java.util.stream.Collectors.toSet;
  */
 @Service
 public class TeachService {
+    @PersistenceContext
+    private EntityManager entityManager;
     private final StudentOnLineService studentOnLineService;
     private final TeachPlanCourseService teachPlanCourseService;
     private final TeachPlanRepository teachPlanRepository;
     private final TbClassService tbClassService;
-//    private final TeachPlanClassRepository teachPlanClassRepository;
+    //    private final TeachPlanClassRepository teachPlanClassRepository;
     private final TeachPlanCourseRepository teachPlanCourseRepository;
     private final OnLineCourseDicService onLineCourseDicService;
     private final TeacherService teacherService;
@@ -70,20 +72,20 @@ public class TeachService {
     private final CourseStudyRepository courseStudyRepository;
     private final StringRedisTemplate redisTemplate;
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
-//    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
+    //    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
     private final StudentScoreService studentScoreService;
 
     @Autowired
     public TeachService(
             StudentOnLineService studentOnLineService,
-                        TeachPlanRepository teachPlanRepository,
-                        TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
+            TeachPlanRepository teachPlanRepository,
+            TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
 //                        TeachPlanClassRepository teachPlanClassRepository,
-                        TeacherService teacherService,StudentScoreService studentScoreService,
-                        PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService, StringRedisTemplate redisTemplate,
-                        OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
-                        TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository
+            TeacherService teacherService, StudentScoreService studentScoreService,
+            PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService, StringRedisTemplate redisTemplate,
+            OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
+            TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository
 //                        TeachPlanClassVerifyRepository teachPlanClassVerifyRepository
     ) {
         this.studentOnLineService = studentOnLineService;
@@ -129,7 +131,7 @@ public class TeachService {
             BeanUtil.copyProperties(teachPlan, t);
             setPlan(t);
 //            if (!classId.equals(teachPlan.getClassId())){
-                //修改了班级id需要重新判断
+            //修改了班级id需要重新判断
 //            }
 //            t.setSumNumber(sumNumber);
 //            t.setClassNumber(classNumber);
@@ -140,7 +142,7 @@ public class TeachService {
     }
 
 
-    private void setPlan(TeachPlanVerify teachPlan){
+    private void setPlan(TeachPlanVerify teachPlan) {
         TbClasses tbClass = tbClassService.findById(teachPlan.getClassId());
         //修改计划名称需要判断是否存在同名计划存在不能修改
         String planName = tbClass.getSpecialtyName() + tbClass.getGrade() + "级";
@@ -150,6 +152,7 @@ public class TeachService {
         teachPlan.setGrade(tbClass.getGrade());
         teachPlan.setPlanName(planName);
     }
+
     private void saveTeachPlanCourse(String planId, List<TeachPlanCourseVo> courses, String remark, String centerAreaId, String userId) {
         List<TeachPlanCourseVerify> planCourseList = courses.stream().filter(Objects::nonNull)
                 .map(t -> createTeachPlanCourse(planId, t, remark, centerAreaId, userId))
@@ -237,34 +240,34 @@ public class TeachService {
 //        return teachPlanClassVerifyRepository.findAllByPlanId(planId);
 //    }
 
-    public Page<TeachPlanDto> findAllPageByPlanIdAndVerifyStatus(String planId, String verifyStatus, Pageable pageable) {
-        if (StrUtil.isNotBlank(planId) && StrUtil.isNotBlank(verifyStatus)) {
-            return teachPlanVerifyRepository.findAllPageByPlanIdAndVerifyStatusDto(planId, verifyStatus, pageable);
-        } else if (StrUtil.isNotBlank(planId) && StrUtil.isBlank(verifyStatus)) {
-            return teachPlanVerifyRepository.findAllPageByPlanIdDto(planId, pageable);
-        } else if (StrUtil.isNotBlank(verifyStatus) && StrUtil.isBlank(planId)) {
-            return teachPlanVerifyRepository.findAllPageByVerifyStatusDto(verifyStatus, pageable);
-        } else {
-            return teachPlanVerifyRepository.findAllPageDto(pageable);
-        }
-    }
+//    public Page<TeachPlanDto> findAllPageByPlanIdAndVerifyStatus(String planId, String verifyStatus, Pageable pageable) {
+//        if (StrUtil.isNotBlank(planId) && StrUtil.isNotBlank(verifyStatus)) {
+//            return teachPlanVerifyRepository.findAllPageByPlanIdAndVerifyStatusDto(planId, verifyStatus, pageable);
+//        } else if (StrUtil.isNotBlank(planId) && StrUtil.isBlank(verifyStatus)) {
+//            return teachPlanVerifyRepository.findAllPageByPlanIdDto(planId, pageable);
+//        } else if (StrUtil.isNotBlank(verifyStatus) && StrUtil.isBlank(planId)) {
+//            return teachPlanVerifyRepository.findAllPageByVerifyStatusDto(verifyStatus, pageable);
+//        } else {
+//            return teachPlanVerifyRepository.findAllPageDto(pageable);
+//        }
+//    }
 
 
-    public Page<TeachPlanDto> findAllPageDtoByCenterAreaId(String centerAreaId, String verifyStatus, Pageable pageable) {
-        if (StrUtil.isBlank(verifyStatus)) {
-            return teachPlanVerifyRepository.findAllPageByCenterAreaIdDto(centerAreaId, pageable);
-        } else {
-            return teachPlanVerifyRepository.findAllPageByVerifyStatusAndCenterAreaIdDto(verifyStatus, centerAreaId, pageable);
-        }
-    }
+//    public Page<TeachPlanDto> findAllPageDtoByCenterAreaId(String centerAreaId, String verifyStatus, Pageable pageable) {
+//        if (StrUtil.isBlank(verifyStatus)) {
+//            return teachPlanVerifyRepository.findAllPageByCenterAreaIdDto(centerAreaId, pageable);
+//        } else {
+//            return teachPlanVerifyRepository.findAllPageByVerifyStatusAndCenterAreaIdDto(verifyStatus, centerAreaId, pageable);
+//        }
+//    }
 
-    public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, String verifyStatus, Pageable pageable) {
-        if (StrUtil.isBlank(verifyStatus)) {
-            return teachPlanVerifyRepository.findAllPageByCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
-        } else {
-            return teachPlanVerifyRepository.findAllPageByPlanIdAndCenterAreaIdDto(planId, verifyStatus, centerAreaId, pageable);
-        }
-    }
+//    public Page<TeachPlanDto> findAllPageDtoByCenterAreaIdAndPlanId(String centerAreaId, String planId, String verifyStatus, Pageable pageable) {
+//        if (StrUtil.isBlank(verifyStatus)) {
+//            return teachPlanVerifyRepository.findAllPageByCenterAreaIdAndPlanIdDto(centerAreaId, planId, pageable);
+//        } else {
+//            return teachPlanVerifyRepository.findAllPageByPlanIdAndCenterAreaIdDto(planId, verifyStatus, centerAreaId, pageable);
+//        }
+//    }
 
 //    @Async
 //    @Transactional(rollbackFor = Exception.class)
@@ -275,6 +278,86 @@ public class TeachService {
 //        }).collect(Collectors.toList());
 //        teachPlanClassRepository.saveAll(list);
 //    }
+
+    public Page<TeachPlanVerify> findAllPage(TeachPlanVo vo, Pageable of) {
+        StringBuffer dataSql = new StringBuffer(" select " +
+                " tpv.plan_id as plan_id, " +
+                " tpv.plan_name as plan_name," +
+                " tpv.start_date as start_date," +
+                " tpv.end_date as end_date," +
+                " tpv.plan_admin as plan_admin," +
+                " tpv.course_number as course_number, " +
+                " tpv.grade as grade, " +
+                " tpv.specialty_name as specialty_name, " +
+                " tpv.class_id as class_id, " +
+                " tpv.class_name as class_name, " +
+                " tpv.center_area_id as center_area_id, " +
+                " lc.center_name as center_name, " +
+                " tpv.is_validated as is_validated, " +
+                " tpv.c_time as c_time," +
+                " tpv.u_time as u_time," +
+                " tpv.u_user as u_user," +
+                " tpv.c_user as c_user," +
+                " tpv.verify_status as verify_status, " +
+                " tpv.remark as remark " +
+                " from teach_plan_verify as tpv left join learn_center as lc on lc.center_id = tpv.center_area_id ");
+        StringBuffer whereSql = new StringBuffer(" where 1 = 1 ");
+        StringBuffer countSql = new StringBuffer(" select count(*) from teach_plan_verify as tpv left join learn_center as lc on lc.center_id = tpv.center_area_id ");
+        if (StrUtil.isNotBlank(vo.getCenterAreaId())) {
+            whereSql.append(" and tpv.center_area_id = :centerAreaId ");
+        }
+        if (StrUtil.isNotBlank(vo.getClassName())) {
+            whereSql.append(" and tpv.class_name = :className ");
+        }
+        if (StrUtil.isNotBlank(vo.getGrade())) {
+            whereSql.append(" and tpv.grade = :grade ");
+        }
+        if (StrUtil.isNotBlank(vo.getVerifyStatus())) {
+            whereSql.append(" and tpv.verify_status = :verifyStatus");
+        }
+        if (StrUtil.isNotBlank(vo.getSpecialtyName())) {
+            whereSql.append(" and tpv.specialty_name = :specialtyName");
+        }
+        if (StrUtil.isNotBlank(vo.getCenterName())) {
+            whereSql.append(" and lc.center_name = :centerName");
+        }
+        dataSql.append(whereSql).append(" order by tpv.c_time desc ");
+        countSql.append(whereSql);
+        Query dataQuery = entityManager.createNativeQuery(dataSql.toString(), TeachPlanVerify.class);
+        Query countQuery = entityManager.createNativeQuery(countSql.toString());
+        if (StrUtil.isNotBlank(vo.getCenterAreaId())) {
+            dataQuery.setParameter("centerAreaId", vo.getCenterAreaId());
+            countQuery.setParameter("centerAreaId", vo.getCenterAreaId());
+        }
+        if (StrUtil.isNotBlank(vo.getClassName())) {
+            dataQuery.setParameter("className", vo.getClassName());
+            countQuery.setParameter("className", vo.getClassName());
+        }
+        if (StrUtil.isNotBlank(vo.getGrade())) {
+            dataQuery.setParameter("grade", vo.getGrade());
+            countQuery.setParameter("grade", vo.getGrade());
+        }
+        if (StrUtil.isNotBlank(vo.getVerifyStatus())) {
+            dataQuery.setParameter("verifyStatus", vo.getVerifyStatus());
+            countQuery.setParameter("verifyStatus", vo.getVerifyStatus());
+        }
+        if (StrUtil.isNotBlank(vo.getSpecialtyName())) {
+            dataQuery.setParameter("specialtyName", vo.getSpecialtyName());
+            countQuery.setParameter("specialtyName", vo.getSpecialtyName());
+        }
+        if (StrUtil.isNotBlank(vo.getCenterName())) {
+            dataQuery.setParameter("centerName", vo.getCenterName());
+            countQuery.setParameter("centerName", vo.getCenterName());
+        }
+
+        //设置分页
+        dataQuery.setFirstResult((int) of.getOffset());
+        dataQuery.setMaxResults(of.getPageSize());
+        BigInteger count = (BigInteger) countQuery.getSingleResult();
+        long total = count.longValue();
+        List<TeachPlanVerify> content = total > of.getOffset() ? dataQuery.getResultList() : Collections.emptyList();
+        return new PageImpl<>(content, of, total);
+    }
 
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -369,7 +452,7 @@ public class TeachService {
 
 
 //    private void updateVerifyPlanClass(String planId, String verifyStatus, String remark, String userId) {
-        // 审核通过 删除原来的班级
+    // 审核通过 删除原来的班级
 //        if (VERIFY_STATUS_AGREE.equals(verifyStatus)) {
 //            teachPlanClassRepository.deleteAllByPlanId(planId);
 //        }
@@ -499,10 +582,10 @@ public class TeachService {
                                 BigDecimal jobsScore = new BigDecimal("0");
                                 String videoPercentage = d.getVideoPercentage() == null ? "0" : d.getVideoPercentage();
                                 String jobsPercentage = d.getJobsPercentage() == null ? "0" : d.getJobsPercentage();
-                                if (0 != d.getOnLineTimeSum()){
+                                if (0 != d.getOnLineTimeSum()) {
                                     videoScore = NumberUtil.mul(NumberUtil.div(d.getOnLineTime(), d.getOnLineTimeSum(), 2), Double.valueOf(videoPercentage) / 100);
                                 }
-                                if (0 != d.getAnswerSum()){
+                                if (0 != d.getAnswerSum()) {
                                     jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getAnswerSum(), 2), Double.valueOf(jobsPercentage) / 100);
                                 }
                                 String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
@@ -512,10 +595,10 @@ public class TeachService {
         return list;
     }
 
-    public void taskPlanStatus(){
+    public void taskPlanStatus() {
         List<TeachPlan> list = teachPlanRepository.findAllByStatusAndEndDateBefore(PLAN_STATUS_ONGOING, DateUtil.today()).stream()
                 .filter(Objects::nonNull).peek(t -> t.setStatus(PLAN_STATUS_SUCCESS)).collect(toList());
-        if (!list.isEmpty()){
+        if (!list.isEmpty()) {
             teachPlanRepository.saveAll(list);
         }
     }
@@ -530,12 +613,12 @@ public class TeachService {
                         studentScoreService.saveAll(list);
                     }
                 }));
-        if (!planList.isEmpty()){
+        if (!planList.isEmpty()) {
             teachPlanRepository.saveAll(planList.stream().peek(t -> t.setCountStatus(PLAN_COUNT_STATUS_SUCCESS)).collect(toList()));
         }
     }
 
-    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
+    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage) {
         return teachPlanRepository.findAllStudentIdsByPlanId(planeId)
                 .stream()
                 .filter(Objects::nonNull)
@@ -544,7 +627,7 @@ public class TeachService {
                 .collect(toList());
     }
 
-    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage){
+    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage) {
         Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
         if (optional.isPresent()) {
             CourseStudy c = optional.get();
@@ -560,7 +643,7 @@ public class TeachService {
             double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
             //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
             BigDecimal jobScore = new BigDecimal("0");
-            if (0 != c.getAnswerSum()){
+            if (0 != c.getAnswerSum()) {
                 jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
             }
             //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
@@ -593,11 +676,11 @@ public class TeachService {
                 .collect(toSet());
     }
 
-    public Page<TeachPlan> findAllByCenterId(String centerId, Pageable pageable){
+    public Page<TeachPlan> findAllByCenterId(String centerId, Pageable pageable) {
         return teachPlanRepository.findAllByCenterAreaId(centerId, pageable);
     }
 
-    public Page<TeachPlan> findAllByCenterIdAndClassId(String centerId, String classId, Pageable pageable){
+    public Page<TeachPlan> findAllByCenterIdAndClassId(String centerId, String classId, Pageable pageable) {
         return teachPlanRepository.findAllByCenterAreaIdAndClassId(centerId, classId, pageable);
     }
 }

@@ -104,7 +104,7 @@ public class Dic {
      */
     public static final int PLAN_COUNT_STATUS_SUCCESS = 0;
     public static final int PLAN_COUNT_STATUS_ONGOING = 1;
-    /** 课程类型　1.线上，2.线下,3.混合 */
+    /** 课程类型　1.线上，2.线下,3.混合 4,线上和混合类型  */
     public static final String COURSE_TYPE_1 = "1";
     public static final String COURSE_TYPE_2 = "2";
     public static final String COURSE_TYPE_3 = "3";

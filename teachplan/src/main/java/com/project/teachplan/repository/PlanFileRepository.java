@@ -29,10 +29,10 @@ public interface PlanFileRepository extends JpaRepository<PlanFile, String>, Jpa
     Page<PlanFile> findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(String isValidated, String planId, Pageable pageable);
 
     @Transactional(readOnly = true)
-    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeDesc(String isValidated, String planId, String classId, String courseId, String createDate);
+    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateOrderByCreateTimeAsc(String isValidated, String planId, String classId, String courseId, String createDate);
 
     @Transactional(readOnly = true)
-    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String planId, String classId, String courseId, String createDate, String verifyStatus);
+    List<PlanFile> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCourseIdAndCreateDateAndVerifyStatusOrderByCreateTimeAsc(String isValidated, String planId, String classId, String courseId, String createDate, String verifyStatus);
 
 
     @Transactional(readOnly = true)

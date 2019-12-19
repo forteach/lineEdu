@@ -25,7 +25,7 @@ public interface TeacherService {
 
     TeacherVerify verifyTeacher(TeacherVerifyVo vo);
 
-    Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest);
+//    Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest);
 
     List<Teacher> findAllByCenterAreaId(String centerAreaId);
 
@@ -35,15 +35,17 @@ public interface TeacherService {
 
     Teacher findById(String teacherId);
 
-    TeacherVerify findByTeacherId(String teacherId);
+//    TeacherVerify findByTeacherId(String teacherId);
 
-    Page<TeacherDto> findAllPageDto(PageRequest pageRequest);
+//    Page<TeacherDto> findAllPageDto(PageRequest pageRequest);
+//
+//    Page<TeacherDto> findAllPageDtoByVerifyStatus(String verifyStatus, PageRequest pageRequest);
+//
+//    Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest);
+//
+//    Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest);
 
-    Page<TeacherDto> findAllPageDtoByVerifyStatus(String verifyStatus, PageRequest pageRequest);
-
-    Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest);
-
-    Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest);
+    Page<TeacherVerify> findAllPage(String teacherName, String centerAreaId, String verifyStatus, String phone, PageRequest pageRequest);
 
     TeacherFile saveFile(TeacherFile teacherFile);
 

@@ -1,5 +1,6 @@
 package com.project.user.service.impl;
 
+import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.user.domain.ActionColumn;
 import com.project.user.domain.RoleColAct;
@@ -47,7 +48,7 @@ public class AuthorityMgrServiceImpl implements AuthorityMgrService {
      */
     @Override
     @Cacheable(value = "treeMenu", key = "#root.targetClass", unless = "#result eq null")
-    public List treeMenu() {
+    public List<ActionColumn> treeMenu() {
         return getInfoColChild(findTreeAll());
     }
 
@@ -71,7 +72,7 @@ public class AuthorityMgrServiceImpl implements AuthorityMgrService {
      */
     @Override
     @Cacheable(value = "columnRole", key = "#roleId", unless = "#result eq null")
-    public List findColumnByRoleId(String roleId) {
+    public List<ActionColumn> findColumnByRoleId(String roleId) {
 
         //根据角色ID 获取栏目编号
         List<RoleColAct> roleColActList = roleColActRepository.findByRoleIdEquals(roleId);
@@ -169,7 +170,7 @@ public class AuthorityMgrServiceImpl implements AuthorityMgrService {
      */
     @Override
     @Cacheable(value = "sysUserColumn", key = "#userId", unless = "#result eq null")
-    public List findColumnOperationListByUserId(String userId) {
+    public List<Map<String, Object>> findColumnOperationListByUserId(String userId) {
 
         //获得用户对应的角色
         UserRole userRole = userRoleRepository.findByUserIdIs(userId);
@@ -259,7 +260,7 @@ public class AuthorityMgrServiceImpl implements AuthorityMgrService {
      * @return
      */
     @Override
-    public List getInfoColChild(List<ActionColumn> list) {
+    public List<ActionColumn> getInfoColChild(List<ActionColumn> list) {
 
         List<ActionColumn> treeList = new ArrayList<>();
 
@@ -285,8 +286,8 @@ public class AuthorityMgrServiceImpl implements AuthorityMgrService {
     }
 
     @Override
-    public List findInfoColChild(List<ActionColumn> topColumnList, List<ActionColumn> childrenList) {
-        List<Map> listMap = new ArrayList<>();
+    public List<Map<String, Object>> findInfoColChild(List<ActionColumn> topColumnList, List<ActionColumn> childrenList) {
+        List<Map<String, Object>> listMap = new ArrayList<>();
         for (ActionColumn topColumn : topColumnList) {
             Map<String, Object> tempMap = new HashMap<>(10);
             Map<String, Object> metaMap = new HashMap<>(10);
@@ -295,11 +296,11 @@ public class AuthorityMgrServiceImpl implements AuthorityMgrService {
             tempMap.put("name", topColumn.getColNameModel());
             tempMap.put("path", topColumn.getColUrl());
             tempMap.put("meta", metaMap);
-            List<Map> childList = new ArrayList<>();
+            List<Map<String, Object>> childList = new ArrayList<>();
             for (ActionColumn child : childrenList) {
                 if (child.getColParentId() != null && child.getColParentId().equals(topColumn.getColId())) {
-                    Map<String, Object> childMap = new HashMap<>(10);
-                    Map<String, Object> childMeta = new HashMap<>(10);
+                    Map<String, Object> childMap = MapUtil.newHashMap();
+                    Map<String, Object> childMeta = MapUtil.newHashMap();
                     childMeta.put("title", child.getColName());
                     childMeta.put("icon", child.getColImgUrl());
                     childMap.put("name", child.getColNameModel());

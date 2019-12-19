@@ -34,9 +34,9 @@ public class FlowInfo extends Entitys implements Serializable {
     @Column(name = "flow_name", columnDefinition = "VARCHAR(32) COMMENT '流程编号名称'")
     private String flowName;
 
-    public FlowInfo(String flowId, String flowName, String centerId) {
-        this.flowId = flowId;
-        this.flowName = flowName;
-        super.centerAreaId=centerId;
-    }
+//    public FlowInfo(String flowId, String flowName, String centerId) {
+//        this.flowId = flowId;
+//        this.flowName = flowName;
+//        super.centerAreaId=centerId;
+//    }
 }

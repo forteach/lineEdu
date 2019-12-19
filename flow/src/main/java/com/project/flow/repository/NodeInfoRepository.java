@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 public interface NodeInfoRepository extends JpaRepository<NodeInfo, String>, JpaSpecificationExecutor<NodeInfo> {
 
     //获得中心开始节点信息
-    public NodeInfo findByFlowIdAndIsStartAndCenterAreaId(String flowId,String isStart,String centerId);
+//    public NodeInfo findByFlowIdAndIsStartAndCenterAreaId(String flowId,String isStart,String centerId);
 
     //判断中心流程节点是否是开始节点
-    public boolean existsByFlowIdAndNodeIdAndIsStartAndCenterAreaId(String flowId,String nodeId,String isStart,String centerId);
+//    public boolean existsByFlowIdAndNodeIdAndIsStartAndCenterAreaId(String flowId,String nodeId,String isStart,String centerId);
 
 }

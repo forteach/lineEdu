@@ -44,10 +44,10 @@ public class NodeRole extends Entitys implements Serializable {
     @Column(name = "role_name", columnDefinition = "VARCHAR(32) COMMENT '节点角色名称'")
     private String nodeName;
 
-    public NodeRole(String nodeId, String roleId, String nodeName, String centerId) {
-        this.nodeId = nodeId;
-        this.nodeName = nodeName;
-        this.roleId = roleId;
-        super.centerAreaId=centerId;
-    }
+//    public NodeRole(String nodeId, String roleId, String nodeName, String centerId) {
+//        this.nodeId = nodeId;
+//        this.nodeName = nodeName;
+//        this.roleId = roleId;
+//        super.centerAreaId=centerId;
+//    }
 }

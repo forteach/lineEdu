@@ -30,4 +30,6 @@ public interface StudentScoreDto {
     public String getOffLineScore();
     /** 课程类别*/
     public String getCourseType();
+
+    public String getType();
 }

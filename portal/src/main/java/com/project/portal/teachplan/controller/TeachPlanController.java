@@ -14,6 +14,7 @@ import com.project.schoolroll.service.LearnCenterService;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.teachplan.service.TeachService;
+import com.project.teachplan.vo.TeachPlanVo;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
@@ -126,25 +127,35 @@ public class TeachPlanController {
     @ApiOperation(value = "分页查询教学计划")
     @PostMapping(path = "/findByPlanIdPageAll")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query"),
+//            @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query"),
             @ApiImplicitParam(name = "verifyStatus", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", paramType = "form"),
+            @ApiImplicitParam(name = "specialtyName", dataType = "string", value = "专业名称", paramType = "form"),
+            @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "className", value = "班级", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "centerName", value = "学习中心名称", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "page", value = "分页", dataType = "int", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(name = "size", value = "每页数量", dataType = "int", example = "15", required = true, paramType = "query")
     })
     public WebResult findByPlanIdPageAll(@RequestBody TeachPlanPageAllRequest request, HttpServletRequest httpServletRequest) {
         valideSort(request.getPage(), request.getSize());
         String token = httpServletRequest.getHeader("token");
-        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        if (tokenService.isAdmin(token)) {
-            return WebResult.okResult(teachService.findAllPageByPlanIdAndVerifyStatus(request.getPlanId(), request.getVerifyStatus(), pageRequest));
-        } else {
-            String centerAreaId = tokenService.getCenterAreaId(token);
-            if (StrUtil.isNotBlank(request.getPlanId())) {
-                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaIdAndPlanId(centerAreaId, request.getPlanId(), request.getVerifyStatus(), pageRequest));
-            } else {
-                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaId(centerAreaId, request.getVerifyStatus(), pageRequest));
-            }
+        PageRequest of = PageRequest.of(request.getPage(), request.getSize());
+        TeachPlanVo vo = new TeachPlanVo();
+        BeanUtil.copyProperties(request, vo);
+        if (!tokenService.isAdmin(token)) {
+            vo.setCenterAreaId(tokenService.getCenterAreaId(token));
         }
+        return WebResult.okResult(teachService.findAllPage(vo, of));
+//        if (tokenService.isAdmin(token)) {
+//            return WebResult.okResult(teachService.findAllPageByPlanIdAndVerifyStatus(request.getPlanId(), request.getVerifyStatus(), pageRequest));
+//        } else {
+//            String centerAreaId = tokenService.getCenterAreaId(token);
+//            if (StrUtil.isNotBlank(request.getPlanId())) {
+//                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaIdAndPlanId(centerAreaId, request.getPlanId(), request.getVerifyStatus(), pageRequest));
+//            } else {
+//                return WebResult.okResult(teachService.findAllPageDtoByCenterAreaId(centerAreaId, request.getVerifyStatus(), pageRequest));
+//            }
+//        }
     }
 
     @UserLoginToken

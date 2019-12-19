@@ -37,7 +37,8 @@ public interface StudentScoreRepository extends JpaRepository<StudentScore, Stri
             " ss.courseScore as courseScore, " +
             " ss.onLineScore as onLineScore, " +
             " ss.offLineScore as offLineScore, " +
-            " ss.courseType as courseType " +
+            " ss.courseType as courseType," +
+            " ss.type as type " +
             " from StudentScore as ss " +
             " left join StudentOnLine as s on s.studentId = ss.studentId" +
             " where ss.isValidated = '0' " +

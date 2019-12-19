@@ -1,11 +1,15 @@
 package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import com.project.base.common.keyword.DefineCode;
+import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.repository.StudentScoreRepository;
 import com.project.schoolroll.service.StudentScoreService;
+import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,11 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -124,24 +130,30 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         return new PageImpl<>(content2, of, total);
     }
 
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public void updateOffLineScore(OffLineScoreUpdateVo vo) {
-//        StudentScore studentScore = findById(vo.getScoreId());
-//        studentScore.setUpdateUser(vo.getUpdateUser());
-//        studentScore.setOnLineScore(vo.getOffLineScore());
-//        //线下占比
-//        Integer linePercentage = studentScore.getLinePercentage();
-//        //计算加线下成绩后课程成绩
-//        BigDecimal courseScore = NumberUtil.add(NumberUtil.mul(Double.valueOf(vo.getOffLineScore()), linePercentage), studentScore.getCourseScore());
-//        studentScore.setCourseScore(courseScore.floatValue());
-//        studentScoreRepository.save(studentScore);
-//    }
-//    private StudentScore findById(String scoreId){
-//        Optional<StudentScore> optional = studentScoreRepository.findById(scoreId);
-//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的学生成绩");
-//        return optional.get();
-//    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateOffLineScore(OffLineScoreUpdateVo vo) {
+        StudentScore studentScore = findById(vo.getScoreId());
+        //是线上课程不能录入线下成绩
+        MyAssert.isTrue(COURSE_TYPE_1.equals(studentScore.getType()), DefineCode.ERR0010, "线上课程不能录入线下成绩");
+        studentScore.setUpdateUser(vo.getUpdateUser());
+        studentScore.setOnLineScore(vo.getOffLineScore());
+        //线下占比
+        Integer linePercentage = studentScore.getLinePercentage();
+        MyAssert.isNull(linePercentage, DefineCode.ERR0010, "线下占比成绩百分比是空");
+        MyAssert.isTrue(0 == linePercentage, DefineCode.ERR0010, "线下占比为0不能录入");
+        //计算加线下成绩后课程成绩
+        BigDecimal courseScore = NumberUtil.add(NumberUtil.mul(Double.valueOf(vo.getOffLineScore()), linePercentage), studentScore.getCourseScore());
+        studentScore.setCourseScore(courseScore.floatValue());
+        studentScoreRepository.save(studentScore);
+    }
+
+    @Override
+    public StudentScore findById(String scoreId){
+        Optional<StudentScore> optional = studentScoreRepository.findById(scoreId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的学生成绩");
+        return optional.get();
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -161,8 +173,24 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         return studentScoreRepository.findAllByIsValidatedEqualsAndCenterAreaId(centerId)
                 .stream()
                 .map(o -> CollUtil.newArrayList(o.getStuId(), o.getStudentId(), o.getStudentName(), o.getGender(), o.getCourseName(), o.getSchoolYear(), o.getTerm(),
-                        String.valueOf(o.getCourseScore()), o.getOnLineScore(), o.getOffLineScore(), o.getCourseType()))
+                        String.valueOf(o.getCourseScore()), o.getOnLineScore(), o.getOffLineScore(),
+                        getType(o.getType()), o.getCourseType()))
                 .collect(toList());
+    }
+
+    private String getType(String type){
+        switch (type){
+            case COURSE_TYPE_1:
+                return "线上";
+            case COURSE_TYPE_2:
+                return "线下";
+            case COURSE_TYPE_3:
+                return "混合";
+            case COURSE_TYPE_4:
+                return "线上和混合";
+            default:
+                return "";
+        }
     }
 
     private List<String> setExportHead() {
@@ -176,6 +204,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
                 "课程分数",
                 "线上成绩",
                 "线下成绩",
+                "课程类型",
                 "课程类别(必修(bx)、选修(xx)、实践(sj)");
     }
 }

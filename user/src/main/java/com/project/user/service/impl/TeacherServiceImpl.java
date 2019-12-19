@@ -17,14 +17,18 @@ import com.project.user.service.TeacherService;
 import com.project.user.service.UserService;
 import com.project.user.web.vo.RegisterTeacherVo;
 import com.project.user.web.vo.TeacherVerifyVo;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +49,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final UserService userService;
     private final TeacherFileRepository teacherFileRepository;
     private final TeacherVerifyRepository teacherVerifyRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public TeacherServiceImpl(TeacherRepository teacherRepository, TeacherVerifyRepository teacherVerifyRepository,
                               UserService userService, TeacherFileRepository teacherFileRepository) {
@@ -128,10 +134,10 @@ public class TeacherServiceImpl implements TeacherService {
         teacherFileRepository.saveAll(list);
     }
 
-    @Override
-    public Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest) {
-        return teacherRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageRequest);
-    }
+//    @Override
+//    public Page<Teacher> findAllPageByCenterAreaId(String centerAreaId, PageRequest pageRequest) {
+//        return teacherRepository.findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, pageRequest);
+//    }
 
     @Override
     public List<Teacher> findAllByCenterAreaId(String centerAreaId) {
@@ -155,11 +161,80 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public TeacherVerify findByTeacherId(String teacherId){
-        Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(teacherId);
-        MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "不存在对应的教师信息");
-        return optionalTeacher.get();
+    public Page<TeacherVerify> findAllPage(String teacherName, String centerAreaId, String verifyStatus, String phone, PageRequest pageRequest){
+        StringBuilder dataSql = new StringBuilder(" select " +
+                " t.teacher_id as teacher_id, " +
+                " t.teacher_name as teacher_name, " +
+                " t.teacher_code as teacher_code, " +
+                " t.gender as gender, " +
+                " t.birth_date as birth_date, " +
+                " t.id_card as id_card, " +
+                " t.professional_title as professional_title, " +
+                " t.professional_title_date as professional_title_date, " +
+                " t.position as position, " +
+                " t.industry as industry, " +
+                " t.email as email, " +
+                " t.phone as phone, " +
+                " t.specialty as specialty, " +
+                " t.is_full_time as is_full_time, " +
+                " t.academic_degree as academic_degree, " +
+                " t.bank_card_account as bank_card_account, " +
+                " t.bank_card_bank as bank_card_bank, " +
+                " t.is_validated as is_validated,  " +
+                " t.center_area_id as center_area_id, " +
+                " lc.center_name as center_name, " +
+                " t.remark as remark, " +
+                " t.c_time as c_time, " +
+                " t.u_time as u_time, " +
+                " t.u_user as u_user, " +
+                " t.c_user as c_user, " +
+                " t.verify_status as verify_status " +
+                " from teacher_verify as t left join learn_center as lc on lc.center_id = t.center_area_id ");
+        StringBuilder whereSql = new StringBuilder(" where 1 = 1 ");
+        StringBuilder countSql = new StringBuilder(" select count(1) from teacher_verify as t left join learn_center as lc on lc.center_id = t.center_area_id ");
+        if (StrUtil.isNotBlank(centerAreaId)){
+            whereSql.append(" and t.center_area_id = :centerAreaId");
+        }
+        if(StrUtil.isNotBlank(phone)){
+            whereSql.append(" and t.phone = :phone");
+        }
+        if (StrUtil.isNotBlank(verifyStatus)){
+            whereSql.append(" and t.verify_status = :verifyStatus");
+        }
+        if (StrUtil.isNotBlank(teacherName)){
+            whereSql.append(" and t.teacher_name like '%").append(teacherName).append("%'");
+        }
+        dataSql.append(whereSql).append(" order by t.c_time desc ");
+        countSql.append(whereSql);
+        Query dataQuery = entityManager.createNativeQuery(dataSql.toString(), TeacherVerify.class);
+        Query countQuery = entityManager.createNativeQuery(countSql.toString());
+        if (StrUtil.isNotBlank(centerAreaId)) {
+            dataQuery.setParameter("centerAreaId", centerAreaId);
+            countQuery.setParameter("centerAreaId", centerAreaId);
+        }
+        if (StrUtil.isNotBlank(phone)) {
+            dataQuery.setParameter("phone", phone);
+            countQuery.setParameter("phone", phone);
+        }
+        if (StrUtil.isNotBlank(verifyStatus)){
+            dataQuery.setParameter("verifyStatus", verifyStatus);
+            countQuery.setParameter("verifyStatus", verifyStatus);
+        }
+        //设置分页
+        dataQuery.setFirstResult((int) pageRequest.getOffset());
+        dataQuery.setMaxResults(pageRequest.getPageSize());
+        BigInteger count = (BigInteger) countQuery.getSingleResult();
+        long total = count.longValue();
+        List<TeacherVerify> content = total > pageRequest.getOffset() ? dataQuery.getResultList() : Collections.emptyList();
+        return new PageImpl<>(content, pageRequest, total);
     }
+
+//    @Override
+//    public TeacherVerify findByTeacherId(String teacherId){
+//        Optional<TeacherVerify> optionalTeacher = teacherVerifyRepository.findById(teacherId);
+//        MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "不存在对应的教师信息");
+//        return optionalTeacher.get();
+//    }
 
     @Override
     public Teacher findById(String teacherId) {
@@ -168,38 +243,38 @@ public class TeacherServiceImpl implements TeacherService {
         return optionalTeacher.get();
     }
 
-    /**
-     * 管理端通过状态查询的教师信息
-     *
-     * @param pageRequest
-     * @return
-     */
-    @Override
-    public Page<TeacherDto> findAllPageDto(PageRequest pageRequest) {
-        return teacherVerifyRepository.findAllByDto(pageRequest);
-    }
-
-    @Override
-    public Page<TeacherDto> findAllPageDtoByVerifyStatus(String verifyStatus, PageRequest pageRequest) {
-        return teacherVerifyRepository.findAllByVerifyStatusEqualsDto(verifyStatus, pageRequest);
-    }
-
-    @Override
-    public Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest) {
-        return teacherVerifyRepository.findAllByVerifyStatusEqualsAndCenterAreaIdDto(verifyStatus, centerAreaId, pageRequest);
-    }
-
-    /**
-     * 学习中心查询的教师信息
-     *
-     * @param centerAreaId
-     * @param pageRequest
-     * @return
-     */
-    @Override
-    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest) {
-        return teacherVerifyRepository.findAllByCenterAreaIdDto(centerAreaId, pageRequest);
-    }
+//    /**
+//     * 管理端通过状态查询的教师信息
+//     *
+//     * @param pageRequest
+//     * @return
+//     */
+//    @Override
+//    public Page<TeacherDto> findAllPageDto(PageRequest pageRequest) {
+//        return teacherVerifyRepository.findAllByDto(pageRequest);
+//    }
+//
+//    @Override
+//    public Page<TeacherDto> findAllPageDtoByVerifyStatus(String verifyStatus, PageRequest pageRequest) {
+//        return teacherVerifyRepository.findAllByVerifyStatusEqualsDto(verifyStatus, pageRequest);
+//    }
+//
+//    @Override
+//    public Page<TeacherDto> findAllPageDtoByVerifyStatusAndCenterAreaId(String verifyStatus, String centerAreaId, PageRequest pageRequest) {
+//        return teacherVerifyRepository.findAllByVerifyStatusEqualsAndCenterAreaIdDto(verifyStatus, centerAreaId, pageRequest);
+//    }
+//
+//    /**
+//     * 学习中心查询的教师信息
+//     *
+//     * @param centerAreaId
+//     * @param pageRequest
+//     * @return
+//     */
+//    @Override
+//    public Page<TeacherDto> findAllPageByCenterAreaIdDto(String centerAreaId, PageRequest pageRequest) {
+//        return teacherVerifyRepository.findAllByCenterAreaIdDto(centerAreaId, pageRequest);
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

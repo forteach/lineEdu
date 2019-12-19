@@ -19,4 +19,10 @@ import java.io.Serializable;
 public class TeacherFindAllPageRequest extends SortVo implements Serializable {
     @ApiModelProperty(name = "verifyStatus", value = "审核状态 0 已经审核, 1 没有审核 2 拒绝", dataType = "string")
     private String verifyStatus;
+    @ApiModelProperty(name = "teacherName", value = "教师姓名", dataType = "string")
+    private String teacherName;
+    @ApiModelProperty(name = "centerAreaId", value = "学习中心id", dataType = "string")
+    public String centerAreaId;
+    @ApiModelProperty(name = "phone", value = "电话", dataType = "string")
+    public String phone;
 }

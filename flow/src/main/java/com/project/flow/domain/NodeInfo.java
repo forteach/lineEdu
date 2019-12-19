@@ -43,12 +43,12 @@ public class NodeInfo extends Entitys implements Serializable {
     @Column(name = "flow_id", columnDefinition = "VARCHAR(32) COMMENT '流程编号'")
     private String flowId;
 
-    public NodeInfo(String nodeId, String nodeName, String isStart, String isEnd, String flowId,String centerId) {
-        this.nodeId = nodeId;
-        this.nodeName = nodeName;
-        this.isStart = isStart;
-        this.isEnd = isEnd;
-        this.flowId = flowId;
-        super.centerAreaId=centerId;
-    }
+//    public NodeInfo(String nodeId, String nodeName, String isStart, String isEnd, String flowId,String centerId) {
+//        this.nodeId = nodeId;
+//        this.nodeName = nodeName;
+//        this.isStart = isStart;
+//        this.isEnd = isEnd;
+//        this.flowId = flowId;
+//        super.centerAreaId=centerId;
+//    }
 }

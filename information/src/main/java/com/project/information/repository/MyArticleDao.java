@@ -13,8 +13,8 @@ public interface MyArticleDao extends JpaRepository<MyArticle, String> {
 
 	public List<MyArticle> findByUserIdAndTagType(String userId, int tagType);
 
-	@Modifying
-	public void deleteByPkId(String id);
+//	@Modifying
+//	public void deleteByPkId(String id);
 
 	@Modifying
 	public void deleteByUserIdAndArticleIdAndTagType(String articleId, String userId, int tagType);

@@ -313,9 +313,8 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteByStudentId(String studentId) {
         //移除学生对应的token
-        weChatUserRepository.findByStudentId(studentId).forEach(s -> {
-            tokenService.removeToken(s.getOpenId());
-        });
+        weChatUserRepository.findByStudentId(studentId)
+                .forEach(s -> tokenService.removeToken(s.getOpenId()));
         //删除学生绑定的信息
         weChatUserRepository.deleteAllByStudentId(studentId);
     }

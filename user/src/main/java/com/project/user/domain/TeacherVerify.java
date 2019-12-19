@@ -68,4 +68,10 @@ public class TeacherVerify extends Entitys implements Serializable {
     private String remark;
     @Column(name = "verify_status", nullable = false, columnDefinition = "CHAR(1) DEFAULT 1 COMMENT '审核状态 0 已经审核, 1 没有审核 2 拒绝'")
     private String verifyStatus = StrUtil.isBlank(this.verifyStatus) ? VERIFY_STATUS_APPLY : this.verifyStatus;
+
+    /**
+     * 学习中心名称
+     */
+    @Column(name = "center_name", columnDefinition = "VARCHAR(64) COMMENT '学习中心名称'")
+    private String centerName;
 }

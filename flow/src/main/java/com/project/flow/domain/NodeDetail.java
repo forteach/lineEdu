@@ -59,17 +59,17 @@ public class NodeDetail extends Entitys implements Serializable {
     @Column(name = "remark", columnDefinition = "VARCHAR(32) COMMENT '备注'")
     private String remark;
 
-    public NodeDetail(String detailId, String actId, String actName, String nowNodeId, String nowNodeName, String nextNodeId, String nextNodeName, String flowId, String isNow, String remark,String centerId) {
-        this.detailId = detailId;
-        this.actId = actId;
-        this.actName = actName;
-        this.nowNodeId = nowNodeId;
-        this.nowNodeName = nowNodeName;
-        this.nextNodeId = nextNodeId;
-        this.nextNodeName = nextNodeName;
-        this.flowId = flowId;
-        this.isNow = isNow;
-        this.remark = remark;
-        super.centerAreaId=centerId;
-    }
+//    public NodeDetail(String detailId, String actId, String actName, String nowNodeId, String nowNodeName, String nextNodeId, String nextNodeName, String flowId, String isNow, String remark,String centerId) {
+//        this.detailId = detailId;
+//        this.actId = actId;
+//        this.actName = actName;
+//        this.nowNodeId = nowNodeId;
+//        this.nowNodeName = nowNodeName;
+//        this.nextNodeId = nextNodeId;
+//        this.nextNodeName = nextNodeName;
+//        this.flowId = flowId;
+//        this.isNow = isNow;
+//        this.remark = remark;
+//        super.centerAreaId=centerId;
+//    }
 }

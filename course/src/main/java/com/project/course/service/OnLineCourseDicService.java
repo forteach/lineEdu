@@ -30,7 +30,7 @@ public interface OnLineCourseDicService {
 
     void updateStatus(String courseId, String userId);
 
-    Page<OnLineCourseDic> findAllPage(PageRequest pageRequest);
+    Page<OnLineCourseDic> findAllPage(PageRequest pageRequest, String courseName);
 
-    Page<OnLineCourseDic> findAllPageByType(PageRequest pageRequest, String type);
+    Page<OnLineCourseDic> findAllPageByType(PageRequest pageRequest, String type, String courseName);
 }
