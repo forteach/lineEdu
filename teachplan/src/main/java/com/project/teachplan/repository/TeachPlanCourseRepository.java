@@ -47,4 +47,8 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
 
     @Modifying
     void deleteAllByCourseId(String courseId);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update TeachPlanCourse set isValidated = ?1 where planId = ?2")
+    int updateIsValidatedByPlanId(String isValidated, String planId);
 }

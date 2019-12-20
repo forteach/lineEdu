@@ -20,8 +20,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class PlanFileFindAllPage extends SortVo implements Serializable {
 
-    @ApiModelProperty(name = "classId", value = "班级id", dataType = "string", required = true)
-    private String classId;
+//    @ApiModelProperty(name = "classId", value = "班级id", dataType = "string", required = true)
+//    private String classId;
 
     @ApiModelProperty(name = "planId", value = "计划Id", dataType = "string", required = true)
     private String planId;

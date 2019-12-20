@@ -1,10 +1,8 @@
 package com.project.teachplan.repository.verify;
 
 import com.project.teachplan.domain.verify.TeachPlanVerify;
-import com.project.teachplan.repository.dto.TeachPlanDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +28,10 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
 
     @Transactional(readOnly = true)
     List<TeachPlanVerify> findAllByCenterAreaId(String centerAreaId);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = " update TeachPlanVerify set isValidated = ?1 where planId = ?2")
+    int updateIsValidatedByPlanId(String isValidated, String planId);
 
 
 //    @Query(value = "select " +

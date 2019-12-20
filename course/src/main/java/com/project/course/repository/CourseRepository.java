@@ -42,12 +42,15 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     /**
      * 分页查询我的课程科目
      *
-     * @param cUser
+//     * @param cUser
      * @param pageable
      * @return
      */
     @Transactional(readOnly = true)
     Page<ICourseListDto> findByCreateUserOrderByCreateTimeDesc(String cUser, Pageable pageable);
+
+    @Transactional(readOnly = true)
+    Page<ICourseListDto> findByOrderByCreateTimeDesc(Pageable pageable);
 
     /**
      * 分页查询课程信息根据课程id查询课程列表

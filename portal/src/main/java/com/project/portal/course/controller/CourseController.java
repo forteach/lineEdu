@@ -155,13 +155,20 @@ public class CourseController {
     })
     public WebResult findMyCourse(@RequestBody CourseFindAllReq req, HttpServletRequest request) {
         valideSort(req.getPage(), req.getSize());
-        String userId = tokenService.getUserId(request.getHeader("token"));
+
+//        String userId = tokenService.getUserId(request.getHeader("token"));
+
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
-        return WebResult.okResult(courseService.findMyCourse(userId, page)
+        return WebResult.okResult(courseService.findMyCourse(page)
                 .stream()
                 .filter(Objects::nonNull)
-                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(), item.getCreateTime(), item.getCourseType()))
-                .collect(toList()));
+                .map(item -> //{
+//                    String courseId = item.getCourseId();
+//                    return
+                    new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(),
+                            item.getCreateTime(), item.getCourseType(), courseVerifyVoService.existsByCourseId(item.getCourseId()))
+                //}
+                ).collect(toList()));
     }
 
     @UserLoginToken

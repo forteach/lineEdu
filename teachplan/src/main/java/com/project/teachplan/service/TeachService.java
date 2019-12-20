@@ -29,7 +29,6 @@ import com.project.teachplan.repository.dto.TeachCenterDto;
 import com.project.teachplan.repository.verify.TeachPlanCourseVerifyRepository;
 import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import com.project.teachplan.vo.*;
-import com.project.user.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -64,25 +63,25 @@ public class TeachService {
     private final TeachPlanCourseService teachPlanCourseService;
     private final TeachPlanRepository teachPlanRepository;
     private final TbClassService tbClassService;
-    //    private final TeachPlanClassRepository teachPlanClassRepository;
     private final TeachPlanCourseRepository teachPlanCourseRepository;
     private final OnLineCourseDicService onLineCourseDicService;
-    private final TeacherService teacherService;
     private final PlanFileService planFileService;
     private final CourseStudyRepository courseStudyRepository;
     private final StringRedisTemplate redisTemplate;
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
-    //    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
     private final StudentScoreService studentScoreService;
+//    private final TeacherService teacherService;
+//    private final TeachPlanClassRepository teachPlanClassRepository;
+//    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
 
     @Autowired
     public TeachService(
             StudentOnLineService studentOnLineService,
             TeachPlanRepository teachPlanRepository,
             TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
-//                        TeachPlanClassRepository teachPlanClassRepository,
-            TeacherService teacherService, StudentScoreService studentScoreService,
+//            TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
+            StudentScoreService studentScoreService,
             PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService, StringRedisTemplate redisTemplate,
             OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
             TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository
@@ -91,7 +90,7 @@ public class TeachService {
         this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
-        this.teacherService = teacherService;
+//        this.teacherService = teacherService;
 //        this.teachPlanClassRepository = teachPlanClassRepository;
         this.teachPlanCourseService = teachPlanCourseService;
         this.teachPlanCourseRepository = teachPlanCourseRepository;
@@ -107,16 +106,21 @@ public class TeachService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public TeachPlanVerify saveUpdatePlan(TeachPlanVerify teachPlan) {
+    public TeachPlanVerify saveUpdatePlan(TeachPlanVerify teachPlan, List<TeachPlanCourseVo> courses, String remark) {
         teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
         MyAssert.isNull(teachPlan.getClassId(), DefineCode.ERR0010, "班级id不能为空");
         if (StrUtil.isBlank(teachPlan.getPlanId())) {
+            MyAssert.isTrue(courses.isEmpty(), DefineCode.ERR0010, "课程信息不为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getStartDate()), DefineCode.ERR0010, "计划开始时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getEndDate()), DefineCode.ERR0010, "计划结束时间不能为空");
             MyAssert.isTrue(StrUtil.isBlank(teachPlan.getPlanAdmin()), DefineCode.ERR0010, "负责人不能为空");
             setPlan(teachPlan);
             String planId = IdUtil.fastSimpleUUID();
             teachPlan.setPlanId(planId);
+            saveTeachPlanCourse(planId, courses, remark, teachPlan.getCenterAreaId(), teachPlan.getCreateUser());
+            if (!courses.isEmpty()) {
+                teachPlan.setCourseNumber(courses.size());
+            }
             //设置对应的班级和专业对应的属性
             return teachPlanVerifyRepository.save(teachPlan);
         } else {
@@ -137,6 +141,12 @@ public class TeachService {
 //            t.setClassNumber(classNumber);
 
             t.setCourseNumber(courseNumber);
+            teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
+            teachPlanCourseVerifyRepository.deleteAllByPlanId(t.getPlanId());
+            saveTeachPlanCourse(t.getPlanId(), courses, remark, teachPlan.getCenterAreaId(), teachPlan.getCreateUser());
+            if (!courses.isEmpty()) {
+                teachPlan.setCourseNumber(courses.size());
+            }
             return teachPlanVerifyRepository.save(t);
         }
     }
@@ -194,25 +204,26 @@ public class TeachService {
 //        return teachPlanVerifyRepository.save(teachPlan);
 //    }
 
-    @Transactional(rollbackFor = Exception.class)
-    public TeachPlanVerify saveUpdatePlanCourse(String planId, List<TeachPlanCourseVo> courses, String remark, String centerAreaId, String userId) {
-        Optional<TeachPlanVerify> teachPlanOptional = teachPlanVerifyRepository.findById(planId);
-        MyAssert.isFalse(teachPlanOptional.isPresent(), DefineCode.ERR0010, "不存在对应的计划编号");
-        TeachPlanVerify teachPlan = teachPlanOptional.get();
-        teachPlanCourseVerifyRepository.deleteAllByPlanId(planId);
-        saveTeachPlanCourse(planId, courses, remark, centerAreaId, userId);
-        if (!courses.isEmpty()) {
-            teachPlan.setCourseNumber(courses.size());
-        }
-        teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
-        return teachPlanVerifyRepository.save(teachPlan);
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    public TeachPlanVerify saveUpdatePlanCourse(String planId, List<TeachPlanCourseVo> courses, String remark, String centerAreaId, String userId) {
+//        Optional<TeachPlanVerify> teachPlanOptional = teachPlanVerifyRepository.findById(planId);
+//        MyAssert.isFalse(teachPlanOptional.isPresent(), DefineCode.ERR0010, "不存在对应的计划编号");
+//        TeachPlanVerify teachPlan = teachPlanOptional.get();
+//        teachPlanCourseVerifyRepository.deleteAllByPlanId(planId);
+//        saveTeachPlanCourse(planId, courses, remark, centerAreaId, userId);
+//        if (!courses.isEmpty()) {
+//            teachPlan.setCourseNumber(courses.size());
+//        }
+//        teachPlan.setVerifyStatus(VERIFY_STATUS_APPLY);
+//        return teachPlanVerifyRepository.save(teachPlan);
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByPlanId(String planId) {
         teachPlanRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
-//        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
-//        teachPlanClassRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
+        teachPlanVerifyRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
+        teachPlanCourseRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
+        teachPlanCourseVerifyRepository.updateIsValidatedByPlanId(TAKE_EFFECT_CLOSE, planId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -222,13 +233,10 @@ public class TeachService {
         TeachPlanVerify teachPlanVerify = optional.get();
         MyAssert.isTrue(DateUtil.parseDate(teachPlanVerify.getEndDate()).isAfterOrEquals(new Date()), DefineCode.ERR0010, "正在进行的计划不能删除");
         teachPlanCourseRepository.deleteAllByPlanId(planId);
-
-//        teachPlanClassRepository.deleteAllByPlanId(planId);
-
-
         teachPlanRepository.deleteAllByPlanId(planId);
         teachPlanVerifyRepository.deleteById(planId);
         teachPlanCourseVerifyRepository.deleteAllByPlanId(planId);
+//        teachPlanClassRepository.deleteAllByPlanId(planId);
 //        teachPlanClassVerifyRepository.deleteAllByPlanId(planId);
     }
 
@@ -676,11 +684,11 @@ public class TeachService {
                 .collect(toSet());
     }
 
-    public Page<TeachPlan> findAllByCenterId(String centerId, Pageable pageable) {
-        return teachPlanRepository.findAllByCenterAreaId(centerId, pageable);
-    }
-
-    public Page<TeachPlan> findAllByCenterIdAndClassId(String centerId, String classId, Pageable pageable) {
-        return teachPlanRepository.findAllByCenterAreaIdAndClassId(centerId, classId, pageable);
-    }
+//    public Page<TeachPlan> findAllByCenterId(String centerId, Pageable pageable) {
+//        return teachPlanRepository.findAllByCenterAreaId(centerId, pageable);
+//    }
+//
+//    public Page<TeachPlan> findAllByCenterIdAndClassId(String centerId, String classId, Pageable pageable) {
+//        return teachPlanRepository.findAllByCenterAreaIdAndClassId(centerId, classId, pageable);
+//    }
 }

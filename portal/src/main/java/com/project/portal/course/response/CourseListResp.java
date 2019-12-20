@@ -49,6 +49,8 @@ public class CourseListResp implements Serializable {
     private String createTime;
     @ApiModelProperty(name = "courseType", value = "课程类型 1 线上 2，线下 3 混合", dataType = "int")
     private Integer courseType;
+    @ApiModelProperty(name = "auditState", value = "0 已经审核, 1 没有审核 2 拒绝")
+    private boolean auditState;
 
     public CourseListResp(String courseId, String courseName, String topPicSrc, String alias, String isValidated, String createTime, Integer courseType) {
         this.courseId = courseId;
@@ -58,6 +60,18 @@ public class CourseListResp implements Serializable {
         this.isValidated = isValidated;
         this.createTime = createTime;
         this.courseType = courseType;
+    }
+
+    public CourseListResp(String courseId, String courseName, String topPicSrc, String alias,
+                          String isValidated, String createTime, Integer courseType, boolean auditState) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.topPicSrc = topPicSrc;
+        this.alias = alias;
+        this.isValidated = isValidated;
+        this.createTime = createTime;
+        this.courseType = courseType;
+        this.auditState = auditState;
     }
 
     public CourseListResp() {

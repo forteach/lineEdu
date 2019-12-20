@@ -178,12 +178,12 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.findAllByIsValidatedEqualsAndCreateTime(date);
     }
 
-    public Page<TeachPlanFileList> findAllPageFileListByCreateDate(String planId, String classId, String createDate, Pageable pageable) {
-        return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCreateDateOrderByCreateDateDesc(TAKE_EFFECT_OPEN, planId, classId, createDate, pageable);
+    public Page<TeachPlanFileList> findAllPageFileListByCreateDate(String planId, String createDate, Pageable pageable) {
+        return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdAndCreateDateOrderByCreateDate(TAKE_EFFECT_OPEN, planId, createDate, pageable);
     }
 
-    public Page<TeachPlanFileList> findAllPageFileList(String planId, String classId, Pageable pageable) {
-        return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateDateDesc(TAKE_EFFECT_OPEN, planId, classId, pageable);
+    public Page<TeachPlanFileList> findAllPageFileList(String planId, Pageable pageable) {
+        return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateDate(TAKE_EFFECT_OPEN, planId, pageable);
     }
 
     public Map<String, List<PlanFile>> findAllByCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate) {

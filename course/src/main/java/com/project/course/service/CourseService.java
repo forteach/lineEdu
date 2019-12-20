@@ -41,6 +41,8 @@ public interface CourseService {
 
     public List<ICourseListDto> findMyCourse(String userId, PageRequest page);
 
+    List<ICourseListDto> findMyCourse(PageRequest page);
+
     public Course getById(String id);
 
     public List<CourseListResp> myCourseList(String classId);

@@ -48,4 +48,6 @@ public interface ICourseListDto {
     public String getCreateTime();
     /** 课程类型*/
     public Integer getCourseType();
+    /** 课程 字典id*/
+    public String getCourseNumber();
 }

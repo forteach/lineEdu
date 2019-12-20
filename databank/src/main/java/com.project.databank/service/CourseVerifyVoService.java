@@ -21,7 +21,7 @@ public interface CourseVerifyVoService {
 
     void update(CourseVerifyVo verifyVo);
 
-    Page<CourseVerifyVo> findAllPage(String courseName, PageRequest pageRequest);
+    Page<CourseVerifyVo> findAllPage(String courseId, PageRequest pageRequest);
 
     Page<CourseVerifyVo> findAllPage(PageRequest pageRequest);
 
@@ -37,7 +37,9 @@ public interface CourseVerifyVoService {
 
     void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
 
-    List<String> findVerifyCourse();
+//    List<String> findVerifyCourse();
+
+    boolean existsByCourseId(String courseId);
 
     void deleteAllByCourseId(String courseId);
 }

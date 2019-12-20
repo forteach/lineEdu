@@ -135,6 +135,11 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findByCreateUserOrderByCreateTimeDesc(userId, page).getContent();
     }
 
+    @Override
+    public List<ICourseListDto> findMyCourse(PageRequest page) {
+        return courseRepository.findByOrderByCreateTimeDesc(page).getContent();
+    }
+
     /**
      * 根据课程编号，获得课程基本信息
      *

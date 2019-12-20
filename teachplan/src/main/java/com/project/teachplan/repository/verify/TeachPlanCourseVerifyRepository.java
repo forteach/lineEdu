@@ -4,6 +4,7 @@ import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.domain.verify.TeachPlanCourseVerify;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -31,4 +32,8 @@ public interface TeachPlanCourseVerifyRepository extends JpaRepository<TeachPlan
 
     @Modifying
     void deleteAllByCourseId(String courseId);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update TeachPlanCourseVerify set isValidated = ?1 where planId = ?2")
+    int updateIsValidatedByPlanId(String isValidated, String planId);
 }

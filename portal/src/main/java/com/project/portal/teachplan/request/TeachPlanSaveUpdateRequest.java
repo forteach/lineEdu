@@ -1,5 +1,6 @@
 package com.project.portal.teachplan.request;
 
+import com.project.teachplan.vo.TeachPlanCourseVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -26,6 +27,12 @@ public class TeachPlanSaveUpdateRequest implements Serializable {
 
     @ApiModelProperty(name = "classId", value = "班级id", dataType = "string", required = true)
     private String classId;
+
+    @ApiModelProperty(name = "remark", value = "备注说明", dataType = "string")
+    private String remark;
+
+    @ApiModelProperty(name = "courses", dataType = "list", value = "课程集合")
+    private List<TeachPlanCourseVo> courses;
 
 //    @ApiModelProperty(name = "specialtyName", value = "专业名称", dataType = "string")
 //    private String specialtyName;

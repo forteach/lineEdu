@@ -25,13 +25,16 @@ public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, 
     Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String verifyStatus, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusAndCourseNameOrderByCreateTimeDesc(String isValidated, String verifyStatus, String courseName, Pageable pageable);
+    Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusAndCourseIdOrderByCreateTimeDesc(String isValidated, String verifyStatus, String courseId, Pageable pageable);
 
     @Modifying(flushAutomatically = true)
     int deleteByFileId(String fileId);
 
-    @Query(value = "select distinct courseName from CourseVerifyVo where isValidated = '0' and verifyStatus = '1'")
-    List<String> findDistinctAllByIsValidatedEqualsAndVerifyStatus();
+//    @Query(value = "select distinct courseName from CourseVerifyVo where isValidated = '0' and verifyStatus = '1'")
+//    List<String> findDistinctAllByIsValidatedEqualsAndVerifyStatus();
+
+    @Transactional(readOnly = true)
+    boolean existsAllByIsValidatedEqualsAndCourseIdAndVerifyStatus(String isValidated, String courseId, String verifyStatus);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     void deleteAllByCourseId(String courseId);

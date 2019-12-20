@@ -55,15 +55,16 @@ public class CourseVerifyController {
     @UserLoginToken
     @PostMapping("/findAllPageVerify")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "query"),
+//            @ApiImplicitParam(name = "courseName", value = "课程名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "courseId", value = "课程Id", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllPageVerify(@RequestBody FindDatumVerifyRequest request) {
         valideSort(request.getPage(), request.getSize());
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        if (StrUtil.isNotBlank(request.getCourseName())) {
-            return WebResult.okResult(courseVerifyVoService.findAllPage(request.getCourseName(), pageRequest));
+        if (StrUtil.isNotBlank(request.getCourseId())) {
+            return WebResult.okResult(courseVerifyVoService.findAllPage(request.getCourseId(), pageRequest));
         }
         return WebResult.okResult(courseVerifyVoService.findAllPage(pageRequest));
     }
@@ -113,10 +114,10 @@ public class CourseVerifyController {
         return WebResult.okResult();
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "查询需要修改的课程信息")
-    @GetMapping(path = "/findCourse")
-    public WebResult findAllCourse() {
-        return WebResult.okResult(courseVerifyVoService.findVerifyCourse());
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "查询需要修改的课程信息")
+//    @GetMapping(path = "/findCourse")
+//    public WebResult findAllCourse() {
+//        return WebResult.okResult(courseVerifyVoService.findVerifyCourse());
+//    }
 }

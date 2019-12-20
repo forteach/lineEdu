@@ -1,8 +1,6 @@
 package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -28,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,17 +68,24 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form"),
-            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "form")
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "courses", dataType = "list", value = "课程id集合", paramType = "form"),
+            @ApiImplicitParam(name = "courseId", dataType = "string", value = "课程id", paramType = "form"),
+            @ApiImplicitParam(name = "credit", dataType = "string", value = "学分", paramType = "form"),
+            @ApiImplicitParam(name = "onLinePercentage", dataType = "int", value = "线上占比", paramType = "form"),
+            @ApiImplicitParam(name = "linePercentage", dataType = "int", value = "线下占比", paramType = "form"),
+            @ApiImplicitParam(name = "remark", value = "备注说明", dataType = "string", paramType = "form")
     })
     public WebResult saveUpdate(@RequestBody TeachPlanSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
+        String centerAreaId = tokenService.getCenterAreaId(token);
         TeachPlanVerify teachPlan = new TeachPlanVerify();
         BeanUtil.copyProperties(request, teachPlan);
-        teachPlan.setCenterAreaId(tokenService.getCenterAreaId(token));
+        teachPlan.setCenterAreaId(centerAreaId);
         teachPlan.setCreateUser(userId);
         teachPlan.setUpdateUser(userId);
-        return WebResult.okResult(teachService.saveUpdatePlan(teachPlan));
+        return WebResult.okResult(teachService.saveUpdatePlan(teachPlan, request.getCourses(), request.getRemark()));
     }
 
 //    @UserLoginToken
@@ -101,27 +105,27 @@ public class TeachPlanController {
 //        return WebResult.okResult(teachService.saveUpdatePlanClass(request.getPlanId(), request.getClassIds(), request.getRemark(), centerAreaId, userId));
 //    }
 
-    @UserLoginToken
-    @ApiOperation(value = "保存修改计划对应的课程接口")
-    @PostMapping(path = "/saveUpdateCourse")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "teacherId", dataType = "string", value = "创建教师id", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "courses", dataType = "list", value = "课程id集合", paramType = "form"),
-            @ApiImplicitParam(name = "courseId", dataType = "string", value = "课程id", paramType = "form"),
-            @ApiImplicitParam(name = "credit", dataType = "string", value = "学分", paramType = "form"),
-            @ApiImplicitParam(name = "onLinePercentage", dataType = "int", value = "线上占比", paramType = "form"),
-            @ApiImplicitParam(name = "linePercentage", dataType = "int", value = "线下占比", paramType = "form"),
-            @ApiImplicitParam(name = "remark", value = "备注说明", dataType = "string", paramType = "form")
-    })
-    public WebResult saveUpdateCourse(@RequestBody TeachPlanCourseSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
-        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
-        MyAssert.isTrue(request.getCourses().isEmpty(), DefineCode.ERR0010, "课程信息不为空");
-        String token = httpServletRequest.getHeader("token");
-        String centerAreaId = tokenService.getCenterAreaId(token);
-        String userId = tokenService.getUserId(token);
-        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses(), request.getRemark(), centerAreaId, userId));
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "保存修改计划对应的课程接口")
+//    @PostMapping(path = "/saveUpdateCourse")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", required = true, paramType = "form"),
+//            @ApiImplicitParam(name = "teacherId", dataType = "string", value = "创建教师id", required = true, paramType = "form"),
+//            @ApiImplicitParam(name = "courses", dataType = "list", value = "课程id集合", paramType = "form"),
+//            @ApiImplicitParam(name = "courseId", dataType = "string", value = "课程id", paramType = "form"),
+//            @ApiImplicitParam(name = "credit", dataType = "string", value = "学分", paramType = "form"),
+//            @ApiImplicitParam(name = "onLinePercentage", dataType = "int", value = "线上占比", paramType = "form"),
+//            @ApiImplicitParam(name = "linePercentage", dataType = "int", value = "线下占比", paramType = "form"),
+//            @ApiImplicitParam(name = "remark", value = "备注说明", dataType = "string", paramType = "form")
+//    })
+//    public WebResult saveUpdateCourse(@RequestBody TeachPlanCourseSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
+//        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+//        MyAssert.isTrue(request.getCourses().isEmpty(), DefineCode.ERR0010, "课程信息不为空");
+//        String token = httpServletRequest.getHeader("token");
+//        String centerAreaId = tokenService.getCenterAreaId(token);
+//        String userId = tokenService.getUserId(token);
+//        return WebResult.okResult(teachService.saveUpdatePlanCourse(request.getPlanId(), request.getCourses(), request.getRemark(), centerAreaId, userId));
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "分页查询教学计划")

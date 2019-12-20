@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface TeachPlanFileListRepository extends JpaRepository<TeachPlanFileList, String> {
     @Transactional(readOnly = true)
-    Page<TeachPlanFileList> findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateDateDesc(String isValidated, String planId, String classId, Pageable pageable);
+    Page<TeachPlanFileList> findAllByIsValidatedEqualsAndPlanIdOrderByCreateDate(String isValidated, String planId, Pageable pageable);
 
     @Transactional(readOnly = true)
-    Page<TeachPlanFileList> findAllByIsValidatedEqualsAndPlanIdAndClassIdAndCreateDateOrderByCreateDateDesc(String isValidated, String planId, String classId, String createDate, Pageable pageable);
+    Page<TeachPlanFileList> findAllByIsValidatedEqualsAndPlanIdAndCreateDateOrderByCreateDate(String isValidated, String planId, String createDate, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     int deleteAllByPlanIdAndClassIdAndCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate);

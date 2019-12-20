@@ -90,29 +90,29 @@ public class PlanFileController {
         return WebResult.okResult(planFileService.update(planFile));
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
-    @PostMapping(path = "/findByCenterAreaIdAllPage")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
-            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
-    })
-    public WebResult findByCenterAreaIdAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
-        valideSort(request.getPage(), request.getPage());
-        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
-        if (StrUtil.isNotBlank(request.getClassId())) {
-            return WebResult.okResult(teachService.findAllByCenterIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
-        }
-        return WebResult.okResult(teachService.findAllByCenterId(centerAreaId, pageRequest));
-    }
+//    @UserLoginToken
+//    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
+//    @PostMapping(path = "/findByCenterAreaIdAllPage")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "query"),
+//            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", paramType = "query"),
+//            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", paramType = "query")
+//    })
+//    public WebResult findByCenterAreaIdAllPage(@RequestBody PlanFileFindAllPage request, HttpServletRequest httpServletRequest) {
+//        valideSort(request.getPage(), request.getPage());
+//        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
+//        String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
+//        if (StrUtil.isNotBlank(request.getClassId())) {
+//            return WebResult.okResult(teachService.findAllByCenterIdAndClassId(centerAreaId, request.getClassId(), pageRequest));
+//        }
+//        return WebResult.okResult(teachService.findAllByCenterId(centerAreaId, pageRequest));
+//    }
 
     @UserLoginToken
     @ApiOperation(value = "班级资料明细列表分页查询")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "query"),
+//            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(name = "createDate", value = "创建日期", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
@@ -120,13 +120,13 @@ public class PlanFileController {
     })
     public WebResult findAllPage(@RequestBody PlanFileFindAllPage request) {
         valideSort(request.getPage(), request.getPage());
-        MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级Id不能为空");
+//        MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级Id不能为空");
         MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
         if (StrUtil.isNotBlank(request.getCreateDate())) {
-            return WebResult.okResult(planFileService.findAllPageFileListByCreateDate(request.getPlanId(), request.getClassId(), request.getCreateDate(), pageRequest));
+            return WebResult.okResult(planFileService.findAllPageFileListByCreateDate(request.getPlanId(), request.getCreateDate(), pageRequest));
         } else {
-            return WebResult.okResult(planFileService.findAllPageFileList(request.getPlanId(), request.getClassId(), pageRequest));
+            return WebResult.okResult(planFileService.findAllPageFileList(request.getPlanId(), pageRequest));
         }
     }
 

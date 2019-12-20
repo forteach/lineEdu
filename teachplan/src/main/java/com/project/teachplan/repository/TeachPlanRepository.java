@@ -40,11 +40,11 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Transactional(readOnly = true)
     Optional<TeachCenterDto> findAllByPlanId(String planId);
 
-    @Transactional(readOnly = true)
-    Page<TeachPlan> findAllByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable);
-
-    @Transactional(readOnly = true)
-    Page<TeachPlan> findAllByCenterAreaId(String centerAreaId, Pageable pageable);
+//    @Transactional(readOnly = true)
+//    Page<TeachPlan> findAllByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable);
+//
+//    @Transactional(readOnly = true)
+//    Page<TeachPlan> findAllByCenterAreaId(String centerAreaId, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "update TeachPlan set isValidated = ?1 where planId = ?2")
