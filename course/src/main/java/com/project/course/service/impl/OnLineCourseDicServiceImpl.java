@@ -135,7 +135,7 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Override
     public Page<OnLineCourseDic> findAllPage(PageRequest pageRequest, String courseName) {
         if (StrUtil.isNotBlank(courseName)){
-            return onLineCourseDicRepository.findAllByCourseNameLike("%" + courseName + "%", pageRequest);
+            return onLineCourseDicRepository.findAllByCourseNameContaining(courseName, pageRequest);
         }
         return onLineCourseDicRepository.findAll(pageRequest);
     }
@@ -145,12 +145,12 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
         if (COURSE_TYPE_4.equals(type)) {
             List<String> list = CollUtil.toList(COURSE_TYPE_1, COURSE_TYPE_3);
             if (StrUtil.isNotBlank(courseName)){
-                return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeInAndCourseNameLike(TAKE_EFFECT_OPEN, list, "%" + courseName + "%", pageRequest);
+                return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeInAndCourseNameContaining(TAKE_EFFECT_OPEN, list, courseName, pageRequest);
             }
             return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeIn(TAKE_EFFECT_OPEN, list, pageRequest);
         }
         if (StrUtil.isNotBlank(courseName)){
-            return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeAndCourseNameLike(TAKE_EFFECT_OPEN, type,"%" + courseName + "%", pageRequest);
+            return onLineCourseDicRepository.findAllByIsValidatedEqualsAndTypeAndCourseNameContaining(TAKE_EFFECT_OPEN, type, courseName, pageRequest);
         }
         return onLineCourseDicRepository.findAllByIsValidatedEqualsAndType(TAKE_EFFECT_OPEN, type, pageRequest);
     }

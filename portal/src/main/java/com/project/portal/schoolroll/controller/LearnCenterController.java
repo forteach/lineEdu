@@ -149,7 +149,7 @@ public class LearnCenterController {
         if (StrUtil.isBlank(request.getCenterName())) {
             return WebResult.okResult(learnCenterRepository.findAllByRoleId(CENTER_ROLE_ID, of));
         }
-        return WebResult.okResult(learnCenterRepository.findAllByRoleIdAndCenterNameLike(CENTER_ROLE_ID, "%" + request.getCenterName() + "%", of));
+        return WebResult.okResult(learnCenterRepository.findAllByRoleIdAndCenterNameContaining(CENTER_ROLE_ID, request.getCenterName(), of));
     }
 
     @UserLoginToken
