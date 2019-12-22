@@ -138,7 +138,7 @@ public class CourseTask {
     }
 
     /**
-     * 统计学习课程占比
+     * 修改学习中心状态，并使帐号失效
      */
     @Schedules({
 //            @Scheduled(cron = "0 10 3 * * ?")
