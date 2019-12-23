@@ -43,10 +43,10 @@ public interface CatalogueRepository extends JpaRepository<Catalogue, String>, J
      * @param chapterParentId
      * @return 所属的章节信息按照从顺序排列
      */
-    @Transactional(readOnly = true)
-    @Query("select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId, publish as publish, sort as sort, chapterLevel as chapterLevel from Catalogue" +
-            " where isValidated = :isValidated and chapterParentId = :chapterParentId order by sort asc")
-    List<ICourseChapterDto> findByChapterParentId(@Param("isValidated") String isValidated, @Param("chapterParentId") String chapterParentId);
+//    @Transactional(readOnly = true)
+//    @Query("select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId, publish as publish, sort as sort, chapterLevel as chapterLevel from Catalogue" +
+//            " where isValidated = :isValidated and chapterParentId = :chapterParentId order by sort asc")
+//    List<ICourseChapterDto> findByChapterParentId(@Param("isValidated") String isValidated, @Param("chapterParentId") String chapterParentId);
 
     /**
      * 根据科目章节查询科目章节信息
@@ -56,8 +56,8 @@ public interface CatalogueRepository extends JpaRepository<Catalogue, String>, J
      * @param chapterId
      * @return
      */
-    @Transactional(readOnly = true)
-    List<Catalogue> findByIsValidatedEqualsAndCourseIdAndChapterId(String isValidated, String courseId, String chapterId);
+//    @Transactional(readOnly = true)
+//    List<Catalogue> findByIsValidatedEqualsAndCourseIdAndChapterId(String isValidated, String courseId, String chapterId);
 
     /**
      * 根据章节ID和是否有效查询章节目录信息
@@ -66,10 +66,10 @@ public interface CatalogueRepository extends JpaRepository<Catalogue, String>, J
      * @param courseId    　科目ID
      * @return　目录章节基本信息
      */
-    @Transactional(readOnly = true)
-    @Query("select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId, publish as publish, sort as sort, chapterLevel as chapterLevel " +
-            "from Catalogue where isValidated = :isValidated and  courseId = :courseId  ORDER BY  sort asc")
-    List<ICourseChapterDto> findCourseId(@Param("isValidated") String isValidated, @Param("courseId") String courseId);
+//    @Transactional(readOnly = true)
+//    @Query("select chapterId as chapterId, chapterName as chapterName, chapterParentId as chapterParentId, publish as publish, sort as sort, chapterLevel as chapterLevel " +
+//            "from Catalogue where isValidated = :isValidated and  courseId = :courseId  ORDER BY  sort asc")
+//    List<ICourseChapterDto> findCourseId(@Param("isValidated") String isValidated, @Param("courseId") String courseId);
 
     /**
      * 查询有效的章节科目信息行数

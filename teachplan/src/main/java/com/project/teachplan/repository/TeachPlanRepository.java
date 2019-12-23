@@ -2,10 +2,7 @@ package com.project.teachplan.repository;
 
 import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.repository.dto.IPlanStatusDto;
-import com.project.teachplan.repository.dto.PlanCourseStudyDto;
 import com.project.teachplan.repository.dto.TeachCenterDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

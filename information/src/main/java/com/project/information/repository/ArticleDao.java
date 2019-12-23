@@ -26,53 +26,53 @@ public interface ArticleDao extends JpaRepository<Article, String>, JpaSpecifica
 	@Query("update  Article  set isValidated='1' where articleId =?1")
 	public int deleteArticleById(String articleId);
 
-	/**
-	 * 分页查看资讯信息
-	 */
-	public Page<IArticle> findByUserIdOrderByCreateTimeDesc(String userId, Pageable pageable);
-
-
-	public Page<IArticle> findAllByOrderByCreateTimeDesc(Pageable pageable);
-
-
-	@Modifying
-	@Query("update  Article  set isValidated='1' where articleId in(?1)")
-	public int delMoreByArticleIds(List<String> articleIds);
+//	/**
+//	 * 分页查看资讯信息
+//	 */
+//	public Page<IArticle> findByUserIdOrderByCreateTimeDesc(String userId, Pageable pageable);
+//
+//
+//	public Page<IArticle> findAllByOrderByCreateTimeDesc(Pageable pageable);
+//
+//
+//	@Modifying
+//	@Query("update  Article  set isValidated='1' where articleId in(?1)")
+//	public int delMoreByArticleIds(List<String> articleIds);
 	
 
 
-	/**
-	 * 精华
-	 * @param articleIds
-	 * @return
-	 */
-	@Modifying
-	@Query("update  Article  set isNice=?2 where articleId =?1")
-	public void addNice(String articleIds, String value);
+//	/**
+//	 * 精华
+//	 * @param articleIds
+//	 * @return
+//	 */
+//	@Modifying
+//	@Query("update  Article  set isNice=?2 where articleId =?1")
+//	public void addNice(String articleIds, String value);
 
 
-	/**
-	 * 收藏数量
-	 * @return
-	 */
-	@Modifying
-	@Query("update  Article  set collectCount=collectCount+1 where articleId =?1")
-	public int addCollectCount(String articleId);
+//	/**
+//	 * 收藏数量
+//	 * @return
+//	 */
+//	@Modifying
+//	@Query("update  Article  set collectCount=collectCount+1 where articleId =?1")
+//	public int addCollectCount(String articleId);
 
-	/**
-	 * 点赞数量
-	 * @return
-	 */
-	@Modifying
-	@Query("update  Article  set clickGood=clickGood+1 where articleId =?1")
-	public int addClickGood(String articleId);
+//	/**
+//	 * 点赞数量
+//	 * @return
+//	 */
+//	@Modifying
+//	@Query("update  Article  set clickGood=clickGood+1 where articleId =?1")
+//	public int addClickGood(String articleId);
 
-	/**
-	 * 点击数量
-	 * @return
-	 */
-	@Modifying
-	@Query("update  Article  set clickCount=clickCount+1 where articleId =?1")
-	public int addClickCount(String articleId);
+//	/**
+//	 * 点击数量
+//	 * @return
+//	 */
+//	@Modifying
+//	@Query("update  Article  set clickCount=clickCount+1 where articleId =?1")
+//	public int addClickCount(String articleId);
 
 }

@@ -47,11 +47,13 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class PlanFileController {
     private final PlanFileService planFileService;
     private final TokenService tokenService;
-    private final TeachService teachService;
+//    private final TeachService teachService;
 
-    public PlanFileController(PlanFileService planFileService, TeachService teachService, TokenService tokenService) {
+    public PlanFileController(PlanFileService planFileService,
+//                              TeachService teachService,
+                              TokenService tokenService) {
         this.planFileService = planFileService;
-        this.teachService = teachService;
+//        this.teachService = teachService;
         this.tokenService = tokenService;
     }
 

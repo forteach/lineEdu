@@ -40,5 +40,5 @@ public interface ChapteDataService {
 
     void verifyData(CourseVerifyRequest request, String datumType);
 
-    Integer findCourseVideoTimeSumByCourseId(String courseId);
+//    Integer findCourseVideoTimeSumByCourseId(String courseId);
 }

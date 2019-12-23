@@ -40,11 +40,11 @@ public class Dic {
     /**
      * 是当前树结构第一个
      */
-    public static final String COURSE_CHAPTER_SORT = "1";
+//    public static final String COURSE_CHAPTER_SORT = "1";
     /**
      * 所处的层级是2
      */
-    public static final String COURSE_CHAPTER_LEVERL = "2";
+//    public static final String COURSE_CHAPTER_LEVERL = "2";
     /**
      * 教师信息 roleId 0 studentId 1
      */
@@ -81,9 +81,9 @@ public class Dic {
     /**
      * mongodb _id
      */
-    public static final String MONGDB_ID = "_id";
+//    public static final String MONGDB_ID = "_id";
 
-    public static final String QUESTION_ID = "questionId$";
+//    public static final String QUESTION_ID = "questionId$";
     public static final String QUESTION_CHAPTER = "questionChapter$";
     public static final String QUESTIONS_VERIFY = "questionsVerify";
 

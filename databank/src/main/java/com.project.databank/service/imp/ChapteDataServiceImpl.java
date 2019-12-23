@@ -512,11 +512,11 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         rep.saveAndFlush(fd);
     }
 
-    @Override
-    public Integer findCourseVideoTimeSumByCourseId(String courseId) {
-        return viewDatumRepository.findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(TAKE_EFFECT_OPEN, courseId, COURSE_ZILIAO_VIEW, VERIFY_STATUS_AGREE)
-                .stream()
-                .mapToInt(ViewDatum::getVideoDuration)
-                .sum();
-    }
+//    @Override
+//    public Integer findCourseVideoTimeSumByCourseId(String courseId) {
+//        return viewDatumRepository.findAllByIsValidatedEqualsAndCourseIdAndDatumTypeAndVerifyStatus(TAKE_EFFECT_OPEN, courseId, COURSE_ZILIAO_VIEW, VERIFY_STATUS_AGREE)
+//                .stream()
+//                .mapToInt(ViewDatum::getVideoDuration)
+//                .sum();
+//    }
 }

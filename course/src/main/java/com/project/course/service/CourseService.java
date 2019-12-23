@@ -39,7 +39,7 @@ public interface CourseService {
 
     public void saveCourseImages(CourseImagesReq courseImagesReq);
 
-    public List<ICourseListDto> findMyCourse(String userId, PageRequest page);
+//    public List<ICourseListDto> findMyCourse(String userId, PageRequest page);
 
     List<ICourseListDto> findMyCourse(PageRequest page);
 

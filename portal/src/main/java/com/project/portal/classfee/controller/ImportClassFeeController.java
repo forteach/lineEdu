@@ -1,15 +1,15 @@
 package com.project.portal.classfee.controller;
 
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.StrUtil;
+//import cn.hutool.core.io.FileUtil;
+//import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.classfee.domain.ClassFeeInfo;
 import com.project.classfee.service.ClassFeeInfoService;
 import com.project.portal.response.WebResult;
-import com.project.schoolroll.domain.excel.StudentImport;
-import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
+//import com.project.schoolroll.domain.excel.StudentImport;
+//import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
 import com.project.token.annotation.PassToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
@@ -38,14 +38,16 @@ import java.util.List;
 @RequestMapping(path = "/import", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ImportClassFeeController {
     private final ClassFeeInfoService classFeeInfoService;
-    private final ExcelImpServiceImpl excelImpService;
+//    private final ExcelImpServiceImpl excelImpService;
     private final TokenService tokenService;
 
 
     @Autowired
-    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService, ExcelImpServiceImpl excelImpService, TokenService tokenService) {
+    public ImportClassFeeController(ClassFeeInfoService classFeeInfoService,
+//                                    ExcelImpServiceImpl excelImpService,
+                                    TokenService tokenService) {
         this.classFeeInfoService = classFeeInfoService;
-        this.excelImpService = excelImpService;
+//        this.excelImpService = excelImpService;
         this.tokenService = tokenService;
     }
 
@@ -77,34 +79,34 @@ public class ImportClassFeeController {
         return WebResult.failException("导入的Excel文件数据错误");
     }
 
-    @PassToken
-    @ApiOperation(value = "导入学生信息数据")
-    @PostMapping(path = "/students/{token}")
-    @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
-    public WebResult inportStudents(@RequestParam("file") MultipartFile file, @PathVariable String token) {
-        MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
-        try {
-
-            excelImpService.checkoutKey();
-            //设置导入修改时间 防止失败没有过期时间
-            String type = FileUtil.extName(file.getOriginalFilename());
-            //todo 需要获取上传的学生中心id数据
-            String centerAreaId = tokenService.getCenterAreaId(token);
-            String userId = tokenService.getUserId(token);
-            if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
-                excelImpService.setStudentKey();
-                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class, centerAreaId, userId);
-                return WebResult.okResult();
-            } else if (StrUtil.isNotBlank(type) && "xls".equals(type)) {
-                excelImpService.setStudentKey();
-                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class, centerAreaId, userId);
-                return WebResult.okResult();
-            }
-        } catch (IOException e) {
-            excelImpService.deleteKey();
-            log.error("students in IOException, file : [{}],  message : [{}]", file, e.getMessage());
-            e.printStackTrace();
-        }
-        return WebResult.failException("导入的文件格式不是Excel文件");
-    }
+//    @PassToken
+//    @ApiOperation(value = "导入学生信息数据")
+//    @PostMapping(path = "/students/{token}")
+//    @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
+//    public WebResult inportStudents(@RequestParam("file") MultipartFile file, @PathVariable String token) {
+//        MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
+//        try {
+//
+//            excelImpService.checkoutKey();
+//            //设置导入修改时间 防止失败没有过期时间
+//            String type = FileUtil.extName(file.getOriginalFilename());
+//            需要获取上传的学生中心id数据
+//            String centerAreaId = tokenService.getCenterAreaId(token);
+//            String userId = tokenService.getUserId(token);
+//            if (StrUtil.isNotBlank(type) && "xlsx".equals(type)) {
+//                excelImpService.setStudentKey();
+//                excelImpService.studentsExcel07Reader(file.getInputStream(), StudentImport.class, centerAreaId, userId);
+//                return WebResult.okResult();
+//            } else if (StrUtil.isNotBlank(type) && "xls".equals(type)) {
+//                excelImpService.setStudentKey();
+//                excelImpService.studentsExcel03Reader(file.getInputStream(), StudentImport.class, centerAreaId, userId);
+//                return WebResult.okResult();
+//            }
+//        } catch (IOException e) {
+//            excelImpService.deleteKey();
+//            log.error("students in IOException, file : [{}],  message : [{}]", file, e.getMessage());
+//            e.printStackTrace();
+//        }
+//        return WebResult.failException("导入的文件格式不是Excel文件");
+//    }
 }

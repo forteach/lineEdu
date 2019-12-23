@@ -130,10 +130,10 @@ public class CourseServiceImpl implements CourseService {
      * @param page
      * @return
      */
-    @Override
-    public List<ICourseListDto> findMyCourse(String userId, PageRequest page) {
-        return courseRepository.findByCreateUserOrderByCreateTimeDesc(userId, page).getContent();
-    }
+//    @Override
+//    public List<ICourseListDto> findMyCourse(String userId, PageRequest page) {
+//        return courseRepository.findByCreateUserOrderByCreateTimeDesc(userId, page).getContent();
+//    }
 
     @Override
     public List<ICourseListDto> findMyCourse(PageRequest page) {

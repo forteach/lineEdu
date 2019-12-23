@@ -2,7 +2,6 @@ package com.project.portal.course.controller.verify;
 
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.portal.course.request.CourseSaveReq;
 import com.project.portal.course.vo.RCourse;
 import org.springframework.stereotype.Component;
 

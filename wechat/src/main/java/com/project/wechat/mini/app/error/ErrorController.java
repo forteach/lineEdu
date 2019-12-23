@@ -1,4 +1,4 @@
-package com.project.wechat.mini.app.error;
+//package com.project.wechat.mini.app.error;
 
 import org.springframework.stereotype.Controller;
 
@@ -10,18 +10,18 @@ import org.springframework.stereotype.Controller;
  *
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
-@Controller
+//@Controller
 //@RequestMapping("/error")
-public class ErrorController {
+//public class ErrorController {
 
 //  @GetMapping(value = "/404")
-  public String error404() {
-    return "error";
-  }
+//  public String error404() {
+//    return "error";
+//  }
 
 //  @GetMapping(value = "/500")
-  public String error500() {
-    return "error";
-  }
+//  public String error500() {
+//    return "error";
+//  }
 
-}
+//}

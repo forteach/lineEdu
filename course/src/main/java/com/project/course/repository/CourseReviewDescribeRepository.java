@@ -1,14 +1,7 @@
 package com.project.course.repository;
 
 import com.project.course.domain.CourseReviewDescribe;
-import com.project.course.repository.dto.ICourseReviewDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @author: zhangyy

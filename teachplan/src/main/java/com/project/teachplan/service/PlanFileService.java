@@ -11,7 +11,6 @@ import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.domain.TeachPlanFileList;
 import com.project.teachplan.repository.PlanFileRepository;
 import com.project.teachplan.repository.TeachPlanFileListRepository;
-import com.project.teachplan.repository.dto.TeachPlanClassDto;
 import com.project.teachplan.vo.TeachFileVerifyVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,9 +117,9 @@ public class PlanFileService extends BaseMySqlService {
         return planFileRepository.findAllByIsValidatedEqualsAndPlanIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, pageable);
     }
 
-    public Page<PlanFile> findAllPage(Pageable pageable) {
-        return planFileRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
-    }
+//    public Page<PlanFile> findAllPage(Pageable pageable) {
+//        return planFileRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
+//    }
 
     private Map<String, List<PlanFile>> groupByType(List<PlanFile> list){
         return list.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(PlanFile::getType));
@@ -174,9 +173,9 @@ public class PlanFileService extends BaseMySqlService {
         planFileRepository.saveAll(fileList);
     }
 
-    public List<PlanFile> findAllFileByDate(String date) {
-        return planFileRepository.findAllByIsValidatedEqualsAndCreateTime(date);
-    }
+//    public List<PlanFile> findAllFileByDate(String date) {
+//        return planFileRepository.findAllByIsValidatedEqualsAndCreateTime(date);
+//    }
 
     public Page<TeachPlanFileList> findAllPageFileListByCreateDate(String planId, String createDate, Pageable pageable) {
         return teachPlanFileListRepository.findAllByIsValidatedEqualsAndPlanIdAndCreateDateOrderByCreateDate(TAKE_EFFECT_OPEN, planId, createDate, pageable);

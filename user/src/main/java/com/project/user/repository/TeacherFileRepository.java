@@ -14,8 +14,8 @@ import java.util.List;
  * @description:
  */
 public interface TeacherFileRepository extends JpaRepository<TeacherFile, String> {
-    @Transactional(readOnly = true)
-    List<TeacherFile> findAllByIsValidatedEqualsAndTeacherId(String isValidated, String teacherId);
+//    @Transactional(readOnly = true)
+//    List<TeacherFile> findAllByIsValidatedEqualsAndTeacherId(String isValidated, String teacherId);
 
     @Transactional(readOnly = true)
     List<TeacherFile> findAllByTeacherId(String teacherId);

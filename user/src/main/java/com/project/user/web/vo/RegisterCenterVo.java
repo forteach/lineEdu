@@ -1,9 +1,9 @@
-package com.project.user.web.vo;
+//package com.project.user.web.vo;
 
-import lombok.Builder;
-import lombok.Data;
-
-import java.io.Serializable;
+//import lombok.Builder;
+//import lombok.Data;
+//
+//import java.io.Serializable;
 
 /**
  * @author: zhangyy
@@ -12,12 +12,12 @@ import java.io.Serializable;
  * @version: 1.0
  * @description:
  */
-@Data
-@Builder
-public class RegisterCenterVo implements Serializable {
+//@Data
+//@Builder
+//public class RegisterCenterVo implements Serializable {
 //    private String email;
-    private String centerName;
+//    private String centerName;
 //    private String teacherName;
 //    private String teacherId;
 //    private String userName;
-}
+//}

@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface AudioDatumRepository extends IDatumRepoitory<AudioDatum, String> {
 
-    @Modifying(clearAutomatically = true)
-    @Query(value = "UPDATE AudioDatum set isValidated = :isValidated WHERE courseId = :courseId and chapterId = :chapterId")
-    int updateIsValidated(String isValidated, String courseId, String chapterId);
+//    @Modifying(clearAutomatically = true)
+//    @Query(value = "UPDATE AudioDatum set isValidated = :isValidated WHERE courseId = :courseId and chapterId = :chapterId")
+//    int updateIsValidated(String isValidated, String courseId, String chapterId);
 }

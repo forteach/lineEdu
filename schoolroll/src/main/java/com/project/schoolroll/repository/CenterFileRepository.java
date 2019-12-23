@@ -18,11 +18,11 @@ public interface CenterFileRepository extends JpaRepository<CenterFile, String> 
     @Transactional(readOnly = true)
     List<CenterFile> findAllByIsValidatedEqualsAndCenterId(String isValidated, String centerId);
 
-    @Modifying(flushAutomatically = true)
-    int deleteAllByCenterAreaId(String centerAreaId);
+//    @Modifying(flushAutomatically = true)
+//    int deleteAllByCenterAreaId(String centerAreaId);
 
-    @Modifying(flushAutomatically = true)
-    long deleteAllByFileIdIn(List<String> fileIds);
+//    @Modifying(flushAutomatically = true)
+//    long deleteAllByFileIdIn(List<String> fileIds);
 
     @Transactional(readOnly = true)
     List<CenterFile> findAllByCenterId(String centerId);
