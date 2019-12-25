@@ -2,11 +2,13 @@ package com.project.portal.schoolroll.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.domain.Course;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.OffLineScoreUpdateRequest;
 import com.project.portal.schoolroll.request.StudentScoreRequest;
@@ -26,13 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.io.IOException;
 import java.util.List;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
+import static com.project.schoolroll.domain.excel.Dic.IMPORT_COURSE_SCORE;
 
 /**
  * @author: zhangyy
@@ -48,11 +52,13 @@ import static com.project.portal.request.ValideSortVo.valideSort;
 public class StudentScoreController {
     private final StudentScoreService studentScoreService;
     private final TokenService tokenService;
+    private final TeachService teachService;
 
-    public StudentScoreController(StudentScoreService studentScoreService,
+    public StudentScoreController(StudentScoreService studentScoreService, TeachService teachService,
                                   TokenService tokenService) {
         this.studentScoreService = studentScoreService;
         this.tokenService = tokenService;
+        this.teachService = teachService;
     }
 
     @UserLoginToken
@@ -125,12 +131,53 @@ public class StudentScoreController {
     @PassToken
     @GetMapping(path = "/exportTemplate/{courseName}")
     @ApiOperation(value = "导出学生成绩导入模板")
-    public WebResult exportTemplate(@PathVariable String courseName, HttpServletRequest request, HttpServletResponse response){
+    public WebResult exportTemplate(@PathVariable String courseName, HttpServletRequest request, HttpServletResponse response) {
         MyAssert.isTrue(StrUtil.isBlank(courseName), DefineCode.ERR0010, "课程名称不能为空");
         //设置导入数据模板
-        List<List<String>> lists = CollUtil.toList(CollUtil.newArrayList("姓名", courseName));
+        List<List<String>> lists = CollUtil.toList(CollUtil.newArrayList("姓名", "学号", courseName));
         MyExcleUtil.getExcel(response, request, lists, courseName + "成绩导入模板.xlsx");
         return WebResult.okResult();
+    }
+
+
+    @PassToken
+    @ApiOperation(value = "学生导入课程成绩")
+    @PostMapping(path = "/importCourseScore")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "courseId", value = "课程Id", required = true, paramType = "form", dataType = "string"),
+            @ApiImplicitParam(name = "courseName", value = "课程名称", required = true, paramType = "form", dataType = "string"),
+            @ApiImplicitParam(name = "classId", value = "班级id", required = true, paramType = "form", dataType = "string"),
+            @ApiImplicitParam(name = "token", value = "token", required = true, paramType = "form", dataType = "string")
+    })
+    public WebResult importCourseScore(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
+        MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "文件信息不为空");
+        String courseId = httpServletRequest.getParameter("courseId");
+        String courseName = httpServletRequest.getParameter("courseName");
+        String token = httpServletRequest.getParameter("token");
+        String classId = httpServletRequest.getParameter("classId");
+        MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程Id不为空");
+        MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0010, "token is null");
+        MyAssert.isTrue(StrUtil.isBlank(courseName), DefineCode.ERR0010, "课程名称不能为空");
+        MyAssert.isTrue(StrUtil.isBlank(classId), DefineCode.ERR0010, "班级Id不能为空");
+        String type = FileUtil.extName(file.getOriginalFilename());
+        if (StrUtil.isNotBlank(type) &&
+                "xlsx".equals(type) || "xls".equals(type)) {
+            String centerId = tokenService.getCenterAreaId(token);
+            //判断计划是否结束，只有结束的计划才能上传成绩
+            MyAssert.isFalse(teachService.checkPlanDate(classId), DefineCode.ERR0010, "您导入的班级计划还没有结束，暂时不能导入成绩");
+            String key = IMPORT_COURSE_SCORE.concat(centerId).concat("$").concat(centerId);
+            studentScoreService.checkoutKey(key);
+            String userId = tokenService.getUserId(token);
+            try {
+                studentScoreService.importScore(file.getInputStream(), key, courseId, courseName, centerId, userId, classId);
+                return WebResult.okResult();
+            } catch (IOException e) {
+                studentScoreService.deleteKey(key);
+                log.error("students in IOException, file : [{}],  message : [{}]", file, e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return WebResult.failException("导入的文件格式不是Excel文件");
     }
 
     @UserLoginToken

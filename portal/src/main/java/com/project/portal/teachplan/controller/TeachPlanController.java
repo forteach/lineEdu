@@ -7,8 +7,12 @@ import com.project.base.exception.MyAssert;
 import com.project.mongodb.domain.UserRecord;
 import com.project.mongodb.service.UserRecordService;
 import com.project.portal.response.WebResult;
-import com.project.portal.teachplan.request.*;
+import com.project.portal.teachplan.request.TeachPlanCourseFindAllPageRequest;
+import com.project.portal.teachplan.request.TeachPlanPageAllRequest;
+import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
+import com.project.portal.teachplan.request.TeachPlanVerifyRequest;
 import com.project.schoolroll.service.LearnCenterService;
+import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.teachplan.service.TeachService;
@@ -40,18 +44,19 @@ public class TeachPlanController {
 
     private final TeachService teachService;
     private final TokenService tokenService;
-
+    private final StudentOnLineService studentOnLineService;
     private final UserRecordService userRecordService;
     private final LearnCenterService learnCenterService;
 
     private final TeachPlanCourseService teachPlanCourseService;
 
     @Autowired
-    public TeachPlanController(TeachService teachService, TeachPlanCourseService teachPlanCourseService,
+    public TeachPlanController(TeachService teachService, TeachPlanCourseService teachPlanCourseService, StudentOnLineService studentOnLineService,
                                TokenService tokenService, UserRecordService userRecordService, LearnCenterService learnCenterService) {
         this.teachService = teachService;
         this.teachPlanCourseService = teachPlanCourseService;
         this.tokenService = tokenService;
+        this.studentOnLineService = studentOnLineService;
         this.userRecordService = userRecordService;
         this.learnCenterService = learnCenterService;
     }
@@ -266,23 +271,58 @@ public class TeachPlanController {
     })
     public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req){
         valideSort(req.getPage(), req.getSize());
-        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
-        String key = PLAN_COURSE_STUDENT_STUDY.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
-        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getPlanId(), key, PageRequest.of(req.getPage(), req.getSize())));
+//        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
+//        String key = PLAN_COURSE_STUDENT_STUDY.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
+        String key = "";
+        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), key, PageRequest.of(req.getPage(), req.getSize())));
     }
 
     @UserLoginToken
     @ApiOperation(value = "分页查询计划课程的在线学生学习成绩信息")
     @PostMapping(path = "/findPlanCourseScoreAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "studentName", value = "学生名称", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "className", value = "学生名称", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "grade", value = "学生名称", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "specialtyName", value = "学生名称", dataType = "string", required = true, paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req){
         valideSort(req.getPage(), req.getSize());
-        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
-        String key = PLAN_COURSE_STUDENT_SCORE.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
-        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getPlanId(), key, PageRequest.of(req.getPage(), req.getSize())));
+//        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
+//        String key = PLAN_COURSE_STUDENT_SCORE.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
+        String key = "";
+        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), key, PageRequest.of(req.getPage(), req.getSize())));
     }
+//
+//    @UserLoginToken
+//    @ApiOperation(value = "分页查询计划对应的课程学生信息")
+//    @PostMapping(path = "/findPlanCourseAllPage")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+//            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+//            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
+//    })
+//    public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req){
+//        valideSort(req.getPage(), req.getSize());
+//        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
+//        String key = PLAN_COURSE_STUDENT_STUDY.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
+//        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getPlanId(), key, PageRequest.of(req.getPage(), req.getSize())));
+//    }
+//
+//    @UserLoginToken
+//    @ApiOperation(value = "分页查询计划课程的在线学生学习成绩信息")
+//    @PostMapping(path = "/findPlanCourseScoreAllPage")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+//            @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
+//            @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
+//    })
+//    public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req){
+//        valideSort(req.getPage(), req.getSize());
+//        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
+//        String key = PLAN_COURSE_STUDENT_SCORE.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
+//        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getPlanId(), key, PageRequest.of(req.getPage(), req.getSize())));
+//    }
 }

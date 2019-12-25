@@ -443,6 +443,10 @@ public class ChapteDataServiceImpl implements ChapteDataService {
         switch (datumType) {
             //文档
             case Dic.COURSE_ZILIAO_FILE:
+//                fileDatumRepository.findById(fileId).ifPresent(o -> {
+//                    o.getFileUrl();
+// todo 删除删除后的源文件
+//                });
                 deleteDatumById(fileId, fileDatumRepository);
                 break;
             //视频

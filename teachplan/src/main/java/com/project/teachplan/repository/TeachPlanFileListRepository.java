@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
@@ -23,4 +25,6 @@ public interface TeachPlanFileListRepository extends JpaRepository<TeachPlanFile
 
     @Modifying(clearAutomatically = true)
     int deleteAllByPlanIdAndClassIdAndCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate);
+
+    List<TeachPlanFileList> findAllByPlanId(String planId);
 }

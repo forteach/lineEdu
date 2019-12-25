@@ -21,4 +21,6 @@ public interface TeachPlanFileRepository extends JpaRepository<TeachPlanFile, St
     int deleteAllByPlanId(String planId);
     @Transactional(readOnly = true)
     List<TeachPlanFile> findAllByIsValidatedEqualsAndPlanIdAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String planId, String verifyStatus);
+
+    List<TeachPlanFile> findAllByPlanId(String planId);
 }

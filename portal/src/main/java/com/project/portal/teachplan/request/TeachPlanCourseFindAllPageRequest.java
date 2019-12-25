@@ -17,6 +17,12 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TeachPlanCourseFindAllPageRequest extends SortVo implements Serializable {
-    @ApiModelProperty(name = "planId", value = "计划Id", dataType = "string", required = true)
-    private String planId;
+    @ApiModelProperty(name = "studentName", value = "学生名称", dataType = "string")
+    private String studentName;
+    @ApiModelProperty(name = "className", value = "学生名称", dataType = "string")
+    private String className;
+    @ApiModelProperty(name = "grade", value = "学生名称", dataType = "string")
+    private String grade;
+    @ApiModelProperty(name = "specialtyName", value = "学生名称", dataType = "string")
+    private String specialtyName;
 }

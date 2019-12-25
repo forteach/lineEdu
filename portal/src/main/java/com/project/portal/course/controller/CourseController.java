@@ -302,9 +302,8 @@ public class CourseController {
 
     @UserLoginToken
     @ApiOperation(value = "学生端登录后加载对应的课程信息")
-    @GetMapping("/studentCourseList/{courseType}")
-    @ApiImplicitParam(name = "courseType", value = "课程类型 1 线上 2，线下 3 混合", dataType = "string", paramType = "query")
-    public WebResult findCourseStudent(@PathVariable String courseType, HttpServletRequest request) {
+    @GetMapping("/studentCourseList")
+    public WebResult findCourseStudent(HttpServletRequest request) {
         String token = request.getHeader("token");
         // 微信端获取用户学生Id,教师
         String studentId = tokenService.getStudentId(token);
@@ -319,7 +318,7 @@ public class CourseController {
                     .stream()
                     .filter(Objects::nonNull)
                     .map(vo -> new CourseTeacherVo(vo.getCourseId(), vo.getStatus(), vo.getCountStatus())).collect(toList());
-            return WebResult.okResult(courseService.findByCourseNumber(courseIds, courseType, classId, studentId, key));
+            return WebResult.okResult(courseService.findByCourseNumber(courseIds, classId, studentId, key));
         } else {
             //不是学生是教师只能查看自己创建的课程信息
             return WebResult.okResult(courseService.findAll());

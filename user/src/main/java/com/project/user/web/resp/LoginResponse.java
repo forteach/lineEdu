@@ -1,5 +1,6 @@
 package com.project.user.web.resp;
 
+import com.project.schoolroll.domain.LearnCenter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,4 +40,6 @@ public class LoginResponse implements Serializable {
     private String centerAreaId;
 
     private String centerName;
+
+    private LearnCenter learnCenter;
 }

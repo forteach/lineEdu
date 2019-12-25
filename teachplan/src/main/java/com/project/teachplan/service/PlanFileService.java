@@ -8,6 +8,7 @@ import com.project.base.exception.MyAssert;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.teachplan.domain.PlanFile;
+import com.project.teachplan.domain.TeachPlanFile;
 import com.project.teachplan.domain.TeachPlanFileList;
 import com.project.teachplan.repository.PlanFileRepository;
 import com.project.teachplan.repository.TeachPlanFileListRepository;
@@ -170,7 +171,18 @@ public class PlanFileService extends BaseMySqlService {
                     p.setUpdateUser(userId);
                     p.setIsValidated(status);
                 }).collect(toList());
-        planFileRepository.saveAll(fileList);
+        if (!fileList.isEmpty()) {
+            planFileRepository.saveAll(fileList);
+        }
+
+        List<TeachPlanFileList> collect = teachPlanFileListRepository.findAllByPlanId(planId).stream()
+                .peek(p -> {
+                    p.setUpdateUser(userId);
+                    p.setIsValidated(status);
+                }).collect(toList());
+        if (!fileList.isEmpty()) {
+            teachPlanFileListRepository.saveAll(collect);
+        }
     }
 
 //    public List<PlanFile> findAllFileByDate(String date) {

@@ -1,31 +1,44 @@
 package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.repository.StudentScoreRepository;
 import com.project.schoolroll.service.StudentScoreService;
+import com.project.schoolroll.service.online.StudentOnLineService;
+import com.project.schoolroll.web.vo.ScoreVo;
 import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
@@ -41,18 +54,32 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class StudentScoreServiceImpl extends BaseMySqlService implements StudentScoreService {
     private final StudentScoreRepository studentScoreRepository;
+    private final StringRedisTemplate stringRedisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
+//    private final StudentOnLineService studentOnLineService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public StudentScoreServiceImpl(StudentScoreRepository studentScoreRepository) {
+    public StudentScoreServiceImpl(StudentScoreRepository studentScoreRepository, RedisTemplate<String, String> redisTemplate,
+//                                   StudentOnLineService studentOnLineService,
+                                   StringRedisTemplate stringRedisTemplate) {
         this.studentScoreRepository = studentScoreRepository;
+        this.stringRedisTemplate = stringRedisTemplate;
+        this.redisTemplate = redisTemplate;
+//        this.studentOnLineService = studentOnLineService;
     }
 
     @Override
     public StudentScore findByStudentIdAndCourseId(String studentId, String courseId) {
-        return studentScoreRepository.findAllByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId)
-                .orElseGet(StudentScore::new);
+        Optional<StudentScore> optional = studentScoreRepository.findAllByIsValidatedEqualsAndStudentIdAndCourseId(TAKE_EFFECT_OPEN, studentId, courseId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的信息");
+        return optional.get();
+    }
+
+    @Override
+    public StudentScore findStudentIdAndCourseId(String studentId, String courseId) {
+        return studentScoreRepository.findAllByStudentIdAndCourseId(studentId, courseId).orElseGet(StudentScore::new);
     }
 
     @Override
@@ -206,5 +233,76 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
                 "线下成绩",
                 "课程类型",
                 "课程类别(必修(bx)、选修(xx)、实践(sj)");
+    }
+
+    @Override
+    @SuppressWarnings(value = "all")
+    public void checkoutKey(String key) {
+        MyAssert.isTrue(stringRedisTemplate.hasKey(key), DefineCode.ERR0013, "有人操作，请稍后再试!");
+    }
+
+    @Override
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+    }
+
+    @SuppressWarnings(value = "all")
+    private void setKey(String key) {
+        redisTemplate.opsForValue().set(key, DateUtil.now(), 30L, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void importScore(InputStream inputStream, String key, String courseId, String courseName,
+                            String centerId, String userId, String classId){
+        ExcelReader reader = ExcelUtil.getReader(inputStream);
+        //设置导入
+        setHeaderAlias(reader, courseName);
+
+        List<ScoreVo> list = reader.readAll(ScoreVo.class);
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "你导入的成绩信息是空白数据");
+        // 校验数据不能为空
+        checkScore(list);
+
+        //设置key键
+        setKey(key);
+
+        // 复制数据
+        List<StudentScore> collect = list.stream().filter(Objects::nonNull)
+                .map(v -> setOffLineScore(v.getStudentId(), courseId, v.getScore(), userId, key))
+                .collect(toList());
+        if (!collect.isEmpty()){
+            studentScoreRepository.saveAll(collect);
+        }
+        deleteKey(key);
+    }
+
+    private StudentScore setOffLineScore(String studentId, String courseId, String score, String userId, String key){
+        StudentScore studentScore = findStudentIdAndCourseId(studentId, courseId);
+        //线下占比
+        Integer linePercentage = studentScore.getLinePercentage();
+        if (null == linePercentage || 0 == linePercentage) {
+            deleteKey(key);
+            MyAssert.isNull(linePercentage, DefineCode.ERR0010, "线下占比成绩百分比是空");
+            MyAssert.isTrue(0 == linePercentage, DefineCode.ERR0010, "线下占比为0不能录入");
+        }
+        studentScore.setOffLineScore(score);
+        studentScore.setUpdateUser(userId);
+        studentScore.setStudentId(studentId);
+        return studentScore;
+    }
+
+    private void checkScore(List<ScoreVo> list){
+        list.forEach(v -> {
+            MyAssert.isTrue(StrUtil.isBlank(v.getScore()), DefineCode.ERR0010, "成绩信息不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(v.getStudentId()), DefineCode.ERR0010, "学生Id信息不能为空");
+        });
+//        String studentId = list.get(0).getStudentId();
+//        Optional<StudentOnLine> studentOnLine = studentOnLineService.findById(studentId);
+//        studentOnLine.get().getClassId();
+    }
+
+    private void setHeaderAlias(@NonNull ExcelReader reader, String courseName){
+        reader.addHeaderAlias("学号", "studentId");
+        reader.addHeaderAlias(courseName, "score");
     }
 }

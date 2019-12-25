@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.Md5Util;
+import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.service.TokenService;
 import com.project.user.domain.SysUserLog;
@@ -97,7 +98,8 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> map = BeanUtil.beanToMap(user);
         map.put("token", token);
         List<SysRoleDto> sysRoles = userRoleRepository.findByIsValidatedEqualsAndUserId(userId);
-        String centerName = learnCenterService.findByCenterId(user.getCenterAreaId()).getCenterName();
+        LearnCenter learnCenter = learnCenterService.findByCenterId(user.getCenterAreaId());
+        String centerName = learnCenter.getCenterName();
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(userId)
                 .token(token)
@@ -106,6 +108,7 @@ public class UserServiceImpl implements UserService {
                 .teacherId(user.getTeacherId())
                 .centerAreaId(user.getCenterAreaId())
                 .centerName(centerName)
+                .learnCenter(learnCenter)
                 .build();
         if (!sysRoles.isEmpty()) {
             sysRoles.stream().findFirst().ifPresent(sysRole -> {

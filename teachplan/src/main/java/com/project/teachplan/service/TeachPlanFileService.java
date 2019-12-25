@@ -76,4 +76,15 @@ public class TeachPlanFileService {
             teachPlanFileRepository.saveAll(list);
         }
     }
+    @Transactional
+    public void updateStatus(String planId, String status, String userId){
+        List<TeachPlanFile> list = findAllByPlanId(planId).stream().filter(Objects::nonNull)
+            .peek(p -> {
+                p.setUpdateUser(userId);
+                p.setIsValidated(status);
+            }).collect(toList());
+        if (!list.isEmpty()){
+            teachPlanFileRepository.saveAll(list);
+        }
+    }
 }

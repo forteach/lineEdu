@@ -26,6 +26,8 @@ public class Dic {
     public final static String IMPORT_CLASS_FREE = "classFee";
     public final static String EXPORT_EXCEL_PREFIX = "$studentExport";
 
+    public final static String IMPORT_COURSE_SCORE = "importCourseScore$";
+
     /** 学生数据状态 学生信息 0 表格导入, 1 手动添加*/
     public final static int STUDENT_ON_LINE_IMPORT_STATUS_IMPORT = 0;
     public final static int STUDENT_ON_LINE_IMPORT_STATUS_SAVE = 1;

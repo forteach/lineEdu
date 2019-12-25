@@ -25,6 +25,9 @@ public interface StudentScoreRepository extends JpaRepository<StudentScore, Stri
     Optional<StudentScore> findAllByIsValidatedEqualsAndStudentIdAndCourseId(String isValidated, String studentId, String courseId);
 
     @Transactional(readOnly = true)
+    Optional<StudentScore> findAllByStudentIdAndCourseId(String studentId, String courseId);
+
+    @Transactional(readOnly = true)
     List<StudentScore> findAllByIsValidatedEqualsAndStudentIdOrderByUpdateTime(String isValidated, String studentId);
 
     @Query(value = " select " +

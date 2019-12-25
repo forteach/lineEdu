@@ -8,6 +8,7 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
+import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
 import com.project.course.domain.CourseStudy;
 import com.project.course.domain.OnLineCourseDic;
@@ -71,6 +72,7 @@ public class TeachService {
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
     private final StudentScoreService studentScoreService;
+    private final TeachPlanFileService teachPlanFileService;
 //    private final TeacherService teacherService;
 //    private final TeachPlanClassRepository teachPlanClassRepository;
 //    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
@@ -78,7 +80,7 @@ public class TeachService {
     @Autowired
     public TeachService(
             StudentOnLineService studentOnLineService,
-            TeachPlanRepository teachPlanRepository,
+            TeachPlanRepository teachPlanRepository, TeachPlanFileService teachPlanFileService,
             TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
 //            TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
             StudentScoreService studentScoreService,
@@ -90,6 +92,7 @@ public class TeachService {
         this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
+        this.teachPlanFileService = teachPlanFileService;
 //        this.teacherService = teacherService;
 //        this.teachPlanClassRepository = teachPlanClassRepository;
         this.teachPlanCourseService = teachPlanCourseService;
@@ -145,7 +148,7 @@ public class TeachService {
             teachPlanCourseVerifyRepository.deleteAllByPlanId(t.getPlanId());
             saveTeachPlanCourse(t.getPlanId(), courses, remark, teachPlan.getCenterAreaId(), teachPlan.getCreateUser());
             if (!courses.isEmpty()) {
-                teachPlan.setCourseNumber(courses.size());
+                t.setCourseNumber(courses.size());
             }
             return teachPlanVerifyRepository.save(t);
         }
@@ -374,11 +377,21 @@ public class TeachService {
             c.setIsValidated(status);
             c.setUpdateUser(userId);
         }).collect(Collectors.toList());
-        teachPlanCourseRepository.saveAll(list);
+        if (!list.isEmpty()) {
+            teachPlanCourseRepository.saveAll(list);
+        }
+        List<TeachPlanCourseVerify> collect = teachPlanCourseVerifyRepository.findAllByPlanId(planId).stream().peek(c -> {
+            c.setIsValidated(status);
+            c.setUpdateUser(userId);
+        }).collect(Collectors.toList());
+        if (!collect.isEmpty()) {
+            teachPlanCourseVerifyRepository.saveAll(collect);
+        }
     }
 
+    @Transactional
     public void updateStatus(String planId, String userId) {
-        Optional<TeachPlan> optionalTeachPlan = teachPlanRepository.findById(planId);
+        Optional<TeachPlanVerify> optionalTeachPlan = teachPlanVerifyRepository.findById(planId);
         MyAssert.isFalse(optionalTeachPlan.isPresent(), DefineCode.ERR0014, "不存在对应的计划信息");
         optionalTeachPlan.ifPresent(t -> {
             String status = t.getIsValidated();
@@ -390,18 +403,33 @@ public class TeachService {
                 updateCourseByPlanId(planId, TAKE_EFFECT_OPEN, userId);
                 //修改计划文件状态
                 planFileService.updateStatus(planId, TAKE_EFFECT_OPEN, userId);
+                teachPlanFileService.updateStatus(planId, TAKE_EFFECT_OPEN, userId);
                 //修改审核的计划信息
                 setVerifyStatus(planId, TAKE_EFFECT_OPEN, userId);
+                //修改计划
+                updatePlanStatus(planId, TAKE_EFFECT_OPEN, userId);
             } else {
                 t.setIsValidated(TAKE_EFFECT_CLOSE);
 //                updateClassByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
                 updateCourseByPlanId(planId, TAKE_EFFECT_CLOSE, userId);
                 planFileService.updateStatus(planId, TAKE_EFFECT_CLOSE, userId);
+                teachPlanFileService.updateStatus(planId, TAKE_EFFECT_CLOSE, userId);
                 //修改审核的计划信息
                 setVerifyStatus(planId, TAKE_EFFECT_CLOSE, userId);
+                //修改计划
+                updatePlanStatus(planId, TAKE_EFFECT_CLOSE, userId);
             }
             t.setUpdateUser(userId);
-            teachPlanRepository.save(t);
+            teachPlanVerifyRepository.save(t);
+        });
+    }
+
+    @Transactional
+    public void updatePlanStatus(String planId, String status, String userId) {
+        teachPlanRepository.findById(planId).ifPresent(p -> {
+            p.setIsValidated(status);
+            p.setUpdateUser(userId);
+            teachPlanRepository.save(p);
         });
     }
 
@@ -506,35 +534,55 @@ public class TeachService {
         teachPlanVerifyRepository.save(t);
     }
 
-    @SuppressWarnings(value = "all")
-    public Page<TeachCourseVo> findAllPageDtoByPlanId(String planId, String key, Pageable pageable) {
-        //查询redis缓存
-        if (redisTemplate.hasKey(key)) {
-            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
-            //分页数据保存json转换为分页信息返回显示
-            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
-        }
-        //设置redis缓存
-        Page<TeachCourseVo> page = findAllPageByPlanId(planId, pageable);
-        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
-        return page;
-    }
+//    @SuppressWarnings(value = "all")
+//    public Page<TeachCourseVo> findAllPageDtoByPlanId(String planId, String key, Pageable pageable) {
+//        //查询redis缓存
+//        if (redisTemplate.hasKey(key)) {
+//            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
+//            //分页数据保存json转换为分页信息返回显示
+//            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
+//        }
+//        //设置redis缓存
+//        Page<TeachCourseVo> page = findAllPageByPlanId(planId, pageable);
+//        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
+//        return page;
+//    }
 
     @SuppressWarnings(value = "all")
-    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String planId, String key, Pageable pageable) {
-        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByPlanId(planId);
-        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+    public Page<TeachCourseVo> findAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String key, Pageable pageable) {
         //查询redis缓存
-        TeachCenterDto teachCenterDto = optional.get();
-        if (redisTemplate.hasKey(key)) {
-            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
-            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
-        }
-        //设置redis缓存
-        Page<CourseScoreVo> page = findScoreAllPageByPlanId(teachCenterDto, pageable);
-        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
-        return page;
+//        if (redisTemplate.hasKey(key)) {
+//            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
+//            //分页数据保存json转换为分页信息返回显示
+//            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
+//        }
+//        //设置redis缓存
+//        Page<TeachCourseVo> page = findAllPageByPlanId(planId, pageable);
+//        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
+//        return page;
+        return new PageImpl<>(new ArrayList<>());
     }
+
+    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String key, Pageable pageable) {
+
+        return new PageImpl<>(new ArrayList<>());
+    }
+
+//    @SuppressWarnings(value = "all")
+//    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String planId, String key, Pageable pageable) {
+//        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByPlanId(planId);
+//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+//        //查询redis缓存
+//        TeachCenterDto teachCenterDto = optional.get();
+//        if (redisTemplate.hasKey(key)) {
+//            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
+//            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
+//        }
+//        //设置redis缓存
+//        Page<CourseScoreVo> page = findScoreAllPageByPlanId(teachCenterDto, pageable);
+//        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
+//        return page;
+//    }
 
     private Page<CourseScoreVo> findScoreAllPageByPlanId(TeachCenterDto teachCenterDto, Pageable pageable) {
 //        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
@@ -569,22 +617,18 @@ public class TeachService {
     private List<StudyVo> toListStudy(String studentId, String planId) {
         List<StudyVo> list = CollUtil.newArrayList();
         teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(planId)
-                .forEach(s -> {
-                    courseStudyRepository.findStudyDto(studentId, s.getCourseId())
-                            .ifPresent(d ->
-                                    list.add(new StudyVo(d.getCourseId(), d.getCourseName(),
+                .forEach(s -> courseStudyRepository.findStudyDto(studentId, s.getCourseId())
+                        .ifPresent(d -> list.add(new StudyVo(d.getCourseId(), d.getCourseName(),
                                             d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(),
-                                            d.getCorrectSum())));
-                });
+                                            d.getCorrectSum()))));
         return list;
     }
 
     private List<ScoreVo> toListScore(String studentId, String planId) {
         List<ScoreVo> list = CollUtil.newArrayList();
         teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(planId)
-                .forEach(s -> {
-                    courseStudyRepository.findStudyDto(studentId, s.getCourseId())
-                            .ifPresent(d -> {
+                .forEach(s -> courseStudyRepository.findStudyDto(studentId, s.getCourseId())
+                        .ifPresent(d -> {
                                 //线上成绩 (学习时长/课程总时长) * 视频占比 + (习题回答正确数量/总习题数量) * 练习占比
                                 BigDecimal videoScore = new BigDecimal("0");
                                 BigDecimal jobsScore = new BigDecimal("0");
@@ -598,8 +642,7 @@ public class TeachService {
                                 }
                                 String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
                                 list.add(new ScoreVo(d.getCourseId(), d.getCourseName(), score));
-                            });
-                });
+                            }));
         return list;
     }
 
@@ -682,6 +725,19 @@ public class TeachService {
                 .stream().filter(Objects::nonNull)
                 .map(TeachPlanVerify::getClassId)
                 .collect(toSet());
+    }
+
+    /**
+     * 判断对应班级的计划结束日期是否在当前日期之前
+     * @param classId 班级Id
+     * @return true 在当前日期之前, false 不在今天之前
+     */
+    public boolean checkPlanDate(String classId) {
+        List<TeachPlanVerify> planVerifies = teachPlanVerifyRepository.findAllByClassId(classId);
+        MyAssert.isTrue(planVerifies.isEmpty(), DefineCode.ERR0010, "不存在对应的计划课程");
+        TeachPlanVerify teachPlanVerify = planVerifies.get(0);
+        MyAssert.isTrue(TAKE_EFFECT_CLOSE.equals(teachPlanVerify.getIsValidated()), DefineCode.ERR0010, "对应的班级计划已经失效");
+        return DateUtil.parseDate(teachPlanVerify.getEndDate()).isBefore(new Date());
     }
 
 //    public Page<TeachPlan> findAllByCenterId(String centerId, Pageable pageable) {

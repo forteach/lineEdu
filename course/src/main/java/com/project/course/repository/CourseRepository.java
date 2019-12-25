@@ -100,11 +100,11 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 //    @Transactional(readOnly = true)
 //    List<ICourseDto> findAllByCourseNumberAndCreateUserOrderByCreateTimeDescDto(String courseNumber, String cUser);
 
-    @Transactional(readOnly = true)
-    List<ICourseDto> findAllByIsValidatedEqualsAndCourseNumberOrderByCreateTimeDesc(String isValidated, String courseNumber);
+//    @Transactional(readOnly = true)
+//    List<ICourseDto> findAllByIsValidatedEqualsAndCourseNumberOrderByCreateTimeDesc(String isValidated, String courseNumber);
 
     @Transactional(readOnly = true)
-    List<ICourseDto> findAllByIsValidatedEqualsAndCourseNumberAndCourseTypeOrderByCreateTimeDesc(String isValidated, String courseNumber, Integer courseType);
+    List<ICourseDto> findAllByIsValidatedEqualsAndCourseNumberAndCourseTypeInOrderByCreateTimeDesc(String isValidated, String courseNumber, List<Integer> courseTypes);
 
 //    @Transactional(readOnly = true)
 //    List<Course> findAllByCreateUserOrderByCreateTimeDesc(String cUser);

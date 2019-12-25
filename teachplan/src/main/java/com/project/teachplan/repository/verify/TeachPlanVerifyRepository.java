@@ -33,6 +33,8 @@ public interface TeachPlanVerifyRepository extends JpaRepository<TeachPlanVerify
     @Query(value = " update TeachPlanVerify set isValidated = ?1 where planId = ?2")
     int updateIsValidatedByPlanId(String isValidated, String planId);
 
+    List<TeachPlanVerify> findAllByClassId(String classId);
+
 
 //    @Query(value = "select " +
 //            " tp.planId as planId, " +

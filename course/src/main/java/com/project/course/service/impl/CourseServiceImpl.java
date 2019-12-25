@@ -237,15 +237,10 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseVo> findByCourseNumber(List<CourseTeacherVo> courseIds, String courseType, String classId, String studentId, String key) {
-        List<CourseVo> vos = new ArrayList<>();
+    public List<CourseVo> findByCourseNumber(List<CourseTeacherVo> courseIds, String classId, String studentId, String key) {
+        List<CourseVo> vos = CollUtil.newArrayList();
         for (CourseTeacherVo v : courseIds) {
-            List<ICourseDto> list;
-            if (StrUtil.isNotBlank(courseType)){
-                list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberAndCourseTypeOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, v.getCourseId(), Integer.valueOf(courseType));
-            }else {
-                list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, v.getCourseId());
-            }
+            List<ICourseDto> list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberAndCourseTypeInOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, v.getCourseId(), CollUtil.newArrayList(1,3));
             if (!list.isEmpty()){
                 builderVo(vos, String.valueOf(v.getStatus()), studentId, list);
             }

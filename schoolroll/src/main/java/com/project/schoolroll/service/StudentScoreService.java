@@ -6,6 +6,7 @@ import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -24,6 +25,8 @@ public interface StudentScoreService {
      * @return
      */
     StudentScore findByStudentIdAndCourseId(String studentId, String courseId);
+
+    StudentScore findStudentIdAndCourseId(String studentId, String courseId);
 
     /**
      * 查询对应的学生成绩信息
@@ -49,4 +52,10 @@ public interface StudentScoreService {
     void saveAll(List<StudentScore> list);
 
     List<List<String>> exportScore(String centerId);
+
+    void checkoutKey(String key);
+
+    void importScore(InputStream inputStream, String key, String courseId, String courseName, String centerId, String userId, String classId);
+
+    void deleteKey(String key);
 }
