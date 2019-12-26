@@ -37,6 +37,13 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Transactional(readOnly = true)
     Optional<TeachCenterDto> findAllByPlanId(String planId);
 
+    @Query(value = "select " +
+            " tp.planId as planId, tp.planName as planName, tp.centerAreaId as centerAreaId, " +
+            " lc.centerName as centerName, tp.startDate as startDate, tp.endDate as endDate, tp.classId as classId " +
+            " from TeachPlan as tp left join LearnCenter as lc on lc.centerAreaId = tp.centerAreaId where tp.classId =?1")
+    @Transactional(readOnly = true)
+    Optional<TeachCenterDto> findAllByClassId(String classId);
+
 //    @Transactional(readOnly = true)
 //    Page<TeachPlan> findAllByCenterAreaIdAndClassId(String centerAreaId, String classId, Pageable pageable);
 //

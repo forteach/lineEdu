@@ -11,6 +11,7 @@ import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -66,6 +67,12 @@ public interface CourseService {
     List<Course> findAll();
 
     Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
+
+//    Page<Course> findAllByClassId(String classId, Pageable of);
+
+    Page<ICourseStudyDto> findAllByStudentId(String studentId, Pageable pageable);
+
+    List<Course> findAllByCourseNumberIds(List<String> courseNumberIds);
 
 //    void updatePublish(String courseId, String userId);
 }

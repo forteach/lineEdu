@@ -139,4 +139,21 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " where c.isValidated = '0' and cs.isValidated = '0' and cs.studentId = ?1 and cs.courseId =?2 ")
     @Transactional(readOnly = true)
     Optional<ICourseStudyDto> findStudyDto(String studentId, String courseId);
+
+    @Query(value = "select " +
+            " c.courseId as courseId, " +
+            " c.courseType as courseType," +
+            " c.alias as alias," +
+            " c.courseNumber as courseNumber," +
+            " c.courseDescribe as courseDescribe, " +
+            " cs.answerSum as answerSum, " +
+            " cs.correctSum as correctSum, " +
+            " cs.semesterGrade as semesterGrade, " +
+            " cs.examGrade as examGrade, " +
+            " cs.onLineTime as onLineTime," +
+            " cs.onLineTimeSum as onLineTimeSum " +
+            " from CourseStudy AS cs left join Course as c on c.courseId = cs.courseId " +
+            " where cs.isValidated = '0' and c.isValidated = '0' and cs.studentId = ?1")
+    @Transactional(readOnly = true)
+    Page<ICourseStudyDto> findAllByIsValidatedEqualsAndStudentId(String studentId, Pageable pageable);
 }

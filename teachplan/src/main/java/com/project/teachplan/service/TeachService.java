@@ -17,6 +17,7 @@ import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.domain.online.TbClasses;
+import com.project.schoolroll.repository.dto.StudentOnLineDto;
 import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
@@ -33,6 +34,7 @@ import com.project.teachplan.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -549,23 +551,38 @@ public class TeachService {
 //    }
 
     @SuppressWarnings(value = "all")
-    public Page<TeachCourseVo> findAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String key, Pageable pageable) {
-        //查询redis缓存
-//        if (redisTemplate.hasKey(key)) {
-//            JSONObject jsonObject = JSONObject.parseObject(redisTemplate.opsForValue().get(key));
-//            //分页数据保存json转换为分页信息返回显示
-//            return new PageImpl(jsonObject.getJSONArray("content").toJavaList(TeachCourseVo.class), pageable, jsonObject.getLong("totalElements"));
-//        }
-//        //设置redis缓存
-//        Page<TeachCourseVo> page = findAllPageByPlanId(planId, pageable);
-//        redisTemplate.opsForValue().set(key, JSONObject.toJSONString(page), Duration.ofMinutes(1));
-//        return page;
-        return new PageImpl<>(new ArrayList<>());
+    public Page<TeachCourseVo> findAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, PageRequest request) {
+        Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, "", grade, specialtyName, className);
+        List<StudentOnLineDto> list = page.getContent();
+        if (list.isEmpty()){
+            return new PageImpl<>(new ArrayList<>());
+        }
+        String classId = list.get(0).getClassId();
+        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByClassId(classId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+        TeachCenterDto teachCenterDto = optional.get();
+        List<TeachCourseVo> courseVoList = list.stream().map(d -> new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+                toListStudy(d.getStudentId(), teachCenterDto.getPlanId())))
+                .collect(toList());
+        return new PageImpl<>(courseVoList, request, page.getTotalElements());
     }
 
-    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String key, Pageable pageable) {
-
-        return new PageImpl<>(new ArrayList<>());
+    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, PageRequest request) {
+        Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, "", grade, specialtyName, className);
+        List<StudentOnLineDto> list = page.getContent();
+        if (list.isEmpty()){
+            return new PageImpl<>(new ArrayList<>());
+        }
+        String classId = list.get(0).getClassId();
+        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByClassId(classId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+        TeachCenterDto teachCenterDto = optional.get();
+        List<CourseScoreVo> courseScoreVoList = list.stream().map(d -> new CourseScoreVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+                toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
+                .collect(toList());
+        return new PageImpl<>(courseScoreVoList, request, page.getTotalElements());
     }
 
 //    @SuppressWarnings(value = "all")
@@ -584,35 +601,36 @@ public class TeachService {
 //        return page;
 //    }
 
-    private Page<CourseScoreVo> findScoreAllPageByPlanId(TeachCenterDto teachCenterDto, Pageable pageable) {
-//        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
-        Page<StudentOnLine> page = studentOnLineService.findAllPageByClassId(teachCenterDto.getClassId(), pageable);
-        List<CourseScoreVo> list = page.getContent()
-                .stream()
-                .filter(Objects::nonNull)
-                .map(d -> new CourseScoreVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                        teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
-                        toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
-                .collect(toList());
-        return new PageImpl<>(list, pageable, page.getTotalElements());
-    }
+//    private Page<CourseScoreVo> findScoreAllPageByPlanId(TeachCenterDto teachCenterDto, Pageable pageable) {
+////        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+//        Page<StudentOnLine> page = studentOnLineService.findAllPageByClassId(teachCenterDto.getClassId(), pageable);
+//        List<CourseScoreVo> list = page.getContent()
+//                .stream()
+//                .filter(Objects::nonNull)
+//                .map(d -> new CourseScoreVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+//                        teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+//                        toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
+//                .collect(toList());
+//        return new PageImpl<>(list, pageable, page.getTotalElements());
+//    }
 
-    private Page<TeachCourseVo> findAllPageByPlanId(String planId, Pageable pageable) {
-//        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
-        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByPlanId(planId);
-        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
-        //查询redis缓存
-        TeachCenterDto teachCenterDto = optional.get();
-        Page<StudentOnLine> page = studentOnLineService.findAllPageByClassId(teachCenterDto.getClassId(), pageable);
-        List<TeachCourseVo> list = page.getContent()
-                .stream()
-                .filter(Objects::nonNull)
-                .map(d -> new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                        teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
-                        toListStudy(d.getStudentId(), planId)))
-                .collect(toList());
-        return new PageImpl<>(list, pageable, page.getTotalElements());
-    }
+//    private Page<TeachCourseVo> findAllPageByPlanId(String classId) {
+////    private Page<TeachCourseVo> findAllPageByPlanId(String planId, Pageable pageable) {
+////        Page<PlanCourseStudyDto> page = teachPlanRepository.findAllPageDtoByPlanId(planId, pageable);
+//        Optional<TeachCenterDto> optional = teachPlanRepository.findAllByClassId(classId);
+//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+//        //查询redis缓存
+//        TeachCenterDto teachCenterDto = optional.get();
+//        Page<StudentOnLine> page = studentOnLineService.findAllPageByClassId(teachCenterDto.getClassId(), pageable);
+//        List<TeachCourseVo> list = page.getContent()
+//                .stream()
+//                .filter(Objects::nonNull)
+//                .map(d -> new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+//                        teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+//                        toListStudy(d.getStudentId(), teachCenterDto.getPlanId())))
+//                .collect(toList());
+//        return new PageImpl<>(list, pageable, page.getTotalElements());
+//    }
 
     private List<StudyVo> toListStudy(String studentId, String planId) {
         List<StudyVo> list = CollUtil.newArrayList();

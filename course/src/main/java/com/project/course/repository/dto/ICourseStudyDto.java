@@ -12,6 +12,16 @@ public interface ICourseStudyDto {
 
     public String getCourseName();
 
+    public String getCourseNumber();
+
+    public String getAlias();
+
+    public String getTopPicSrc();
+
+    public String getCourseDescribe();
+
+    public String getCourseType();
+
     public String getVideoPercentage();
 
     public String getJobsPercentage();

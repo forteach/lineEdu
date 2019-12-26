@@ -3,6 +3,8 @@ package com.project.teachplan.repository;
 import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.repository.dto.CourseTeacherDto;
 import com.project.teachplan.repository.dto.IPlanCourseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -51,4 +53,7 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
     @Modifying(clearAutomatically = true)
     @Query(value = "update TeachPlanCourse set isValidated = ?1 where planId = ?2")
     int updateIsValidatedByPlanId(String isValidated, String planId);
+
+    @Query(value = "select courseId from TeachPlanCourse where isValidated = '0' and planId in (select planId from TeachPlan where isValidated = '0' and classId =?1)")
+    public Page<String> findAllByClassId(String classId, Pageable pageable);
 }

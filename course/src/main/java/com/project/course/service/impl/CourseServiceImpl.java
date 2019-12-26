@@ -7,6 +7,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.project.base.common.keyword.DefineCode;
+import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -374,6 +376,23 @@ public class CourseServiceImpl implements CourseService {
             return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, pageRequest);
         }
         return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, studentId, pageRequest);
+    }
+
+//    @Override
+//    public Page<Course> findAllByClassId(String classId, Pageable of){
+//        return courseRepository.findAllByClassId(classId, of);
+//    }
+
+    @Override
+    public List<Course> findAllByCourseNumberIds(List<String> courseNumberIds){
+        if (courseNumberIds.isEmpty()){
+            return new ArrayList<>();
+        }
+        return courseRepository.findAllByIsValidatedEqualsAndCourseNumberIn(TAKE_EFFECT_OPEN, courseNumberIds);
+    }
+    @Override
+    public Page<ICourseStudyDto> findAllByStudentId(String studentId, Pageable pageable){
+        return courseStudyRepository.findAllByIsValidatedEqualsAndStudentId(studentId, pageable);
     }
 
 //    @Override

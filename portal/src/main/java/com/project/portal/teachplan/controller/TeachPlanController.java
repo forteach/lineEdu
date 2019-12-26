@@ -1,6 +1,7 @@
 package com.project.portal.teachplan.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -11,6 +12,7 @@ import com.project.portal.teachplan.request.TeachPlanCourseFindAllPageRequest;
 import com.project.portal.teachplan.request.TeachPlanPageAllRequest;
 import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
 import com.project.portal.teachplan.request.TeachPlanVerifyRequest;
+import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
@@ -31,10 +33,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_SCORE;
-import static com.project.base.common.keyword.Dic.PLAN_COURSE_STUDENT_STUDY;
+import static com.project.base.common.keyword.Dic.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
 @Slf4j
 @RestController
@@ -136,7 +138,6 @@ public class TeachPlanController {
     @ApiOperation(value = "分页查询教学计划")
     @PostMapping(path = "/findByPlanIdPageAll")
     @ApiImplicitParams({
-//            @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "query"),
             @ApiImplicitParam(name = "verifyStatus", value = "修改状态", dataType = "0 (同意) 1 (已经提交) 2 (不同意)", paramType = "form"),
             @ApiImplicitParam(name = "specialtyName", dataType = "string", value = "专业名称", paramType = "form"),
             @ApiImplicitParam(name = "grade", value = "年级", dataType = "string", paramType = "form"),
@@ -243,7 +244,7 @@ public class TeachPlanController {
             @ApiImplicitParam(name = "remark", value = "备注信息", dataType = "string", paramType = "form")
     })
     public WebResult verifyTeachPlan(@RequestBody TeachPlanVerifyRequest request, HttpServletRequest httpServletRequest) {
-        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不为空");
+        MyAssert.isTrue(StrUtil.isBlank(request.getPlanId()), DefineCode.ERR0010, "计划id不为空");
         MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "计划状态不能为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
         teachService.verifyTeachPlan(request.getPlanId(), request.getVerifyStatus(), request.getRemark(), userId);
@@ -265,35 +266,49 @@ public class TeachPlanController {
     @ApiOperation(value = "分页查询计划对应的课程学生信息")
     @PostMapping(path = "/findPlanCourseAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "planId", value = "计划Id", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "studentName", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "className", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "grade", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "specialtyName", value = "学生名称", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req){
-        valideSort(req.getPage(), req.getSize());
-//        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
-//        String key = PLAN_COURSE_STUDENT_STUDY.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
-        String key = "";
-        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), key, PageRequest.of(req.getPage(), req.getSize())));
+        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+        PageRequest request = PageRequest.of(req.getPage(), req.getSize());
+        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), request));
     }
 
     @UserLoginToken
     @ApiOperation(value = "分页查询计划课程的在线学生学习成绩信息")
     @PostMapping(path = "/findPlanCourseScoreAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "studentName", value = "学生名称", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "className", value = "学生名称", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "grade", value = "学生名称", dataType = "string", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "specialtyName", value = "学生名称", dataType = "string", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "studentName", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "className", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "grade", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "specialtyName", value = "学生名称", dataType = "string", paramType = "query"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
     public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req){
+        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+        PageRequest request = PageRequest.of(req.getPage(), req.getSize());
+        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), request));
+    }
+
+    private boolean checkTeachSearch(TeachPlanCourseFindAllPageRequest req){
         valideSort(req.getPage(), req.getSize());
-//        MyAssert.isNull(req.getPlanId(), DefineCode.ERR0010, "计划Id不能为空");
-//        String key = PLAN_COURSE_STUDENT_SCORE.concat(req.getPlanId()).concat("&").concat(String.valueOf(req.getPage())).concat("&").concat(String.valueOf(req.getSize()));
-        String key = "";
-        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), key, PageRequest.of(req.getPage(), req.getSize())));
+        if (StrUtil.isNotBlank(req.getClassName())){
+            return true;
+        }
+        if (StrUtil.isNotBlank(req.getStudentName())){
+            return true;
+        }
+        //必须是年级和专业唯一才能确定对应的计划
+        if (StrUtil.isNotBlank(req.getGrade()) && StrUtil.isNotBlank(req.getSpecialtyName())){
+            return true;
+        }
+        return false;
     }
 //
 //    @UserLoginToken

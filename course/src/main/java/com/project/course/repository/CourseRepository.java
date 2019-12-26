@@ -23,13 +23,13 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
 //    public Course findByCourseId(String courseId);
 
-    /**
-     * 分页查询所有有效课程
-     *
+//    /**
+//     * 分页查询所有有效课程
+//     *
 //     * @param isValidated
-     * @param pageable
-     * @return
-     */
+//     * @param pageable
+//     * @return
+//     */
 //    @Transactional(readOnly = true)
 //    Page<ICourseListDto> findByIsValidated(String isValidated, Pageable pageable);
 
@@ -111,4 +111,18 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Transactional(readOnly = true)
     List<Course> findAllByOrderByCreateTimeDesc();
+
+//    @Query(value = "select " +
+//            " c.courseId as courseId,c.courseName as courseName,c.courseNumber as courseNumber, " +
+//            " c.courseDescribe as courseDescribe,c.alias as alias,c.topPicSrc as topPicSrc, " +
+//            " c.learningTime as learningTime, c.videoTimeNum as videoTimeNum, " +
+//            " c.videoPercentage as videoPercentage, c.jobsPercentage as jobsPercentage, " +
+//            " c.courseType as courseType, c.createUser as createUser, c.updateUser as updateUser, " +
+//            " c.createTime as createTime, c.updateTime as updateTime, c.isValidated as isValidated, c.centerAreaId as centerAreaId " +
+//            " from Course as c where c.isValidated = '0' and c.courseNumber in " +
+//            " (select courseId where TeachPlanCourse where isValidated = '0' and planId in " +
+//            " (select planId where isValidated = '0' and classId = ?1)) ")
+//    Page<Course> findAllByClassId(String classId, Pageable pageable);
+
+    List<Course> findAllByIsValidatedEqualsAndCourseNumberIn(String isValidated, List<String> courseNumberIds);
 }

@@ -14,6 +14,7 @@ import com.project.teachplan.repository.verify.TeachPlanVerifyRepository;
 import com.project.teachplan.vo.CourseTeacherVo;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,5 +142,9 @@ public class TeachPlanCourseService {
     public void deleteTeachCourseByCourseNumber(String courseNumber) {
         teachPlanCourseVerifyRepository.deleteAllByCourseId(courseNumber);
         teachPlanCourseRepository.deleteAllByCourseId(courseNumber);
+    }
+
+    public List<String> findAllByClassId(String classId, Pageable pageable){
+        return teachPlanCourseRepository.findAllByClassId(classId, pageable).getContent();
     }
 }

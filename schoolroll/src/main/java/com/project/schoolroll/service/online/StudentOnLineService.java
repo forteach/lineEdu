@@ -336,4 +336,8 @@ public class StudentOnLineService {
     public Optional<StudentOnLine> findById(String id) {
         return studentOnLineRepository.findById(id);
     }
+
+    public StudentOnLine findStudentById(String studentId){
+        return findById(studentId).orElseGet(StudentOnLine::new);
+    }
 }
