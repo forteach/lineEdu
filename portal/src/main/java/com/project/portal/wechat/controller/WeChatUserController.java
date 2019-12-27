@@ -140,12 +140,24 @@ public class WeChatUserController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "微信端查询学生自己详细信息")
+    @ApiOperation(value = "微信端查询学生自己个人详细信息")
     @GetMapping(path = "/myInfo")
     public WebResult myInfo(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         String studentId = tokenService.getStudentId(token);
         return WebResult.okResult(studentOnLineService.findStudentById(studentId));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "微信端查询学生自己学习总情况")
+    @GetMapping(path = "/myCourseAllStudy")
+    public WebResult myCourseAllStudy(HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        String studentId = tokenService.getStudentId(token);
+        String classId = tokenService.getClassId(token);
+        List<String> courseIds = teachPlanCourseService.findAllByClassId(classId);
+        List<String> offlineIds = teachPlanCourseService.findAllByClassIdAndType(classId, "2");
+        return WebResult.okResult(courseService.findCourseAllStudyByStudentId(studentId, courseIds, offlineIds));
     }
 
     /**

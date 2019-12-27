@@ -39,15 +39,17 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Transactional(readOnly = true)
     Page<ICourseListDto> findAllByCourseType(Integer courseType, Pageable pageable);
 
-    /**
-     * 分页查询我的课程科目
-     *
+    boolean existsAllByCourseName(String courseName);
+
+//    /**
+//     * 分页查询我的课程科目
+//     *
 //     * @param cUser
-     * @param pageable
-     * @return
-     */
-    @Transactional(readOnly = true)
-    Page<ICourseListDto> findByCreateUserOrderByCreateTimeDesc(String cUser, Pageable pageable);
+//     * @param pageable
+//     * @return
+//     */
+//    @Transactional(readOnly = true)
+//    Page<ICourseListDto> findByCreateUserOrderByCreateTimeDesc(String cUser, Pageable pageable);
 
     @Transactional(readOnly = true)
     Page<ICourseListDto> findByOrderByCreateTimeDesc(Pageable pageable);
@@ -105,6 +107,8 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Transactional(readOnly = true)
     List<ICourseDto> findAllByIsValidatedEqualsAndCourseNumberAndCourseTypeInOrderByCreateTimeDesc(String isValidated, String courseNumber, List<Integer> courseTypes);
+
+//    List<Course> findAllByIsValidatedEqualsAndCourseNumberInAndCourseTypeIn(String isValidated, List<String> courseNumbers, List<Integer> courseTypes);
 
 //    @Transactional(readOnly = true)
 //    List<Course> findAllByCreateUserOrderByCreateTimeDesc(String cUser);

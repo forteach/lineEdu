@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, String> {
 
@@ -73,4 +74,28 @@ public interface StudentOnLineRepository extends JpaRepository<StudentOnLine, St
             " where s.isValidated = ?1 order by s.classId, s.createTime desc ")
     @Transactional(readOnly = true)
     List<IStudentOnLineDto> findAllIsValidatedDto(String isValidated);
+
+    @Query(value = " select " +
+            " s.studentId as studentId, " +
+            " s.stuId as stuId, " +
+            " s.studentName as studentName," +
+            " s.gender as gender," +
+            " s.stuIDCard as stuIDCard," +
+            " s.stuPhone as stuPhone," +
+            " s.classId as classId," +
+            " s.className as className," +
+            " s.enrollmentDate as enrollmentDate," +
+            " s.nation as nation, " +
+            " s.learningModality as learningModality, " +
+            " s.importStatus as importStatus, " +
+            " s.centerAreaId as centerAreaId," +
+            " s.grade as grade," +
+            " s.specialtyName as specialtyName, " +
+            " lc.centerName as centerName," +
+            " s.createTime as createTime, " +
+            " s.isValidated as isValidated " +
+            " from StudentOnLine as s " +
+            " left join LearnCenter as lc on lc.centerId = s.centerAreaId  where s.studentId = ?1")
+    @Transactional(readOnly = true)
+    IStudentOnLineDto findByStudentId(String studentId);
 }

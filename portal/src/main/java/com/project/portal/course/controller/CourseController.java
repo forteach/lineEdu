@@ -283,7 +283,7 @@ public class CourseController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findCourseStudyPage(@RequestBody CourseStudyFindPage req, HttpServletRequest request) {
+    public WebResult findCourseStudyPage(@RequestBody CourseStudyFindPage req) {
         valideSort(req.getPage(), req.getSize());
         MyAssert.isNull(req.getCourseId(), DefineCode.ERR0010, "课程Id不是空");
         return WebResult.okResult(courseService.findCourseStudyPageAll(req.getCourseId(), req.getStudentId(),

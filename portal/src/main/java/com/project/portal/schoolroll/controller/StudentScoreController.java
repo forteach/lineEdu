@@ -134,19 +134,19 @@ public class StudentScoreController {
     public WebResult exportTemplate(@PathVariable String courseName, HttpServletRequest request, HttpServletResponse response) {
         MyAssert.isTrue(StrUtil.isBlank(courseName), DefineCode.ERR0010, "课程名称不能为空");
         //设置导入数据模板
-        List<List<String>> lists = CollUtil.toList(CollUtil.newArrayList("姓名", "学号", courseName));
+        List<List<String>> lists = CollUtil.toList(CollUtil.newArrayList("姓名", "身份证号码", courseName));
         MyExcleUtil.getExcel(response, request, lists, courseName + "成绩导入模板.xlsx");
         return WebResult.okResult();
     }
 
 
     @PassToken
-    @ApiOperation(value = "学生导入课程成绩")
+    @ApiOperation(value = "导入学生线下课程成绩")
     @PostMapping(path = "/importCourseScore")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "courseId", value = "课程Id", required = true, paramType = "form", dataType = "string"),
             @ApiImplicitParam(name = "courseName", value = "课程名称", required = true, paramType = "form", dataType = "string"),
-            @ApiImplicitParam(name = "classId", value = "班级id", required = true, paramType = "form", dataType = "string"),
+//            @ApiImplicitParam(name = "classId", value = "班级id", required = true, paramType = "form", dataType = "string"),
             @ApiImplicitParam(name = "token", value = "token", required = true, paramType = "form", dataType = "string")
     })
     public WebResult importCourseScore(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
@@ -158,7 +158,7 @@ public class StudentScoreController {
         MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程Id不为空");
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0010, "token is null");
         MyAssert.isTrue(StrUtil.isBlank(courseName), DefineCode.ERR0010, "课程名称不能为空");
-        MyAssert.isTrue(StrUtil.isBlank(classId), DefineCode.ERR0010, "班级Id不能为空");
+//        MyAssert.isTrue(StrUtil.isBlank(classId), DefineCode.ERR0010, "班级Id不能为空");
         String type = FileUtil.extName(file.getOriginalFilename());
         if (StrUtil.isNotBlank(type) &&
                 "xlsx".equals(type) || "xls".equals(type)) {
@@ -169,7 +169,7 @@ public class StudentScoreController {
             studentScoreService.checkoutKey(key);
             String userId = tokenService.getUserId(token);
             try {
-                studentScoreService.importScore(file.getInputStream(), key, courseId, courseName, centerId, userId, classId);
+                studentScoreService.importScore(file.getInputStream(), key, courseId, courseName, userId);
                 return WebResult.okResult();
             } catch (IOException e) {
                 studentScoreService.deleteKey(key);

@@ -9,6 +9,8 @@ package com.project.teachplan.repository.dto;
  */
 public interface IPlanStatusDto {
     public String getPlanId();
+    /** 计划完成状态 0 完成 1 未完成/进行中*/
     public Integer getStatus();
+    /** */
     public Integer getCountStatus();
 }

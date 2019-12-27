@@ -54,6 +54,12 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
     @Query(value = "update TeachPlanCourse set isValidated = ?1 where planId = ?2")
     int updateIsValidatedByPlanId(String isValidated, String planId);
 
-    @Query(value = "select courseId from TeachPlanCourse where isValidated = '0' and planId in (select planId from TeachPlan where isValidated = '0' and classId =?1)")
-    public Page<String> findAllByClassId(String classId, Pageable pageable);
+    @Query(value = "select distinct courseId from TeachPlanCourse where isValidated = '0' and planId in (select planId from TeachPlan where isValidated = '0' and classId =?1)")
+    Page<String> findAllByClassId(String classId, Pageable pageable);
+
+    @Query(value = "select distinct courseId from TeachPlanCourse where isValidated = '0' and planId in (select planId from TeachPlan where isValidated = '0' and classId =?1)")
+    List<String> findAllByClassId(String classId);
+
+    @Query(value = "select distinct courseId from TeachPlanCourse where isValidated = '0' and type  = ?1 and planId in (select planId from TeachPlan where isValidated = '0' and classId = ?2)")
+    List<String> findAllByTypeAndClassId(String type, String classId);
 }

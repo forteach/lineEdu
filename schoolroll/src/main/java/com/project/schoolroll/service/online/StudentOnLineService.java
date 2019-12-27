@@ -180,12 +180,12 @@ public class StudentOnLineService {
         reader.addHeaderAlias(educationalSystem.getName(), educationalSystem.name());
     }
 
-    /**
-     * 统计计算班级有效的学生人数
-     */
-    public int countByClassId(String classId) {
-        return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
-    }
+//    /**
+//     * 统计计算班级有效的学生人数
+//     */
+//    public int countByClassId(String classId) {
+//        return studentOnLineRepository.countAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
+//    }
 
     /**
      * 分页查询有效的全部学生信息
@@ -210,6 +210,7 @@ public class StudentOnLineService {
                 " s.center_area_id as center_area_id, " +
                 " lc.center_name as center_name, " +
                 " s.c_time as c_time, " +
+                " s.stu_id as stu_id, " +
                 " s.specialty_name as specialty_name, " +
                 " s.grade as grade, " +
                 " s.educational_system as educational_system, " +
@@ -325,19 +326,19 @@ public class StudentOnLineService {
         );
     }
 
-    public List<StudentOnLine> findAllByClassId(String classId){
-        return studentOnLineRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
-    }
-
-    public Page<StudentOnLine> findAllPageByClassId(String classId, Pageable pageable){
-        return studentOnLineRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId, pageable);
-    }
+//    public List<StudentOnLine> findAllByClassId(String classId){
+//        return studentOnLineRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId);
+//    }
+//
+//    public Page<StudentOnLine> findAllPageByClassId(String classId, Pageable pageable){
+//        return studentOnLineRepository.findAllByIsValidatedEqualsAndClassId(TAKE_EFFECT_OPEN, classId, pageable);
+//    }
 
     public Optional<StudentOnLine> findById(String id) {
         return studentOnLineRepository.findById(id);
     }
 
-    public StudentOnLine findStudentById(String studentId){
-        return findById(studentId).orElseGet(StudentOnLine::new);
+    public IStudentOnLineDto findStudentById(String studentId){
+        return studentOnLineRepository.findByStudentId(studentId);
     }
 }

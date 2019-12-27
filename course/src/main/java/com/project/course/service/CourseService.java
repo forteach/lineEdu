@@ -7,6 +7,7 @@ import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
+import com.project.course.web.vo.CourseAllStudyVo;
 import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
 import org.springframework.data.domain.Page;
@@ -73,6 +74,8 @@ public interface CourseService {
     Page<ICourseStudyDto> findAllByStudentId(String studentId, Pageable pageable);
 
     List<Course> findAllByCourseNumberIds(List<String> courseNumberIds);
+
+    CourseAllStudyVo findCourseAllStudyByStudentId(String studentId, List<String> courseIds, List<String> offlineIds);
 
 //    void updatePublish(String courseId, String userId);
 }

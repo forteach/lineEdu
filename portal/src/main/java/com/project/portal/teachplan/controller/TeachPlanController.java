@@ -273,10 +273,16 @@ public class TeachPlanController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req){
-        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+    public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest){
+//        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+        checkTeachSearch(req);
         PageRequest request = PageRequest.of(req.getPage(), req.getSize());
-        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), request));
+        String token = httpServletRequest.getHeader("token");
+        if (tokenService.isAdmin(token)) {
+            return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), "", request));
+        }
+        String centerId = tokenService.getCenterAreaId(token);
+        return WebResult.okResult(teachService.findAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), centerId, request));
     }
 
     @UserLoginToken
@@ -290,14 +296,47 @@ public class TeachPlanController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req){
-        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+    public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest){
+//        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+        checkTeachSearch(req);
         PageRequest request = PageRequest.of(req.getPage(), req.getSize());
-        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), request));
+        String token = httpServletRequest.getHeader("token");
+        if(tokenService.isAdmin(token)){
+            return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), "", request));
+        }
+        String centerId = tokenService.getCenterAreaId(token);
+        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), centerId, request));
+    }
+
+    @UserLoginToken
+    @ApiOperation(value = "分页查询计划课程的在线学生学习成绩信息")
+    @PostMapping(path = "/importPlanCourseScoreAllPage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "studentName", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "className", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "grade", value = "学生名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "specialtyName", value = "学生名称", dataType = "string", paramType = "query")
+    })
+    public WebResult importAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest){
+        MyAssert.isFalse(checkTeach(req), DefineCode.ERR0010, "专业和年级必填");
+        String token = httpServletRequest.getHeader("token");
+        PageRequest of = PageRequest.of(0, 10000);
+        if(tokenService.isAdmin(token)){
+            //String studentName, String isValidated, String centerAreaId, String grade, String specialtyName, String className
+//            studentOnLineService.findStudentOnLineDto(of, req.getStudentName(), req.get)
+//            return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), ""));
+        }
+        return WebResult.okResult();
+//        String centerId = tokenService.getCenterAreaId(token);
+//        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), centerId));
     }
 
     private boolean checkTeachSearch(TeachPlanCourseFindAllPageRequest req){
         valideSort(req.getPage(), req.getSize());
+        return checkTeach(req);
+    }
+
+    private boolean checkTeach(TeachPlanCourseFindAllPageRequest req){
         if (StrUtil.isNotBlank(req.getClassName())){
             return true;
         }

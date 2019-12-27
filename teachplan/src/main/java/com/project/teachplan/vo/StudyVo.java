@@ -29,6 +29,11 @@ public class StudyVo implements Serializable {
     public StudyVo() {
     }
 
+    public StudyVo(String courseId, String courseName) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+    }
+
     public StudyVo(String courseId, String courseName, Integer onLineTime, Integer onLineTimeSum, Integer answerSum, Integer correctSum) {
         this.courseId = courseId;
         this.courseName = courseName;

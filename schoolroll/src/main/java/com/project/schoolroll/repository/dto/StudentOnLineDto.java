@@ -102,6 +102,12 @@ public class StudentOnLineDto implements Serializable {
     @Column(name = "c_time", length = 32)
     public String createTime;
 
+    /**
+     * 由于原学号要改为非必填字段，则用身份证号替换学号信息，新建字段为学号信息
+     */
+    @Column(name = "stu_id", columnDefinition = "VARCHAR(32) COMMENT '学号ID信息'")
+    private String stuId;
+
     /** 专业简称*/
     @Column(name = "specialty_name", columnDefinition = "VARCHAR(32) COMMENT '专业简称'")
     private String specialtyName;

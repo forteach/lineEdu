@@ -4,10 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.project.base.common.keyword.DefineCode;
-import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.UpdateUtil;
 import com.project.course.domain.Course;
@@ -23,13 +23,13 @@ import com.project.course.repository.record.CourseRecordsRepository;
 import com.project.course.service.CourseService;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
+import com.project.course.web.vo.CourseAllStudyVo;
 import com.project.course.web.vo.CourseTeacherVo;
 import com.project.course.web.vo.CourseVo;
 import com.project.mongodb.domain.QuestionsLists;
 import com.project.mongodb.domain.base.QuestionAnswer;
 import com.project.mongodb.repository.QuestionListsRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +41,8 @@ import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
 
-import static com.project.base.common.keyword.Dic.*;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_CLOSE;
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -88,6 +89,8 @@ public class CourseServiceImpl implements CourseService {
         //1、保存课程基本信息
         if (StrUtil.isBlank(course.getCourseId())) {
             MyAssert.isNull(course.getCourseType(), DefineCode.ERR0010, "课程类型不为空");
+            MyAssert.isNull(course.getCourseName(), DefineCode.ERR0010, "课程名称不能为空");
+            MyAssert.isTrue(courseRepository.existsAllByCourseName(course.getCourseName()), DefineCode.ERR0010, "已经存在同名的课程");
 //            MyAssert.isNull(course.getAlias(), DefineCode.ERR0010, "别名不为空");
             course.setCourseId(IdUtil.fastSimpleUUID());
             //设置默认状态，初始课程状态无效
@@ -95,6 +98,9 @@ public class CourseServiceImpl implements CourseService {
             return courseRepository.save(course).getCourseId();
         } else {
             courseRepository.findById(course.getCourseId()).ifPresent(c -> {
+                if (!c.getCourseName().equals(course.getCourseName())) {
+                    MyAssert.isTrue(courseRepository.existsAllByCourseName(course.getCourseName()), DefineCode.ERR0010, "已经存在同名的课程");
+                }
                 UpdateUtil.copyProperties(course, c);
                 c.setUpdateUser(course.getCreateUser());
                 c.setIsValidated(TAKE_EFFECT_CLOSE);
@@ -262,7 +268,7 @@ public class CourseServiceImpl implements CourseService {
                 chapterId = dto.getChapterId();
                 chapterName = dto.getChapterName();
             }
-            vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getAlias(),
+            vos.add(new CourseVo(iCourseDto.getCourseId(), iCourseDto.getCourseName(), iCourseDto.getCourseNumber(), iCourseDto.getCourseType(), iCourseDto.getAlias(),
                     iCourseDto.getTopPicSrc(), iCourseDto.getCourseDescribe(), iCourseDto.getLearningTime(), iCourseDto.getVideoPercentage(),
                     iCourseDto.getJobsPercentage(), chapterId, chapterName, status));
         }
@@ -393,6 +399,39 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Page<ICourseStudyDto> findAllByStudentId(String studentId, Pageable pageable){
         return courseStudyRepository.findAllByIsValidatedEqualsAndStudentId(studentId, pageable);
+    }
+
+    @Override
+    public CourseAllStudyVo findCourseAllStudyByStudentId(String studentId, List<String> courseIds, List<String> offlineIds){
+        if (courseIds.isEmpty()){
+            return new CourseAllStudyVo();
+        }
+        int courseCount = courseIds.size();
+        int offlineCount = offlineIds.size();
+        List<Course> list = courseRepository.findAllByIsValidatedEqualsAndCourseNumberIn(TAKE_EFFECT_OPEN, courseIds);
+        //所有课程视频总长度
+        int videoSum = list.stream().filter(Objects::nonNull).mapToInt(Course::getVideoTimeNum).sum();
+        if (0 == videoSum){
+            return CourseAllStudyVo.builder()
+                    .offlineCount(offlineCount)
+                    .mixCourseCount(courseCount-offlineCount)
+                    .courseSum(list.size())
+                    .build();
+        }
+        List<CourseStudy> courseStudyList = courseStudyRepository.findAllByIsValidatedEqualsAndStudentId(TAKE_EFFECT_OPEN, studentId);
+        //观看课程所有视频总长度
+        int onLineStudySum = courseStudyList.stream().filter(Objects::nonNull).mapToInt(CourseStudy::getOnLineTime).sum();
+        //视频观看站百分比 整数
+        int c = (int) (100 *NumberUtil.div(onLineStudySum, videoSum, 2));
+        String videoTimePercentage = String.valueOf(c).concat("%");
+        //返回对应总览信息
+        return CourseAllStudyVo.builder()
+                .courseCount(courseCount)
+                .offlineCount(offlineCount)
+                .mixCourseCount(courseCount-offlineCount)
+                .courseSum(list.size())
+                .videoTimePercentage(videoTimePercentage)
+                .build();
     }
 
 //    @Override

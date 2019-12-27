@@ -55,7 +55,7 @@ public interface StudentScoreService {
 
     void checkoutKey(String key);
 
-    void importScore(InputStream inputStream, String key, String courseId, String courseName, String centerId, String userId, String classId);
+    void importScore(InputStream inputStream, String key, String courseId, String courseName, String userId);
 
     void deleteKey(String key);
 }

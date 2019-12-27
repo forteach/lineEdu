@@ -18,9 +18,9 @@ public class TeachCourseVo extends BaseTeachCourseVo {
 
     public List<StudyVo> courses;
 
-    public TeachCourseVo(String studentId, String studentName, String stuPhone, String centerAreaId, String centerName, String planId, String planName,
-                         String startDate, String endDate, List<StudyVo> courses) {
-        super(studentId, studentName, stuPhone, centerAreaId, centerName, planId, planName, startDate, endDate);
+
+    public TeachCourseVo(String studentId, String stuId, String specialtyName, String grade, String classId, String className, String studentName, String stuPhone, String centerAreaId, String centerName, String planId, String planName, String startDate, String endDate, List<StudyVo> courses) {
+        super(studentId, stuId, specialtyName, grade, classId, className, studentName, stuPhone, centerAreaId, centerName, planId, planName, startDate, endDate);
         this.courses = courses;
     }
 }

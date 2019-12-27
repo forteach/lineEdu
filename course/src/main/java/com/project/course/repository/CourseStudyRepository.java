@@ -24,6 +24,8 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
 
     @Modifying
     void deleteAllByStudentId(String studentId);
+
+    List<CourseStudy> findAllByIsValidatedEqualsAndStudentId(String isValidated, String studentId);
     /**
      * 查询学生学习课程的状态信息
      *
@@ -134,7 +136,9 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " cs.answerSum as answerSum, " +
             " cs.correctSum as correctSum, " +
             " c.videoPercentage as videoPercentage, " +
-            " c.jobsPercentage as jobsPercentage " +
+            " c.jobsPercentage as jobsPercentage," +
+            " c.courseName as courseName, " +
+            " c.courseNumber as courseNumber " +
             " from CourseStudy AS cs left join Course as c on c.courseId = cs.courseId " +
             " where c.isValidated = '0' and cs.isValidated = '0' and cs.studentId = ?1 and cs.courseId =?2 ")
     @Transactional(readOnly = true)
@@ -142,8 +146,10 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
 
     @Query(value = "select " +
             " c.courseId as courseId, " +
-            " c.courseType as courseType," +
+            " c.courseType as courseType, " +
             " c.alias as alias," +
+            " c.topPicSrc as topPicSrc, " +
+            " c.courseName as courseName, " +
             " c.courseNumber as courseNumber," +
             " c.courseDescribe as courseDescribe, " +
             " cs.answerSum as answerSum, " +

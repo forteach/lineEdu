@@ -301,8 +301,8 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         impCoursewareAll.setCourseId(courseId);
         impCoursewareAll.setCourseName(courseName);
         impCoursewareAll.setChapterId(chapterId);
-        impCoursewareAll.setTeacherId(userId);
-        impCoursewareAll.setTeacherName(teacherName);
+//        impCoursewareAll.setTeacherId(userId);
+//        impCoursewareAll.setTeacherName(teacherName);
         impCoursewareAll.setCenterName(centerName);
         impCoursewareAll.setVideoTime(vo.getFileVideoTime());
         //保存章节资料

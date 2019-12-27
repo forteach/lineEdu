@@ -73,4 +73,8 @@ public interface IStudentOnLineDto {
     public String getCreateTime();
 
     public String getIsValidated();
+
+    public String getSpecialtyName();
+
+    public String getGrade();
 }

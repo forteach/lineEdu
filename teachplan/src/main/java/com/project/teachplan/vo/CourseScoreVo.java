@@ -18,9 +18,8 @@ public class CourseScoreVo extends BaseTeachCourseVo{
 
     public List<ScoreVo> courses;
 
-    public CourseScoreVo(String studentId, String studentName,
-                         String stuPhone, String centerAreaId, String centerName, String planId, String planName, String startDate, String endDate, List<ScoreVo> courses) {
-        super(studentId, studentName, stuPhone, centerAreaId, centerName, planId, planName, startDate, endDate);
+    public CourseScoreVo(String studentId, String stuId, String specialtyName, String grade, String classId, String className, String studentName, String stuPhone, String centerAreaId, String centerName, String planId, String planName, String startDate, String endDate, List<ScoreVo> courses) {
+        super(studentId, stuId, specialtyName, grade, classId, className, studentName, stuPhone, centerAreaId, centerName, planId, planName, startDate, endDate);
         this.courses = courses;
     }
 }

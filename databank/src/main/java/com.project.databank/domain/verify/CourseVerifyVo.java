@@ -45,11 +45,11 @@ public class CourseVerifyVo extends Entitys implements Serializable {
     @Column(name = "course_name", columnDefinition = "VARCHAR(40) COMMENT '科目名称'")
     private String courseName;
 
-    @Column(name = "teacher_id", columnDefinition = "VARCHAR(32) COMMENT '教师id'")
-    private String teacherId;
+//    @Column(name = "teacher_id", columnDefinition = "VARCHAR(32) COMMENT '教师id'")
+//    private String teacherId;
 
-    @Column(name = "teacher_name", columnDefinition = "VARCHAR(32) COMMENT '教师名称'")
-    private String teacherName;
+//    @Column(name = "teacher_name", columnDefinition = "VARCHAR(32) COMMENT '教师名称'")
+//    private String teacherName;
 
     @Column(name = "centerName", columnDefinition = "VARCHAR(64) COMMENT '学习中心名称'")
     private String centerName;

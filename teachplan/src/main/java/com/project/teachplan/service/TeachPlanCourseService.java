@@ -22,7 +22,8 @@ import java.util.*;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class TeachPlanCourseService {
@@ -146,5 +147,13 @@ public class TeachPlanCourseService {
 
     public List<String> findAllByClassId(String classId, Pageable pageable){
         return teachPlanCourseRepository.findAllByClassId(classId, pageable).getContent();
+    }
+
+    public List<String> findAllByClassId(String classId){
+        return teachPlanCourseRepository.findAllByClassId(classId);
+    }
+
+    public List<String> findAllByClassIdAndType(String classId, String type){
+        return teachPlanCourseRepository.findAllByTypeAndClassId(type, classId);
     }
 }

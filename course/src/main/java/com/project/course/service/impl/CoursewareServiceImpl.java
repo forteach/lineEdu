@@ -73,8 +73,8 @@ public class CoursewareServiceImpl implements CoursewareService {
         CourseVerifyVo courseVerifyVo = new CourseVerifyVo();
         BeanUtil.copyProperties(importantCourseware, courseVerifyVo);
         courseVerifyVo.setSubmitType("添加课件");
-        courseVerifyVo.setTeacherId(obj.getTeacherId());
-        courseVerifyVo.setTeacherName(obj.getTeacherName());
+//        courseVerifyVo.setTeacherId(obj.getTeacherId());
+//        courseVerifyVo.setTeacherName(obj.getTeacherName());
         courseVerifyVo.setCourseName(obj.getCourseName());
         courseVerifyVo.setCourseId(obj.getCourseId());
         courseVerifyVo.setCenterName(obj.getCenterName());

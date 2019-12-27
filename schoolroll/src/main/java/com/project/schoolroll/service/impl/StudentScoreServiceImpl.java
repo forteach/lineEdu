@@ -252,8 +252,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
     }
 
     @Override
-    public void importScore(InputStream inputStream, String key, String courseId, String courseName,
-                            String centerId, String userId, String classId){
+    public void importScore(InputStream inputStream, String key, String courseId, String courseName, String userId){
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         //设置导入
         setHeaderAlias(reader, courseName);
@@ -266,7 +265,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         //设置key键
         setKey(key);
 
-        // 复制数据
+        // 构造数据
         List<StudentScore> collect = list.stream().filter(Objects::nonNull)
                 .map(v -> setOffLineScore(v.getStudentId(), courseId, v.getScore(), userId, key))
                 .collect(toList());
@@ -294,15 +293,12 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
     private void checkScore(List<ScoreVo> list){
         list.forEach(v -> {
             MyAssert.isTrue(StrUtil.isBlank(v.getScore()), DefineCode.ERR0010, "成绩信息不能为空");
-            MyAssert.isTrue(StrUtil.isBlank(v.getStudentId()), DefineCode.ERR0010, "学生Id信息不能为空");
+            MyAssert.isTrue(StrUtil.isBlank(v.getStudentId()), DefineCode.ERR0010, "身份证号码不能为空");
         });
-//        String studentId = list.get(0).getStudentId();
-//        Optional<StudentOnLine> studentOnLine = studentOnLineService.findById(studentId);
-//        studentOnLine.get().getClassId();
     }
 
     private void setHeaderAlias(@NonNull ExcelReader reader, String courseName){
-        reader.addHeaderAlias("学号", "studentId");
+        reader.addHeaderAlias("身份证号码", "studentId");
         reader.addHeaderAlias(courseName, "score");
     }
 }

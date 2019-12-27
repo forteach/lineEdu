@@ -6,16 +6,16 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
-import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
+import com.project.course.domain.Course;
 import com.project.course.domain.CourseStudy;
 import com.project.course.domain.OnLineCourseDic;
 import com.project.course.repository.CourseStudyRepository;
+import com.project.course.repository.dto.ICourseStudyDto;
+import com.project.course.service.CourseService;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.schoolroll.domain.StudentScore;
-import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.domain.online.TbClasses;
 import com.project.schoolroll.repository.dto.StudentOnLineDto;
 import com.project.schoolroll.service.StudentScoreService;
@@ -46,7 +46,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -75,14 +74,16 @@ public class TeachService {
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
     private final StudentScoreService studentScoreService;
     private final TeachPlanFileService teachPlanFileService;
+    private final CourseService courseService;
 //    private final TeacherService teacherService;
 //    private final TeachPlanClassRepository teachPlanClassRepository;
 //    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
 
     @Autowired
     public TeachService(
-            StudentOnLineService studentOnLineService,
-            TeachPlanRepository teachPlanRepository, TeachPlanFileService teachPlanFileService,
+            StudentOnLineService studentOnLineService, CourseService courseService,
+            TeachPlanRepository teachPlanRepository,
+            TeachPlanFileService teachPlanFileService,
             TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
 //            TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
             StudentScoreService studentScoreService,
@@ -94,6 +95,7 @@ public class TeachService {
         this.studentOnLineService = studentOnLineService;
         this.teachPlanRepository = teachPlanRepository;
         this.tbClassService = tbClassService;
+        this.courseService = courseService;
         this.teachPlanFileService = teachPlanFileService;
 //        this.teacherService = teacherService;
 //        this.teachPlanClassRepository = teachPlanClassRepository;
@@ -551,8 +553,8 @@ public class TeachService {
 //    }
 
     @SuppressWarnings(value = "all")
-    public Page<TeachCourseVo> findAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, PageRequest request) {
-        Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, "", grade, specialtyName, className);
+    public Page<TeachCourseVo> findAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String centerAreaId, PageRequest request) {
+        Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, centerAreaId, grade, specialtyName, className);
         List<StudentOnLineDto> list = page.getContent();
         if (list.isEmpty()){
             return new PageImpl<>(new ArrayList<>());
@@ -561,15 +563,18 @@ public class TeachService {
         Optional<TeachCenterDto> optional = teachPlanRepository.findAllByClassId(classId);
         MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
         TeachCenterDto teachCenterDto = optional.get();
-        List<TeachCourseVo> courseVoList = list.stream().map(d -> new TeachCourseVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+        List<TeachCourseVo> courseVoList = list.stream().map(d -> new TeachCourseVo(d.getStudentId(),
+                d.getStuId(), d.getSpecialtyName(), d.getGrade(), d.getClassId(),
+                d.getClassName(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(),
+                teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
                 toListStudy(d.getStudentId(), teachCenterDto.getPlanId())))
                 .collect(toList());
         return new PageImpl<>(courseVoList, request, page.getTotalElements());
     }
 
-    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, PageRequest request) {
-        Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, "", grade, specialtyName, className);
+    public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String centerAreaId, PageRequest request) {
+        Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, centerAreaId, grade, specialtyName, className);
         List<StudentOnLineDto> list = page.getContent();
         if (list.isEmpty()){
             return new PageImpl<>(new ArrayList<>());
@@ -578,8 +583,11 @@ public class TeachService {
         Optional<TeachCenterDto> optional = teachPlanRepository.findAllByClassId(classId);
         MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
         TeachCenterDto teachCenterDto = optional.get();
-        List<CourseScoreVo> courseScoreVoList = list.stream().map(d -> new CourseScoreVo(d.getStudentId(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+        List<CourseScoreVo> courseScoreVoList = list.stream().map(d -> new CourseScoreVo(d.getStudentId(),
+                d.getStuId(), d.getSpecialtyName(), d.getGrade(), d.getClassId(),
+                d.getClassName(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(),
+                teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
                 toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
                 .collect(toList());
         return new PageImpl<>(courseScoreVoList, request, page.getTotalElements());
@@ -635,18 +643,30 @@ public class TeachService {
     private List<StudyVo> toListStudy(String studentId, String planId) {
         List<StudyVo> list = CollUtil.newArrayList();
         teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(planId)
-                .forEach(s -> courseStudyRepository.findStudyDto(studentId, s.getCourseId())
-                        .ifPresent(d -> list.add(new StudyVo(d.getCourseId(), d.getCourseName(),
-                                            d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(),
-                                            d.getCorrectSum()))));
+                .forEach(s -> {
+                    Optional<ICourseStudyDto> optional = courseStudyRepository.findStudyDto(studentId, s.getCourseId());
+                    if (optional.isPresent()) {
+                        ICourseStudyDto d = optional.get();
+                        list.add(new StudyVo(d.getCourseId(), d.getCourseName(), d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum()));
+                    }else {
+                        //没有学习直接返回对应的课程
+                        if(StrUtil.isNotBlank(s.getCourseId())) {
+                            Course course = courseService.getById(s.getCourseId());
+                            list.add(new StudyVo(course.getCourseId(), course.getCourseName()));
+                        }
+                    }
+                });
         return list;
     }
 
     private List<ScoreVo> toListScore(String studentId, String planId) {
         List<ScoreVo> list = CollUtil.newArrayList();
         teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(planId)
-                .forEach(s -> courseStudyRepository.findStudyDto(studentId, s.getCourseId())
-                        .ifPresent(d -> {
+                .forEach(s -> {
+                    Optional<ICourseStudyDto> optional = courseStudyRepository.findStudyDto(studentId, s.getCourseId());
+                    if (optional.isPresent()) {
+                        ICourseStudyDto d = optional.get();
+//                        .ifPresent(d -> {
                                 //线上成绩 (学习时长/课程总时长) * 视频占比 + (习题回答正确数量/总习题数量) * 练习占比
                                 BigDecimal videoScore = new BigDecimal("0");
                                 BigDecimal jobsScore = new BigDecimal("0");
@@ -660,7 +680,15 @@ public class TeachService {
                                 }
                                 String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
                                 list.add(new ScoreVo(d.getCourseId(), d.getCourseName(), score));
-                            }));
+//                            });
+                    }else {
+                        //不存在学习成绩设置为 0
+                        if (StrUtil.isNotBlank(s.getCourseId())) {
+                            Course course = courseService.getById(s.getCourseId());
+                            list.add(new ScoreVo(course.getCourseId(), course.getCourseName(), "0"));
+                        }
+                    }
+                });
         return list;
     }
 

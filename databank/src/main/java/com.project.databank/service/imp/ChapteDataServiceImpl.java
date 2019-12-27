@@ -362,8 +362,8 @@ public class ChapteDataServiceImpl implements ChapteDataService {
             verifyVo.setIsValidated(TAKE_EFFECT_OPEN);
             verifyVo.setSubmitType("添加章节资料");
             verifyVo.setCenterName(centerName);
-            verifyVo.setTeacherId(createUser);
-            verifyVo.setTeacherName(teacherName);
+//            verifyVo.setTeacherId(createUser);
+//            verifyVo.setTeacherName(teacherName);
             verifyVo.setCreateUser(createUser);
             verifyVo.setCourseType(CHAPTER_DATE.getValue());
             verifyVo.setCourseName(courseName);

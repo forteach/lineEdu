@@ -58,5 +58,5 @@ public class Course extends Entitys {
     private String jobsPercentage;
 
     @Column(name = "course_type", columnDefinition = "TINYINT(3) DEFAULT 1 COMMENT '课程类型 1 线上 2，线下 3 混合'")
-    private int courseType;
+    private Integer courseType;
 }

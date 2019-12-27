@@ -1,6 +1,8 @@
 package com.project.course.web.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -12,35 +14,35 @@ import java.io.Serializable;
  * @Description:
  */
 @Data
+@NoArgsConstructor
 public class CourseVo implements Serializable {
-    public String courseId;
-    public String courseName;
-    public String courseNumber;
-    public String alias;
-    public String topPicSrc;
-    public String courseDescribe;
-    public String learningTime;
-    public String videoPercentage;
-    public String jobsPercentage;
+    private String courseId;
+    private String courseName;
+    private String courseNumber;
+    private Integer courseType;
+    private String alias;
+    private String topPicSrc;
+    private String courseDescribe;
+    private String learningTime;
+    private String videoPercentage;
+    private String jobsPercentage;
 
 //    public String createUser;
 //    public String createUserName;
 
-    public String chapterId;
-    public String chapterName;
+    private String chapterId;
+    private String chapterName;
     /**是否学完 0完成 1 进行中*/
-    public String finish;
+    private String finish;
 
-    public CourseVo() {
-    }
-
-    public CourseVo(String courseId, String courseName, String courseNumber, String alias, String topPicSrc, String courseDescribe,
+    public CourseVo(String courseId, String courseName, String courseNumber, Integer courseType, String alias, String topPicSrc, String courseDescribe,
                     String learningTime, String videoPercentage, String jobsPercentage,
 //                    String createUser, String createUserName,
                     String chapterId, String chapterName, String finish) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseNumber = courseNumber;
+        this.courseType = courseType;
         this.alias = alias;
         this.topPicSrc = topPicSrc;
         this.courseDescribe = courseDescribe;

@@ -96,8 +96,8 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
                         CourseVerifyVo verifyVo = BeanUtil.mapToBean(map, CourseVerifyVo.class, true);
                         verifyVo.setSubmitType("添加修改习题");
                         verifyVo.setCourseType(COURSE_CHAPTER_QUESTION.getValue());
-                        verifyVo.setUpdateUser(verifyVo.getTeacherId());
-                        verifyVo.setCreateUser(verifyVo.getTeacherId());
+//                        verifyVo.setUpdateUser(verifyVo.getTeacherId());
+//                        verifyVo.setCreateUser(verifyVo.getTeacherId());
                         verifyVo.setVerifyStatus(VERIFY_STATUS_APPLY);
                         verifyVo.setDatumType(CHAPTER_QUESTION.getValue());
                         verifyVo.setFileName(map.get("choiceQstTxt"));

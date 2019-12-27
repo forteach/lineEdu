@@ -178,17 +178,27 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         //设置有效期7天
         stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
 
-        weChatUserInfoOptional.ifPresent(w -> weChatUserRepository
-                .findById(w.getStudentId())
-                .ifPresent(s -> {
-                    if (StrUtil.isNotBlank(portrait)) {
-                        weChatUser.setAvatarUrl(portrait);
-                        weChatUserRepository.save(weChatUser);
-                    }
-                    String studentKey = STUDENT_ADO.concat(weChatUser.getStudentId());
-                    stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
-                })
-        );
+        if (StrUtil.isNotBlank(portrait)){
+            weChatUserInfoOptional.ifPresent(w -> {
+                w.setAvatarUrl(portrait);
+                w.setAvatarUrl(portrait);
+                weChatUserRepository.save(w);
+                String studentKey = STUDENT_ADO.concat(w.getStudentId());
+                stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
+            });
+        }
+
+//        weChatUserInfoOptional.ifPresent(w -> weChatUserRepository
+//                .findById(w.getStudentId())
+//                .ifPresent(s -> {
+//                    if (StrUtil.isNotBlank(portrait)) {
+//                        s.setAvatarUrl(portrait);
+//                        weChatUserRepository.save(s);
+//                    }
+//                    String studentKey = STUDENT_ADO.concat(weChatUser.getStudentId());
+//                    stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
+//                })
+//        );
 
         LoginResponse loginResp = new LoginResponse();
         //获取登陆用户信息

@@ -54,8 +54,8 @@ public class ImpCoursewareAll implements Serializable {
     private String centerName;
     @JsonIgnore
     private String createUser;
-    @JsonIgnore
-    private String teacherName;
-    @JsonIgnore
-    private String teacherId;
+//    @JsonIgnore
+//    private String teacherName;
+//    @JsonIgnore
+//    private String teacherId;
 }

@@ -70,9 +70,9 @@ public class CoursewareController {
         String centerId = tokenService.getCenterAreaId(token);
         String centerAreaId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerAreaId).getCenterName();
-        String teacherName = teacherService.findById(userId).getTeacherName();
-        req.setTeacherId(userId);
-        req.setTeacherName(teacherName);
+//        String teacherName = teacherService.findById(userId).getTeacherName();
+//        req.setTeacherId(userId);
+//        req.setTeacherName(teacherName);
         req.setCreateUser(userId);
         req.setCenterName(centerName);
         coursewareService.saveFile(req, centerId);
