@@ -20,4 +20,6 @@ public interface IPlanCourseDto {
     public String getJobsPercentage();
     /** 观看视频占百分比*/
     public String getVideoPercentage();
+    /** 课程类型 1 线上 2，线下 3 混合*/
+    public Integer getCourseType();
 }

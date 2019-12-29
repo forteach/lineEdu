@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
+import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
 import com.project.mongodb.domain.UserRecord;
 import com.project.mongodb.service.UserRecordService;
@@ -13,6 +14,7 @@ import com.project.portal.teachplan.request.TeachPlanPageAllRequest;
 import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
 import com.project.portal.teachplan.request.TeachPlanVerifyRequest;
 import com.project.schoolroll.domain.online.StudentOnLine;
+import com.project.schoolroll.repository.dto.StudentOnLineDto;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
@@ -320,15 +322,19 @@ public class TeachPlanController {
     public WebResult importAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest){
         MyAssert.isFalse(checkTeach(req), DefineCode.ERR0010, "专业和年级必填");
         String token = httpServletRequest.getHeader("token");
+        String centerId = tokenService.getCenterAreaId(token);
         PageRequest of = PageRequest.of(0, 10000);
+        List<StudentOnLineDto> list;
         if(tokenService.isAdmin(token)){
-            //String studentName, String isValidated, String centerAreaId, String grade, String specialtyName, String className
-//            studentOnLineService.findStudentOnLineDto(of, req.getStudentName(), req.get)
-//            return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), ""));
+            list = studentOnLineService.findStudentOnLineDto(of, req.getStudentName(), TAKE_EFFECT_OPEN, "", req.getGrade(), req.getSpecialtyName(), req.getClassName()).getContent();
+        }else {
+            list = studentOnLineService.findStudentOnLineDto(of, req.getStudentName(), TAKE_EFFECT_OPEN, centerId, req.getGrade(), req.getSpecialtyName(), req.getClassName()).getContent();
         }
+        if (!list.isEmpty()){
+
+        }
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "不存在要导出的数据");
         return WebResult.okResult();
-//        String centerId = tokenService.getCenterAreaId(token);
-//        return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), centerId));
     }
 
     private boolean checkTeachSearch(TeachPlanCourseFindAllPageRequest req){

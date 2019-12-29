@@ -20,7 +20,7 @@ public interface ICourseStudyDto {
 
     public String getCourseDescribe();
 
-    public String getCourseType();
+    public Integer getCourseType();
 
     public String getVideoPercentage();
 

@@ -11,6 +11,8 @@ public interface StudentScoreDto {
     /** 学号*/
     public String getStudentId();
 
+    public String getCourseId();
+
     public String getStuId();
     /** 姓名*/
     public String getStudentName();
@@ -31,5 +33,6 @@ public interface StudentScoreDto {
     /** 课程类别*/
     public String getCourseType();
 
+    /** 课程类型　1.线上，2.线下,3.混合*/
     public String getType();
 }

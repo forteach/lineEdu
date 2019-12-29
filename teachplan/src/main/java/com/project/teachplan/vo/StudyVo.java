@@ -26,20 +26,25 @@ public class StudyVo implements Serializable {
 
     private Integer correctSum;
 
+    private Integer courseType;
+
     public StudyVo() {
     }
 
-    public StudyVo(String courseId, String courseName) {
+    public StudyVo(String courseId, String courseName, Integer CourseType) {
         this.courseId = courseId;
         this.courseName = courseName;
+        this.courseType = courseType;
     }
 
-    public StudyVo(String courseId, String courseName, Integer onLineTime, Integer onLineTimeSum, Integer answerSum, Integer correctSum) {
+    public StudyVo(String courseId, String courseName, Integer onLineTime, Integer onLineTimeSum,
+                   Integer answerSum, Integer correctSum, Integer courseType) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.onLineTime = onLineTime;
         this.onLineTimeSum = onLineTimeSum;
         this.answerSum = answerSum;
         this.correctSum = correctSum;
+        this.courseType = courseType;
     }
 }

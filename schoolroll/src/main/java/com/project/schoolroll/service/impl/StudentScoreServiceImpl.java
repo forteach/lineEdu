@@ -2,6 +2,7 @@ package com.project.schoolroll.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -12,8 +13,10 @@ import com.project.mysql.service.BaseMySqlService;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.schoolroll.repository.StudentScoreRepository;
+import com.project.schoolroll.repository.dto.StudentOnLineDto;
 import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.service.online.StudentOnLineService;
+import com.project.schoolroll.service.vo.CourseScoreVo;
 import com.project.schoolroll.web.vo.ScoreVo;
 import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
@@ -30,15 +33,16 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.*;
 import static java.util.stream.Collectors.toList;
@@ -196,9 +200,89 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         return list;
     }
 
+    public List<List<String>> exportScore(List<StudentOnLineDto> list){
+        //获取对应的学生成绩信息列表
+        List<CourseScoreVo> scoreVos = list.parallelStream().map(this::setScoreValue).collect(toList());
+        //获取集合元素最多值的
+        int maxSize = scoreVos.stream().filter(Objects::nonNull)
+                .map(CourseScoreVo::getCourseScore)
+                .mapToInt(List::size)
+                .max()
+                .getAsInt();
+        //转换为头部课程别表
+        List<Map<String, String>> maps = new ArrayList<>();
+        List<String> head = setHead(maps);
+        //转换头部课程列表
+        //取出对应的课程列表和成绩组合输出列表数据
+        return scoreVos.parallelStream().filter(Objects::nonNull).map(v -> setStudentScore(v, head)).collect(toList());
+    }
+    // todo
+    public List<String> setStudentScore(CourseScoreVo vo, List<String> list){
+//        List<String> strings = CollUtil.newArrayList("姓名", "身份证号", "学号", "年级", "专业","性别");
+        List<String> strings = CollUtil.newArrayList(vo.getStudentName(), vo.getStudentId(), vo.getStuId(), vo.getGrade(), vo.getSpecialtyName(), vo.getGender());
+//        strings.add("")
+        return strings;
+    }
+
+    private List<String> setHead(List<Map<String, String>> mapList) {
+        List<String> list = CollUtil.newArrayList("姓名", "身份证号", "学号", "年级", "专业","性别");
+        mapList.forEach(m -> list.add(m.get("courseName")));
+        return list;
+    }
+    public List<String> setHeadValue(List<Map<String, String>> mapList, List<String> list){
+        mapList.forEach(m -> list.add(m.get("courseName")));
+        return list;
+    }
+
+    public CourseScoreVo setScoreValue(StudentOnLineDto s){
+        String studentId = s.getStudentId();
+        //课程信息 key courseId value   score, courseName
+        List<Map<String, String>> list = new ArrayList<>(16);
+        studentScoreRepository.findAllByIsValidatedEqualsAndStudentId(TAKE_EFFECT_OPEN, studentId)
+                .forEach(d -> {
+                    Map<String, String> stringMap = new HashMap<>(3);
+                    stringMap.put("courseName", d.getCourseName());
+                    stringMap.put("score", String.valueOf(d.getCourseScore()));
+                    stringMap.put("courseId", d.getCourseId());
+                });
+        return new CourseScoreVo(s.getStudentId(), s.getStudentName(), s.getStuId(), s.getGender(), s.getGrade(), s.getSpecialtyName(), list);
+    }
+
+
+//    private static List<List<String>> convert(List<StudentGrand> StudentGrandList)
+//            throws IntrospectionException, IllegalAccessException, InvocationTargetException {//取得StudentGrand的属性，当然你也可以用list = {"id", "name", ...}
+//        Field[] declaredFields = StudentGrand.class.getDeclaredFields();
+//
+//        List<List<String>> convertedTable = new ArrayList<List<String>>();
+//
+//        //多少个属性表示多少行，遍历行
+//        for (Field field : declaredFields) {
+//            field.setAccessible(true);
+//            ArrayList<String> rowLine = new ArrayList<String>();
+//            //list<T>多少个StudentGrand实体类表示有多少列，遍历列
+//            for (int i = 0, size = StudentGrandList.size(); i < size; i++) {
+//                //每一行的第一列对应StudentGrand字段名
+//                //所以新table的第一列要设置为字段名
+//                if(i == 0){
+//                    rowLine.add(field.getName());
+//                }
+//                //新table从第二列开始，某一列的某个值对应旧table第一列的某个字段
+//                else{
+//                    StudentGrand StudentGrand = StudentGrandList.get(i);
+//                    String val = (String) field.get(StudentGrand);//grand为int会报错
+//                    System.out.println(val);
+//                    rowLine.add(val);
+//                }
+//            }
+//            convertedTable.add(rowLine);
+//        }
+//        return convertedTable;
+//    }
+
     private List<List<String>> findStudentScoreLists(String centerId) {
         return studentScoreRepository.findAllByIsValidatedEqualsAndCenterAreaId(centerId)
-                .stream()
+                .parallelStream()
+                .filter(Objects::nonNull)
                 .map(o -> CollUtil.newArrayList(o.getStuId(), o.getStudentId(), o.getStudentName(), o.getGender(), o.getCourseName(), o.getSchoolYear(), o.getTerm(),
                         String.valueOf(o.getCourseScore()), o.getOnLineScore(), o.getOffLineScore(),
                         getType(o.getType()), o.getCourseType()))

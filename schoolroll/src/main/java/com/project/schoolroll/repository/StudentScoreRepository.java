@@ -27,6 +27,38 @@ public interface StudentScoreRepository extends JpaRepository<StudentScore, Stri
     @Transactional(readOnly = true)
     Optional<StudentScore> findAllByStudentIdAndCourseId(String studentId, String courseId);
 
+    @Query(value = " select " +
+            " ss.studentId as studentId, " +
+            " c.courseId as courseId, " +
+            " c.courseName as courseName, " +
+            " ss.courseType as courseType, " +
+            " ss.schoolYear as schoolYear," +
+            " ss.term as term, " +
+            " ss.courseScore as courseScore, " +
+            " ss.onLineScore as onLineScore, " +
+            " ss.offLineScore as offLineScore, " +
+            " ss.type as type " +
+            " from StudentScore as ss " +
+            " left join Course as c on c.courseId = ss.courseId " +
+            " where ss.isValidated = ?1 and c.isValidated = ?1 and ss.studentId in ?2 ")
+    List<StudentScoreDto> findAllByIsValidatedEqualsAndStudentIdIn(String isValidated, List<String> studentIds);
+
+    @Query(value = " select " +
+            " ss.studentId as studentId, " +
+            " c.courseId as courseId, " +
+            " c.courseName as courseName, " +
+            " ss.courseType as courseType, " +
+            " ss.schoolYear as schoolYear," +
+            " ss.term as term, " +
+            " ss.courseScore as courseScore, " +
+            " ss.onLineScore as onLineScore, " +
+            " ss.offLineScore as offLineScore, " +
+            " ss.type as type " +
+            " from StudentScore as ss " +
+            " left join Course as c on c.courseId = ss.courseId " +
+            " where ss.isValidated = ?1 and c.isValidated = ?1 and ss.studentId = ?2 ")
+    List<StudentScoreDto> findAllByIsValidatedEqualsAndStudentId(String isValidated, String studentId);
+
     @Transactional(readOnly = true)
     List<StudentScore> findAllByIsValidatedEqualsAndStudentIdOrderByUpdateTime(String isValidated, String studentId);
 

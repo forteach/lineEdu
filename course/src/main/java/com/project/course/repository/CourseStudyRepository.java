@@ -36,6 +36,7 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " c.course_id as courseId, " +
             " c.course_name as courseName, " +
             " c.alias as alias, " +
+            " c.course_type as courseType, " +
             " cc.chapter_id as chapterId, " +
             " cc.chapter_name as chapterName, " +
             " cs.study_status as studyStatus, " +
@@ -62,6 +63,7 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " c.course_id as courseId, " +
             " c.course_name as courseName, " +
             " c.alias as alias, " +
+            " c.course_type as courseType, " +
             " cs.study_status as studyStatus, " +
             " cs.semester_grade as semesterGrade," +
             " cs.exam_grade as examGrade, " +
@@ -89,6 +91,7 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " c.course_id as courseId, " +
             " c.course_name as courseName, " +
             " c.alias as alias, " +
+            " c.course_type as courseType, " +
             " cs.study_status as studyStatus, " +
             " cs.semester_grade as semesterGrade," +
             " cs.exam_grade as examGrade, " +
@@ -138,7 +141,8 @@ public interface CourseStudyRepository extends JpaRepository<CourseStudy, String
             " c.videoPercentage as videoPercentage, " +
             " c.jobsPercentage as jobsPercentage," +
             " c.courseName as courseName, " +
-            " c.courseNumber as courseNumber " +
+            " c.courseNumber as courseNumber," +
+            " c.courseType as courseType " +
             " from CourseStudy AS cs left join Course as c on c.courseId = cs.courseId " +
             " where c.isValidated = '0' and cs.isValidated = '0' and cs.studentId = ?1 and cs.courseId =?2 ")
     @Transactional(readOnly = true)

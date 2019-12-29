@@ -641,18 +641,18 @@ public class TeachService {
 //    }
 
     private List<StudyVo> toListStudy(String studentId, String planId) {
-        List<StudyVo> list = CollUtil.newArrayList();
+        List<StudyVo> list = new ArrayList<>(16);
         teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(planId)
                 .forEach(s -> {
                     Optional<ICourseStudyDto> optional = courseStudyRepository.findStudyDto(studentId, s.getCourseId());
                     if (optional.isPresent()) {
                         ICourseStudyDto d = optional.get();
-                        list.add(new StudyVo(d.getCourseId(), d.getCourseName(), d.getOnLineTime(), d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum()));
+                        list.add(new StudyVo(d.getCourseId(), d.getCourseName(), d.getOnLineTime(),
+                                d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum(), s.getCourseType()));
                     }else {
-                        //没有学习直接返回对应的课程
+                        //没有学习直接返回对应的课程信息
                         if(StrUtil.isNotBlank(s.getCourseId())) {
-                            Course course = courseService.getById(s.getCourseId());
-                            list.add(new StudyVo(course.getCourseId(), course.getCourseName()));
+                            list.add(new StudyVo(s.getCourseId(), s.getCourseName(), s.getCourseType()));
                         }
                     }
                 });
@@ -679,13 +679,13 @@ public class TeachService {
                                     jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getAnswerSum(), 2), Double.valueOf(jobsPercentage) / 100);
                                 }
                                 String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
-                                list.add(new ScoreVo(d.getCourseId(), d.getCourseName(), score));
+                                list.add(new ScoreVo(d.getCourseId(), d.getCourseName(), score, d.getCourseType()));
 //                            });
                     }else {
                         //不存在学习成绩设置为 0
                         if (StrUtil.isNotBlank(s.getCourseId())) {
                             Course course = courseService.getById(s.getCourseId());
-                            list.add(new ScoreVo(course.getCourseId(), course.getCourseName(), "0"));
+                            list.add(new ScoreVo(course.getCourseId(), course.getCourseName(), "0", s.getCourseType()));
                         }
                     }
                 });

@@ -41,7 +41,8 @@ public interface TeachPlanCourseRepository extends JpaRepository<TeachPlanCourse
             " tpcv.line_percentage as linePercentage, " +
             " tpcv.on_line_percentage as onLinePercentage, " +
             " c.video_percentage as videoPercentage, " +
-            " c.jobs_percentage as jobsPercentage " +
+            " c.jobs_percentage as jobsPercentage," +
+            " c.courseType as courseType " +
             " from (select line_percentage, on_line_percentage, course_id from teach_plan_course where is_validated = '0' and plan_id = ?1) as tpcv " +
             " left join course as c on c.course_number = tpcv.course_id ", nativeQuery = true)
     @Transactional(readOnly = true)

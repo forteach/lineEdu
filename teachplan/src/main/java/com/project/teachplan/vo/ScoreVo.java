@@ -15,11 +15,14 @@ public class ScoreVo {
 
     private String courseName;
 
+    public Integer courseType;
+
     private String score;
 
-    public ScoreVo(String courseId, String courseName, String score) {
+    public ScoreVo(String courseId, String courseName, String score, Integer courseType) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.score = score;
+        this.courseType = courseType;
     }
 }
