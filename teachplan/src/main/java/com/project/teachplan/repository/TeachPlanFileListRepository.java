@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -25,6 +26,8 @@ public interface TeachPlanFileListRepository extends JpaRepository<TeachPlanFile
 
     @Modifying(clearAutomatically = true)
     int deleteAllByPlanIdAndClassIdAndCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate);
+
+    Optional<TeachPlanFileList> findByPlanIdAndClassIdAndCourseIdAndCreateDate(String planId, String classId, String courseId, String createDate);
 
     List<TeachPlanFileList> findAllByPlanId(String planId);
 }

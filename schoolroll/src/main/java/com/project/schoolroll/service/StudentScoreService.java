@@ -1,6 +1,7 @@
 package com.project.schoolroll.service;
 
 import com.project.schoolroll.domain.StudentScore;
+import com.project.schoolroll.repository.dto.StudentOnLineDto;
 import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,8 @@ public interface StudentScoreService {
     void saveAll(List<StudentScore> list);
 
     List<List<String>> exportScore(String centerId);
+
+    List<List<String>> exportScore(List<StudentOnLineDto> list);
 
     void checkoutKey(String key);
 

@@ -1,9 +1,9 @@
 package com.project.portal.teachplan.request;
 
+import com.project.portal.teachplan.request.base.BaseTeachPlanSaveUpdateRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author: zhangyy
@@ -12,10 +12,11 @@ import java.io.Serializable;
  * @version: 1.0
  * @description:
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class PlanFileFindAllRequest implements Serializable {
-    @ApiModelProperty(name = "planId", value = "计划id", dataType = "string", required = true)
-    private String planId;
+public class PlanFileFindAllRequest extends BaseTeachPlanSaveUpdateRequest {
+//    @ApiModelProperty(name = "planId", value = "计划id", dataType = "string", required = true)
+//    private String planId;
     @ApiModelProperty(name = "classId", value = "班级Id", dataType = "string", required = true)
     private String classId;
     @ApiModelProperty(name = "courseId", value = "课程id", dataType = "string", required = true)

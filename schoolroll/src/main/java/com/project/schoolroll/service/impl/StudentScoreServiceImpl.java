@@ -200,6 +200,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         return list;
     }
 
+    @Override
     public List<List<String>> exportScore(List<StudentOnLineDto> list){
         //获取对应的学生成绩信息列表
         List<CourseScoreVo> scoreVos = list.parallelStream().map(this::setScoreValue).collect(toList());
@@ -208,19 +209,22 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
                 .map(CourseScoreVo::getCourseScore)
                 .mapToInt(List::size)
                 .max()
-                .getAsInt();
+                .orElse(0);
+        //设置获取课程成绩列表表头
+        List<Map<String, String>> maxList = scoreVos.stream().filter(Objects::nonNull)
+                .map(CourseScoreVo::getCourseScore)
+                .filter(c -> maxSize == c.size()).findFirst().orElseGet(LinkedList::new);
         //转换为头部课程别表
-        List<Map<String, String>> maps = new ArrayList<>();
-        List<String> head = setHead(maps);
-        //转换头部课程列表
+        List<String> head = setHead(maxList);
         //取出对应的课程列表和成绩组合输出列表数据
-        return scoreVos.parallelStream().filter(Objects::nonNull).map(v -> setStudentScore(v, head)).collect(toList());
+        List<List<String>> listList = scoreVos.parallelStream().filter(Objects::nonNull).map(v -> setStudentScore(v, head)).collect(toList());
+        listList.add(0, head);
+        return listList;
     }
-    // todo
-    public List<String> setStudentScore(CourseScoreVo vo, List<String> list){
-//        List<String> strings = CollUtil.newArrayList("姓名", "身份证号", "学号", "年级", "专业","性别");
-        List<String> strings = CollUtil.newArrayList(vo.getStudentName(), vo.getStudentId(), vo.getStuId(), vo.getGrade(), vo.getSpecialtyName(), vo.getGender());
-//        strings.add("")
+    private List<String> setStudentScore(CourseScoreVo vo, List<String> head){
+        List<String> strings = CollUtil.newArrayList(vo.getStudentName(), vo.getStudentId(),
+                vo.getStuId(), vo.getGrade(), vo.getSpecialtyName(), vo.getGender());
+        setHeadValue(vo.getCourseScore(), strings);
         return strings;
     }
 
@@ -229,12 +233,12 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         mapList.forEach(m -> list.add(m.get("courseName")));
         return list;
     }
-    public List<String> setHeadValue(List<Map<String, String>> mapList, List<String> list){
-        mapList.forEach(m -> list.add(m.get("courseName")));
+    private List<String> setHeadValue(List<Map<String, String>> mapList, List<String> list){
+        mapList.forEach(m -> list.add(m.get("score")));
         return list;
     }
 
-    public CourseScoreVo setScoreValue(StudentOnLineDto s){
+    private CourseScoreVo setScoreValue(StudentOnLineDto s){
         String studentId = s.getStudentId();
         //课程信息 key courseId value   score, courseName
         List<Map<String, String>> list = new ArrayList<>(16);
@@ -244,6 +248,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
                     stringMap.put("courseName", d.getCourseName());
                     stringMap.put("score", String.valueOf(d.getCourseScore()));
                     stringMap.put("courseId", d.getCourseId());
+                    list.add(stringMap);
                 });
         return new CourseScoreVo(s.getStudentId(), s.getStudentName(), s.getStuId(), s.getGender(), s.getGrade(), s.getSpecialtyName(), list);
     }
@@ -370,7 +375,10 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         }
         studentScore.setOffLineScore(score);
         studentScore.setUpdateUser(userId);
+        studentScore.setCreateUser(userId);
+        studentScore.setCourseId(courseId);
         studentScore.setStudentId(studentId);
+        studentScore.setCourseScore(Float.parseFloat(score));
         return studentScore;
     }
 

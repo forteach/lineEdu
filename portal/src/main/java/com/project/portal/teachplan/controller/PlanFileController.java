@@ -92,6 +92,21 @@ public class PlanFileController {
         return WebResult.okResult(planFileService.update(planFile));
     }
 
+    @ApiOperation(value = "创建计划文件")
+    @PostMapping(path = "/createPlanFile")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "planId", value = "计划id", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "courseId", value = "课程id", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "createDate", value = "上课日期", dataType = "string", paramType = "form", required = true)
+    })
+    public WebResult createPlanFile(@RequestBody CreatePlanFileRequest request){
+        MyAssert.isNull(request.getPlanId(), DefineCode.ERR0010, "计划id不能为空");
+        MyAssert.isNull(request.getClassId(), DefineCode.ERR0010, "班级id不为空");
+        MyAssert.isNull(request.getCourseId(), DefineCode.ERR0010, "课程id不为空");
+        MyAssert.isNull(request.getCreateDate(), DefineCode.ERR0010, "上课日期不为空");
+        return WebResult.okResult(planFileService.getTeachPlanFileList(request.getPlanId(), request.getClassId(),request.getCourseId(), request.getCreateDate()));
+    }
 //    @UserLoginToken
 //    @ApiOperation(value = "班级资料根据学习中心查询明细列表")
 //    @PostMapping(path = "/findByCenterAreaIdAllPage")

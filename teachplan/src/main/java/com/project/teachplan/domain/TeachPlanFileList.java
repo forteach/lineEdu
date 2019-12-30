@@ -52,4 +52,14 @@ public class TeachPlanFileList extends Entitys implements Serializable {
 
     @Column(name = "course_name", columnDefinition = "VARCHAR(32) COMMENT '课程字典名字'")
     private String courseName;
+
+    @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '课程类型　1.线上，2.线下,3.混合'")
+    private String type;
+
+    public TeachPlanFileList(String courseId, String planId, String createDate, String classId) {
+        this.classId = classId;
+        this.courseId = courseId;
+        this.planId = planId;
+        this.createDate = createDate;
+    }
 }

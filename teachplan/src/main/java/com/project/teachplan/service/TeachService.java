@@ -785,12 +785,4 @@ public class TeachService {
         MyAssert.isTrue(TAKE_EFFECT_CLOSE.equals(teachPlanVerify.getIsValidated()), DefineCode.ERR0010, "对应的班级计划已经失效");
         return DateUtil.parseDate(teachPlanVerify.getEndDate()).isBefore(new Date());
     }
-
-//    public Page<TeachPlan> findAllByCenterId(String centerId, Pageable pageable) {
-//        return teachPlanRepository.findAllByCenterAreaId(centerId, pageable);
-//    }
-//
-//    public Page<TeachPlan> findAllByCenterIdAndClassId(String centerId, String classId, Pageable pageable) {
-//        return teachPlanRepository.findAllByCenterAreaIdAndClassId(centerId, classId, pageable);
-//    }
 }

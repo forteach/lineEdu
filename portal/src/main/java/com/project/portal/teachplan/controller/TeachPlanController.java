@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
-import com.project.base.common.keyword.Dic;
 import com.project.base.exception.MyAssert;
 import com.project.mongodb.domain.UserRecord;
 import com.project.mongodb.service.UserRecordService;
@@ -13,10 +12,7 @@ import com.project.portal.teachplan.request.TeachPlanCourseFindAllPageRequest;
 import com.project.portal.teachplan.request.TeachPlanPageAllRequest;
 import com.project.portal.teachplan.request.TeachPlanSaveUpdateRequest;
 import com.project.portal.teachplan.request.TeachPlanVerifyRequest;
-import com.project.schoolroll.domain.online.StudentOnLine;
-import com.project.schoolroll.repository.dto.StudentOnLineDto;
 import com.project.schoolroll.service.LearnCenterService;
-import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.teachplan.domain.verify.TeachPlanVerify;
 import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.teachplan.service.TeachService;
@@ -35,11 +31,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static com.project.base.common.keyword.Dic.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
+
 @Slf4j
 @RestController
 @RequestMapping(path = "/teachPlan", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -48,19 +43,16 @@ public class TeachPlanController {
 
     private final TeachService teachService;
     private final TokenService tokenService;
-    private final StudentOnLineService studentOnLineService;
     private final UserRecordService userRecordService;
     private final LearnCenterService learnCenterService;
-
     private final TeachPlanCourseService teachPlanCourseService;
 
     @Autowired
-    public TeachPlanController(TeachService teachService, TeachPlanCourseService teachPlanCourseService, StudentOnLineService studentOnLineService,
+    public TeachPlanController(TeachService teachService, TeachPlanCourseService teachPlanCourseService,
                                TokenService tokenService, UserRecordService userRecordService, LearnCenterService learnCenterService) {
         this.teachService = teachService;
         this.teachPlanCourseService = teachPlanCourseService;
         this.tokenService = tokenService;
-        this.studentOnLineService = studentOnLineService;
         this.userRecordService = userRecordService;
         this.learnCenterService = learnCenterService;
     }
@@ -193,7 +185,7 @@ public class TeachPlanController {
         String userName = tokenService.getUserName(token);
         String centerId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerId).getCenterName();
-        Map<String,String> map = new HashMap<>(2);
+        Map<String, String> map = new HashMap<>(2);
         map.put("planId", planId);
         userRecordService.save(new UserRecord(userId, userName, centerId, centerName, "删除计划信息", "删除", map));
         return WebResult.okResult();
@@ -207,7 +199,7 @@ public class TeachPlanController {
         MyAssert.isNull(planId, DefineCode.ERR0010, "计划id不为空");
         if (tokenService.isStudent(httpServletRequest.getHeader("token"))) {
             return WebResult.okResult(teachPlanCourseService.findAllCourseByPlanId(planId));
-        }else {
+        } else {
             return WebResult.okResult(teachPlanCourseService.findAllCourseVerifyByPlanId(planId));
         }
     }
@@ -255,9 +247,9 @@ public class TeachPlanController {
 
     @GetMapping("/findAll")
     @ApiOperation(value = "查询全部有效的教学计划")
-    public WebResult findAllPlan(HttpServletRequest httpServletRequest){
+    public WebResult findAllPlan(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
-        if (tokenService.isAdmin(token)){
+        if (tokenService.isAdmin(token)) {
             return WebResult.okResult(teachService.findAllPlan());
         }
         String centerId = tokenService.getCenterAreaId(token);
@@ -275,8 +267,7 @@ public class TeachPlanController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest){
-//        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+    public WebResult findAllStudyCourse(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest) {
         checkTeachSearch(req);
         PageRequest request = PageRequest.of(req.getPage(), req.getSize());
         String token = httpServletRequest.getHeader("token");
@@ -298,59 +289,31 @@ public class TeachPlanController {
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0", required = true, paramType = "query"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15", required = true, paramType = "query")
     })
-    public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest){
-//        MyAssert.isFalse(checkTeachSearch(req), DefineCode.ERR0010, "专业和年级必填");
+    public WebResult findAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest) {
         checkTeachSearch(req);
         PageRequest request = PageRequest.of(req.getPage(), req.getSize());
         String token = httpServletRequest.getHeader("token");
-        if(tokenService.isAdmin(token)){
+        if (tokenService.isAdmin(token)) {
             return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), "", request));
         }
         String centerId = tokenService.getCenterAreaId(token);
         return WebResult.okResult(teachService.findScoreAllPageDtoByPlanId(req.getStudentName(), req.getClassName(), req.getGrade(), req.getSpecialtyName(), centerId, request));
     }
 
-    @UserLoginToken
-    @ApiOperation(value = "分页查询计划课程的在线学生学习成绩信息")
-    @PostMapping(path = "/importPlanCourseScoreAllPage")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "studentName", value = "学生名称", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "className", value = "学生名称", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "grade", value = "学生名称", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "specialtyName", value = "学生名称", dataType = "string", paramType = "query")
-    })
-    public WebResult importAllStudyCourseScore(@RequestBody TeachPlanCourseFindAllPageRequest req, HttpServletRequest httpServletRequest){
-        MyAssert.isFalse(checkTeach(req), DefineCode.ERR0010, "专业和年级必填");
-        String token = httpServletRequest.getHeader("token");
-        String centerId = tokenService.getCenterAreaId(token);
-        PageRequest of = PageRequest.of(0, 10000);
-        List<StudentOnLineDto> list;
-        if(tokenService.isAdmin(token)){
-            list = studentOnLineService.findStudentOnLineDto(of, req.getStudentName(), TAKE_EFFECT_OPEN, "", req.getGrade(), req.getSpecialtyName(), req.getClassName()).getContent();
-        }else {
-            list = studentOnLineService.findStudentOnLineDto(of, req.getStudentName(), TAKE_EFFECT_OPEN, centerId, req.getGrade(), req.getSpecialtyName(), req.getClassName()).getContent();
-        }
-        if (!list.isEmpty()){
-
-        }
-        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "不存在要导出的数据");
-        return WebResult.okResult();
-    }
-
-    private boolean checkTeachSearch(TeachPlanCourseFindAllPageRequest req){
+    private boolean checkTeachSearch(TeachPlanCourseFindAllPageRequest req) {
         valideSort(req.getPage(), req.getSize());
         return checkTeach(req);
     }
 
-    private boolean checkTeach(TeachPlanCourseFindAllPageRequest req){
-        if (StrUtil.isNotBlank(req.getClassName())){
+    private boolean checkTeach(TeachPlanCourseFindAllPageRequest req) {
+        if (StrUtil.isNotBlank(req.getClassName())) {
             return true;
         }
-        if (StrUtil.isNotBlank(req.getStudentName())){
+        if (StrUtil.isNotBlank(req.getStudentName())) {
             return true;
         }
         //必须是年级和专业唯一才能确定对应的计划
-        if (StrUtil.isNotBlank(req.getGrade()) && StrUtil.isNotBlank(req.getSpecialtyName())){
+        if (StrUtil.isNotBlank(req.getGrade()) && StrUtil.isNotBlank(req.getSpecialtyName())) {
             return true;
         }
         return false;

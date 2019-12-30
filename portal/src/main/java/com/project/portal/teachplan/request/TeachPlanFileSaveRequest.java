@@ -1,10 +1,10 @@
 package com.project.portal.teachplan.request;
 
+import com.project.portal.teachplan.request.base.BaseTeachPlanSaveUpdateRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 
 /**
  * @Auther: zhangyy
@@ -13,9 +13,10 @@ import java.io.Serializable;
  * @Version: 1.0
  * @Description:
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel(value = "教学计划资料信息保存")
-public class TeachPlanFileSaveRequest implements Serializable {
+public class TeachPlanFileSaveRequest extends BaseTeachPlanSaveUpdateRequest {
 
     @ApiModelProperty(name = "fileName", value = "资料名称", dataType = "string")
     private String fileName;
@@ -32,6 +33,6 @@ public class TeachPlanFileSaveRequest implements Serializable {
     /**
      * 项目id
      */
-    @ApiModelProperty(name = "planId", value = "项目计划id", dataType = "string")
-    private String planId;
+//    @ApiModelProperty(name = "planId", value = "项目计划id", dataType = "string")
+//    private String planId;
 }

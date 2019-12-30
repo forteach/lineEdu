@@ -25,39 +25,35 @@ import java.util.List;
  */
 public interface CourseService {
 
-    public String saveUpdate(Course course);
+    String saveUpdate(Course course);
 
-    public void updateStatusById(String courseId, String userId);
+    void updateStatusById(String courseId, String userId);
 
-    public void deleteById(String courseId);
+    void deleteById(String courseId);
 
-    public void delete(Course course);
+    void delete(Course course);
 
-    public List<ICourseListDto> findAll(PageRequest page);
+    List<ICourseListDto> findAll(PageRequest page);
 
     List<ICourseListDto> findAllByCourseType(Integer courseType, PageRequest page);
 
-    public List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus);
+    List<CourseImages> findImagesByCourseId(String courseId, String verifyStatus);
 
-    public void saveCourseImages(CourseImagesReq courseImagesReq);
-
-//    public List<ICourseListDto> findMyCourse(String userId, PageRequest page);
+    void saveCourseImages(CourseImagesReq courseImagesReq);
 
     List<ICourseListDto> findMyCourse(PageRequest page);
 
-    public Course getById(String id);
+    Course getById(String id);
 
-    public List<CourseListResp> myCourseList(String classId);
+    List<CourseListResp> myCourseList(String classId);
 
-    public List<ICourseStudyDto> findCourseStudyList(String studentId, Integer studyStatus);
+    List<ICourseStudyDto> findCourseStudyList(String studentId, Integer studyStatus);
 
-    public int deleteImagesByCourseId(String courseId);
+    int deleteImagesByCourseId(String courseId);
 
     List<CourseVo> findByCourseNumber(List<CourseTeacherVo> courseIds, String classId, String studentId, String key);
 
     List<CourseVo> findCourseVoByClassId(String classId, String key);
-
-//    List<Course> findAllCourseVoByCreateUser(String createUser);
 
     void updateCourseTime(String courseId, Integer videoTimeNum);
 
@@ -69,13 +65,9 @@ public interface CourseService {
 
     Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
 
-//    Page<Course> findAllByClassId(String classId, Pageable of);
-
     Page<ICourseStudyDto> findAllByStudentId(String studentId, Pageable pageable);
 
     List<Course> findAllByCourseNumberIds(List<String> courseNumberIds);
 
     CourseAllStudyVo findCourseAllStudyByStudentId(String studentId, List<String> courseIds, List<String> offlineIds);
-
-//    void updatePublish(String courseId, String userId);
 }

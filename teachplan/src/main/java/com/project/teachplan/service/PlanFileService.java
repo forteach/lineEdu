@@ -5,10 +5,10 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.course.domain.OnLineCourseDic;
 import com.project.course.service.OnLineCourseDicService;
 import com.project.mysql.service.BaseMySqlService;
 import com.project.teachplan.domain.PlanFile;
-import com.project.teachplan.domain.TeachPlanFile;
 import com.project.teachplan.domain.TeachPlanFileList;
 import com.project.teachplan.repository.PlanFileRepository;
 import com.project.teachplan.repository.TeachPlanFileListRepository;
@@ -80,14 +80,23 @@ public class PlanFileService extends BaseMySqlService {
     }
 
     @Async
-    @Transactional(rollbackFor = Exception.class)
     void saveTeachPlanFileList(PlanFile classFile) {
-        TeachPlanFileList teachPlanFileList = new TeachPlanFileList();
-        BeanUtil.copyProperties(classFile, teachPlanFileList);
-        String courseName = onLineCourseDicService.findId(teachPlanFileList.getCourseId()).getCourseName();
-        MyAssert.isTrue(StrUtil.isBlank(courseName), DefineCode.ERR0014, "课程名称为空");
-        teachPlanFileList.setCourseName(courseName);
-        teachPlanFileListRepository.save(teachPlanFileList);
+        getTeachPlanFileList(classFile.getPlanId(), classFile.getClassId(), classFile.getCourseId(), classFile.getCreateDate());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public TeachPlanFileList getTeachPlanFileList(String planId, String classId, String courseId, String createDate){
+        TeachPlanFileList teachPlanFileList = teachPlanFileListRepository
+                .findByPlanIdAndClassIdAndCourseIdAndCreateDate(planId, classId, courseId, createDate)
+                .orElse(new TeachPlanFileList(courseId, planId, createDate, classId));
+        if (StrUtil.isBlank(teachPlanFileList.getCourseName())){
+            OnLineCourseDic onLineCourseDic = onLineCourseDicService.findId(teachPlanFileList.getCourseId());
+            String courseName = onLineCourseDic.getCourseName();
+            String type = onLineCourseDic.getType();
+            teachPlanFileList.setType(type);
+            teachPlanFileList.setCourseName(courseName);
+        }
+        return teachPlanFileListRepository.save(teachPlanFileList);
     }
 
     /**

@@ -156,19 +156,13 @@ public class CourseController {
     public WebResult findMyCourse(@RequestBody CourseFindAllReq req, HttpServletRequest request) {
         valideSort(req.getPage(), req.getSize());
 
-//        String userId = tokenService.getUserId(request.getHeader("token"));
-
         PageRequest page = PageRequest.of(req.getPage(), req.getSize());
         return WebResult.okResult(courseService.findMyCourse(page)
                 .stream()
                 .filter(Objects::nonNull)
-                .map(item -> //{
-//                    String courseId = item.getCourseId();
-//                    return
-                    new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(),
-                            item.getCreateTime(), item.getCourseType(), courseVerifyVoService.existsByCourseId(item.getCourseId()))
-                //}
-                ).collect(toList()));
+                .map(item -> new CourseListResp(item.getCourseId(), item.getCourseName(), item.getTopPicSrc(), item.getAlias(), item.getIsValidated(),
+                            item.getCreateTime(), item.getCourseType(), courseVerifyVoService.existsByCourseId(item.getCourseId())))
+                .collect(toList()));
     }
 
     @UserLoginToken
@@ -197,16 +191,6 @@ public class CourseController {
         courseService.updateStatusById(req.getCourseId(), req.getUserId());
         return WebResult.okResult();
     }
-
-//    @ApiOperation(value = "修改课程发布状态")
-//    @PostMapping(path = "/publish/{courseId}")
-//    @ApiImplicitParam(name = "courseId", value = "科目ID", dataType = "string", required = true)
-//    public WebResult updatePublish(@PathVariable String courseId, HttpServletRequest httpServletRequest){
-//        MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程Id不为空");
-//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-//        courseService.updatePublish(courseId, userId);
-//        return WebResult.okResult();
-//    }
 
     /**
      * 保存课程轮播图信息

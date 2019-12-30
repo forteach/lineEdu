@@ -91,7 +91,6 @@ public class CourseServiceImpl implements CourseService {
             MyAssert.isNull(course.getCourseType(), DefineCode.ERR0010, "课程类型不为空");
             MyAssert.isNull(course.getCourseName(), DefineCode.ERR0010, "课程名称不能为空");
             MyAssert.isTrue(courseRepository.existsAllByCourseName(course.getCourseName()), DefineCode.ERR0010, "已经存在同名的课程");
-//            MyAssert.isNull(course.getAlias(), DefineCode.ERR0010, "别名不为空");
             course.setCourseId(IdUtil.fastSimpleUUID());
             //设置默认状态，初始课程状态无效
             course.setIsValidated(TAKE_EFFECT_CLOSE);
@@ -131,17 +130,6 @@ public class CourseServiceImpl implements CourseService {
     public List<ICourseListDto> findAllByCourseType(Integer courseType, PageRequest page) {
         return courseRepository.findAllByCourseType(courseType, page).getContent();
     }
-
-    /**
-     * 分页查询我的课程科目
-     *
-     * @param page
-     * @return
-     */
-//    @Override
-//    public List<ICourseListDto> findMyCourse(String userId, PageRequest page) {
-//        return courseRepository.findByCreateUserOrderByCreateTimeDesc(userId, page).getContent();
-//    }
 
     @Override
     public List<ICourseListDto> findMyCourse(PageRequest page) {
@@ -285,11 +273,6 @@ public class CourseServiceImpl implements CourseService {
         return null;
     }
 
-//    @Override
-//    public List<Course> findAllCourseVoByCreateUser(String createUser) {
-//        return courseRepository.findAllByCreateUserOrderByCreateTimeDesc(createUser);
-//    }
-
     @Override
     public List<Course> findAll(){
         return courseRepository.findAllByOrderByCreateTimeDesc();
@@ -384,11 +367,6 @@ public class CourseServiceImpl implements CourseService {
         return courseStudyRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, courseId, studentId, pageRequest);
     }
 
-//    @Override
-//    public Page<Course> findAllByClassId(String classId, Pageable of){
-//        return courseRepository.findAllByClassId(classId, of);
-//    }
-
     @Override
     public List<Course> findAllByCourseNumberIds(List<String> courseNumberIds){
         if (courseNumberIds.isEmpty()){
@@ -433,19 +411,4 @@ public class CourseServiceImpl implements CourseService {
                 .videoTimePercentage(videoTimePercentage)
                 .build();
     }
-
-//    @Override
-//    public void updatePublish(String courseId, String userId) {
-//        Optional<Course> optional = courseRepository.findById(courseId);
-//        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "要修改的课程不存在");
-//        optional.ifPresent(c -> {
-//            if (PUBLISH_NO.equals(c.getPublish())) {
-//                c.setPublish(PUBLISH_YES);
-//            } else {
-//                c.setPublish(PUBLISH_NO);
-//            }
-//            c.setUpdateUser(userId);
-//            courseRepository.save(c);
-//        });
-//    }
 }
