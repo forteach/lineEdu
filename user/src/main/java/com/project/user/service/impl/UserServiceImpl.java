@@ -127,6 +127,18 @@ public class UserServiceImpl implements UserService {
 
         return loginResponse;
     }
+    @Override
+    public SysUsers checkUserNameAndPassWord(String teacherCode, String passWord){
+        SysUsers user = userRepository.findByTeacherId(teacherCode);
+        if (user == null) {
+            MyAssert.isNull(null, DefineCode.ERR0014, "用户不存在");
+        } else if (TAKE_EFFECT_CLOSE.equals(user.getIsValidated())) {
+            MyAssert.isNull(null, DefineCode.ERR0014, "您的账号已经失效,请联系管理员");
+        } else if (!user.getPassWord().equals(Md5Util.macMD5(passWord.concat(salt)))) {
+            MyAssert.isNull(null, DefineCode.ERR0016, "密码错误");
+        }
+        return user;
+    }
 
     private void saveSysUserLoginLog(String ip, String userId, String centerAreaId) {
         SysUserLog sysUserLog = new SysUserLog();
@@ -137,28 +149,28 @@ public class UserServiceImpl implements UserService {
         sysUserLogService.addLog(sysUserLog);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean registerUser(RegisterUserReq registerUserReq) {
-        Optional<Teacher> teacher = teacherRepository.findById(registerUserReq.getTeacherCode());
-        if (!teacher.isPresent()) {
-            MyAssert.isNull(null, DefineCode.ERR0014, "不存在您的信息，请联系管理员");
-        }
-        //验证是否注册
-        SysUsers users = userRepository.findByTeacherId(registerUserReq.getTeacherCode());
-        if (users != null) {
-            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
-        }
-        SysUsers user = new SysUsers();
-        user.setId(registerUserReq.getTeacherCode());
-        user.setPassWord(Md5Util.macMD5(registerUserReq.getPassWord().concat(salt)));
-        user.setTeacherId(registerUserReq.getTeacherCode());
-        user.setUserName(registerUserReq.getUserName());
-        user.setUpdateUser(registerUserReq.getTeacherCode());
-        user.setCreateUser(registerUserReq.getTeacherCode());
-        userRepository.save(user);
-        return true;
-    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public boolean registerUser(RegisterUserReq registerUserReq) {
+//        Optional<Teacher> teacher = teacherRepository.findById(registerUserReq.getTeacherCode());
+//        if (!teacher.isPresent()) {
+//            MyAssert.isNull(null, DefineCode.ERR0014, "不存在您的信息，请联系管理员");
+//        }
+//        //验证是否注册
+//        SysUsers users = userRepository.findByTeacherId(registerUserReq.getTeacherCode());
+//        if (users != null) {
+//            MyAssert.isNull(null, DefineCode.ERR0011, "您已经注册过了");
+//        }
+//        SysUsers user = new SysUsers();
+//        user.setId(registerUserReq.getTeacherCode());
+//        user.setPassWord(Md5Util.macMD5(registerUserReq.getPassWord().concat(salt)));
+//        user.setTeacherId(registerUserReq.getTeacherCode());
+//        user.setUserName(registerUserReq.getUserName());
+//        user.setUpdateUser(registerUserReq.getTeacherCode());
+//        user.setCreateUser(registerUserReq.getTeacherCode());
+//        userRepository.save(user);
+//        return true;
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -272,7 +284,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateCenter(String centerName, String newCenterName, String updateUser) {
@@ -297,7 +308,6 @@ public class UserServiceImpl implements UserService {
         });
     }
 
-    @Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateCenterPhone(String centerName, String phone, String userId) {

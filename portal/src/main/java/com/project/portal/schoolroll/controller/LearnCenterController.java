@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +78,7 @@ public class LearnCenterController {
             @ApiImplicitParam(name = "schoolPhone", value = "学校联系人电话", dataType = "string", paramType = "form", required = true),
             @ApiImplicitParam(name = "endDate", value = "结束时间", dataType = "string", paramType = "form", required = true)
     })
+    @Transactional
     public WebResult saveUpdate(@RequestBody LearnCenterSaveUpdateRequest request, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
@@ -121,7 +123,7 @@ public class LearnCenterController {
             learnCenter.setCenterId(centerAreaId);
             learnCenter.setCenterAreaId(centerAreaId);
             learnCenter.setUpdateUser(userId);
-            learnCenter.setUpdateUser(userId);
+            learnCenter.setCreateUser(userId);
             learnCenterRepository.save(learnCenter);
             userService.registerCenter(request.getCenterName(), request.getPhone(), centerAreaId, userId);
         }

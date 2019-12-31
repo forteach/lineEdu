@@ -47,9 +47,15 @@ public class CourseStudy extends Entitys implements Serializable {
     @Column(name = "on_line_time_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '课程视频总长度(秒)'", nullable = false)
     private Integer onLineTimeSum;
 
+    /**
+     * 生成习题快照的数量, （原来是回答正确,后来改为生成习题的数量）
+     */
     @Column(name = "answer_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '当前生成快照题目总数量'", nullable = false)
     private Integer answerSum;
 
+    /**
+     * 回答正确的题数量
+     */
     @Column(name = "correct_sum", columnDefinition = "INT(11) DEFAULT 0 COMMENT '正确题目总数量'", nullable = false)
     private Integer correctSum;
 

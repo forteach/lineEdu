@@ -3,7 +3,6 @@ package com.project.portal.wechat.controller;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.IdcardUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -17,6 +16,8 @@ import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
+import com.project.user.domain.SysUsers;
+import com.project.user.service.UserService;
 import com.project.wechat.mini.app.config.WeChatMiniAppConfig;
 import com.project.wechat.mini.app.service.WeChatUserService;
 import com.project.wechat.mini.app.web.request.BindingUserRequest;
@@ -49,15 +50,17 @@ public class WeChatUserController {
     private final StudentOnLineService studentOnLineService;
     private final CourseService courseService;
     private final TeachPlanCourseService teachPlanCourseService;
+    private final UserService userService;
 
     @Autowired
-    public WeChatUserController(WeChatUserService weChatUserService, StudentOnLineService studentOnLineService,
+    public WeChatUserController(WeChatUserService weChatUserService, StudentOnLineService studentOnLineService, UserService userService,
                                 TeachPlanCourseService teachPlanCourseService, CourseService courseService, TokenService tokenService) {
         this.weChatUserService = weChatUserService;
         this.tokenService = tokenService;
         this.studentOnLineService = studentOnLineService;
         this.courseService = courseService;
         this.teachPlanCourseService = teachPlanCourseService;
+        this.userService = userService;
     }
 
     @PassToken
@@ -95,11 +98,19 @@ public class WeChatUserController {
     public WebResult binding(@RequestBody BindingUserReq bindingUserReq, HttpServletRequest request) {
         MyAssert.blank(bindingUserReq.getStuIDCard(), DefineCode.ERR0010, "身份证号码/手机号码不为空");
         MyAssert.blank(bindingUserReq.getStudentName(), DefineCode.ERR0010, "用户名不为空");
-        MyAssert.isFalse(Validator.isMobile(bindingUserReq.getStuIDCard()) || IdcardUtil.isValidCard(bindingUserReq.getStuIDCard()), DefineCode.ERR0010, "身份证号码或手机号码格式不正确");
         BindingUserRequest bindingUser = new BindingUserRequest();
         BeanUtil.copyProperties(bindingUserReq, bindingUser);
         bindingUser.setOpenId(tokenService.getOpenId(request.getHeader("token")));
-        return WebResult.okResult(weChatUserService.bindingUser(bindingUser));
+        if (IdcardUtil.isValidCard(bindingUserReq.getStuIDCard())) {
+            //是学生
+            return WebResult.okResult(weChatUserService.bindingUser(bindingUser));
+        } else {
+            //是教师
+            SysUsers users = userService.checkUserNameAndPassWord(bindingUser.getStudentName(), bindingUser.getStuIDCard());
+            String userName = users.getUserName();
+            String teacherId = users.getTeacherId();
+            return WebResult.okResult(weChatUserService.bindTeacher(bindingUser, teacherId, userName));
+        }
     }
 
     @ApiOperation(value = "解绑微信登录用户")
@@ -158,21 +169,5 @@ public class WeChatUserController {
         List<String> courseIds = teachPlanCourseService.findAllByClassId(classId);
         List<String> offlineIds = teachPlanCourseService.findAllByClassIdAndType(classId, "2");
         return WebResult.okResult(courseService.findCourseAllStudyByStudentId(studentId, courseIds, offlineIds));
-    }
-
-    /**
-     * todo delete
-     *
-     * @param studentId
-     * @return
-     */
-    @PassToken
-    @ApiOperation(value = "重置用户登陆绑定信息")
-    @GetMapping("/restart/{studentId}")
-    public WebResult restart(@PathVariable("studentId") String studentId) {
-        MyAssert.isNull(studentId, DefineCode.ERR0010, "学生id不为空");
-        log.info("restart weChat studentId : [{}]", studentId);
-        weChatUserService.restart(studentId);
-        return WebResult.okResult();
     }
 }

@@ -50,28 +50,28 @@ public class StudentScore extends Entitys implements Serializable {
     /**
      * 课程id
      */
-    @Column(name = "course_id", columnDefinition = "VARCHAR(32) COMMENT '课程id'")
+    @Column(name = "course_id", nullable = false, columnDefinition = "VARCHAR(32) COMMENT '课程id'")
     private String courseId;
-    /**
-     * 课程类别, bx 必修, xx 选修, sj 实践
-     */
-    @Column(name = "course_type", columnDefinition = "VARCHAR(32) COMMENT '课程类别, bx 必修, xx 选修, sj 实践'")
-    private String courseType;
+//    /**
+//     * 课程类别, bx 必修, xx 选修, sj 实践
+//     */
+//    @Column(name = "course_type", columnDefinition = "VARCHAR(32) COMMENT '课程类别, bx 必修, xx 选修, sj 实践'")
+//    private String courseType;
     /**
      * 课程分数
      */
     @Column(name = "course_score", columnDefinition = "FLOAT(5,2) COMMENT '课程分数'")
     private Float courseScore;
-    /**
-     * 学期
-     */
-    @Column(name = "term", columnDefinition = "VARCHAR(32) COMMENT '学期'")
-    private String term;
-    /**
-     * 学年
-     */
-    @Column(name = "school_year", columnDefinition = "VARCHAR(32) COMMENT '学年'")
-    private String schoolYear;
+//    /**
+//     * 学期
+//     */
+//    @Column(name = "term", columnDefinition = "VARCHAR(32) COMMENT '学期'")
+//    private String term;
+//    /**
+//     * 学年
+//     */
+//    @Column(name = "school_year", columnDefinition = "VARCHAR(32) COMMENT '学年'")
+//    private String schoolYear;
 
     @Column(name = "on_line_score", columnDefinition = "VARCHAR(32) COMMENT '线上成绩'")
     private String onLineScore;
@@ -89,4 +89,7 @@ public class StudentScore extends Entitys implements Serializable {
 
     @Column(name = "type", columnDefinition = "VARCHAR(32) COMMENT '课程类型　1.线上，2.线下,3.混合'")
     private String type;
+
+    @Column(name = "complete_status", nullable = false, columnDefinition = "TINYINT(4) DEFAULT 0 COMMENT '完成状态 0 未完成, 1 完成'")
+    private Integer completeStatus;
 }

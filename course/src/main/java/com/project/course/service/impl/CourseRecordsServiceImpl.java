@@ -89,7 +89,9 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
                 .filter(Objects::nonNull)
                 .map(this::sumRecordsByCourseIdAndStudent)
                 .collect(Collectors.toList());
-        courseRecordsRepository.saveAll(list);
+        if(!list.isEmpty()) {
+            courseRecordsRepository.saveAll(list);
+        }
     }
 
     /** 计算每名学生每课上课总时长*/

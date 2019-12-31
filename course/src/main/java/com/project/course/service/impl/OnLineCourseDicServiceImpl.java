@@ -79,7 +79,7 @@ public class OnLineCourseDicServiceImpl implements OnLineCourseDicService {
     @Override
     public OnLineCourseDic findId(String courseId) {
         Optional<OnLineCourseDic> obj = onLineCourseDicRepository.findById(courseId);
-        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "未找到该条记录");
+        MyAssert.isFalse(obj.isPresent(), DefineCode.ERR0014, "不存在对应的课程信息");
         return obj.get();
     }
 

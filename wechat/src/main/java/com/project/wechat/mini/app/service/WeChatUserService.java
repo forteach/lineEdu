@@ -19,18 +19,14 @@ public interface WeChatUserService {
      */
     String bindingUser(BindingUserRequest bindingUserReq);
 
+    String bindTeacher(BindingUserRequest bindingUserReq, String teacherId, String userName);
+
     /**
      * 生成token并绑定用户上
      * @param session
      * @return
      */
     LoginResponse bindingToken(WxMaJscode2SessionResult session, String portrait, String ip);
-
-    /**
-     * 重置微信用户绑定信息
-     * @param string
-     */
-    void restart(String string);
 
     void updateStatus(String studentId, String status, String userId);
 

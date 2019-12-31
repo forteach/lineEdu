@@ -49,6 +49,8 @@ public interface WeChatUserRepository extends JpaRepository<WeChatUser, String> 
     @Transactional(readOnly = true)
     Optional<IWeChatUser> findAllByIsValidatedEqualsAndOpenId(String openId);
 
+    Optional<WeChatUser> findAllByOpenId(String openId);
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     void deleteAllByStudentId(String studentId);
 }

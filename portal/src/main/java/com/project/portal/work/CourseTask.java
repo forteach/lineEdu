@@ -3,8 +3,8 @@ package com.project.portal.work;
 import com.project.course.service.CourseRecordsService;
 import com.project.course.service.CourseService;
 import com.project.databank.service.CourseVerifyVoService;
-import com.project.schoolroll.domain.LearnCenter;
 import com.project.schoolroll.service.LearnCenterService;
+import com.project.schoolroll.service.StudentScoreService;
 import com.project.teachplan.service.TeachService;
 import com.project.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +15,6 @@ import org.springframework.scheduling.annotation.Schedules;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Objects;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author: zhangyy
@@ -41,6 +38,8 @@ public class CourseTask {
     private LearnCenterService learnCenterService;
     @Resource
     private UserService userService;
+    @Resource
+    private StudentScoreService studentScoreService;
 
     /**
      * 同步教师端修改的习题记录
@@ -99,7 +98,7 @@ public class CourseTask {
 
 
     /**
-     * 统计学习课程占比
+     * 统计计算学习课程章节习题数量,生成快照数量,回答正确的数量
      */
     @Schedules({
             @Scheduled(cron = "0 0/1 * * * ?")
@@ -124,7 +123,7 @@ public class CourseTask {
 //            @Scheduled(cron = "0 0 0/1 * * ?")
     })
     @Async
-    public void asyncCourseStudentScore() {
+    public void asyncCourseStudentScore() throws InterruptedException {
         log.info("start course student score async ==> ");
         // 定时查询计划,修改计划状态,计算学生成绩
         if (log.isDebugEnabled()) {
@@ -132,8 +131,14 @@ public class CourseTask {
         }
         //修改教学计划状态
         teachService.taskPlanStatus();
+        //暂停10秒
+        Thread.sleep(10000);
         //计算计划对应的学生成绩
         teachService.taskOnLineCourseScore();
+        //暂停10秒
+        Thread.sleep(20000);
+        //查询计算没有完成计算的成绩
+        studentScoreService.taskCompleteCourseScore();
         log.info(" <== end course student score async ");
     }
 
@@ -152,11 +157,7 @@ public class CourseTask {
             log.debug("task thread name : {}", Thread.currentThread().getName());
         }
         //修改学习中心状态
-        List<String> centerList = learnCenterService.findCenterListByEndDate()
-                .stream()
-                .filter(Objects::nonNull)
-                .map(LearnCenter::getCenterName)
-                .collect(toList());
+        List<String> centerList = learnCenterService.findCenterListByEndDate();
         //使学习中心的登录账号失效
         userService.updateCenterUsers(centerList);
         log.info(" <== end center update status async ");

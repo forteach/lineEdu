@@ -151,13 +151,14 @@ public class PlanFileService extends BaseMySqlService {
     public void deleteByFileId(String fileId) {
         Optional<PlanFile> optionalPlanFile = planFileRepository.findById(fileId);
         MyAssert.isFalse(optionalPlanFile.isPresent(), DefineCode.ERR0010, "不存在要删除的文件");
-        optionalPlanFile.ifPresent(p -> {
-            List<PlanFile> list = planFileRepository.findAllByPlanIdAndClassIdAndCourseIdAndCreateDate(p.getPlanId(), p.getClassId(), p.getCourseId(), p.getCreateDate());
-            if (1 == list.size()) {
-                teachPlanFileListRepository.deleteAllByPlanIdAndClassIdAndCourseIdAndCreateDate(p.getPlanId(), p.getClassId(), p.getCourseId(), p.getCreateDate());
-            }
-            planFileRepository.deleteById(fileId);
-        });
+        planFileRepository.deleteById(fileId);
+//        optionalPlanFile.ifPresent(p -> {
+//            List<PlanFile> list = planFileRepository.findAllByPlanIdAndClassIdAndCourseIdAndCreateDate(p.getPlanId(), p.getClassId(), p.getCourseId(), p.getCreateDate());
+//            if (1 == list.size()) {
+//                teachPlanFileListRepository.deleteAllByPlanIdAndClassIdAndCourseIdAndCreateDate(p.getPlanId(), p.getClassId(), p.getCourseId(), p.getCreateDate());
+//            }
+//            planFileRepository.deleteById(fileId);
+//        });
     }
 
     @Transactional(rollbackFor = Exception.class)

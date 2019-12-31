@@ -15,7 +15,7 @@ public class StudentScorePageAllVo {
     private String studentId;
     private String courseId;
     private String term;
-    private String courseType;
+    private String type;
     private String schoolYear;
     private String startDate;
     private String endDate;

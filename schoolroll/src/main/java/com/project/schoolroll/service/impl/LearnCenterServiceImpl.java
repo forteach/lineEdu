@@ -94,20 +94,20 @@ public class LearnCenterServiceImpl implements LearnCenterService {
 
     /**
      * 修改有效期已经到的学习中心状态
-     * @return 需要修改的学习中心集合
+     * @return 需要修改的学习中心名称集合
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<LearnCenter> findCenterListByEndDate(){
+    public List<String> findCenterListByEndDate(){
         List<LearnCenter> collect = learnCenterRepository
                 .findAllByIsValidatedEqualsAndRoleIdAndEndDateBefore(TAKE_EFFECT_OPEN, CENTER_ROLE_ID, DateUtil.today())
                 .stream()
                 .filter(Objects::nonNull)
-                .peek(l -> l.setIsValidated(TAKE_EFFECT_CLOSE))
+                .peek(c -> c.setIsValidated(TAKE_EFFECT_CLOSE))
                 .collect(toList());
         if (!collect.isEmpty()){
             learnCenterRepository.saveAll(collect);
         }
-        return collect;
+        return collect.stream().filter(Objects::nonNull).map(LearnCenter::getCenterName).collect(toList());
     }
 }

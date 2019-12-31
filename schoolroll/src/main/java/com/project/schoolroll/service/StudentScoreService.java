@@ -2,7 +2,6 @@ package com.project.schoolroll.service;
 
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.repository.dto.StudentOnLineDto;
-import com.project.schoolroll.web.vo.OffLineScoreUpdateVo;
 import com.project.schoolroll.web.vo.StudentScorePageAllVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,19 +45,21 @@ public interface StudentScoreService {
 
     Page<StudentScore> findStudentScorePageAll(StudentScorePageAllVo pageAllVo, PageRequest of);
 
-    void updateOffLineScore(OffLineScoreUpdateVo vo);
+//    void updateOffLineScore(OffLineScoreUpdateVo vo);
 
     StudentScore findById(String scoreId);
 
     void saveAll(List<StudentScore> list);
 
-    List<List<String>> exportScore(String centerId);
+    void taskCompleteCourseScore();
+
+//    List<List<String>> exportScore(String centerId);
 
     List<List<String>> exportScore(List<StudentOnLineDto> list);
 
     void checkoutKey(String key);
 
-    void importScore(InputStream inputStream, String key, String courseId, String courseName, String userId);
+    void importScore(InputStream inputStream, String key, String courseId, String courseName, String type, String userId, String centerId);
 
     void deleteKey(String key);
 }

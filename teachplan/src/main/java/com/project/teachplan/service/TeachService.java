@@ -556,19 +556,21 @@ public class TeachService {
     public Page<TeachCourseVo> findAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String centerAreaId, PageRequest request) {
         Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, centerAreaId, grade, specialtyName, className);
         List<StudentOnLineDto> list = page.getContent();
-        if (list.isEmpty()){
+        if (list.isEmpty()) {
             return new PageImpl<>(new ArrayList<>());
         }
         String classId = list.get(0).getClassId();
         Optional<TeachCenterDto> optional = teachPlanRepository.findAllByClassId(classId);
-        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+        if (!optional.isPresent()) {
+            return new PageImpl<>(new ArrayList<>());
+        }
         TeachCenterDto teachCenterDto = optional.get();
-        List<TeachCourseVo> courseVoList = list.stream().map(d -> new TeachCourseVo(d.getStudentId(),
-                d.getStuId(), d.getSpecialtyName(), d.getGrade(), d.getClassId(),
-                d.getClassName(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(),
-                teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
-                toListStudy(d.getStudentId(), teachCenterDto.getPlanId())))
+        List<TeachCourseVo> courseVoList = list.stream().filter(Objects::nonNull)
+                .map(d -> new TeachCourseVo(d.getStudentId(), d.getStuId(), d.getSpecialtyName(),
+                        d.getGrade(), d.getClassId(), d.getClassName(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
+                        teachCenterDto.getCenterName(), teachCenterDto.getPlanId(), teachCenterDto.getPlanName(),
+                        teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+                        toListStudy(d.getStudentId(), teachCenterDto.getPlanId())))
                 .collect(toList());
         return new PageImpl<>(courseVoList, request, page.getTotalElements());
     }
@@ -576,19 +578,21 @@ public class TeachService {
     public Page<CourseScoreVo> findScoreAllPageDtoByPlanId(String studentName, String className, String grade, String specialtyName, String centerAreaId, PageRequest request) {
         Page<StudentOnLineDto> page = studentOnLineService.findStudentOnLineDto(request, studentName, TAKE_EFFECT_OPEN, centerAreaId, grade, specialtyName, className);
         List<StudentOnLineDto> list = page.getContent();
-        if (list.isEmpty()){
+        if (list.isEmpty()) {
             return new PageImpl<>(new ArrayList<>());
         }
         String classId = list.get(0).getClassId();
         Optional<TeachCenterDto> optional = teachPlanRepository.findAllByClassId(classId);
-        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在对应的计划信息");
+        if (!optional.isPresent()) {
+            return new PageImpl<>(new ArrayList<>());
+        }
         TeachCenterDto teachCenterDto = optional.get();
-        List<CourseScoreVo> courseScoreVoList = list.stream().map(d -> new CourseScoreVo(d.getStudentId(),
-                d.getStuId(), d.getSpecialtyName(), d.getGrade(), d.getClassId(),
-                d.getClassName(), d.getStudentName(), d.getStuPhone(), d.getCenterAreaId(),
-                teachCenterDto.getCenterName(), teachCenterDto.getPlanId(),
-                teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
-                toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
+        List<CourseScoreVo> courseScoreVoList = list.stream().filter(Objects::nonNull)
+                .map(d -> new CourseScoreVo(d.getStudentId(), d.getStuId(), d.getSpecialtyName(),
+                        d.getGrade(), d.getClassId(), d.getClassName(), d.getStudentName(), d.getStuPhone(),
+                        d.getCenterAreaId(), teachCenterDto.getCenterName(), teachCenterDto.getPlanId(),
+                        teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
+                        toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
                 .collect(toList());
         return new PageImpl<>(courseScoreVoList, request, page.getTotalElements());
     }
@@ -649,9 +653,9 @@ public class TeachService {
                         ICourseStudyDto d = optional.get();
                         list.add(new StudyVo(d.getCourseId(), d.getCourseName(), d.getOnLineTime(),
                                 d.getOnLineTimeSum(), d.getAnswerSum(), d.getCorrectSum(), s.getCourseType()));
-                    }else {
+                    } else {
                         //没有学习直接返回对应的课程信息
-                        if(StrUtil.isNotBlank(s.getCourseId())) {
+                        if (StrUtil.isNotBlank(s.getCourseId())) {
                             list.add(new StudyVo(s.getCourseId(), s.getCourseName(), s.getCourseType()));
                         }
                     }
@@ -666,22 +670,20 @@ public class TeachService {
                     Optional<ICourseStudyDto> optional = courseStudyRepository.findStudyDto(studentId, s.getCourseId());
                     if (optional.isPresent()) {
                         ICourseStudyDto d = optional.get();
-//                        .ifPresent(d -> {
-                                //线上成绩 (学习时长/课程总时长) * 视频占比 + (习题回答正确数量/总习题数量) * 练习占比
-                                BigDecimal videoScore = new BigDecimal("0");
-                                BigDecimal jobsScore = new BigDecimal("0");
-                                String videoPercentage = d.getVideoPercentage() == null ? "0" : d.getVideoPercentage();
-                                String jobsPercentage = d.getJobsPercentage() == null ? "0" : d.getJobsPercentage();
-                                if (0 != d.getOnLineTimeSum()) {
-                                    videoScore = NumberUtil.mul(NumberUtil.div(d.getOnLineTime(), d.getOnLineTimeSum(), 2), Double.valueOf(videoPercentage) / 100);
-                                }
-                                if (0 != d.getAnswerSum()) {
-                                    jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getAnswerSum(), 2), Double.valueOf(jobsPercentage) / 100);
-                                }
-                                String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
-                                list.add(new ScoreVo(d.getCourseId(), d.getCourseName(), score, d.getCourseType()));
-//                            });
-                    }else {
+                        //线上成绩 (学习时长/课程总时长) * 视频占比 + (习题回答正确数量/总习题数量) * 练习占比
+                        BigDecimal videoScore = new BigDecimal("0");
+                        BigDecimal jobsScore = new BigDecimal("0");
+                        String videoPercentage = d.getVideoPercentage() == null ? "0" : d.getVideoPercentage();
+                        String jobsPercentage = d.getJobsPercentage() == null ? "0" : d.getJobsPercentage();
+                        if (0 != d.getOnLineTimeSum()) {
+                            videoScore = NumberUtil.mul(NumberUtil.div(d.getOnLineTime(), d.getOnLineTimeSum(), 2), Double.valueOf(videoPercentage) / 100);
+                        }
+                        if (0 != d.getAnswerSum()) {
+                            jobsScore = NumberUtil.mul(NumberUtil.div(d.getCorrectSum(), d.getAnswerSum(), 2), Double.valueOf(jobsPercentage) / 100);
+                        }
+                        String score = NumberUtil.toStr(NumberUtil.mul(NumberUtil.add(videoScore, jobsScore), 100));
+                        list.add(new ScoreVo(d.getCourseId(), d.getCourseName(), score, d.getCourseType()));
+                    } else {
                         //不存在学习成绩设置为 0
                         if (StrUtil.isNotBlank(s.getCourseId())) {
                             Course course = courseService.getById(s.getCourseId());
@@ -692,67 +694,104 @@ public class TeachService {
         return list;
     }
 
+    @Transactional
     public void taskPlanStatus() {
+        // 查询今天之前的要到期的计划并改变计划结束状态　从进行中1 改为 0
         List<TeachPlan> list = teachPlanRepository.findAllByStatusAndEndDateBefore(PLAN_STATUS_ONGOING, DateUtil.today()).stream()
-                .filter(Objects::nonNull).peek(t -> t.setStatus(PLAN_STATUS_SUCCESS)).collect(toList());
+                .filter(Objects::nonNull)
+                .peek(t -> t.setStatus(PLAN_STATUS_SUCCESS))
+                .collect(toList());
         if (!list.isEmpty()) {
             teachPlanRepository.saveAll(list);
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void taskOnLineCourseScore() {
+        //查询已经完成的计划并且没有计算过成绩的计划信息
         List<TeachPlan> planList = teachPlanRepository.findAllByIsValidatedEqualsAndStatusAndCountStatus(TAKE_EFFECT_OPEN, PLAN_STATUS_SUCCESS, PLAN_COUNT_STATUS_ONGOING);
+        //获取对应的计划id
         Set<String> planIds = planList.stream().filter(Objects::nonNull).map(TeachPlan::getPlanId).collect(toSet());
+        //查询计划课程对应的课程信息包含(课程名称,Id,平时成绩,线上，线下占比,平时作业占比,观看视频占百分比 等)
         planIds.forEach(p -> teachPlanCourseRepository.findAllPlanCourseDtoByPlanId(p)
                 .forEach(c -> {
-                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getOnLinePercentage(), c.getLinePercentage(), c.getVideoPercentage(), c.getJobsPercentage());
+                    List<StudentScore> list = findAllStudentScore(p, c.getCourseId(), c.getCourseType(), c.getOnLinePercentage(), c.getLinePercentage(), c.getVideoPercentage(), c.getJobsPercentage());
                     if (!list.isEmpty()) {
                         studentScoreService.saveAll(list);
                     }
                 }));
         if (!planList.isEmpty()) {
+            //修改计划计算状态为完成
             teachPlanRepository.saveAll(planList.stream().peek(t -> t.setCountStatus(PLAN_COUNT_STATUS_SUCCESS)).collect(toList()));
         }
     }
 
-    private List<StudentScore> findAllStudentScore(String planeId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage) {
+    private List<StudentScore> findAllStudentScore(String planeId, String courseId, Integer courseType, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage) {
         return teachPlanRepository.findAllStudentIdsByPlanId(planeId)
                 .stream()
                 .filter(Objects::nonNull)
-                .map(s -> findSetStudentScore(s, courseId, onLinePercentage, linePercentage, videoPercentage, jobsPercentage))
+                .map(s -> findSetStudentScore(s, courseId, courseType, onLinePercentage, linePercentage, videoPercentage, jobsPercentage))
                 .filter(Objects::nonNull)
                 .collect(toList());
     }
 
-    private StudentScore findSetStudentScore(String studentId, String courseId, int onLinePercentage, int linePercentage, String videoPercentage, String jobsPercentage) {
+    private StudentScore findSetStudentScore(String studentId, String courseId, Integer courseType, int onLinePercentage,
+                                             int linePercentage, String videoPercentage, String jobsPercentage) {
         Optional<CourseStudy> optional = courseStudyRepository.findAllByCourseIdAndStudentId(courseId, studentId);
         if (optional.isPresent()) {
             CourseStudy c = optional.get();
-            StudentScore studentScore = studentScoreService.findByStudentIdAndCourseId(studentId, courseId);
+            StudentScore studentScore = studentScoreService.findStudentIdAndCourseId(studentId, courseId);
             studentScore.setCourseId(courseId);
             studentScore.setStudentId(studentId);
             studentScore.setUpdateUser(c.getStudentId());
             studentScore.setCreateUser(c.getStudentId());
             studentScore.setCenterAreaId(c.getCenterAreaId());
-            int onLineTime = c.getOnLineTime();
-            int onLineTimeSum = c.getOnLineTimeSum();
-            //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
-            double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
-            //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
-            BigDecimal jobScore = new BigDecimal("0");
-            if (0 != c.getAnswerSum()) {
-                jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
+            //设置课程类型
+            String type = String.valueOf(courseType);
+            if (StrUtil.isBlank(studentScore.getType())) {
+                studentScore.setType(type);
             }
-            //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
-            BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
-            //计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
-            BigDecimal courseScore = NumberUtil.mul(onLineScore, NumberUtil.div(onLinePercentage, 100, 2));
-            studentScore.setOnLineScore(onLineScore.toPlainString());
-            studentScore.setCourseScore(courseScore.floatValue());
-            //线下成绩占比 %
-            studentScore.setLinePercentage(linePercentage);
-            //线上成绩占比 %
-            studentScore.setOnLinePercentage(onLinePercentage);
+            //不是线下课程需要计算成绩占比和计算总成绩
+            if (!COURSE_TYPE_2.equals(type)) {
+                //线上观看时间
+                int onLineTime = c.getOnLineTime();
+                //课程总时间
+                int onLineTimeSum = c.getOnLineTimeSum();
+                //观看视频成绩 (观看视频时长/视频总时长) * 观看视频占比
+                double videoScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(onLineTime, onLineTimeSum, 2), 100F), Double.valueOf(videoPercentage) / 100);
+                //平时作业成绩 (回答正确题目数量/总题目数量) * 平时作业占比
+                BigDecimal jobScore = new BigDecimal("0");
+                if (0 != c.getAnswerSum()) {
+                    jobScore = NumberUtil.mul(NumberUtil.mul(NumberUtil.div(c.getCorrectSum(), c.getAnswerSum(), 2), 100F), Double.valueOf(jobsPercentage) / 100);
+                }
+                //线上成绩 = (观看视频时长/视频总时长) * 观看视频占比 + (回答正确题目数量/总题目数量) * 平时作业占比
+                BigDecimal onLineScore = NumberUtil.add(videoScore, jobScore);
+                studentScore.setOnLineScore(onLineScore.toPlainString());
+                //判断课程类别是线上课程直接计算成绩是线上学习结果成绩,计算结果直接完成
+                if (COURSE_TYPE_1.equals(type)) {
+                    studentScore.setCourseScore(Float.valueOf(studentScore.getOnLineScore()));
+                    studentScore.setCompleteStatus(1);
+                } else if (COURSE_TYPE_3.equals(type)) {
+                    //是混合课程 计算课程成绩 线上成绩部分 = 线上成绩 * 线上成绩占比
+                    //线上总成绩
+                    BigDecimal onLineScoreSum = NumberUtil.mul(onLineScore, NumberUtil.div(onLinePercentage, 100, 2));
+                    //线下总成绩
+                    String offLineScore = studentScore.getOffLineScore();
+                    if (StrUtil.isNotBlank(offLineScore)) {
+                        //计算课程总成绩
+                        //线下总成绩
+                        BigDecimal offLineScoreSum = NumberUtil.mul(new BigDecimal(offLineScore), NumberUtil.div(linePercentage, 100, 2));
+                        //课程总成绩
+                        BigDecimal courseScore = NumberUtil.add(onLineScoreSum, offLineScoreSum);
+                        studentScore.setCourseScore(courseScore.floatValue());
+                    }
+                    studentScore.setCompleteStatus(0);
+                }
+                //线下成绩占比 %
+                studentScore.setLinePercentage(linePercentage);
+                //线上成绩占比 %
+                studentScore.setOnLinePercentage(onLinePercentage);
+            }
             return studentScore;
         }
         return null;
@@ -773,16 +812,16 @@ public class TeachService {
                 .collect(toSet());
     }
 
-    /**
-     * 判断对应班级的计划结束日期是否在当前日期之前
-     * @param classId 班级Id
-     * @return true 在当前日期之前, false 不在今天之前
-     */
-    public boolean checkPlanDate(String classId) {
-        List<TeachPlanVerify> planVerifies = teachPlanVerifyRepository.findAllByClassId(classId);
-        MyAssert.isTrue(planVerifies.isEmpty(), DefineCode.ERR0010, "不存在对应的计划课程");
-        TeachPlanVerify teachPlanVerify = planVerifies.get(0);
-        MyAssert.isTrue(TAKE_EFFECT_CLOSE.equals(teachPlanVerify.getIsValidated()), DefineCode.ERR0010, "对应的班级计划已经失效");
-        return DateUtil.parseDate(teachPlanVerify.getEndDate()).isBefore(new Date());
-    }
+//    /**
+//     * 判断对应班级的计划结束日期是否在当前日期之前
+//     * @param classId 班级Id
+//     * @return true 在当前日期之前, false 不在今天之前
+//     */
+//    public boolean checkPlanDate(String classId) {
+//        List<TeachPlanVerify> planVerifies = teachPlanVerifyRepository.findAllByClassId(classId);
+//        MyAssert.isTrue(planVerifies.isEmpty(), DefineCode.ERR0010, "不存在对应的计划课程");
+//        TeachPlanVerify teachPlanVerify = planVerifies.get(0);
+//        MyAssert.isTrue(TAKE_EFFECT_CLOSE.equals(teachPlanVerify.getIsValidated()), DefineCode.ERR0010, "对应的班级计划已经失效");
+//        return DateUtil.parseDate(teachPlanVerify.getEndDate()).isBefore(new Date());
+//    }
 }

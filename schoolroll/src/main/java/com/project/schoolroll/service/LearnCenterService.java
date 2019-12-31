@@ -34,5 +34,5 @@ public interface LearnCenterService {
 
     void updateFileStatus(String centerId, String status, String userId);
 
-    List<LearnCenter> findCenterListByEndDate();
+    List<String> findCenterListByEndDate();
 }

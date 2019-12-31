@@ -4,7 +4,6 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -35,7 +34,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.base.common.keyword.Dic.*;
-import static com.project.token.constant.TokenKey.*;
+import static com.project.token.constant.TokenKey.TOKEN_VALIDITY_TIME;
+import static com.project.token.constant.TokenKey.USER_ROLE_CODE_TEACHER;
 
 /**
  * @Auther: zhangyy
@@ -70,36 +70,31 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String bindingUser(BindingUserRequest bindingUserReq) {
-        if (Validator.isMobile(bindingUserReq.getStuIDCard())) {
-            return bindTeacher(bindingUserReq);
-        } else {
-            List<StudentOnLine> list = studentOnLineService.findByStuIDCardAndStudentName(StrUtil.trim(bindingUserReq.getStuIDCard()), StrUtil.trim(bindingUserReq.getStudentName()));
-            MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "身份信息不符, 请联系管理员");
-            Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(bindingUserReq.getOpenId()).stream().findFirst();
-            if (weChatUserInfoOptional.isPresent() && WX_INFO_BINDIND_0.equals(weChatUserInfoOptional.get().getBinding())) {
-                MyAssert.isNull(null, DefineCode.ERR0014, "该微信账号已经认证");
-            }
-            WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
-            StudentOnLine studentOnLine = list.get(0);
-            if (checkStudent(bindingUserReq, studentOnLine.getStudentName(), studentOnLine.getStuIDCard())) {
-                String openId = bindingUserReq.getOpenId();
-                String key = USER_PREFIX.concat(openId);
-                updateWeChatUser(key, bindingUserReq, weChatUser);
-                weChatUser.setBinding(WX_INFO_BINDIND_0);
-                weChatUser.setStudentId(studentOnLine.getStudentId());
-                weChatUser.setClassId(studentOnLine.getClassId());
-                weChatUser.setCenterAreaId(studentOnLine.getCenterAreaId());
-                weChatUser.setStudentName(studentOnLine.getStudentName());
-                weChatUser.setClassName(tbClassService.findClassByClassId(studentOnLine.getClassId()).getClassName());
-                weChatUser.setOpenId(openId);
-                weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
-                weChatUser.setCreateUser(bindingUserReq.getStuIDCard());
-                weChatUserRepository.save(weChatUser);
-                //setTokenRedis(weChatUser, key, TOKEN_STUDENT);
-                return "绑定成功";
-            }
-            return "身份信息不符, 认证失败!";
+        List<StudentOnLine> list = studentOnLineService.findByStuIDCardAndStudentName(StrUtil.trim(bindingUserReq.getStuIDCard()), StrUtil.trim(bindingUserReq.getStudentName()));
+        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "身份信息不符, 请联系管理员");
+        Optional<WeChatUser> weChatUserInfoOptional = weChatUserRepository.findByOpenId(bindingUserReq.getOpenId()).stream().findFirst();
+        if (weChatUserInfoOptional.isPresent() && WX_INFO_BINDIND_0.equals(weChatUserInfoOptional.get().getBinding())) {
+            MyAssert.isNull(null, DefineCode.ERR0014, "该微信账号已经认证");
         }
+        WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
+        StudentOnLine studentOnLine = list.get(0);
+        if (checkStudent(bindingUserReq, studentOnLine.getStudentName(), studentOnLine.getStuIDCard())) {
+            String openId = bindingUserReq.getOpenId();
+            String key = USER_PREFIX.concat(openId);
+            updateWeChatUser(key, bindingUserReq, weChatUser);
+            weChatUser.setBinding(WX_INFO_BINDIND_0);
+            weChatUser.setStudentId(studentOnLine.getStudentId());
+            weChatUser.setClassId(studentOnLine.getClassId());
+            weChatUser.setCenterAreaId(studentOnLine.getCenterAreaId());
+            weChatUser.setStudentName(studentOnLine.getStudentName());
+            weChatUser.setClassName(tbClassService.findClassByClassId(studentOnLine.getClassId()).getClassName());
+            weChatUser.setOpenId(openId);
+            weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
+            weChatUser.setCreateUser(bindingUserReq.getStuIDCard());
+            weChatUserRepository.save(weChatUser);
+            return "绑定成功";
+        }
+        return "身份信息不符, 认证失败!";
     }
 
     /**
@@ -108,18 +103,24 @@ public class WeChatUserServiceImpl implements WeChatUserService {
      * @param bindingUserReq
      * @return
      */
-    private String bindTeacher(BindingUserRequest bindingUserReq) {
-        List<WeChatUser> list = weChatUserRepository.findByStudentId(bindingUserReq.getStuIDCard());
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String bindTeacher(BindingUserRequest bindingUserReq, String teacherId, String userName) {
+        String studentName = bindingUserReq.getStudentName();
+        List<WeChatUser> weChatUsers = weChatUserRepository.findByStudentId(studentName);
+        MyAssert.isFalse(weChatUsers.isEmpty(), DefineCode.ERR0010, "当前账号已经绑定过了");
         String openId = bindingUserReq.getOpenId();
-        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0010, "您注册的手机号码，不是教师手机号码，请联系管理员");
-        WeChatUser weChatUser = list.get(0);
+        WeChatUser weChatUser = weChatUserRepository.findAllByOpenId(openId).orElseGet(WeChatUser::new);
         String key = USER_PREFIX.concat(openId);
         updateWeChatUser(key, bindingUserReq, weChatUser);
         weChatUser.setOpenId(openId);
         weChatUser.setBinding(WX_INFO_BINDIND_0);
-        weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
+        weChatUser.setCreateUser(bindingUserReq.getStudentName());
+        weChatUser.setUpdateUser(bindingUserReq.getStudentName());
+        weChatUser.setRoleId(WECHAT_ROLE_ID_TEACHER);
+        weChatUser.setStudentId(teacherId);
+        weChatUser.setStudentName(userName);
         weChatUserRepository.save(weChatUser);
-        //setTokenRedis(weChatUser, key, TOKEN_TEACHER);
         return "绑定成功";
     }
 
@@ -161,10 +162,12 @@ public class WeChatUserServiceImpl implements WeChatUserService {
             centerAreaId = weChatUser.getCenterAreaId();
         }
         WeChatUser weChatUser = weChatUserInfoOptional.orElseGet(WeChatUser::new);
-        String token;
+        String token = "";
         if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())) {
+            //是教师
             token = tokenService.createToken(openId, centerAreaId, USER_ROLE_CODE_TEACHER);
         } else {
+            //是学生
             token = tokenService.createToken(openId, centerAreaId);
         }
         Map<String, Object> map = BeanUtil.beanToMap(weChatUser);
@@ -178,7 +181,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         //设置有效期7天
         stringRedisTemplate.expire(key, TOKEN_VALIDITY_TIME, TimeUnit.SECONDS);
 
-        if (StrUtil.isNotBlank(portrait)){
+        if (StrUtil.isNotBlank(portrait)) {
             weChatUserInfoOptional.ifPresent(w -> {
                 w.setAvatarUrl(portrait);
                 w.setAvatarUrl(portrait);
@@ -233,13 +236,6 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     }
 
     @Override
-    public void restart(String string) {
-        List<WeChatUser> list = weChatUserRepository.findByStudentId(string);
-        MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "不存要删除的用户");
-        updateWeChat(list);
-    }
-
-    @Override
     public void untying(String openId) {
         List<WeChatUser> list = weChatUserRepository.findByOpenId(openId);
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "不存要解绑的用户");
@@ -247,7 +243,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateWeChat(List<WeChatUser> list){
+    public void updateWeChat(List<WeChatUser> list) {
         //删除token登录信息
         list.forEach(weChatUser -> tokenService.removeToken(weChatUser.getOpenId()));
         //删除微信登录信息

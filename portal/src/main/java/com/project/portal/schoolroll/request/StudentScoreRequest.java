@@ -27,14 +27,14 @@ public class StudentScoreRequest extends SortVo implements Serializable {
     @ApiModelProperty(name = "courseId", value = "课程Id", dataType = "string")
     private String courseId;
 
-    @ApiModelProperty(name = "term", value = "学期", dataType = "string")
-    private String term;
+//    @ApiModelProperty(name = "term", value = "学期", dataType = "string")
+//    private String term;
 
     @ApiModelProperty(name = "courseType", value = "课程类别", dataType = "string")
-    private String courseType;
+    private String type;
 
-    @ApiModelProperty(name = "schoolYear", value = "学年", dataType = "string")
-    private String schoolYear;
+//    @ApiModelProperty(name = "schoolYear", value = "学年", dataType = "string")
+//    private String schoolYear;
 
     @ApiModelProperty(name = "startDate", value = "开始日期", dataType = "string")
     private String startDate;

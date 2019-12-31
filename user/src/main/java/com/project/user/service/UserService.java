@@ -1,6 +1,6 @@
 package com.project.user.service;
 
-import com.project.user.web.req.RegisterUserReq;
+import com.project.user.domain.SysUsers;
 import com.project.user.web.req.UpdatePassWordReq;
 import com.project.user.web.req.UserLoginReq;
 import com.project.user.web.resp.LoginResponse;
@@ -26,13 +26,16 @@ public interface UserService {
 
     LoginResponse login(UserLoginReq userLoginReq);
 
-    /**
-     * 教师端用户注册
-     *
-     * @param registerUserReq
-     * @return
-     */
-    boolean registerUser(RegisterUserReq registerUserReq);
+
+    SysUsers checkUserNameAndPassWord(String teacherCode, String passWord);
+
+//    /**
+//     * 教师端用户注册
+//     *
+//     * @param registerUserReq
+//     * @return
+//     */
+//    boolean registerUser(RegisterUserReq registerUserReq);
 
     /**
      * 重置用户密码
@@ -76,6 +79,8 @@ public interface UserService {
 
     void updateCenterPhone(String centerName, String phone, String userId);
 
-    /** 批量修改管理端用户状态为无效*/
+    /**
+     * 批量修改管理端用户状态为无效
+     */
     void updateCenterUsers(List<String> list);
 }

@@ -218,7 +218,7 @@ public class StudentOnLineService {
                 " from student_on_line as s " +
                 " left join learn_center as lc on lc.center_id = s.center_area_id ");
         StringBuilder whereSql = new StringBuilder(" where lc.is_validated = '0' ");
-        StringBuilder countSql = new StringBuilder(" select count(1) from student_on_line as s left join learn_center as lc on lc.center_id = s.center_area_id ");
+        StringBuilder countSql = new StringBuilder(" select count(*) from student_on_line as s left join learn_center as lc on lc.center_id = s.center_area_id ");
         if (StrUtil.isNotBlank(centerAreaId)) {
             whereSql.append(" and lc.center_id = :centerAreaId");
         }

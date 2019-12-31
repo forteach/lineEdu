@@ -18,10 +18,13 @@ public abstract class BaseTeachCourseVo implements Serializable {
      */
     public String studentId;
 
+    /** 班级id */
     public String classId;
 
+    /** 课程名称 */
     public String className;
 
+    /** 学号 */
     public String stuId;
 
     /** 专业*/
@@ -77,7 +80,7 @@ public abstract class BaseTeachCourseVo implements Serializable {
         this.specialtyName = specialtyName;
         this.grade = grade;
         this.classId = classId;
-        this.centerName = className;
+        this.className = className;
         this.studentName = studentName;
         this.stuPhone = stuPhone;
         this.centerAreaId = centerAreaId;
