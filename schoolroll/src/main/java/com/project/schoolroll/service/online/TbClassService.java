@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class TbClassService {
+
     private final TbClassesRepository tbClassesRepository;
 
     @Autowired

@@ -426,6 +426,7 @@ public class StudentScoreServiceImpl extends BaseMySqlService implements Student
         list.forEach(v -> {
             MyAssert.isTrue(StrUtil.isBlank(v.getScore()), DefineCode.ERR0010, "成绩信息不能为空");
             MyAssert.isTrue(StrUtil.isBlank(v.getStudentId()), DefineCode.ERR0010, "身份证号码不能为空");
+            MyAssert.isFalse(NumberUtil.isNumber(v.getScore()), DefineCode.ERR0010, v.getScore() + " 不是数字");
         });
     }
 

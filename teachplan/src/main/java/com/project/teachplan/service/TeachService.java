@@ -15,9 +15,11 @@ import com.project.course.repository.CourseStudyRepository;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.service.CourseService;
 import com.project.course.service.OnLineCourseDicService;
+import com.project.schoolroll.domain.StudentFinishSchool;
 import com.project.schoolroll.domain.StudentScore;
 import com.project.schoolroll.domain.online.TbClasses;
 import com.project.schoolroll.repository.dto.StudentOnLineDto;
+import com.project.schoolroll.service.StudentFinishSchoolService;
 import com.project.schoolroll.service.StudentScoreService;
 import com.project.schoolroll.service.online.StudentOnLineService;
 import com.project.schoolroll.service.online.TbClassService;
@@ -75,6 +77,7 @@ public class TeachService {
     private final StudentScoreService studentScoreService;
     private final TeachPlanFileService teachPlanFileService;
     private final CourseService courseService;
+    private final StudentFinishSchoolService studentFinishSchoolService;
 //    private final TeacherService teacherService;
 //    private final TeachPlanClassRepository teachPlanClassRepository;
 //    private final TeachPlanClassVerifyRepository teachPlanClassVerifyRepository;
@@ -82,7 +85,7 @@ public class TeachService {
     @Autowired
     public TeachService(
             StudentOnLineService studentOnLineService, CourseService courseService,
-            TeachPlanRepository teachPlanRepository,
+            TeachPlanRepository teachPlanRepository, StudentFinishSchoolService studentFinishSchoolService,
             TeachPlanFileService teachPlanFileService,
             TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
 //            TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
@@ -109,6 +112,7 @@ public class TeachService {
         this.courseStudyRepository = courseStudyRepository;
         this.redisTemplate = redisTemplate;
         this.studentScoreService = studentScoreService;
+        this.studentFinishSchoolService = studentFinishSchoolService;
     }
 
 
@@ -824,4 +828,28 @@ public class TeachService {
 //        MyAssert.isTrue(TAKE_EFFECT_CLOSE.equals(teachPlanVerify.getIsValidated()), DefineCode.ERR0010, "对应的班级计划已经失效");
 //        return DateUtil.parseDate(teachPlanVerify.getEndDate()).isBefore(new Date());
 //    }
+
+    public void computeFinishSchool(){
+        List<String> planIds = teachPlanRepository.findAllByIsValidatedEqualsAndEndDateBefore(TAKE_EFFECT_OPEN, DateUtil.today());
+//        planIds.forEach(p -> {
+//            List<TeachPlanCourse> planCourses = teachPlanCourseRepository.findAllByPlanId(p);
+//            return teachPlanRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, p).stream().filter(Objects::nonNull)
+//                    .map(s -> {
+//                        List<StudentScore> list = studentScoreService.findByStudentId(s.studentId);
+//                        StudentFinishSchool finishSchool = studentFinishSchoolService.findById(s.getStudentId());
+//                        if (list.size() < planCourses.size()){
+//                            finishSchool.setIsFinishSchool(NO);
+//                        }else {
+////                             list.forEach(ss -> {
+////                                if (ss.getCourseScore() < 60F){
+////                                    finishSchool.setIsFinishSchool(NO);
+////                                }else {
+////                                    finishSchool.setIsFinishSchool(YES);
+////                                }
+////                            });
+//                        }
+//                        return finishSchool;
+//                    }).collect(toList());
+//        });
+    }
 }

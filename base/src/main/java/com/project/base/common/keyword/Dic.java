@@ -13,6 +13,10 @@ public class Dic {
     public static final String TAKE_EFFECT_OPEN = "0";
 
     public static final String TAKE_EFFECT_CLOSE = "1";
+    /** 是 Y*/
+    public static final String YES = "Y";
+    /** 没有完成 N */
+    public static final String NO = "N";
 
     /**
      *学习中心类别 0 总部 1 其它分中心

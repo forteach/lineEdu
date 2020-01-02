@@ -1,8 +1,10 @@
 package com.project.teachplan.repository;
 
+import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.repository.dto.IPlanStatusDto;
 import com.project.teachplan.repository.dto.TeachCenterDto;
+import com.project.teachplan.vo.PlanStudentVo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -116,4 +118,13 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
 //            nativeQuery = true)
 //    @Transactional(readOnly = true)
 //    Page<PlanCourseStudyDto> findAllPageDtoByPlanId(String planId, Pageable pageable);
+
+//    @Query(value = "select ")
+//    List<StudentOnLine> findAllByIsValidatedEqualsAndEndDateBefore(String endDate);
+
+
+    List<String> findAllByIsValidatedEqualsAndEndDateBefore(String isValidated, String endDate);
+
+    @Query(value = "select studentId as studentId, studentName as studentName from StudentOnLine where isValidated = '0' and classId in (select classId from TeachPlan where planId = ?2)")
+    List<PlanStudentVo> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
 }

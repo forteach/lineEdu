@@ -132,11 +132,11 @@ public class CourseTask {
         //修改教学计划状态
         teachService.taskPlanStatus();
         //暂停10秒
-        Thread.sleep(10000);
+//        Thread.sleep(10000);
         //计算计划对应的学生成绩
         teachService.taskOnLineCourseScore();
         //暂停10秒
-        Thread.sleep(20000);
+//        Thread.sleep(10000);
         //查询计算没有完成计算的成绩
         studentScoreService.taskCompleteCourseScore();
         log.info(" <== end course student score async ");
@@ -161,5 +161,25 @@ public class CourseTask {
         //使学习中心的登录账号失效
         userService.updateCenterUsers(centerList);
         log.info(" <== end center update status async ");
+    }
+
+    /** 计算所有课程都完成没，是否达到毕业条件*/
+    @Schedules({
+//            @Scheduled(cron = "0 10 3 * * ?")
+            @Scheduled(cron = "0 0 0/2 * * ?")
+    })
+    @Async
+    public void computeFinishSchool(){
+        log.info("start compute student finish school async ==> ");
+        // 修改学习中心,修改学习中心状态
+        if (log.isDebugEnabled()) {
+            log.debug("task thread name : {}", Thread.currentThread().getName());
+        }
+        //查询计划已经结束的学生信息
+        //查询计划结束的学生对应的课程学习情况,是否成绩及格和全部课程毕业
+
+
+
+        log.info(" <== end compute student finish school async");
     }
 }
