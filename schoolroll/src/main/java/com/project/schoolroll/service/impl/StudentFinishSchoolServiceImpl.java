@@ -6,6 +6,9 @@ import com.project.schoolroll.service.StudentFinishSchoolService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author: zhangyy
@@ -23,21 +26,29 @@ public class StudentFinishSchoolServiceImpl implements StudentFinishSchoolServic
     }
 
     @Override
-    public Page<StudentFinishSchool> findAllByIsValidatedEqualsAndIsFinishSchoolPage(String isValidated, String isFinishSchool, Pageable pageable){
+    public Page<StudentFinishSchool> findAllByIsValidatedEqualsAndIsFinishSchoolPage(String isValidated, String isFinishSchool, Pageable pageable) {
         return studentFinishSchoolRepository.findAllByIsValidatedEqualsAndIsFinishSchool(isValidated, isFinishSchool, pageable);
     }
 
     @Override
-    public Page<StudentFinishSchool> findAllByIsValidatedEqualsPage(String isValidated, Pageable pageable){
+    public Page<StudentFinishSchool> findAllByIsValidatedEqualsPage(String isValidated, Pageable pageable) {
         return studentFinishSchoolRepository.findAllByIsValidatedEquals(isValidated, pageable);
     }
 
     @Override
-    public Page<StudentFinishSchool> findAllIsFinishSchoolPage(String isFinishSchool, Pageable pageable){
+    public Page<StudentFinishSchool> findAllIsFinishSchoolPage(String isFinishSchool, Pageable pageable) {
         return studentFinishSchoolRepository.findAllByIsFinishSchool(isFinishSchool, pageable);
     }
+
     @Override
-    public StudentFinishSchool findById(String studentId){
+    public StudentFinishSchool findById(String studentId) {
         return studentFinishSchoolRepository.findById(studentId).orElseGet(StudentFinishSchool::new);
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveAll(List<StudentFinishSchool> list) {
+        studentFinishSchoolRepository.saveAll(list);
     }
 }

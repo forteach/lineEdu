@@ -1,6 +1,5 @@
 package com.project.teachplan.repository;
 
-import com.project.schoolroll.domain.online.StudentOnLine;
 import com.project.teachplan.domain.TeachPlan;
 import com.project.teachplan.repository.dto.IPlanStatusDto;
 import com.project.teachplan.repository.dto.TeachCenterDto;
@@ -123,8 +122,14 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
 //    List<StudentOnLine> findAllByIsValidatedEqualsAndEndDateBefore(String endDate);
 
 
+    /**
+     * 查询已经结束的计划信息
+     */
     List<String> findAllByIsValidatedEqualsAndEndDateBefore(String isValidated, String endDate);
 
+    /**
+     * 查询计划对应的学生信息，学生名称和Id
+     */
     @Query(value = "select studentId as studentId, studentName as studentName from StudentOnLine where isValidated = '0' and classId in (select classId from TeachPlan where planId = ?2)")
     List<PlanStudentVo> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
 }

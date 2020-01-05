@@ -13,9 +13,9 @@ public class Dic {
     public static final String TAKE_EFFECT_OPEN = "0";
 
     public static final String TAKE_EFFECT_CLOSE = "1";
-    /** 是 Y*/
+    /** 完成 (YES)  Y*/
     public static final String YES = "Y";
-    /** 没有完成 N */
+    /** 没有完成 (NO) N */
     public static final String NO = "N";
 
     /**

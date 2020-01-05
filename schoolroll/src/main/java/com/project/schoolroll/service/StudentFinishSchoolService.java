@@ -4,6 +4,8 @@ import com.project.schoolroll.domain.StudentFinishSchool;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com
@@ -15,5 +17,6 @@ public interface StudentFinishSchoolService {
     Page<StudentFinishSchool> findAllByIsValidatedEqualsAndIsFinishSchoolPage(String isValidated, String isFinishSchool, Pageable pageable);
     Page<StudentFinishSchool> findAllByIsValidatedEqualsPage(String isValidated, Pageable pageable);
     Page<StudentFinishSchool> findAllIsFinishSchoolPage(String isFinishSchool, Pageable pageable);
-    public StudentFinishSchool findById(String studentId);
+    StudentFinishSchool findById(String studentId);
+    void saveAll(List<StudentFinishSchool> list);
 }

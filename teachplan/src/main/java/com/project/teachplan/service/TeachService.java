@@ -829,27 +829,44 @@ public class TeachService {
 //        return DateUtil.parseDate(teachPlanVerify.getEndDate()).isBefore(new Date());
 //    }
 
-    public void computeFinishSchool(){
+    public void computeFinishSchool() {
+        //查询对应已经完成的计划Id集合
         List<String> planIds = teachPlanRepository.findAllByIsValidatedEqualsAndEndDateBefore(TAKE_EFFECT_OPEN, DateUtil.today());
-//        planIds.forEach(p -> {
-//            List<TeachPlanCourse> planCourses = teachPlanCourseRepository.findAllByPlanId(p);
-//            return teachPlanRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, p).stream().filter(Objects::nonNull)
-//                    .map(s -> {
-//                        List<StudentScore> list = studentScoreService.findByStudentId(s.studentId);
-//                        StudentFinishSchool finishSchool = studentFinishSchoolService.findById(s.getStudentId());
-//                        if (list.size() < planCourses.size()){
-//                            finishSchool.setIsFinishSchool(NO);
-//                        }else {
-////                             list.forEach(ss -> {
-////                                if (ss.getCourseScore() < 60F){
-////                                    finishSchool.setIsFinishSchool(NO);
-////                                }else {
-////                                    finishSchool.setIsFinishSchool(YES);
-////                                }
-////                            });
-//                        }
-//                        return finishSchool;
-//                    }).collect(toList());
-//        });
+        planIds.forEach(p -> {
+            //计划对应的课程信息
+            List<TeachPlanCourse> planCourses = teachPlanCourseRepository.findAllByPlanId(p);
+            List<StudentFinishSchool> list = teachPlanRepository.findAllByIsValidatedEqualsAndPlanId(TAKE_EFFECT_OPEN, p).stream().filter(Objects::nonNull)
+                    .map(v -> buildStudentFinishSchool(planCourses, v))
+                    .collect(toList());
+            if (!list.isEmpty()) {
+                studentFinishSchoolService.saveAll(list);
+            }
+        });
+    }
+
+    private StudentFinishSchool buildStudentFinishSchool(List<TeachPlanCourse> planCourses, PlanStudentVo vo) {
+        List<StudentScore> list = studentScoreService.findByStudentId(vo.getStudentId());
+        StudentFinishSchool finishSchool = studentFinishSchoolService.findById(vo.getStudentId());
+        if (planCourses.size() != list.size()) {
+            //计划的课程数量和实际有成绩的课程数量不同，说明不能毕业
+            finishSchool.setIsFinishSchool(NO);
+        } else {
+            //有成绩的数量和计划课程的数量相同，需要判断对应的成绩是否符合毕业条件即，每门课成绩都需要大于等于60分
+            long count = list.stream()
+                    .filter(Objects::nonNull)
+                    .filter(s -> null != s.getCourseScore())
+                    .mapToDouble(StudentScore::getCourseScore)
+                    .filter(s -> s >= 60F)
+                    .count();
+            //计算过的课程成绩全部大于等于60分成绩合格否则不合格
+            if (count == list.size()) {
+                finishSchool.setIsFinishSchool(YES);
+            }else {
+                finishSchool.setIsFinishSchool(NO);
+            }
+        }
+        finishSchool.setStudentId(vo.getStudentId());
+        finishSchool.setStudentName(vo.getStudentName());
+        return finishSchool;
     }
 }

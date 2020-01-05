@@ -175,11 +175,8 @@ public class CourseTask {
         if (log.isDebugEnabled()) {
             log.debug("task thread name : {}", Thread.currentThread().getName());
         }
-        //查询计划已经结束的学生信息
         //查询计划结束的学生对应的课程学习情况,是否成绩及格和全部课程毕业
-
-
-
+        teachService.computeFinishSchool();
         log.info(" <== end compute student finish school async");
     }
 }
