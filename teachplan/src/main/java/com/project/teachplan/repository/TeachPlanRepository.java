@@ -130,6 +130,6 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     /**
      * 查询计划对应的学生信息，学生名称和Id
      */
-    @Query(value = "select studentId as studentId, studentName as studentName from StudentOnLine where isValidated = '0' and classId in (select classId from TeachPlan where planId = ?2)")
+    @Query(value = "select studentId as studentId, studentName as studentName, centerAreaId as centerAreaId from StudentOnLine where isValidated = '0' and classId in (select classId from TeachPlan where planId = ?2)")
     List<PlanStudentVo> findAllByIsValidatedEqualsAndPlanId(String isValidated, String planId);
 }

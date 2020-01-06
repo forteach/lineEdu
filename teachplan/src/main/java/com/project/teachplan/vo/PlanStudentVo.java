@@ -13,4 +13,5 @@ import lombok.Data;
 public class PlanStudentVo {
     public String studentId;
     public String studentName;
+    public String centerAreaId;
 }

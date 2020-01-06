@@ -18,8 +18,13 @@ public class CourseScoreVo extends BaseTeachCourseVo{
 
     public List<ScoreVo> courses;
 
-    public CourseScoreVo(String studentId, String stuId, String specialtyName, String grade, String classId, String className, String studentName, String stuPhone, String centerAreaId, String centerName, String planId, String planName, String startDate, String endDate, List<ScoreVo> courses) {
+    /** 是否已经毕业 Y/N */
+    public String isFinishSchool;
+
+    public CourseScoreVo(String studentId, String stuId, String specialtyName, String grade, String classId, String className, String studentName, String stuPhone, String centerAreaId, String centerName, String planId,
+                         String planName, String startDate, String endDate, List<ScoreVo> courses, String isFinishSchool) {
         super(studentId, stuId, specialtyName, grade, classId, className, studentName, stuPhone, centerAreaId, centerName, planId, planName, startDate, endDate);
         this.courses = courses;
+        this.isFinishSchool = isFinishSchool;
     }
 }

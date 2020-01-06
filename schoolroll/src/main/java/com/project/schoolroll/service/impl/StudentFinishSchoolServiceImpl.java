@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -41,8 +42,13 @@ public class StudentFinishSchoolServiceImpl implements StudentFinishSchoolServic
     }
 
     @Override
-    public StudentFinishSchool findById(String studentId) {
+    public StudentFinishSchool findByStudentId(String studentId) {
         return studentFinishSchoolRepository.findById(studentId).orElseGet(StudentFinishSchool::new);
+    }
+
+    @Override
+    public Optional<StudentFinishSchool> findById(String studentId) {
+        return studentFinishSchoolRepository.findById(studentId);
     }
 
 

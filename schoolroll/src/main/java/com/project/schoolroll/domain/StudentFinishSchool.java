@@ -1,8 +1,10 @@
 package com.project.schoolroll.domain;
 
 import com.project.mysql.domain.Entitys;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -23,6 +25,8 @@ import java.io.Serializable;
 @Table(name = "student_finish_school", indexes = {
         @Index(columnList = "student_id", name = "student_id_index")
 })
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @org.hibernate.annotations.Table(comment = "学生是毕业信息", appliesTo = "student_finish_school")
 public class StudentFinishSchool extends Entitys implements Serializable {
@@ -43,4 +47,8 @@ public class StudentFinishSchool extends Entitys implements Serializable {
      */
     @Column(name = "is_makeup_examination", columnDefinition = "CHAR(3) COMMENT '是否需要补考 Y/N'")
     public String isMakeupExamination;
+
+    public StudentFinishSchool(String isFinishSchool) {
+        this.isFinishSchool = isFinishSchool;
+    }
 }

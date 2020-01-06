@@ -31,7 +31,7 @@ public class StudyVo implements Serializable {
     public StudyVo() {
     }
 
-    public StudyVo(String courseId, String courseName, Integer CourseType) {
+    public StudyVo(String courseId, String courseName, Integer courseType) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseType = courseType;

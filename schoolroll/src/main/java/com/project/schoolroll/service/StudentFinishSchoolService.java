@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -17,6 +18,7 @@ public interface StudentFinishSchoolService {
     Page<StudentFinishSchool> findAllByIsValidatedEqualsAndIsFinishSchoolPage(String isValidated, String isFinishSchool, Pageable pageable);
     Page<StudentFinishSchool> findAllByIsValidatedEqualsPage(String isValidated, Pageable pageable);
     Page<StudentFinishSchool> findAllIsFinishSchoolPage(String isFinishSchool, Pageable pageable);
-    StudentFinishSchool findById(String studentId);
+    StudentFinishSchool findByStudentId(String studentId);
+    Optional<StudentFinishSchool> findById(String studentId);
     void saveAll(List<StudentFinishSchool> list);
 }

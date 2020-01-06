@@ -596,9 +596,16 @@ public class TeachService {
                         d.getGrade(), d.getClassId(), d.getClassName(), d.getStudentName(), d.getStuPhone(),
                         d.getCenterAreaId(), teachCenterDto.getCenterName(), teachCenterDto.getPlanId(),
                         teachCenterDto.getPlanName(), teachCenterDto.getStartDate(), teachCenterDto.getEndDate(),
-                        toListScore(d.getStudentId(), teachCenterDto.getPlanId())))
+                        toListScore(d.getStudentId(), teachCenterDto.getPlanId()), isFinishSchool(d.getStudentId())))
                 .collect(toList());
         return new PageImpl<>(courseScoreVoList, request, page.getTotalElements());
+    }
+
+    private String isFinishSchool(String studentId) {
+        return studentFinishSchoolService
+                .findById(studentId)
+                .orElse(new StudentFinishSchool(NO))
+                .getIsFinishSchool();
     }
 
 //    @SuppressWarnings(value = "all")
@@ -846,7 +853,7 @@ public class TeachService {
 
     private StudentFinishSchool buildStudentFinishSchool(List<TeachPlanCourse> planCourses, PlanStudentVo vo) {
         List<StudentScore> list = studentScoreService.findByStudentId(vo.getStudentId());
-        StudentFinishSchool finishSchool = studentFinishSchoolService.findById(vo.getStudentId());
+        StudentFinishSchool finishSchool = studentFinishSchoolService.findByStudentId(vo.getStudentId());
         if (planCourses.size() != list.size()) {
             //计划的课程数量和实际有成绩的课程数量不同，说明不能毕业
             finishSchool.setIsFinishSchool(NO);
@@ -861,10 +868,11 @@ public class TeachService {
             //计算过的课程成绩全部大于等于60分成绩合格否则不合格
             if (count == list.size()) {
                 finishSchool.setIsFinishSchool(YES);
-            }else {
+            } else {
                 finishSchool.setIsFinishSchool(NO);
             }
         }
+        finishSchool.setCenterAreaId(vo.getCenterAreaId());
         finishSchool.setStudentId(vo.getStudentId());
         finishSchool.setStudentName(vo.getStudentName());
         return finishSchool;
