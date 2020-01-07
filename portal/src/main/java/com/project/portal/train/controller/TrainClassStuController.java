@@ -1,6 +1,8 @@
 package com.project.portal.train.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -8,6 +10,8 @@ import com.project.portal.response.WebResult;
 import com.project.portal.train.request.FindTrainClassStuAllPageRequest;
 import com.project.portal.train.request.TrainClassStuPageRequest;
 import com.project.portal.train.request.TrainClassStuSaveUpdateRequest;
+import com.project.portal.util.MyExcleUtil;
+import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.train.domain.TrainClassStu;
@@ -16,14 +20,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -34,6 +42,7 @@ import static com.project.portal.request.ValideSortVo.valideSort;
  * @version: 1.0
  * @description:
  */
+@Slf4j
 @RestController
 @Api(value = "培训项目班级学生管理", tags = {"培训项目班级学生管理"})
 @RequestMapping(path = "/trainClassStu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -71,7 +80,7 @@ public class TrainClassStuController {
         trainClassStu.setUpdateUser(userId);
         if (StrUtil.isBlank(request.getTrainStuId())) {
             String centerAreaId = tokenService.getCenterAreaId(token);
-            trainClassStu.setUpdateUser(userId);
+            trainClassStu.setCreateUser(userId);
             trainClassStu.setCenterAreaId(centerAreaId);
             return WebResult.okResult(trainClassStuService.save(trainClassStu));
         } else {
@@ -122,5 +131,48 @@ public class TrainClassStuController {
         }else {
             return WebResult.okResult(trainClassStuService.findAllPage(PageRequest.of(request.getPage(), request.getSize())));
         }
+    }
+
+    @PassToken
+    @ApiOperation(value = "导入培训的学生信息数据")
+    @PostMapping(path = "/saveImport/{token}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class),
+            @ApiImplicitParam(name = "token", value = "token", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "trainClassId", value = "培训项目班级编号", dataType = "string", paramType = "form")
+    })
+    public WebResult saveImportStu(@RequestParam("file") MultipartFile file, @PathVariable String token, HttpServletRequest httpServletRequest){
+        MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
+        MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
+        try {
+            trainClassStuService.checkoutKey();
+            //设置导入修改时间 防止失败没有过期时间
+            String type = FileUtil.extName(file.getOriginalFilename());
+            if (StrUtil.isNotBlank(type) && "xlsx".equals(type) || "xls".equals(type)) {
+                String centerAreaId = tokenService.getCenterAreaId(token);
+                String userId = tokenService.getUserId(token);
+                String pjPlanId = httpServletRequest.getParameter("pjPlanId");
+                String trainClassId = httpServletRequest.getParameter("trainClassId");
+                MyAssert.isTrue(StrUtil.isBlank(trainClassId), DefineCode.ERR0010, "班级id不能是空");
+                MyAssert.isTrue(StrUtil.isBlank(pjPlanId), DefineCode.ERR0010, "计划id不能是空");
+                return WebResult.okResult(trainClassStuService.saveImportAll(trainClassId, pjPlanId, centerAreaId, userId, file.getInputStream()));
+            }
+        } catch (IOException e) {
+            trainClassStuService.deleteKey();
+            log.error("students in IOException, file : [{}],  message : [{}]", file, e.getMessage());
+            e.printStackTrace();
+        }
+        return WebResult.failException("导入的文件格式不是Excel文件");
+    }
+
+    @PassToken
+    @GetMapping(path = "/exportTrainStudentTemplate")
+    @ApiOperation(value = "导出学生成绩导入模板")
+    public WebResult exportTemplate(HttpServletRequest request, HttpServletResponse response) {
+        //设置导入数据模板
+        List<List<String>> lists = CollUtil.toList(CollUtil.newArrayList("姓名", "性别", "联系方式", "民族", "身份证号码", "单位职务"));
+        MyExcleUtil.getExcel(response, request, lists, "成绩导入模板.xlsx");
+        return WebResult.okResult();
     }
 }

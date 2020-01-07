@@ -8,6 +8,8 @@ import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.TrainCourse;
 import com.project.train.repository.TrainCourseRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class TrainCourseService extends BaseMySqlService {
      */
     @Transactional(rollbackFor = Exception.class)
     public TrainCourse save(TrainCourse trainCourse) {
+        MyAssert.isTrue(trainCourseRepository.existsByCourseName(trainCourse.getCourseName()), DefineCode.ERR0010, "已经存在对应课程名称");
         trainCourse.setCourseId(IdUtil.fastSimpleUUID());
         return trainCourseRepository.save(trainCourse);
     }
@@ -42,6 +45,9 @@ public class TrainCourseService extends BaseMySqlService {
     @Transactional(rollbackFor = Exception.class)
     public TrainCourse update(TrainCourse trainCourse) {
         TrainCourse obj = findId(trainCourse.getCourseId());
+        if (!obj.getCourseName().equals(trainCourse.getCourseName())){
+            MyAssert.isTrue(trainCourseRepository.existsByCourseName(trainCourse.getCourseName()), DefineCode.ERR0010, "已经存在对应课程名称");
+        }
         BeanUtil.copyProperties(trainCourse, obj);
         return trainCourseRepository.save(obj);
     }
@@ -64,6 +70,10 @@ public class TrainCourseService extends BaseMySqlService {
      * @return
      */
     public List<TrainCourse> findAll(String centerAreaId) {
-        return trainCourseRepository.findAllByCenterAreaId(centerAreaId);
+        return trainCourseRepository.findAllByCenterAreaIdOrderByCreateTime(centerAreaId);
+    }
+
+    public Page<TrainCourse> findAllPage(String centerAreaId, Pageable pageable){
+        return trainCourseRepository.findAllByCenterAreaIdOrderByCreateTime(centerAreaId, pageable);
     }
 }

@@ -1,6 +1,8 @@
 package com.project.train.repository;
 
 import com.project.train.domain.TrainCourse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -13,6 +15,10 @@ import java.util.List;
 @Repository("trainCourseRepository")
 public interface TrainCourseRepository extends JpaRepository<TrainCourse, String>, JpaSpecificationExecutor<TrainCourse> {
 
-    //所有的项目计划列表
-    public List<TrainCourse> findAllByCenterAreaId(String centerId);
+    boolean existsByCourseName(String courseName);
+
+    /**所有的项目计划列表*/
+    List<TrainCourse> findAllByCenterAreaIdOrderByCreateTime(String centerId);
+
+    Page<TrainCourse> findAllByCenterAreaIdOrderByCreateTime(String centerId, Pageable pageable);
 }
