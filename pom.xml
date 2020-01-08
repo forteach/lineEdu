@@ -26,6 +26,7 @@
         <module>wechat</module>
         <module>flow</module>
         <module>train</module>
+        <module>questionlibrary</module>
     </modules>
 
     <parent>

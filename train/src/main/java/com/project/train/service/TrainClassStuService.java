@@ -202,6 +202,7 @@ public class TrainClassStuService extends BaseMySqlService {
 
         //判断是否全部完善信息了
         trainPlanFinishService.updateAll(planId);
+        deleteKey();
         return list.size();
     }
 

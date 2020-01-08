@@ -77,6 +77,11 @@
             <artifactId>train</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>questionlibary</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

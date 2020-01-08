@@ -28,10 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.project.portal.request.ValideSortVo.valideSort;
 
@@ -156,7 +157,10 @@ public class TrainClassStuController {
                 String trainClassId = httpServletRequest.getParameter("trainClassId");
                 MyAssert.isTrue(StrUtil.isBlank(trainClassId), DefineCode.ERR0010, "班级id不能是空");
                 MyAssert.isTrue(StrUtil.isBlank(pjPlanId), DefineCode.ERR0010, "计划id不能是空");
-                return WebResult.okResult(trainClassStuService.saveImportAll(trainClassId, pjPlanId, centerAreaId, userId, file.getInputStream()));
+                int size = trainClassStuService.saveImportAll(trainClassId, pjPlanId, centerAreaId, userId, file.getInputStream());
+                Map<String, Object> map = new HashMap<>(2);
+                map.put("size", size);
+                return WebResult.okResult(map);
             }
         } catch (IOException e) {
             trainClassStuService.deleteKey();
