@@ -79,7 +79,7 @@
         </dependency>
         <dependency>
             <groupId>com.project</groupId>
-            <artifactId>questionlibary</artifactId>
+            <artifactId>questionlibrary</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
