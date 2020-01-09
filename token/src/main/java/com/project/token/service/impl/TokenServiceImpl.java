@@ -3,6 +3,7 @@ package com.project.token.service.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.project.token.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,6 +97,19 @@ public class TokenServiceImpl implements TokenService {
         return JWT.require(Algorithm.HMAC256(salt.concat(userId))).build();
     }
 
+    @Override
+    public boolean checkToken(String token){
+        try {
+            String openId = JWT.decode(token).getAudience().get(0);
+            this.verifier(openId).verify(token);
+        } catch (JWTVerificationException j) {
+            if (log.isErrorEnabled()) {
+                log.error("token 校验非法 401");
+            }
+            return false;
+        }
+        return true;
+    }
     /**
      * 获取token携带的用户信息
      *

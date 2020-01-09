@@ -79,6 +79,7 @@ public class StudentOnLineController {
     public WebResult saveImport(@RequestParam("file") MultipartFile file, @PathVariable String token) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
+        MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         try {
             studentOnLineService.checkoutKey();
             //设置导入修改时间 防止失败没有过期时间
@@ -156,6 +157,7 @@ public class StudentOnLineController {
     public WebResult exportStudent(@PathVariable(name = "token") String token, @PathVariable(name = "isValidated") String isValidated,
                                    HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
+        MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         MyAssert.isTrue(StrUtil.isBlank(isValidated), DefineCode.ERR0010, "学生状态为空");
         String centerId = tokenService.getCenterAreaId(token);
         String fileName = TAKE_EFFECT_CLOSE.equals(isValidated) ? "冻结学生信息表.xlsx" : "学生信息表.xlsx";

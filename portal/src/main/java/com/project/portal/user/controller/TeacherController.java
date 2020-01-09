@@ -286,6 +286,7 @@ public class TeacherController {
     @ApiImplicitParam(name = "token", value = "签名token", required = true, dataType = "string", paramType = "path")
     public WebResult exportTeachers(@PathVariable String token, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
+        MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         List<List<String>> lists;
         if (tokenService.isAdmin(token)) {
             //是管理员，导出全部教师信息

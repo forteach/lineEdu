@@ -146,6 +146,7 @@ public class TrainClassStuController {
     public WebResult saveImportStu(@RequestParam("file") MultipartFile file, @PathVariable String token, HttpServletRequest httpServletRequest){
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
+        MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         try {
             trainClassStuService.checkoutKey();
             //设置导入修改时间 防止失败没有过期时间

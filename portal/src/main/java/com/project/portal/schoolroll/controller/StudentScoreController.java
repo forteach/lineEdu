@@ -162,7 +162,8 @@ public class StudentScoreController {
         String courseId = httpServletRequest.getParameter("courseId");
         String token = httpServletRequest.getParameter("token");
         MyAssert.isTrue(StrUtil.isBlank(courseId), DefineCode.ERR0010, "课程Id不为空");
-        MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0010, "token is null");
+        MyAssert.isFalse(StrUtil.isNotBlank(token), DefineCode.ERR0010, "token is null");
+        MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         String fileType = FileUtil.extName(file.getOriginalFilename());
 //        String courseName = httpServletRequest.getParameter("courseName");
 //        String classId = httpServletRequest.getParameter("classId");
@@ -219,6 +220,7 @@ public class StudentScoreController {
         String specialtyName = httpServletRequest.getParameter("specialtyName");
         String token = httpServletRequest.getParameter("token");
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0010, "token is null");
+        MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         MyAssert.isFalse(checkSearch(studentName, className, grade, specialtyName), DefineCode.ERR0010, "查询条件不正确, 需要确认唯一班级");
         String centerId = tokenService.getCenterAreaId(token);
         PageRequest of = PageRequest.of(0, 10000);

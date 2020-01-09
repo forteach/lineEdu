@@ -1,15 +1,12 @@
 package com.project.portal.classfee.controller;
 
 
-//import cn.hutool.core.io.FileUtil;
-//import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.classfee.domain.ClassFeeInfo;
 import com.project.classfee.service.ClassFeeInfoService;
 import com.project.portal.response.WebResult;
-//import com.project.schoolroll.domain.excel.StudentImport;
-//import com.project.schoolroll.service.impl.ExcelImpServiceImpl;
 import com.project.token.annotation.PassToken;
 import com.project.token.service.TokenService;
 import io.swagger.annotations.Api;
@@ -38,7 +35,7 @@ import java.util.List;
 @RequestMapping(path = "/import", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ImportClassFeeController {
     private final ClassFeeInfoService classFeeInfoService;
-//    private final ExcelImpServiceImpl excelImpService;
+    //    private final ExcelImpServiceImpl excelImpService;
     private final TokenService tokenService;
 
 
@@ -57,6 +54,8 @@ public class ImportClassFeeController {
     @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class)
     public WebResult leadingInStudents(@RequestParam("file") MultipartFile file, @PathVariable String token) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
+        MyAssert.isFalse(StrUtil.isNotBlank(token), DefineCode.ERR0010, "token is null");
+        MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         String centerAreaId = tokenService.getCenterAreaId(token);
         String creteUser = tokenService.getUserId(token);
         try {

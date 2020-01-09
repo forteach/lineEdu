@@ -36,6 +36,8 @@ public interface TokenService {
      */
     JWTVerifier verifier(String openId);
 
+    boolean checkToken(String token);
+
     /**
      * 根据用户请求token 信息获取请求的用户信息
      *
