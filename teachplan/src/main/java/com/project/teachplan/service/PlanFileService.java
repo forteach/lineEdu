@@ -85,11 +85,11 @@ public class PlanFileService extends BaseMySqlService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeachPlanFileList getTeachPlanFileList(String planId, String classId, String courseId, String createDate){
+    public TeachPlanFileList getTeachPlanFileList(String planId, String classId, String courseId, String createDate) {
         TeachPlanFileList teachPlanFileList = teachPlanFileListRepository
                 .findByPlanIdAndClassIdAndCourseIdAndCreateDate(planId, classId, courseId, createDate)
                 .orElse(new TeachPlanFileList(courseId, planId, createDate, classId));
-        if (StrUtil.isBlank(teachPlanFileList.getCourseName())){
+        if (StrUtil.isBlank(teachPlanFileList.getCourseName())) {
             OnLineCourseDic onLineCourseDic = onLineCourseDicService.findId(teachPlanFileList.getCourseId());
             String courseName = onLineCourseDic.getCourseName();
             String type = onLineCourseDic.getType();
@@ -131,9 +131,10 @@ public class PlanFileService extends BaseMySqlService {
 //        return planFileRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
 //    }
 
-    private Map<String, List<PlanFile>> groupByType(List<PlanFile> list){
+    private Map<String, List<PlanFile>> groupByType(List<PlanFile> list) {
         return list.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(PlanFile::getType));
     }
+
     public Map<String, List<PlanFile>> findAllPlanIdAndClassId(String planId, String classId) {
         return groupByType(planFileRepository.findAllByIsValidatedEqualsAndPlanIdAndClassIdOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, planId, classId));
     }
@@ -159,6 +160,15 @@ public class PlanFileService extends BaseMySqlService {
 //            }
 //            planFileRepository.deleteById(fileId);
 //        });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByFileIdAndAdmin(String fileId) {
+        Optional<PlanFile> optionalPlanFile = planFileRepository.findById(fileId);
+        MyAssert.isFalse(optionalPlanFile.isPresent(), DefineCode.ERR0010, "不存在要删除的文件");
+        String verifyStatus = optionalPlanFile.get().getVerifyStatus();
+        MyAssert.isFalse(VERIFY_STATUS_AGREE.equals(verifyStatus), DefineCode.ERR0010, "已经审核过的信息不能删除");
+        planFileRepository.deleteById(fileId);
     }
 
     @Transactional(rollbackFor = Exception.class)

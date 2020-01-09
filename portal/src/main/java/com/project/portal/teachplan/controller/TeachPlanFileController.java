@@ -86,9 +86,14 @@ public class TeachPlanFileController {
     @ApiOperation(value = "通过文件id删除对应的文件信息")
     @DeleteMapping(path = "/{fileId}")
     @ApiImplicitParam(name = "fileId", value = "资料id", dataType = "string", paramType = "form", required = true)
-    public WebResult deleteByFileId(@PathVariable String fileId) {
+    public WebResult deleteByFileId(@PathVariable String fileId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(fileId, DefineCode.ERR0010, "文件id不能为空");
-        teachPlanFileService.deleteByFileId(fileId);
+        String token = httpServletRequest.getHeader("token");
+        if (tokenService.isAdmin(token)){
+            teachPlanFileService.deleteByFileIdAndAdmin(fileId);
+        }else {
+            teachPlanFileService.deleteByFileId(fileId);
+        }
         return WebResult.okResult();
     }
 
@@ -101,7 +106,11 @@ public class TeachPlanFileController {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         log.info("delete teachPlanFile planId : [{}], userId : [{}]", planId, userId);
-        teachPlanFileService.deleteByPlanId(planId);
+        if (tokenService.isAdmin(token)){
+            teachPlanFileService.deleteByPlanIdAndAdmin(planId);
+        }else {
+            teachPlanFileService.deleteByPlanId(planId);
+        }
         return WebResult.okResult();
     }
 
