@@ -2,8 +2,10 @@ package com.project.mongodb.domain.base;
 
 
 import com.project.mongodb.domain.question.ChoiceQstOption;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class AbstractExam extends BaseEntity {
 
     /**
@@ -99,4 +103,25 @@ public abstract class AbstractExam extends BaseEntity {
     private String remark;
 
     private String verifyStatus;
+
+    public AbstractExam(String chapterId, String courseId, String chapterName, Double score,
+                        String teacherId, String examType, String choiceQstTxt, String answer,
+                        String analysis, String levelId, String courseName, String teacherName,
+                        String centerAreaId, String centerName, String verifyStatus) {
+        this.chapterId = chapterId;
+        this.courseId = courseId;
+        this.chapterName = chapterName;
+        this.score = score;
+        this.teacherId = teacherId;
+        this.examType = examType;
+        this.choiceQstTxt = choiceQstTxt;
+        this.answer = answer;
+        this.analysis = analysis;
+        this.levelId = levelId;
+        this.courseName = courseName;
+        this.teacherName = teacherName;
+        this.centerAreaId = centerAreaId;
+        this.centerName = centerName;
+        this.verifyStatus = verifyStatus;
+    }
 }

@@ -173,8 +173,6 @@ public class StudentScoreController {
             String key = IMPORT_COURSE_SCORE.concat(courseId).concat("#").concat(centerId);
             studentScoreService.checkoutKey(key);
             String userId = tokenService.getUserId(token);
-            //判断计划是否结束，只有结束的计划才能上传成绩
-//            MyAssert.isFalse(teachService.checkPlanDate(classId), DefineCode.ERR0010, "您导入的班级计划还没有结束，暂时不能导入成绩");
             try {
                 OnLineCourseDic onLineCourseDic = onLineCourseDicService.findId(courseId);
                 String type = onLineCourseDic.getType();

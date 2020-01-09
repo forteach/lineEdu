@@ -20,4 +20,9 @@ public class ChoiceQstOption {
      * 选择项 A,B,C等Value
      */
     private String optValue;
+
+    public ChoiceQstOption(String optTxt, String optValue) {
+        this.optTxt = optTxt;
+        this.optValue = optValue;
+    }
 }

@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserService {
         List<SysRoleDto> sysRoles = userRoleRepository.findByIsValidatedEqualsAndUserId(userId);
         LearnCenter learnCenter = learnCenterService.findByCenterId(user.getCenterAreaId());
         String centerName = learnCenter.getCenterName();
+        map.put("centerName", centerName);
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(userId)
                 .token(token)

@@ -73,6 +73,9 @@ public interface TokenService {
     /** 获取用户名*/
     String getUserName(String token);
 
+    /** 获取学习中心名称*/
+    String getCenterName(String token);
+
     /**
      * 保存token 到redis
      *
