@@ -18,7 +18,7 @@ public interface TrainCourseRepository extends JpaRepository<TrainCourse, String
     boolean existsByCourseName(String courseName);
 
     /**所有的项目计划列表*/
-    List<TrainCourse> findAllByCenterAreaIdOrderByCreateTime(String centerId);
+    List<TrainCourse> findAllByCenterAreaIdOrderByCreateTimeDesc(String centerId);
 
-    Page<TrainCourse> findAllByCenterAreaIdOrderByCreateTime(String centerId, Pageable pageable);
+    Page<TrainCourse> findAllByIsValidatedEqualsOrderByCreateTimeDesc(String isValidated, Pageable pageable);
 }

@@ -17,6 +17,8 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
+import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
+
 /**
  * 财务类型明细
  */
@@ -70,10 +72,10 @@ public class TrainCourseService extends BaseMySqlService {
      * @return
      */
     public List<TrainCourse> findAll(String centerAreaId) {
-        return trainCourseRepository.findAllByCenterAreaIdOrderByCreateTime(centerAreaId);
+        return trainCourseRepository.findAllByCenterAreaIdOrderByCreateTimeDesc(centerAreaId);
     }
 
-    public Page<TrainCourse> findAllPage(String centerAreaId, Pageable pageable){
-        return trainCourseRepository.findAllByCenterAreaIdOrderByCreateTime(centerAreaId, pageable);
+    public Page<TrainCourse> findAllPage(Pageable pageable){
+        return trainCourseRepository.findAllByIsValidatedEqualsOrderByCreateTimeDesc(TAKE_EFFECT_OPEN, pageable);
     }
 }

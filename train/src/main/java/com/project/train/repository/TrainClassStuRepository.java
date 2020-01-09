@@ -17,6 +17,8 @@ public interface TrainClassStuRepository extends JpaRepository<TrainClassStu, St
     //获得计划下的班级成员信息
     public Page<TrainClassStu> findByPjPlanIdOrderByCreateTimeDesc(String pjPlanId, Pageable pageable);
 
+    boolean existsByPjPlanIdAndStuName(String pjPlanId, String stuName);
+
     //获得班级下的班级成员信息
     public Page<TrainClassStu> findByTrainClassId(String classId, Pageable pageable);
 

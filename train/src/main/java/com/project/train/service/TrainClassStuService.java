@@ -1,6 +1,7 @@
 package com.project.train.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -28,10 +29,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
@@ -64,15 +62,15 @@ public class TrainClassStuService extends BaseMySqlService {
         trainClassStu.setTrainStuId(IdUtil.fastSimpleUUID());
         trainClassStuRepository.save(trainClassStu);
 
-        String planId=trainClassStu.getPjPlanId();
+        String planId = trainClassStu.getPjPlanId();
         //计划班级数量
-        int pcount=trainClassService.countClass(planId);
+        int pcount = trainClassService.countClass(planId);
         //添加班级学生的班级数量
-       int ccount=countClass(planId);
+        int ccount = countClass(planId);
 
-       //如果两个数量相等，改变计划完成情况的班级添加完成状态为1
-        if((pcount==ccount)&&(pcount!=0)){
-            TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(planId);
+        //如果两个数量相等，改变计划完成情况的班级添加完成状态为1
+        if ((pcount == ccount) && (pcount != 0)) {
+            TrainPlanFinish tf = trainPlanFinishService.findPjPlanId(planId);
             tf.setIsStudent(1);
             trainPlanFinishService.save(tf);
         }
@@ -108,7 +106,7 @@ public class TrainClassStuService extends BaseMySqlService {
 
 
     /**
-     * @param pjPlanId   获取计划项目的班级成员列表
+     * @param pjPlanId 获取计划项目的班级成员列表
      * @param pageable
      * @return
      */
@@ -144,7 +142,7 @@ public class TrainClassStuService extends BaseMySqlService {
         return trainClassStuRepository.findByTrainClassId(classId, pageable);
     }
 
-    public Page<TrainClassStu> findAllPage(String centerAreaId, String pjPlanId, int agoDay, Pageable pageable){
+    public Page<TrainClassStu> findAllPage(String centerAreaId, String pjPlanId, int agoDay, Pageable pageable) {
         return trainClassStuRepository.findAll((Root<TrainClassStu> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             Predicate predicate = null;
             if (StrUtil.isNotBlank(centerAreaId)) {
@@ -153,7 +151,7 @@ public class TrainClassStuService extends BaseMySqlService {
             if (StrUtil.isNotBlank(pjPlanId)) {
                 predicate = criteriaBuilder.equal(root.get("pjPlanId"), pjPlanId);
             }
-            if (StrUtil.isNotBlank(String.valueOf(agoDay))){
+            if (StrUtil.isNotBlank(String.valueOf(agoDay))) {
                 String fromDay = DateUtil.formatDate(DateUtil.offsetDay(new Date(), -agoDay));
                 predicate = criteriaBuilder.between(root.get("createTime"), fromDay, DateUtil.today());
             }
@@ -163,16 +161,17 @@ public class TrainClassStuService extends BaseMySqlService {
 
     /**
      * 返回计划下的班级数量
+     *
      * @param pjPlanId
      * @return
      */
-    public int countClass(String pjPlanId){
+    public int countClass(String pjPlanId) {
         return trainClassStuRepository.countClass(pjPlanId);
     }
 
 
     @Transactional(rollbackFor = Exception.class)
-    public int saveImportAll(String classId, String planId, String centerAreaId, String userId, InputStream inputStream){
+    public int saveImportAll(String classId, String planId, String centerAreaId, String userId, InputStream inputStream) {
         ExcelReader reader = ExcelUtil.getReader(inputStream);
         //设置头部数据
         setHeaderAlias(reader);
@@ -187,15 +186,22 @@ public class TrainClassStuService extends BaseMySqlService {
         //设置健
         setKey();
         //保存数据
-        trainClassStuRepository.saveAll(list);
+        List<TrainClassStu> stuArrayList = new ArrayList<>(64);
+        list.parallelStream().forEach(s -> {
+            boolean b = trainClassStuRepository.existsByPjPlanIdAndStuName(planId, s.getStuName());
+            if (!b){
+                stuArrayList.add(s);
+            }
+        });
+        trainClassStuRepository.saveAll(stuArrayList);
         //计划班级数量
-        int pcount=trainClassService.countClass(planId);
+        int pcount = trainClassService.countClass(planId);
         //添加班级学生的班级数量
-        int ccount=countClass(planId);
+        int ccount = countClass(planId);
 
         //如果两个数量相等，改变计划完成情况的班级添加完成状态为1
-        if((pcount==ccount)&&(pcount!=0)){
-            TrainPlanFinish tf=trainPlanFinishService.findPjPlanId(planId);
+        if ((pcount == ccount) && (pcount != 0)) {
+            TrainPlanFinish tf = trainPlanFinishService.findPjPlanId(planId);
             tf.setIsStudent(1);
             trainPlanFinishService.save(tf);
         }
@@ -208,19 +214,20 @@ public class TrainClassStuService extends BaseMySqlService {
 
     private void checkImportData(List<TrainClassStu> list, String classId, String className, String planId, String trainProjectName, String centerAreaId, String userId) {
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "导入数据不存在");
-        list.parallelStream().filter(Objects::nonNull).forEach(s -> {
-            MyAssert.isTrue(StrUtil.isBlank(s.getStuName()), DefineCode.ERR0010, "姓名不能为空");
-            MyAssert.isTrue(StrUtil.isBlank(s.getGender()), DefineCode.ERR0010, "姓别为空");
-            s.setTrainStuId(IdUtil.fastSimpleUUID());
-            s.setTrainClassId(classId);
-            s.setTrainClassName(className);
-            s.setPjPlanId(planId);
-            s.setTrainProjectName(trainProjectName);
-            s.setUserId(userId);
-            s.setCenterAreaId(centerAreaId);
-            s.setCreateUser(userId);
-            s.setUpdateUser(userId);
-        });
+        list.parallelStream().filter(Objects::nonNull)
+                .forEach(s -> {
+                    MyAssert.isTrue(StrUtil.isBlank(s.getStuName()), DefineCode.ERR0010, "姓名不能为空");
+                    MyAssert.isTrue(StrUtil.isBlank(s.getGender()), DefineCode.ERR0010, "姓别为空");
+                    s.setTrainStuId(IdUtil.fastSimpleUUID());
+                    s.setTrainClassId(classId);
+                    s.setTrainClassName(className);
+                    s.setPjPlanId(planId);
+                    s.setTrainProjectName(trainProjectName);
+                    s.setUserId(userId);
+                    s.setCenterAreaId(centerAreaId);
+                    s.setCreateUser(userId);
+                    s.setUpdateUser(userId);
+                });
     }
 
     @SuppressWarnings(value = "all")

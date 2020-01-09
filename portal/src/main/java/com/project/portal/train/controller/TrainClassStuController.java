@@ -136,15 +136,16 @@ public class TrainClassStuController {
 
     @PassToken
     @ApiOperation(value = "导入培训的学生信息数据")
-    @PostMapping(path = "/saveImport/{token}")
+    @PostMapping(path = "/saveImport")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "需要导入的Excel文件", required = true, paramType = "body", dataTypeClass = File.class),
             @ApiImplicitParam(name = "token", value = "token", required = true, paramType = "form"),
             @ApiImplicitParam(name = "pjPlanId", value = "培训项目计划编号", dataType = "string", paramType = "form"),
             @ApiImplicitParam(name = "trainClassId", value = "培训项目班级编号", dataType = "string", paramType = "form")
     })
-    public WebResult saveImportStu(@RequestParam("file") MultipartFile file, @PathVariable String token, HttpServletRequest httpServletRequest){
+    public WebResult saveImportStu(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest){
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "导入的文件不存在,请重新选择");
+        String token = httpServletRequest.getParameter("token");
         MyAssert.isTrue(StrUtil.isBlank(token), DefineCode.ERR0004, "token is null");
         MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         try {
@@ -173,11 +174,11 @@ public class TrainClassStuController {
 
     @PassToken
     @GetMapping(path = "/exportTrainStudentTemplate")
-    @ApiOperation(value = "导出学生成绩导入模板")
+    @ApiOperation(value = "学员导入模板")
     public WebResult exportTemplate(HttpServletRequest request, HttpServletResponse response) {
         //设置导入数据模板
         List<List<String>> lists = CollUtil.toList(CollUtil.newArrayList("姓名", "性别", "联系方式", "民族", "身份证号码", "单位职务"));
-        MyExcleUtil.getExcel(response, request, lists, "成绩导入模板.xlsx");
+        MyExcleUtil.getExcel(response, request, lists, "学员导入模板.xlsx");
         return WebResult.okResult();
     }
 }

@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainCourseFindAllPageRequest;
 import com.project.portal.train.request.TrainCourseSaveUpdateRequest;
@@ -82,13 +83,12 @@ public class TrainCourseController {
     @ApiOperation(value = "分页查询对应的培训课程")
     @PostMapping(path = "/findAllPage")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "centerAreaId", value = "学习中心id", dataType = "string", paramType = "form"),
             @ApiImplicitParam(value = "分页", dataType = "int", name = "page", example = "0"),
             @ApiImplicitParam(value = "每页数量", dataType = "int", name = "size", example = "15")
     })
-    public WebResult findAllPage(@RequestBody TrainCourseFindAllPageRequest request, HttpServletRequest httpServletRequest){
+    public WebResult findAllPage(@RequestBody SortVo request){
         valideSort(request.getPage(), request.getPage());
-        return WebResult.okResult(trainCourseService.findAllPage(request.getCenterAreaId(), PageRequest.of(request.getPage(), request.getSize())));
+        return WebResult.okResult(trainCourseService.findAllPage(PageRequest.of(request.getPage(), request.getSize())));
     }
 
 //    @ApiOperation(value = "培训项目课程字典列表")
