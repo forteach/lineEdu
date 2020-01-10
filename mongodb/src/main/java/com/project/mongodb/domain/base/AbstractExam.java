@@ -107,7 +107,7 @@ public abstract class AbstractExam extends BaseEntity {
     public AbstractExam(String chapterId, String courseId, String chapterName, Double score,
                         String teacherId, String examType, String choiceQstTxt, String answer,
                         String analysis, String levelId, String courseName, String teacherName,
-                        String centerAreaId, String centerName, String verifyStatus) {
+                        String centerAreaId, String centerName, String verifyStatus, List<ChoiceQstOption> optChildren) {
         this.chapterId = chapterId;
         this.courseId = courseId;
         this.chapterName = chapterName;
@@ -123,5 +123,6 @@ public abstract class AbstractExam extends BaseEntity {
         this.centerAreaId = centerAreaId;
         this.centerName = centerName;
         this.verifyStatus = verifyStatus;
+        this.optChildren = optChildren;
     }
 }

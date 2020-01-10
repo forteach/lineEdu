@@ -71,7 +71,7 @@ public class TeachService {
     private final OnLineCourseDicService onLineCourseDicService;
     private final PlanFileService planFileService;
     private final CourseStudyRepository courseStudyRepository;
-    private final StringRedisTemplate redisTemplate;
+//    private final StringRedisTemplate redisTemplate;
     private final TeachPlanVerifyRepository teachPlanVerifyRepository;
     private final TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository;
     private final StudentScoreService studentScoreService;
@@ -90,7 +90,8 @@ public class TeachService {
             TeachPlanCourseRepository teachPlanCourseRepository, TbClassService tbClassService,
 //            TeachPlanClassRepository teachPlanClassRepository, TeacherService teacherService,
             StudentScoreService studentScoreService,
-            PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService, StringRedisTemplate redisTemplate,
+            PlanFileService planFileService, TeachPlanCourseService teachPlanCourseService,
+//            StringRedisTemplate redisTemplate,
             OnLineCourseDicService onLineCourseDicService, CourseStudyRepository courseStudyRepository,
             TeachPlanVerifyRepository teachPlanVerifyRepository, TeachPlanCourseVerifyRepository teachPlanCourseVerifyRepository
 //                        TeachPlanClassVerifyRepository teachPlanClassVerifyRepository
@@ -110,7 +111,7 @@ public class TeachService {
         this.teachPlanCourseVerifyRepository = teachPlanCourseVerifyRepository;
 //        this.teachPlanClassVerifyRepository = teachPlanClassVerifyRepository;
         this.courseStudyRepository = courseStudyRepository;
-        this.redisTemplate = redisTemplate;
+//        this.redisTemplate = redisTemplate;
         this.studentScoreService = studentScoreService;
         this.studentFinishSchoolService = studentFinishSchoolService;
     }

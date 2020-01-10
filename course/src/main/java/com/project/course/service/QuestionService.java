@@ -21,5 +21,8 @@ public interface QuestionService {
 
     List<BigQuestion> getRedisBigQuestion(String userId);
 
+    /**
+     * 保存导入的习题集合
+     */
     void saveBigQuestion(List<BigQuestion> list);
 }

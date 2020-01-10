@@ -60,18 +60,31 @@ public class QuestionServiceImpl implements QuestionService {
         // 校验数据不能为空
         checkData(list);
         List<BigQuestion> bigQuestions = builderBigQuestion(list, vo);
-        stringRedisTemplate.opsForValue().set(READ_QUESTION_KEY.concat(vo.getTeacherId()), JSONUtil.toJsonStr(list),  Duration.ofDays(1L));
+        stringRedisTemplate.opsForValue().set(READ_QUESTION_KEY.concat(vo.getTeacherId()), JSONUtil.toJsonStr(bigQuestions),  Duration.ofHours(12L));
         log.info("import bigQuestion userId: [{}], size : [{}]", vo.getTeacherId(), bigQuestions.size());
         return bigQuestions;
     }
 
     private List<BigQuestion> builderBigQuestion(List<BigQuestionVo> list, QuestionVo vo){
         return list.stream().map(v ->{
-            BigQuestion bigQuestion = new BigQuestion(vo.getChapterId(), vo.getCourseId(), vo.getChapterName(),
-                    Double.valueOf(v.getScore()), vo.getTeacherId(), v.getExamType(), v.getChoiceQstTxt(),
-                    v.getAnswer(), v.getAnalysis(), v.getLevelId(), vo.getCourseName(),
-                    vo.getTeacherName(), vo.getCenterAreaId(), vo.getCenterName(), VERIFY_STATUS_APPLY);
-            List<ChoiceQstOption> choiceQstOptions = new ArrayList<>(6);
+
+            //判断习题类型 单选题(single)，不定向选择题 (multiple)，判断题(trueOrFalse)
+            String examType = "";
+            switch (v.getExamType()){
+                case "单选题":
+                    examType = "single";
+                    break;
+                case "不定项选择题":
+                    examType = "multiple";
+                    break;
+                case "判断题":
+                    examType = "trueOrFalse";
+                    break;
+                default:
+                    examType = "";
+            }
+            //选项转换 从行转换集合
+            List<ChoiceQstOption> choiceQstOptions = new ArrayList<>(8);
             if (StrUtil.isNotBlank(v.getOptTxtA())){
                 choiceQstOptions.add(new ChoiceQstOption(v.getOptTxtA(), "A"));
             }
@@ -90,8 +103,10 @@ public class QuestionServiceImpl implements QuestionService {
             if (StrUtil.isNotBlank(v.getOptTxtF())){
                 choiceQstOptions.add(new ChoiceQstOption(v.getOptTxtA(), "F"));
             }
-            bigQuestion.setOptChildren(choiceQstOptions);
-            return bigQuestion;
+            return new BigQuestion(vo.getChapterId(), vo.getCourseId(), vo.getChapterName(),
+                    Double.valueOf(v.getScore()), vo.getTeacherId(), examType, v.getChoiceQstTxt(),
+                    v.getAnswer(), v.getAnalysis(), v.getLevelId(), vo.getCourseName(),
+                    vo.getTeacherName(), vo.getCenterAreaId(), vo.getCenterName(), VERIFY_STATUS_APPLY, choiceQstOptions);
         }).collect(toList());
     }
     @Override
@@ -104,7 +119,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveBigQuestion(List<BigQuestion> list){
         bigQuestionRepository.saveAll(list);
     }

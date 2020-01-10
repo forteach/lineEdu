@@ -7,7 +7,7 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.course.service.QuestionService;
 import com.project.course.web.vo.QuestionVo;
-import com.project.mongodb.domain.BigQuestion;
+import com.project.portal.questionlibrary.request.BigQuestionListRequest;
 import com.project.portal.response.WebResult;
 import com.project.portal.util.MyExcleUtil;
 import com.project.token.annotation.PassToken;
@@ -79,7 +79,7 @@ public class QuestionController {
     })
     public WebResult importCourseScore(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
         MyAssert.isTrue(file.isEmpty(), DefineCode.ERR0010, "文件信息不为空");
-        String token = httpServletRequest.getHeader("token");
+        String token = httpServletRequest.getParameter("token");
         MyAssert.isFalse(StrUtil.isNotBlank(token), DefineCode.ERR0010, "token is null");
         MyAssert.isFalse(tokenService.checkToken(token), DefineCode.ERR0010, "401");
         String courseId = httpServletRequest.getParameter("courseId");
@@ -109,7 +109,7 @@ public class QuestionController {
 
     @ApiOperation(value = "获取导入的习题集")
     @GetMapping(path = "/getImportQuestion")
-    public WebResult getImportQuestions(HttpServletRequest httpServletRequest){
+    public WebResult getImportQuestions(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
         return WebResult.okResult(questionService.getRedisBigQuestion(userId));
@@ -117,12 +117,12 @@ public class QuestionController {
 
     @ApiOperation(value = "保存导入的习题集")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "bigQuestion", dataTypeClass = List.class, required = true, paramType = "form")
+            @ApiImplicitParam(name = "bigQuestions", dataTypeClass = List.class, required = true, paramType = "form")
     })
     @PostMapping(path = "/saveQuestion")
-    public WebResult saveQuestion(@RequestBody List<BigQuestion> bigQuestions){
-        MyAssert.isTrue(bigQuestions.isEmpty(), DefineCode.ERR0010, "习题集不能为空");
-        questionService.saveBigQuestion(bigQuestions);
+    public WebResult saveQuestion(@RequestBody BigQuestionListRequest request) {
+        MyAssert.isTrue(request.getBigQuestions().isEmpty(), DefineCode.ERR0010, "习题集不能为空");
+        questionService.saveBigQuestion(request.getBigQuestions());
         return WebResult.okResult();
     }
 }

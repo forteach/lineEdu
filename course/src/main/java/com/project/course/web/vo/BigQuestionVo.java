@@ -1,7 +1,11 @@
 package com.project.course.web.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @Auther: zhangyy
@@ -11,8 +15,9 @@ import lombok.Data;
  * @Description:
  */
 @Data
-@Builder
-public class BigQuestionVo {
+@AllArgsConstructor
+@NoArgsConstructor
+public class BigQuestionVo implements Serializable {
     /**
      * 题目题干
      */
