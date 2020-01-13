@@ -58,9 +58,7 @@ public interface TeachPlanRepository extends JpaRepository<TeachPlan, String>, J
     @Transactional(readOnly = true)
     List<TeachPlan> findAllByStatusAndEndDateBefore(int status, String endDate);
 
-
-    @Query(value = "select distinct student_id from student_on_line where is_validated = '0' and class_id in " +
-            " ( select distinct from teach_plan where plan_id = 1? ) ", nativeQuery = true)
+    @Query(value = "select studentId from StudentOnLine where isValidated = '0' and classId in (select distinct classId from TeachPlan where planId = ?1)")
     @Transactional(readOnly = true)
     List<String> findAllStudentIdsByPlanId(String planId);
 
