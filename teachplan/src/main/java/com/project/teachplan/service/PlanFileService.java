@@ -167,7 +167,7 @@ public class PlanFileService extends BaseMySqlService {
         Optional<PlanFile> optionalPlanFile = planFileRepository.findById(fileId);
         MyAssert.isFalse(optionalPlanFile.isPresent(), DefineCode.ERR0010, "不存在要删除的文件");
         String verifyStatus = optionalPlanFile.get().getVerifyStatus();
-        MyAssert.isFalse(VERIFY_STATUS_AGREE.equals(verifyStatus), DefineCode.ERR0010, "已经审核过的信息不能删除");
+        MyAssert.isTrue(VERIFY_STATUS_AGREE.equals(verifyStatus), DefineCode.ERR0010, "已经审核过的信息不能删除");
         planFileRepository.deleteById(fileId);
     }
 

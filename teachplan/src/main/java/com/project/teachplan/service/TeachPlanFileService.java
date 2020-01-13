@@ -61,7 +61,7 @@ public class TeachPlanFileService {
         Optional<TeachPlanFile> optional = teachPlanFileRepository.findById(fileId);
         MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在要删除的信息");
         String verifyStatus = optional.get().getVerifyStatus();
-        MyAssert.isFalse(VERIFY_STATUS_AGREE.equals(verifyStatus), DefineCode.ERR0010, "已经审核过的信息不能删除");
+        MyAssert.isTrue(VERIFY_STATUS_AGREE.equals(verifyStatus), DefineCode.ERR0010, "已经审核过的信息不能删除");
         teachPlanFileRepository.deleteById(fileId);
     }
 
