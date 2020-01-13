@@ -8,6 +8,7 @@ import com.project.portal.response.WebResult;
 import com.project.portal.teachplan.request.TeachPlanFileFinaAllRequest;
 import com.project.portal.teachplan.request.TeachPlanFileSaveRequest;
 import com.project.portal.teachplan.request.TeachPlanVerifyRequest;
+import com.project.portal.teachplan.request.VerifyTeachPlanFileRequest;
 import com.project.teachplan.domain.TeachPlanFile;
 import com.project.teachplan.service.TeachPlanFileService;
 import com.project.token.annotation.UserLoginToken;
@@ -127,6 +128,20 @@ public class TeachPlanFileController {
         MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "计划状态不能为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
         teachPlanFileService.verifyTeachPlan(request.getPlanId(), request.getVerifyStatus(), request.getRemark(), userId);
+        return WebResult.okResult();
+    }
+    @PostMapping(path = "/verifyFile")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fileId", value = "资料id", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "verifyStatus", value = "计划状态 0 同意,1 已经提交,2 不同意拒绝", example = "0", dataType = "string", paramType = "form", required = true),
+            @ApiImplicitParam(name = "remark", value = "备注信息", dataType = "string", paramType = "form")
+    })
+    public WebResult verifyFile(@RequestBody VerifyTeachPlanFileRequest request, HttpServletRequest httpServletRequest){
+        MyAssert.isNull(request.getFileId(), DefineCode.ERR0010, "文件id不为空");
+        MyAssert.isNull(request.getVerifyStatus(), DefineCode.ERR0010, "状态不为空");
+        String token = httpServletRequest.getHeader("token");
+        String userId = tokenService.getUserId(token);
+        teachPlanFileService.verifyTeachPlanFile(request.getFileId(), request.getVerifyStatus(), request.getRemark(),userId);
         return WebResult.okResult();
     }
 }

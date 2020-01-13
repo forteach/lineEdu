@@ -98,6 +98,16 @@ public class TeachPlanFileService {
             teachPlanFileRepository.saveAll(list);
         }
     }
+    @Transactional(rollbackFor = Exception.class)
+    public void verifyTeachPlanFile(String fileId, String verifyStatus, String remark, String userId){
+        Optional<TeachPlanFile> optional = teachPlanFileRepository.findById(fileId);
+        MyAssert.isFalse(optional.isPresent(), DefineCode.ERR0010, "不存在信息");
+        TeachPlanFile teachPlanFile = optional.get();
+        teachPlanFile.setUpdateUser(userId);
+        teachPlanFile.setVerifyStatus(verifyStatus);
+        teachPlanFile.setRemark(remark);
+        teachPlanFileRepository.save(teachPlanFile);
+    }
 
     @Transactional
     public void updateStatus(String planId, String status, String userId) {
