@@ -236,12 +236,12 @@ public class TeacherServiceImpl implements TeacherService {
 //        return optionalTeacher.get();
 //    }
 
-    @Override
-    public Teacher findById(String teacherId) {
-        Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
-        MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "不存在对应的教师信息");
-        return optionalTeacher.get();
-    }
+//    @Override
+//    public Teacher findById(String teacherId) {
+//        Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
+//        MyAssert.isFalse(optionalTeacher.isPresent(), DefineCode.ERR0014, "不存在对应的教师信息");
+//        return optionalTeacher.get();
+//    }
 
 //    /**
 //     * 管理端通过状态查询的教师信息

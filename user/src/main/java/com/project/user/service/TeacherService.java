@@ -33,7 +33,7 @@ public interface TeacherService {
 
     void deleteByTeacherId(String teacherId);
 
-    Teacher findById(String teacherId);
+//    Teacher findById(String teacherId);
 
 //    TeacherVerify findByTeacherId(String teacherId);
 

@@ -46,8 +46,8 @@ public class ChapteDataController {
     private ChapterDataVerify chapterDataVerify;
     @Resource
     private TokenService tokenService;
-    @Resource
-    private TeacherService teacherService;
+//    @Resource
+//    private TeacherService teacherService;
     @Resource
     private LearnCenterService learnCenterService;
     @Resource
@@ -75,11 +75,12 @@ public class ChapteDataController {
         // 2、设置返回结果
         String token = httpServletRequest.getHeader("token");
         String userId = tokenService.getUserId(token);
+        String userName = tokenService.getUserName(token);
         String centerAreaId = tokenService.getCenterAreaId(token);
         String centerName = learnCenterService.findByCenterId(centerAreaId).getCenterName();
-        String teacherName = teacherService.findById(userId).getTeacherName();
+//        String teacherName = teacherService.findById(userId).getTeacherName();
         String courseName = courseService.getById(courseId).getCourseName();
-        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId, centerAreaId, centerName, teacherName, courseName));
+        return WebResult.okResult(chapteDataService.save(courseId, chapterId, datumType, files, userId, centerAreaId, centerName, userName, courseName));
     }
 
     @UserLoginToken
