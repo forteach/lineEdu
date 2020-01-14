@@ -31,9 +31,11 @@ import javax.persistence.criteria.Root;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.train.config.Dic.IMPORT_STUDENT;
+import static java.util.stream.Collectors.toList;
 
 /**
  * 项目计划班级成员信息记录
@@ -186,13 +188,20 @@ public class TrainClassStuService extends BaseMySqlService {
         //设置健
         setKey();
         //保存数据
-        List<TrainClassStu> stuArrayList = new ArrayList<>(64);
-        list.parallelStream().forEach(s -> {
-            boolean b = trainClassStuRepository.existsByPjPlanIdAndStuName(planId, s.getStuName());
-            if (!b){
-                stuArrayList.add(s);
-            }
-        });
+//        List<TrainClassStu> stuArrayList = new ArrayList<>(64);
+//        list.parallelStream().forEach(s -> {
+//            boolean b = trainClassStuRepository.existsByPjPlanIdAndStuName(planId, s.getStuName());
+//            if (!b){
+//                stuArrayList.add(s);
+//            }
+//        });
+
+        //过滤当前导入的已经存在的计划
+        List<TrainClassStu> stuArrayList = list.parallelStream()
+                .filter(Objects::nonNull)
+                .filter(s -> !trainClassStuRepository.existsByPjPlanIdAndStuName(planId, s.getStuName()))
+                .collect(toList());
+
         trainClassStuRepository.saveAll(stuArrayList);
         //计划班级数量
         int pcount = trainClassService.countClass(planId);
