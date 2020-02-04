@@ -63,6 +63,37 @@ public class WeChatUserController {
         this.userService = userService;
     }
 
+    @UserLoginToken
+    @ApiOperation(value = "绑定微信用户登录信息")
+    @PostMapping("/binding")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "studentName", value = "姓名", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "stuIDCard", value = "身份证号码/电话号码", dataType = "string", required = true, paramType = "form"),
+            @ApiImplicitParam(name = "type", value = "学生类型 1 校内学生，2 在线学生", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "signature", value = "sha1( rawData + session_key )", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "rawData", value = "rawData", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "encryptedData", value = "加密数据", dataType = "string", paramType = "form"),
+            @ApiImplicitParam(name = "iv", value = "数据接口返回", dataType = "string", paramType = "form"),
+    })
+    public WebResult binding(@RequestBody BindingUserReq bindingUserReq, HttpServletRequest request) {
+        MyAssert.blank(bindingUserReq.getStuIDCard(), DefineCode.ERR0010, "身份证号码/手机号码不为空");
+        MyAssert.blank(bindingUserReq.getStudentName(), DefineCode.ERR0010, "用户名不为空");
+        BindingUserRequest bindingUser = new BindingUserRequest();
+        BeanUtil.copyProperties(bindingUserReq, bindingUser);
+        bindingUser.setOpenId(tokenService.getOpenId(request.getHeader("token")));
+        if (IdcardUtil.isValidCard(bindingUserReq.getStuIDCard())) {
+            //是学生
+//            MyAssert.blank(bindingUserReq.getType(), DefineCode.ERR0010, "学生类型不为空");
+            return WebResult.okResult(weChatUserService.bindingUser(bindingUser));
+        } else {
+            //是教师
+            SysUsers users = userService.checkUserNameAndPassWord(bindingUser.getStudentName(), bindingUser.getStuIDCard());
+            String userName = users.getUserName();
+            String teacherId = users.getTeacherId();
+            return WebResult.okResult(weChatUserService.bindTeacher(bindingUser, teacherId, userName));
+        }
+    }
+
     @PassToken
     @ApiOperation(value = "微信小程序登录接口")
     @GetMapping("/login")
@@ -81,35 +112,6 @@ public class WeChatUserController {
         } catch (WxErrorException e) {
             log.error(e.getMessage(), e);
             return WebResult.failResult(DefineCode.ERR0009, e.getMessage());
-        }
-    }
-
-    @UserLoginToken
-    @ApiOperation(value = "绑定微信用户登录信息")
-    @PostMapping("/binding")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "studentName", value = "姓名", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "stuIDCard", value = "身份证号码/电话号码", required = true, paramType = "form"),
-            @ApiImplicitParam(name = "signature", value = "sha1( rawData + session_key )", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "rawData", value = "rawData", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "encryptedData", value = "加密数据", dataType = "string", paramType = "form"),
-            @ApiImplicitParam(name = "iv", value = "数据接口返回", dataType = "string", paramType = "form"),
-    })
-    public WebResult binding(@RequestBody BindingUserReq bindingUserReq, HttpServletRequest request) {
-        MyAssert.blank(bindingUserReq.getStuIDCard(), DefineCode.ERR0010, "身份证号码/手机号码不为空");
-        MyAssert.blank(bindingUserReq.getStudentName(), DefineCode.ERR0010, "用户名不为空");
-        BindingUserRequest bindingUser = new BindingUserRequest();
-        BeanUtil.copyProperties(bindingUserReq, bindingUser);
-        bindingUser.setOpenId(tokenService.getOpenId(request.getHeader("token")));
-        if (IdcardUtil.isValidCard(bindingUserReq.getStuIDCard())) {
-            //是学生
-            return WebResult.okResult(weChatUserService.bindingUser(bindingUser));
-        } else {
-            //是教师
-            SysUsers users = userService.checkUserNameAndPassWord(bindingUser.getStudentName(), bindingUser.getStuIDCard());
-            String userName = users.getUserName();
-            String teacherId = users.getTeacherId();
-            return WebResult.okResult(weChatUserService.bindTeacher(bindingUser, teacherId, userName));
         }
     }
 

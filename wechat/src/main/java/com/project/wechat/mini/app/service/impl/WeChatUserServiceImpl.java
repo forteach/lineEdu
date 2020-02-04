@@ -89,6 +89,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
             weChatUser.setStudentName(studentOnLine.getStudentName());
             weChatUser.setClassName(tbClassService.findClassByClassId(studentOnLine.getClassId()).getClassName());
             weChatUser.setOpenId(openId);
+            weChatUser.setType(bindingUserReq.getType());
             weChatUser.setUpdateUser(bindingUserReq.getStuIDCard());
             weChatUser.setCreateUser(bindingUserReq.getStuIDCard());
             weChatUserRepository.save(weChatUser);

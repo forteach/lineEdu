@@ -20,4 +20,6 @@ public class BindingUserRequest extends WxDataVo implements Serializable {
     private String studentName;
 
     private String stuIDCard;
+
+    private String type;
 }

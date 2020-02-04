@@ -83,4 +83,7 @@ public class WeChatUser extends Entitys implements Serializable {
      */
     @Column(name = "role_id", nullable = false, columnDefinition = "VARCHAR(32) DEFAULT 1 COMMENT '角色 0 教师 1 学生'")
     private String roleId;
+
+    @Column(name = "type", columnDefinition = "CHAR(1) COMMENT '学生类型 1 校内学生, 2 在线学生'")
+    private String type;
 }
