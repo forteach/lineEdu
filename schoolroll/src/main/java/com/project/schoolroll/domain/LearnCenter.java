@@ -46,7 +46,7 @@ public class LearnCenter extends Entitys implements Serializable {
     /**
      * 地址
      */
-    @Column(name = "address", columnDefinition = "VARCHAR(64) COMMENT '学校地址'")
+    @Column(name = "address", columnDefinition = "VARCHAR(255) COMMENT '学校地址'")
     private String address;
     /**
      * 企业负责人
@@ -84,13 +84,13 @@ public class LearnCenter extends Entitys implements Serializable {
     @Column(name = "banking_account_address", columnDefinition = "VARCHAR(255) COMMENT '开户行地址'")
     private String bankingAccountAddress;
 
-    @Column(name = "company_address", columnDefinition = "VARCHAR(32) COMMENT '公司地址'")
+    @Column(name = "company_address", columnDefinition = "VARCHAR(255) COMMENT '公司地址'")
     private String companyAddress;
 
-    @Column(name = "company_name", columnDefinition = "VARCHAR(32) COMMENT '公司名称'")
+    @Column(name = "company_name", columnDefinition = "VARCHAR(128) COMMENT '公司名称'")
     private String companyName;
 
-    @Column(name = "school_admin", columnDefinition = "varchar(32) comment '学校校内联系人'")
+    @Column(name = "school_admin", columnDefinition = "VARCHAR(64) comment '学校校内联系人'")
     private String schoolAdmin;
 
     @Column(name = "school_plone", columnDefinition = "VARCHAR(32) COMMENT '学校联系人电话'")
