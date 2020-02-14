@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,6 +89,9 @@ public class StudentOnLineService {
         Map<String, List<StudentOnLine>> stringListMap = list.stream()
                 .filter(s -> StrUtil.isNotBlank(s.getClassName()))
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
+        //判断已经存在的班级名称不能再使用了
+        stringListMap.keySet().forEach(s -> MyAssert.isTrue(tbClassService.existsByCenterAreaIdAndClassName(s, centerAreaId), DefineCode.ERR0010, "已经存在相同的班级名称"));
+
         //同一班的学生入学时间必须相同。
         stringListMap.forEach((k, v) -> {
             //判断同一班级的学生入学日期是否是相同，大于１,则有不同的

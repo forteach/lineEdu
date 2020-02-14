@@ -22,6 +22,9 @@ public interface TbClassesRepository extends JpaRepository<TbClasses, String> {
 //    Optional<TbClasses> findByClassNameAndCenterAreaId(String className, String centerAreaId);
 
     @Transactional(readOnly = true)
+    boolean existsByCenterAreaIdAndClassName(String centerAreaId, String className);
+
+    @Transactional(readOnly = true)
     Optional<TbClasses> findBySpecialtyNameAndGradeAndCenterAreaId(String specialtyName, String grade, String centerAreaId);
 
     @Transactional(readOnly = true)

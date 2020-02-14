@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static java.util.stream.Collectors.toList;
@@ -34,6 +33,10 @@ public class TbClassService {
     TbClasses getClassIdByClassName(String className, String centerAreaId, String userId, String specialtyName, String grade) {
         return tbClassesRepository.findBySpecialtyNameAndGradeAndCenterAreaId(specialtyName, grade, centerAreaId)
                 .orElseGet(() -> tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId, specialtyName, grade)));
+    }
+
+    public boolean existsByCenterAreaIdAndClassName(String className, String centerAreaId){
+        return tbClassesRepository.existsByCenterAreaIdAndClassName(centerAreaId, className);
     }
 
     public TbClasses findById(String classId) {
