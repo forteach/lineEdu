@@ -32,7 +32,7 @@ public class TbClassService {
 
     @Transactional(rollbackFor = Exception.class)
     TbClasses getClassIdByClassName(String className, String centerAreaId, String userId, String specialtyName, String grade) {
-        return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId)
+        return tbClassesRepository.findBySpecialtyNameAndGradeAndCenterAreaId(specialtyName, grade, centerAreaId)
                 .orElseGet(() -> tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId, specialtyName, grade)));
     }
 

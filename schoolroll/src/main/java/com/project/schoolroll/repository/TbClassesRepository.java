@@ -18,8 +18,11 @@ import java.util.Optional;
  */
 public interface TbClassesRepository extends JpaRepository<TbClasses, String> {
 
+//    @Transactional(readOnly = true)
+//    Optional<TbClasses> findByClassNameAndCenterAreaId(String className, String centerAreaId);
+
     @Transactional(readOnly = true)
-    Optional<TbClasses> findByClassNameAndCenterAreaId(String className, String centerAreaId);
+    Optional<TbClasses> findBySpecialtyNameAndGradeAndCenterAreaId(String specialtyName, String grade, String centerAreaId);
 
     @Transactional(readOnly = true)
     List<TbClasses> findAllByIsValidatedEqualsAndCenterAreaIdOrderByCreateTimeDesc(String isValidated, String centerAreaId);
