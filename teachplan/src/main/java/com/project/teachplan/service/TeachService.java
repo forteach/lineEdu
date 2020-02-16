@@ -167,7 +167,7 @@ public class TeachService {
         TbClasses tbClass = tbClassService.findById(teachPlan.getClassId());
         //修改计划名称需要判断是否存在同名计划存在不能修改
         String planName = tbClass.getSpecialtyName() + tbClass.getGrade() + "级";
-        MyAssert.isTrue(teachPlanVerifyRepository.existsAllByPlanName(planName), DefineCode.ERR0010, "已经存在同名计划,请修改");
+        MyAssert.isTrue(teachPlanVerifyRepository.existsAllByPlanNameAndCenterAreaId(planName, teachPlan.getCenterAreaId()), DefineCode.ERR0010, "已经存在同名计划,请修改");
         teachPlan.setClassName(tbClass.getClassName());
         teachPlan.setSpecialtyName(tbClass.getSpecialtyName());
         teachPlan.setGrade(tbClass.getGrade());
