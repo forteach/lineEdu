@@ -41,8 +41,8 @@ public class CourseChapter extends Entitys {
     @Column(name = "chapter_parent_id", columnDefinition = "CHAR(32) COMMENT '章节父编号'")
     private String chapterParentId;
 
-    @Column(name = "sort", columnDefinition = "CHAR(3) COMMENT '当前层所处的顺序'")
-    private String sort;
+    @Column(name = "sort", columnDefinition = "int(3) COMMENT '当前层所处的顺序'")
+    private Integer sort;
 
     @Column(name = "chapter_type", columnDefinition = "CHAR(3) COMMENT '目录类型：1.章、２.节、3.小节 '")
     private String chapterType;

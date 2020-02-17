@@ -80,7 +80,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
             int count = courseChapterRepository.countByIsValidatedEqualsAndCourseIdAndChapterParentId(TAKE_EFFECT_OPEN, courseChapter.getCourseId(), courseChapter.getChapterParentId());
 
             //3、设置当前章节下的最大序号
-            courseChapter.setSort(String.valueOf(count + 1));
+            courseChapter.setSort(count + 1);
             courseChapterRepository.save(courseChapter);
 
 
@@ -200,7 +200,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         if (stringRedisTemplate.hasKey(key)) {
             return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), CourseTreeResp.class);
         }
-        List<CourseTreeResp> courseTreeResps = new ArrayList<>();
+        List<CourseTreeResp> courseTreeResps = new ArrayList<>(32);
         builderCourseTreeRespList(courseId, studentId, courseTreeResps);
         if (!courseTreeResps.isEmpty()) {
             stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(courseTreeResps), Duration.ofSeconds(5));
@@ -272,7 +272,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     public void updateChapterSort(List<ChapterSortVo> list, String userId) {
         list.forEach(v -> courseChapterRepository.findById(v.getChapterId()).ifPresent(c -> {
             MyAssert.isFalse(NumberUtil.isNumber(v.getSort()), DefineCode.ERR0010, "顺序必须是数字");
-            c.setSort(v.getSort());
+            c.setSort(Integer.valueOf(v.getSort()));
             c.setUpdateUser(userId);
             courseChapterRepository.save(c);
         }));
