@@ -89,20 +89,21 @@ public class StudentOnLineService {
         Map<String, List<StudentOnLine>> stringListMap = list.stream()
                 .filter(s -> StrUtil.isNotBlank(s.getClassName()))
                 .collect(Collectors.groupingBy(StudentOnLine::getClassName));
-        //判断已经存在的班级名称不能再使用了 todo 如果需要在当前班级添加学生
-//        stringListMap.keySet().forEach(s -> MyAssert.isTrue(tbClassService.existsByCenterAreaIdAndClassName(s, centerAreaId), DefineCode.ERR0010, "已经存在相同的班级名称"));
 
-        //同一班的学生入学时间必须相同。
+        //校验学生的数据是否合法
         stringListMap.forEach((k, v) -> {
-            //判断同一班级的学生入学日期是否是相同，大于１,则有不同的
+            //同一班级的学生入学日期是否是相同，大于１,则有不同的
             long count = v.stream().filter(Objects::nonNull).map(StudentOnLine::getEnrollmentDate).distinct().count();
             MyAssert.isTrue(count > 1, DefineCode.ERR0010, "同一班的学生入学时间必须相同");
-//            StudentOnLine studentOnLine = v.get(0);
-
+            tbClassService.findByClassNameAndCenterAreaId(k, centerAreaId).ifPresent(s -> {
+                StudentOnLine studentOnLine = v.get(0);
+                //存在同名的班级信息需要判断是否是同一个班，需要判断是否是同一个专业和年级
+                MyAssert.isFalse(studentOnLine.getGrade().equals(s.getGrade()) && studentOnLine.getSpecialtyName().equals(s.getSpecialtyName()), DefineCode.ERR0010, "已经存在同名班级 : " + k);
+            });
         });
         //判断是否是同一个学习中心，是同一个学习中心则覆盖，否则不予导入并提示
-        list.forEach(s -> studentOnLineRepository.findById(s.getStudentId())
-                .ifPresent(o -> MyAssert.isFalse(centerAreaId.equals(o.getCenterAreaId()), DefineCode.ERR0010, "您添加的学生: " + s.getStudentId() + " 已经在别的学习中心注册")));
+        list.forEach(s -> studentOnLineRepository.findById(s.getStudentId()).ifPresent(o ->
+                MyAssert.isFalse(centerAreaId.equals(o.getCenterAreaId()), DefineCode.ERR0010, "您添加的学生: " + s.getStudentId() + " 已经在别的学习中心注册")));
         //设置键操作
         setStudentKey();
         //保存对应班级和学生信息
@@ -342,7 +343,7 @@ public class StudentOnLineService {
         return studentOnLineRepository.findById(id);
     }
 
-    public IStudentOnLineDto findStudentById(String studentId){
+    public IStudentOnLineDto findStudentById(String studentId) {
         return studentOnLineRepository.findByStudentId(studentId);
     }
 }

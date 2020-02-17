@@ -35,8 +35,8 @@ public class TbClassService {
                 .orElseGet(() -> tbClassesRepository.save(new TbClasses(centerAreaId, IdUtil.simpleUUID(), className, userId, specialtyName, grade)));
     }
 
-    public boolean existsByCenterAreaIdAndClassName(String className, String centerAreaId){
-        return tbClassesRepository.existsByCenterAreaIdAndClassName(centerAreaId, className);
+    public Optional<TbClasses> findByClassNameAndCenterAreaId(String className, String centerAreaId){
+        return tbClassesRepository.findByClassNameAndCenterAreaId(className, centerAreaId);
     }
 
     public TbClasses findById(String classId) {
