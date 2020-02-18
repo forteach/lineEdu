@@ -122,11 +122,11 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         return resp;
     }
 
-    @Override
-    @Transactional(rollbackForClassName = "Exception")
-    public void delete(CourseChapter courseChapter) {
-        courseChapterRepository.delete(courseChapter);
-    }
+//    @Override
+//    @Transactional(rollbackForClassName = "Exception")
+//    public void delete(CourseChapter courseChapter) {
+//        courseChapterRepository.delete(courseChapter);
+//    }
 
     /**
      * 删除树状结构科目课程章节及子章节
@@ -145,7 +145,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         int result = courseChapterRepository.deleteBathIds(stringSet);
         log.info("chapterId : [{}], courseId : [{}], result : [{}] ", chapterId, courseId, result);
         //重新计算课程总时长
-        coursewareService.deleteBathByChapterIds(stringSet);
+        coursewareService.deleteBathByChapterIds(stringSet, courseId);
         int videoTimeSum = coursewareService.findVideoTimeSum(courseId);
         courseService.updateCourseTime(courseId, videoTimeSum);
     }

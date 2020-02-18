@@ -29,7 +29,7 @@ public interface CourseChapterService {
 
     void updateChapterSort(List<ChapterSortVo> list, String userId);
 
-    public void delete(CourseChapter courseChapter);
+//    public void delete(CourseChapter courseChapter);
 
     public void deleteById(String chapterId);
 

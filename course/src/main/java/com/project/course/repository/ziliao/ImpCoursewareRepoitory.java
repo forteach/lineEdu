@@ -22,6 +22,9 @@ public interface ImpCoursewareRepoitory extends JpaRepository<ImportantCoursewar
     int deleteAllByBathIds(@Param("ids") Set<String> ids);
 
     @Transactional(readOnly = true)
+    List<ImportantCourseware> findAllByChapterId(String chapterId);
+
+    @Transactional(readOnly = true)
     List<ImportantCourseware> findByIsValidatedEqualsAndChapterId(String isValidated, String chapterId);
 
     @Transactional(readOnly = true)

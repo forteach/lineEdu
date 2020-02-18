@@ -11,6 +11,7 @@ import com.project.databank.web.vo.CourseVerifyRequest;
 import com.project.mongodb.domain.BigQuestion;
 import com.project.mongodb.repository.BigQuestionRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.HashOperations;
@@ -41,6 +42,7 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     private final HashOperations<String, String, String> hashOperations;
     private final BigQuestionRepository bigQuestionRepository;
 
+    @Autowired
     public CourseVerifyVoServiceImpl(CourseVerifyVoRepository courseVerifyVoRepository, RedisTemplate redisTemplate,
                                      HashOperations<String, String, String> hashOperations, BigQuestionRepository bigQuestionRepository) {
         this.courseVerifyVoRepository = courseVerifyVoRepository;
@@ -138,6 +140,12 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void deleteAllByCourseIdAndChapterId(String courseId, String chapterId){
+        courseVerifyVoRepository.deleteAllByCourseIdAndChapterId(courseId, chapterId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteByFileId(String fileId) {
         courseVerifyVoRepository.deleteByFileId(fileId);
     }
@@ -156,5 +164,11 @@ public class CourseVerifyVoServiceImpl implements CourseVerifyVoService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteAllByCourseId(String courseId){
         courseVerifyVoRepository.deleteAllByCourseId(courseId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAllByCourseIdAndChapterIds(String courseId, Set<String> chapterIds){
+        courseVerifyVoRepository.deleteAllByCourseIdAndChapterIdIn(courseId, chapterIds);
     }
 }

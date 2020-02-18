@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author: zhangyy
@@ -37,9 +38,13 @@ public interface CourseVerifyVoService {
 
     void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
 
+    void deleteAllByCourseIdAndChapterId(String courseId, String chapterId);
+
 //    List<String> findVerifyCourse();
 
     boolean existsByCourseId(String courseId);
 
     void deleteAllByCourseId(String courseId);
+
+    void deleteAllByCourseIdAndChapterIds(String courseId, Set<String> chapterIds);
 }

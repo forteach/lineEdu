@@ -89,6 +89,11 @@ public class CoursewareServiceImpl implements CoursewareService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteCourseChapterId(String chapterId) {
+        List<ImportantCourseware> list = impCoursewareRepoitory.findAllByChapterId(chapterId);
+        if (!list.isEmpty()) {
+            ImportantCourseware importantCourseware = list.get(0);
+            courseVerifyVoService.deleteAllByCourseIdAndChapterId(importantCourseware.getCourseId(), importantCourseware.getChapterId());
+        }
         impCoursewareRepoitory.deleteAllByChapterId(chapterId);
     }
 
@@ -163,13 +168,14 @@ public class CoursewareServiceImpl implements CoursewareService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteByCourseId(String courseId) {
+        courseVerifyVoService.deleteAllByCourseId(courseId);
         impCoursewareRepoitory.deleteAllByCourseId(courseId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteBathByChapterIds(Set<String> stringSet) {
+    public void deleteBathByChapterIds(Set<String> stringSet, String courseId) {
+        courseVerifyVoService.deleteAllByCourseIdAndChapterIds(courseId, stringSet);
         impCoursewareRepoitory.deleteAllByBathIds(stringSet);
     }
 }
-

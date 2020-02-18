@@ -5,10 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author: zhangyy
@@ -20,6 +19,9 @@ import java.util.List;
 public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, String> {
     @Modifying(clearAutomatically = true)
     void deleteAllByCourseIdAndChapterIdAndVerifyStatusAndCourseType(String courseId, String chapterId, String verifyStatus, String courseType);
+
+    @Modifying(flushAutomatically = true)
+    void deleteAllByCourseIdAndChapterId(String courseId, String chapterId);
 
     @Transactional(readOnly = true)
     Page<CourseVerifyVo> findAllByIsValidatedEqualsAndVerifyStatusOrderByCreateTimeDesc(String isValidated, String verifyStatus, Pageable pageable);
@@ -38,4 +40,7 @@ public interface CourseVerifyVoRepository extends JpaRepository<CourseVerifyVo, 
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     void deleteAllByCourseId(String courseId);
+
+    @Modifying(flushAutomatically = true)
+    void deleteAllByCourseIdAndChapterIdIn(String courseId, Set<String> chapterIds);
 }

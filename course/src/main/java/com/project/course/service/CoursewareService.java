@@ -28,7 +28,7 @@ public interface CoursewareService {
 
     int findVideoTimeSum(String courseId);
 
-    void deleteBathByChapterIds(Set<String> stringSet);
+    void deleteBathByChapterIds(Set<String> stringSet, String courseId);
 
     void deleteByCourseId(String courseId);
 }
