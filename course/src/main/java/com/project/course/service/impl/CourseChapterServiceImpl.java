@@ -140,6 +140,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         MyAssert.isFalse(chapterOptional.isPresent(), DefineCode.ERR0010, "章节信息不存在");
         CourseChapter courseChapter = chapterOptional.get();
         String courseId = courseChapter.getCourseId();
+        //查询对应的章节和对应的子章节
         Set<String> stringSet = findLists(courseChapter.getCourseId(), chapterId);
         stringSet.add(chapterId);
         int result = courseChapterRepository.deleteBathIds(stringSet);
@@ -160,6 +161,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
     private Set<String> findLists(String courseId, String chapterParentId) {
         List<CourseChapter> lists = courseChapterRepository.findByCourseIdAndAndChapterParentId(courseId, chapterParentId);
         Set<String> stringSet = lists.stream()
+                //过滤章节父Id是0的章节
                 .filter(courseChapter -> !COURSE_CHAPTER_CHAPTER_PARENT_ID.equals(courseChapter.getChapterParentId()))
                 .map(CourseChapter::getChapterId)
                 .collect(toSet());

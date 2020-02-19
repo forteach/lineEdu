@@ -281,7 +281,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateCourseTime(String courseId, Integer videoTimeNum) {
-        courseRepository.findById(courseId).ifPresent(c -> c.setVideoTimeNum(videoTimeNum));
+        courseRepository.findById(courseId).ifPresent(c -> {
+            c.setVideoTimeNum(videoTimeNum);
+            courseRepository.save(c);
+        });
     }
 
     @Override
