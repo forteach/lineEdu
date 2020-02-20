@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -26,7 +23,6 @@ import java.io.Serializable;
 @DynamicInsert
 @org.hibernate.annotations.Table(appliesTo = "chapter_records", comment = "学生上课章节记录")
 @Table(name = "chapter_records", indexes = {
-        @Index(columnList = "record_id", name = "record_id_index"),
         @Index(columnList = "student_id", name = "student_id_index"),
         @Index(columnList = "course_id", name = "course_id_index"),
         @Index(columnList = "chapter_id", name = "chapter_id_index")

@@ -76,8 +76,14 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
 
     @Override
     public ChapterRecords findChapterRecordsByStudentIdAndChapterId(String studentId, String courseId, String chapterId) {
-        return chapterRecordsRepository.findByIsValidatedEqualsAndStudentIdAndCourseIdAndChapterId(TAKE_EFFECT_OPEN, studentId, courseId, chapterId)
-                .orElseGet(ChapterRecords::new);
+        if (log.isDebugEnabled()) {
+            log.debug("findChapterRecord ERROR : {studentId}, {courseId},{chapterId}", studentId, courseId, chapterId);
+        }
+        List<ChapterRecords> list = chapterRecordsRepository.findByStudentIdAndCourseIdAndChapterId(studentId, courseId, chapterId);
+        if (list.isEmpty()) {
+            return new ChapterRecords();
+        }
+        return list.get(0);
     }
 
 
@@ -89,13 +95,15 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
                 .filter(Objects::nonNull)
                 .map(this::sumRecordsByCourseIdAndStudent)
                 .collect(Collectors.toList());
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             courseRecordsRepository.saveAll(list);
         }
     }
 
-    /** 计算每名学生每课上课总时长*/
-    private CourseRecords sumRecordsByCourseIdAndStudent(CourseRecords courseRecords){
+    /**
+     * 计算每名学生每课上课总时长
+     */
+    private CourseRecords sumRecordsByCourseIdAndStudent(CourseRecords courseRecords) {
         Integer sumTime = chapterRecordsRepository.findAllByIsValidatedEqualsAndCourseIdAndStudentId(TAKE_EFFECT_OPEN, courseRecords.getCourseId(), courseRecords.getStudentId())
                 .stream()
                 .filter(Objects::nonNull)
@@ -124,9 +132,9 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
     @Override
     public Page<CourseRecords> findCourseByCourseId(String courseId, PageRequest page) {
         String createTime = DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -3));
-        if (StrUtil.isNotBlank(courseId)){
+        if (StrUtil.isNotBlank(courseId)) {
             return courseRecordsRepository.findAllByIsValidatedEqualsAndCourseIdAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, createTime, courseId, page);
-        }else {
+        } else {
             return courseRecordsRepository.findAllByIsValidatedEqualsAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, createTime, page);
         }
     }
@@ -134,16 +142,16 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
     @Override
     public Page<CourseRecords> findCourseByCenterAreaId(String courseId, String centerAreaId, PageRequest page) {
         String createTime = DateUtil.formatDateTime(DateUtil.offset(new Date(), DateField.YEAR, -3));
-        if (StrUtil.isNotBlank(courseId)){
+        if (StrUtil.isNotBlank(courseId)) {
             return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndCourseIdAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, createTime, courseId, page);
-        }else {
+        } else {
             return courseRecordsRepository.findAllByIsValidatedEqualsAndCenterAreaIdAndCreateTimeAfterOrderByUpdateTimeDesc(TAKE_EFFECT_OPEN, centerAreaId, createTime, page);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByStudentId(String studentId){
+    public void deleteByStudentId(String studentId) {
         courseStudyRepository.deleteAllByStudentId(studentId);
         courseRecordsRepository.deleteAllByStudentId(studentId);
         chapterRecordsRepository.deleteAllByStudentId(studentId);

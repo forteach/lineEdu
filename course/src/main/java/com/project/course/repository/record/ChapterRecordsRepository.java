@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author: zhangyy
@@ -20,8 +19,7 @@ import java.util.Optional;
 public interface ChapterRecordsRepository extends JpaRepository<ChapterRecords, String> {
 
     @Transactional(readOnly = true)
-    Optional<ChapterRecords> findByIsValidatedEqualsAndStudentIdAndCourseIdAndChapterId(String isValidated, String studentId, String courseId, String chapterId);
-
+    List<ChapterRecords> findByStudentIdAndCourseIdAndChapterId(String studentId, String courseId, String chapterId);
     /**
      * 查询有效课程观看学习记录分页信息
      */

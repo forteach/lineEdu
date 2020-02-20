@@ -132,7 +132,7 @@ public class TeacherController {
     }
 
     @UserLoginToken
-    @ApiOperation(value = "查询有效教师信息集合")
+    @ApiOperation(value = "查询有效教师信息集合,根据学习中心查询对应得教师集合")
     @GetMapping(path = "/")
     public WebResult findAll(HttpServletRequest httpServletRequest) {
         String centerAreaId = tokenService.getCenterAreaId(httpServletRequest.getHeader("token"));
