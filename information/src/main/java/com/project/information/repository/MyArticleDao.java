@@ -4,6 +4,7 @@ package com.project.information.repository;
 import com.project.information.domain.MyArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+
 import java.util.List;
 
 

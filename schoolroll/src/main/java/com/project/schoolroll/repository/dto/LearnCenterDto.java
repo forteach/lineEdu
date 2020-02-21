@@ -1,7 +1,5 @@
 package com.project.schoolroll.repository.dto;
 
-import javax.persistence.Column;
-
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com

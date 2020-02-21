@@ -1,10 +1,6 @@
 package com.project.mongodb.domain.question;
 
 
-import com.project.mongodb.domain.base.AbstractExam;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 /**
  * @Description: 选择题 选择题的子项 多选及单选
  * @author: liu zhenming

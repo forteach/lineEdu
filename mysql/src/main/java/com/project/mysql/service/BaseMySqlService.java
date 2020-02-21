@@ -1,6 +1,8 @@
 package com.project.mysql.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.project.mysql.key.MyKey;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -8,9 +10,6 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.project.mysql.key.*;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class BaseMySqlService {

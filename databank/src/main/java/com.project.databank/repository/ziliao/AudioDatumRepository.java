@@ -1,8 +1,6 @@
 package com.project.databank.repository.ziliao;
 
 import com.project.databank.domain.ziliao.AudioDatum;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
 /**
  * @Auther: zhangyy

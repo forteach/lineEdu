@@ -14,11 +14,13 @@ import com.project.portal.response.WebResult;
 import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
-import com.project.user.service.TeacherService;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

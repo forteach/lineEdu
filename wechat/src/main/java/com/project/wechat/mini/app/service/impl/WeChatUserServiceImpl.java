@@ -34,8 +34,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.project.base.common.keyword.Dic.*;
-import static com.project.token.constant.TokenKey.TOKEN_VALIDITY_TIME;
-import static com.project.token.constant.TokenKey.USER_ROLE_CODE_TEACHER;
+import static com.project.token.constant.TokenKey.*;
 
 /**
  * @Auther: zhangyy
@@ -106,10 +105,13 @@ public class WeChatUserServiceImpl implements WeChatUserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String bindTeacher(BindingUserRequest bindingUserReq, String teacherId, String userName) {
+    public String bindTeacher(BindingUserRequest bindingUserReq, String teacherId, String userName, String centerId, String roleCode) {
         String studentName = bindingUserReq.getStudentName();
         List<WeChatUser> weChatUsers = weChatUserRepository.findByStudentId(studentName);
-        MyAssert.isFalse(weChatUsers.isEmpty(), DefineCode.ERR0010, "当前账号已经绑定过了");
+        if (!weChatUsers.isEmpty()){
+            WeChatUser weChatUser = weChatUsers.get(0);
+            MyAssert.isTrue(WX_INFO_BINDIND_0.equals(weChatUser.getBinding()), DefineCode.ERR0010, "当前账号已经绑定过了");
+        }
         String openId = bindingUserReq.getOpenId();
         WeChatUser weChatUser = weChatUserRepository.findAllByOpenId(openId).orElseGet(WeChatUser::new);
         String key = USER_PREFIX.concat(openId);
@@ -118,9 +120,14 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         weChatUser.setBinding(WX_INFO_BINDIND_0);
         weChatUser.setCreateUser(bindingUserReq.getStudentName());
         weChatUser.setUpdateUser(bindingUserReq.getStudentName());
-        weChatUser.setRoleId(WECHAT_ROLE_ID_TEACHER);
+        if ("3".equals(roleCode)) {
+            weChatUser.setRoleId(WECHAT_ROLE_ID_TEACHER);
+        }else if (WECHAT_ROLE_ID_CENTER.equals(roleCode)){
+            weChatUser.setRoleId(WECHAT_ROLE_ID_CENTER);
+        }
         weChatUser.setStudentId(teacherId);
         weChatUser.setStudentName(userName);
+        weChatUser.setCenterAreaId(centerId);
         weChatUserRepository.save(weChatUser);
         return "绑定成功";
     }
@@ -167,7 +174,10 @@ public class WeChatUserServiceImpl implements WeChatUserService {
         if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())) {
             //是教师
             token = tokenService.createToken(openId, centerAreaId, USER_ROLE_CODE_TEACHER);
-        } else {
+        }else if (WECHAT_ROLE_ID_CENTER.equals(weChatUser.getRoleId())){
+            //是学习中心
+            token = tokenService.createToken(openId, centerAreaId, USER_ROLE_CODE_CENTER);
+        }else {
             //是学生
             token = tokenService.createToken(openId, centerAreaId);
         }
@@ -237,28 +247,33 @@ public class WeChatUserServiceImpl implements WeChatUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void untying(String openId) {
         List<WeChatUser> list = weChatUserRepository.findByOpenId(openId);
         MyAssert.isTrue(list.isEmpty(), DefineCode.ERR0014, "不存要解绑的用户");
-        updateWeChat(list);
+        //删除token登录信息
+        list.forEach(w -> tokenService.removeToken(w.getOpenId()));
+        //删除微信登录信息
+        list.forEach(w -> weChatUserRepository.delete(w));
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void updateWeChat(List<WeChatUser> list) {
-        //删除token登录信息
-        list.forEach(weChatUser -> tokenService.removeToken(weChatUser.getOpenId()));
-        //删除微信登录信息
-        list.forEach(weChatUser -> {
-            if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())) {
-                //是电话号码是教师绑定,绑定信息重置
-                weChatUser.setBinding(WX_INFO_BINDIND_1);
-                weChatUser.setOpenId("");
-                weChatUserRepository.save(weChatUser);
-            } else {
-                weChatUserRepository.delete(weChatUser);
-            }
-        });
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    public void updateWeChat(List<WeChatUser> list) {
+//        //删除token登录信息
+//        list.forEach(weChatUser -> tokenService.removeToken(weChatUser.getOpenId()));
+//        //删除微信登录信息
+//        list.forEach(w -> weChatUserRepository.delete(w));
+//        list.forEach(weChatUser -> {
+//            if (WECHAT_ROLE_ID_TEACHER.equals(weChatUser.getRoleId())) {
+//                //是电话号码是教师绑定,绑定信息重置
+//                weChatUser.setBinding(WX_INFO_BINDIND_1);
+//                weChatUser.setOpenId("");
+//                weChatUserRepository.save(weChatUser);
+//            } else {
+//                weChatUserRepository.delete(weChatUser);
+//            }
+//        });
+//    }
 
     /**
      * 校验身份证和姓名在数据库中是否存在
@@ -302,17 +317,43 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                 });
     }
 
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void saveTeacher(String phone, String teacherName, String gender, String centerId, String userId) {
+//        saveWeChatUser(phone, teacherName, gender, centerId, userId, WECHAT_ROLE_ID_TEACHER);
+//    }
+//
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void saveCenter(String centerName, String centerId, String userId){
+//        saveWeChatUser(centerName, centerName, "1", centerId, userId, WECHAT_ROLE_ID_CENTER);
+//    }
+//
+//    private void saveWeChatUser(String phone, String studentName, String gender, String centerId, String userId, String roleId){
+//        List<WeChatUser> list = weChatUserRepository.findByStudentId(phone);
+//        WeChatUser weChatUser = list.isEmpty() ? new WeChatUser() : list.get(0);
+//        weChatUser.setUpdateUser(userId);
+//        weChatUser.setCreateUser(userId);
+//        weChatUser.setStudentId(phone);
+//        weChatUser.setGender(gender);
+//        weChatUser.setStudentName(studentName);
+//        weChatUser.setCenterAreaId(centerId);
+//        weChatUser.setRoleId(roleId);
+//        weChatUserRepository.save(weChatUser);
+//    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveTeacher(String phone, String teacherName, String gender, String centerId, String userId) {
-        List<WeChatUser> list = weChatUserRepository.findByStudentId(phone);
+    public void updateWeChatInfo(String newCenterName, String centerName, String centerId, String userId){
+        List<WeChatUser> list = weChatUserRepository.findByStudentId(centerName);
         WeChatUser weChatUser = list.isEmpty() ? new WeChatUser() : list.get(0);
         weChatUser.setUpdateUser(userId);
-        weChatUser.setStudentId(phone);
-        weChatUser.setGender(gender);
-        weChatUser.setStudentName(teacherName);
+        weChatUser.setCreateUser(userId);
+        weChatUser.setStudentId(newCenterName);
+        weChatUser.setStudentName(newCenterName);
         weChatUser.setCenterAreaId(centerId);
-        weChatUser.setRoleId(WECHAT_ROLE_ID_TEACHER);
+        weChatUser.setGender("1");
+        weChatUser.setRoleId(WECHAT_ROLE_ID_CENTER);
         weChatUserRepository.save(weChatUser);
     }
 

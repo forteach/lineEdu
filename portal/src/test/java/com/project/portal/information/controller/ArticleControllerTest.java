@@ -5,19 +5,15 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSON;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.project.portal.information.request.article.SaveArticleRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class ArticleControllerTest {

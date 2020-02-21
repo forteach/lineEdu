@@ -274,8 +274,29 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<Course> findCourseListByKey(String key){
+        if (StrUtil.isNotBlank(key)){
+            if (stringRedisTemplate.hasKey(key)){
+                return JSONUtil.toList(JSONUtil.parseArray(stringRedisTemplate.opsForValue().get(key)), Course.class);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setCourseListRedis(List<Course> list, String key){
+        if (!list.isEmpty()){
+            stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(list), Duration.ofMinutes(2));
+        }
+    }
+
+    @Override
     public List<Course> findAll(){
         return courseRepository.findAllByOrderByCreateTimeDesc();
+    }
+    @Override
+    public List<Course> findAllByCourseId(List<String> courseIds){
+        return courseRepository.findAllById(courseIds);
     }
 
     @Override
@@ -395,7 +416,7 @@ public class CourseServiceImpl implements CourseService {
         if (0 == videoSum){
             return CourseAllStudyVo.builder()
                     .offlineCount(offlineCount)
-                    .mixCourseCount(courseCount-offlineCount)
+                    .mixCourseCount(courseCount - offlineCount)
                     .courseSum(list.size())
                     .build();
         }
@@ -409,7 +430,7 @@ public class CourseServiceImpl implements CourseService {
         return CourseAllStudyVo.builder()
                 .courseCount(courseCount)
                 .offlineCount(offlineCount)
-                .mixCourseCount(courseCount-offlineCount)
+                .mixCourseCount(courseCount - offlineCount)
                 .courseSum(list.size())
                 .videoTimePercentage(videoTimePercentage)
                 .build();

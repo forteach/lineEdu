@@ -116,6 +116,9 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Transactional(readOnly = true)
     List<Course> findAllByOrderByCreateTimeDesc();
 
+    @Transactional(readOnly = true)
+    List<Course> findAllByCourseIdInOrderByCreateTimeDesc(List<String> list);
+
 //    @Query(value = "select " +
 //            " c.courseId as courseId,c.courseName as courseName,c.courseNumber as courseNumber, " +
 //            " c.courseDescribe as courseDescribe,c.alias as alias,c.topPicSrc as topPicSrc, " +
@@ -128,5 +131,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 //            " (select planId where isValidated = '0' and classId = ?1)) ")
 //    Page<Course> findAllByClassId(String classId, Pageable pageable);
 
+    @Transactional(readOnly = true)
     List<Course> findAllByIsValidatedEqualsAndCourseNumberIn(String isValidated, List<String> courseNumberIds);
 }

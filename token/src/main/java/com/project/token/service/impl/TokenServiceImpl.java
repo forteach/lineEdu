@@ -43,6 +43,8 @@ public class TokenServiceImpl implements TokenService {
      * 生成一个token
      *
      * @param userId
+     * @param centerAreaId 学习中心Id
+     * @param roleCode 角色
      * @return
      */
     @Override

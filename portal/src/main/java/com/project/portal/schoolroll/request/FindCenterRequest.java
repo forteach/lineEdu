@@ -1,7 +1,6 @@
 package com.project.portal.schoolroll.request;
 
 import com.project.portal.request.SortVo;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,9 +1,7 @@
 package com.project.schoolroll.repository.dto;
 
-import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;

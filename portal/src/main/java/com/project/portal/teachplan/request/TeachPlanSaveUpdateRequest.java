@@ -21,6 +21,10 @@ public class TeachPlanSaveUpdateRequest extends BaseTeachPlanSaveUpdateRequest {
     @ApiModelProperty(name = "planAdmin", dataType = "string", value = "计划负责人")
     private String planAdmin;
 
+    //计划负责人Id 可能是教师Id
+    @ApiModelProperty(name = "planAdminId", dataType = "string", value = "计划负责人Id")
+    private String planAdminId;
+
     @ApiModelProperty(name = "startDate", dataType = "string", value = "计划结束时间")
     private String startDate;
 

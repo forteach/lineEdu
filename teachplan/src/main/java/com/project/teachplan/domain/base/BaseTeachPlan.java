@@ -42,6 +42,9 @@ public abstract class BaseTeachPlan extends Entitys {
     @Column(name = "plan_admin", columnDefinition = "VARCHAR(60) COMMENT '计划负责人'")
     private String planAdmin;
 
+    @Column(name = "plan_admin_Id", columnDefinition = "VARCHAR(32) COMMENT '计划负责人id'")
+    private String planAdminId;
+
     @Column(name = "course_number", nullable = false, columnDefinition = "TINYINT (3) DEFAULT 0 COMMENT '计划的课程数量'")
     private Integer courseNumber = this.courseNumber == null ? 0 : this.courseNumber;
 

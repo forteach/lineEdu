@@ -86,11 +86,13 @@ public class WeChatUserController {
 //            MyAssert.blank(bindingUserReq.getType(), DefineCode.ERR0010, "学生类型不为空");
             return WebResult.okResult(weChatUserService.bindingUser(bindingUser));
         } else {
-            //是教师
+            //是教师或者学习中心
             SysUsers users = userService.checkUserNameAndPassWord(bindingUser.getStudentName(), bindingUser.getStuIDCard());
             String userName = users.getUserName();
             String teacherId = users.getTeacherId();
-            return WebResult.okResult(weChatUserService.bindTeacher(bindingUser, teacherId, userName));
+            String centerId = users.getCenterAreaId();
+            String roleCode = users.getRoleCode();
+            return WebResult.okResult(weChatUserService.bindTeacher(bindingUser, teacherId, userName, centerId, roleCode));
         }
     }
 
@@ -169,6 +171,7 @@ public class WeChatUserController {
         String studentId = tokenService.getStudentId(token);
         String classId = tokenService.getClassId(token);
         List<String> courseIds = teachPlanCourseService.findAllByClassId(classId);
+        //查询线下课程Id集合 课程类型　1.线上，2.线下,3.混合
         List<String> offlineIds = teachPlanCourseService.findAllByClassIdAndType(classId, "2");
         return WebResult.okResult(courseService.findCourseAllStudyByStudentId(studentId, courseIds, offlineIds));
     }

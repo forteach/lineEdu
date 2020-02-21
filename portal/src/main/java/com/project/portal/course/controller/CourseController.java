@@ -36,10 +36,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.project.base.common.keyword.Dic.*;
 import static com.project.portal.request.ValideSortVo.valideSort;
+import static com.project.token.constant.TokenKey.USER_ROLE_CODE_CENTER;
+import static com.project.token.constant.TokenKey.USER_ROLE_CODE_TEACHER;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -303,8 +308,26 @@ public class CourseController {
                     .filter(Objects::nonNull)
                     .map(vo -> new CourseTeacherVo(vo.getCourseId(), vo.getStatus(), vo.getCountStatus())).collect(toList());
             return WebResult.okResult(courseService.findByCourseNumber(courseIds, classId, studentId, key));
-        } else {
-            //不是学生是教师只能查看自己创建的课程信息
+        } else if (USER_ROLE_CODE_CENTER.equals(tokenService.getRoleCode(token))){
+            String centerAreaId = tokenService.getCenterAreaId(token);
+            String key = TEACH_PLAN_CLASS_COURSEVO.concat(centerAreaId);
+            List<Course> course = courseService.findCourseListByKey(key);
+            if (course == null){
+                //是学习中心能查看本学习中心的所有课程
+                course = courseService.findAllByCourseId(teachPlanCourseService.findCourseListByCenterAreaId(centerAreaId));
+                courseService.setCourseListRedis(course, key);
+            }
+            return WebResult.okResult(course);
+        }else if(USER_ROLE_CODE_TEACHER.equals(tokenService.getRoleCode(token))){
+            String key = TEACH_PLAN_CLASS_COURSEVO.concat(studentId);
+            List<Course> course = courseService.findCourseListByKey(key);
+            if (course == null){
+                course = courseService.findAllByCourseId(teachPlanCourseService.findCourseListByPlanAdminId(studentId));
+                courseService.setCourseListRedis(course, key);
+            }
+            //不是学生是教师只能查看自己负责的课程
+            return WebResult.okResult(course);
+        }else {
             return WebResult.okResult(courseService.findAll());
         }
     }

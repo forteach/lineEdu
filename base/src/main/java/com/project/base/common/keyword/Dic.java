@@ -50,10 +50,11 @@ public class Dic {
      */
 //    public static final String COURSE_CHAPTER_LEVERL = "2";
     /**
-     * 教师信息 roleId 0 studentId 1
+     * 教师信息 roleId 0 studentId 1 学习中心 2
      */
     public static final String WECHAT_ROLE_ID_TEACHER = "0";
     public static final String WECHAT_ROLE_ID_STUDENT = "1";
+    public static final String WECHAT_ROLE_ID_CENTER = "2";
 
 
     /**
@@ -93,6 +94,7 @@ public class Dic {
 
     /** 根据班级查询对应的计划课程章节信息*/
     public static final String TEACH_PLAN_CLASS_COURSEVO = "teachPlanClassCourseVo$";
+    public static final String TEACH_PLAN_COURSE = "teachPlanCourse$";
     /** 查询课程对应的章节和学习记录 */
     public static final String COURSE_STUDENT = "courseStudentId$";
 

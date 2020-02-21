@@ -1,19 +1,17 @@
 package com.project.portal.config.interceptor;
 
-import java.sql.SQLException;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.alibaba.fastjson.JSON;
-import com.project.portal.response.WebResult;
 import com.project.base.exception.AssertErrorException;
+import com.project.portal.response.WebResult;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 
 
 /**

@@ -1,6 +1,7 @@
 package com.project.user.web.req;
 
 import lombok.Data;
+
 import java.io.Serializable;
 
 /**

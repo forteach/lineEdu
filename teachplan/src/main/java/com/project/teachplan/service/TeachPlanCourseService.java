@@ -156,4 +156,17 @@ public class TeachPlanCourseService {
     public List<String> findAllByClassIdAndType(String classId, String type){
         return teachPlanCourseRepository.findAllByTypeAndClassId(type, classId);
     }
+
+    /**
+     * 根据学习中心Id 查询对应的课程Id列表集合
+     * @param centerAreaId
+     * @return
+     */
+    public List<String> findCourseListByCenterAreaId(String centerAreaId){
+        return teachPlanCourseRepository.findAllByCenterAreaId(centerAreaId);
+    }
+
+    public List<String> findCourseListByPlanAdminId(String planAdminId){
+        return teachPlanCourseRepository.findAllByPlanAdminId(planAdminId);
+    }
 }

@@ -2,7 +2,6 @@ package com.project.schoolroll.repository;
 
 import com.project.schoolroll.domain.CenterFile;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

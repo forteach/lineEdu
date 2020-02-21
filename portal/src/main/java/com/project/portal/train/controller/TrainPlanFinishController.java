@@ -1,7 +1,5 @@
 package com.project.portal.train.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: zhangyy

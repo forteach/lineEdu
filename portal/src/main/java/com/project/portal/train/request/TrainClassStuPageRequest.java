@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.print.attribute.standard.MediaSize;
 import java.io.Serializable;
 
 /**

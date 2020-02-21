@@ -304,7 +304,8 @@ public class TeachService {
                 " tpv.plan_name as plan_name," +
                 " tpv.start_date as start_date," +
                 " tpv.end_date as end_date," +
-                " tpv.plan_admin as plan_admin," +
+                " tpv.plan_admin as plan_admin, " +
+                " tpv.plan_admin_id as plan_admin_id, " +
                 " tpv.course_number as course_number, " +
                 " tpv.grade as grade, " +
                 " tpv.specialty_name as specialty_name, " +

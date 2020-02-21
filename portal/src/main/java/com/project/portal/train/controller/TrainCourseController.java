@@ -7,7 +7,6 @@ import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
-import com.project.portal.train.request.TrainCourseFindAllPageRequest;
 import com.project.portal.train.request.TrainCourseSaveUpdateRequest;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;

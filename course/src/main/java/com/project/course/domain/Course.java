@@ -2,8 +2,10 @@ package com.project.course.domain;
 
 
 import com.project.mysql.domain.Entitys;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -22,6 +24,8 @@ import javax.persistence.*;
 @org.hibernate.annotations.Table(appliesTo = "course", comment = "科目")
 @Table(name = "course", indexes = {@Index(columnList = "course_id", name = "course_id_index")})
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Course extends Entitys {
 
     private static final long serialVersionUID = 1L;

@@ -1,23 +1,20 @@
 package com.project.information.service;
 
-import java.util.List;
-
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
 import com.project.base.util.RegexUtils;
-import com.project.base.util.UpdateUtil;
 import com.project.information.domain.Article;
 import com.project.information.dto.IArticle;
 import com.project.information.repository.ArticleDao;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 

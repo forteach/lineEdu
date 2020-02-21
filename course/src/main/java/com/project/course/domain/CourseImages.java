@@ -2,7 +2,10 @@ package com.project.course.domain;
 
 import cn.hutool.core.util.StrUtil;
 import com.project.mysql.domain.Entitys;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

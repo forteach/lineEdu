@@ -3,7 +3,6 @@ package com.project.user.service;
 import com.project.user.domain.Teacher;
 import com.project.user.domain.TeacherFile;
 import com.project.user.domain.TeacherVerify;
-import com.project.user.repository.dto.TeacherDto;
 import com.project.user.web.vo.TeacherVerifyVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

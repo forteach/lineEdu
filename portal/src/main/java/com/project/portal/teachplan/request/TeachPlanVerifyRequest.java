@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
 /**
  * @author: zhangyy
  * @email: zhang10092009@hotmail.com

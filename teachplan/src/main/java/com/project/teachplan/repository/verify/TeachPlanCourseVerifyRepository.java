@@ -1,6 +1,5 @@
 package com.project.teachplan.repository.verify;
 
-import com.project.teachplan.domain.TeachPlanCourse;
 import com.project.teachplan.domain.verify.TeachPlanCourseVerify;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

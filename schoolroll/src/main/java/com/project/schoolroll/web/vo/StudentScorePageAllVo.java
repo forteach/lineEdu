@@ -1,7 +1,6 @@
 package com.project.schoolroll.web.vo;
 
 import lombok.Data;
-import org.springframework.data.domain.Pageable;
 
 /**
  * @author: zhangyy

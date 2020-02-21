@@ -11,7 +11,6 @@ import com.project.portal.teachplan.request.*;
 import com.project.portal.util.MyExcleUtil;
 import com.project.teachplan.domain.PlanFile;
 import com.project.teachplan.service.PlanFileService;
-import com.project.teachplan.service.TeachService;
 import com.project.teachplan.vo.TeachFileVerifyVo;
 import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;

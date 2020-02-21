@@ -67,6 +67,7 @@ public class TeachPlanController {
 //            @ApiImplicitParam(name = "specialtyName", value = "专业名称", dataType = "string", paramType = "form")
             @ApiImplicitParam(name = "planId", dataType = "string", value = "计划id", paramType = "form"),
             @ApiImplicitParam(name = "planAdmin", dataType = "string", value = "计划负责人", paramType = "form"),
+            @ApiImplicitParam(name = "planAdminId", dataType = "string", value = "计划负责人Id(教师Id)", paramType = "form"),
             @ApiImplicitParam(name = "startDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "endDate", dataType = "string", value = "计划结束时间", paramType = "form"),
             @ApiImplicitParam(name = "classId", value = "班级id", dataType = "string", required = true, paramType = "form"),

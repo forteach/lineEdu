@@ -1,7 +1,5 @@
 package com.project.information.repository;
 
-import java.util.List;
-
 import com.project.information.domain.Article;
 import com.project.information.dto.IArticle;
 import org.springframework.data.domain.Page;

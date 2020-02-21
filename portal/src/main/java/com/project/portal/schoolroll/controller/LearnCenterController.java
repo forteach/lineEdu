@@ -7,7 +7,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
-import com.project.portal.request.SortVo;
 import com.project.portal.response.WebResult;
 import com.project.portal.schoolroll.request.FindCenterRequest;
 import com.project.portal.schoolroll.request.LearnCenterFileSaveUpdateRequest;
@@ -19,6 +18,7 @@ import com.project.schoolroll.service.LearnCenterService;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
 import com.project.user.service.UserService;
+import com.project.wechat.mini.app.service.WeChatUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -50,13 +50,15 @@ public class LearnCenterController {
     private final LearnCenterRepository learnCenterRepository;
     private final UserService userService;
     private final TokenService tokenService;
+    private final WeChatUserService weChatUserService;
 
     public LearnCenterController(LearnCenterService learnCenterService, UserService userService, TokenService tokenService,
-                                 LearnCenterRepository learnCenterRepository) {
+                                 LearnCenterRepository learnCenterRepository, WeChatUserService weChatUserService) {
         this.learnCenterService = learnCenterService;
         this.learnCenterRepository = learnCenterRepository;
         this.userService = userService;
         this.tokenService = tokenService;
+        this.weChatUserService = weChatUserService;
     }
 
     @UserLoginToken
@@ -96,8 +98,10 @@ public class LearnCenterController {
                 if (StrUtil.isNotBlank(request.getCenterName()) && !learnCenter.getCenterName().equals(request.getCenterName())) {
                     //修改学习中心名称并且名字不同
                     userService.updateCenter(learnCenter.getCenterName(), request.getCenterName(), userId);
+                    //修改微信绑定的手机号码
+                    weChatUserService.updateWeChatInfo(request.getCenterName(), learnCenter.getCenterName(), request.getCenterId(), userId);
                 }
-                if (StrUtil.isNotBlank(request.getPhone()) && !learnCenter.getPhone().equals(request.getPhone())){
+                if (StrUtil.isNotBlank(request.getPhone()) && !learnCenter.getPhone().equals(request.getPhone())) {
                     MyAssert.isFalse(Validator.isMobile(request.getPhone()), DefineCode.ERR0002, "联系电话不是手机号码");
                     //修改注册手机号码
                     userService.updateCenterPhone(learnCenter.getCenterName(), request.getPhone(), userId);
@@ -126,6 +130,8 @@ public class LearnCenterController {
             learnCenter.setCreateUser(userId);
             learnCenterRepository.save(learnCenter);
             userService.registerCenter(request.getCenterName(), request.getPhone(), centerAreaId, userId);
+            // 注册微信用户
+//            weChatUserService.saveCenter(request.getCenterName(), centerAreaId, userId);
         }
         return WebResult.okResult();
     }
@@ -158,9 +164,12 @@ public class LearnCenterController {
     @ApiOperation(value = "移除学习中心信息")
     @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
     @PostMapping("/removeById")
-    public WebResult removeById(@RequestBody String centerId) {
+    public WebResult removeById(@RequestBody String centerId, HttpServletRequest request) {
+        String userId = tokenService.getUserId(request.getHeader("token"));
         MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id");
+        LearnCenter learnCenter = learnCenterService.findByCenterId(centerId);
         learnCenterService.removeById(JSONObject.parseObject(centerId).getString("centerId"));
+        weChatUserService.updateStatus(learnCenter.getPhone(), TAKE_EFFECT_CLOSE, userId);
         return WebResult.okResult();
     }
 
@@ -223,22 +232,26 @@ public class LearnCenterController {
     @ApiOperation(value = "更新学习中心状态")
     @PutMapping(path = "/status/{centerId}")
     @ApiImplicitParam(name = "centerId", value = "学习中心id", dataType = "string", required = true, paramType = "form")
-    public WebResult updateStatus(@PathVariable String centerId, HttpServletRequest httpServletRequest){
+    public WebResult updateStatus(@PathVariable String centerId, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(centerId, DefineCode.ERR0010, "学习中心id不能为空");
         String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
         learnCenterRepository.findById(centerId).ifPresent(c -> {
             String status = c.getIsValidated();
             String centerName = c.getCenterName();
-            if (TAKE_EFFECT_CLOSE.equals(status)){
+            String phone = c.getPhone();
+            if (TAKE_EFFECT_CLOSE.equals(status)) {
                 c.setIsValidated(TAKE_EFFECT_OPEN);
                 //更新用户表状态
                 userService.updateStatus(centerName, TAKE_EFFECT_OPEN, userId);
                 //更新学习中心资料状态
                 learnCenterService.updateFileStatus(centerId, TAKE_EFFECT_OPEN, userId);
-            }else {
+                //修改微信用户的学习中心状态
+                weChatUserService.updateStatus(phone, TAKE_EFFECT_OPEN, userId);
+            } else {
                 c.setIsValidated(TAKE_EFFECT_CLOSE);
                 userService.updateStatus(centerName, TAKE_EFFECT_CLOSE, userId);
                 learnCenterService.updateFileStatus(centerId, TAKE_EFFECT_CLOSE, userId);
+                weChatUserService.updateStatus(phone, TAKE_EFFECT_CLOSE, userId);
             }
             c.setUpdateUser(userId);
             learnCenterRepository.save(c);

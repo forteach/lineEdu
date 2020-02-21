@@ -1,6 +1,5 @@
 package com.project.course.web.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

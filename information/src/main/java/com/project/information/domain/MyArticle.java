@@ -1,14 +1,13 @@
 package com.project.information.domain;
 
-import java.io.Serializable;
-
-import javax.persistence.*;
-
 import com.project.mysql.domain.Entitys;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 我收藏和发布的文章

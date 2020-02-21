@@ -1,7 +1,5 @@
 //package com.project.wechat.mini.app.error;
 
-import org.springframework.stereotype.Controller;
-
 /**
  * <pre>
  * 出错页面控制器

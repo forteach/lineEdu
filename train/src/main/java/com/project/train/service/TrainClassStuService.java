@@ -1,7 +1,6 @@
 package com.project.train.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -9,6 +8,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.project.base.common.keyword.DefineCode;
 import com.project.base.exception.MyAssert;
+import com.project.mysql.service.BaseMySqlService;
 import com.project.train.domain.TrainClass;
 import com.project.train.domain.TrainClassStu;
 import com.project.train.domain.TrainPlanFinish;
@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import com.project.mysql.service.BaseMySqlService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -29,9 +28,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.project.base.common.keyword.Dic.TAKE_EFFECT_OPEN;
 import static com.project.train.config.Dic.IMPORT_STUDENT;

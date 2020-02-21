@@ -15,7 +15,6 @@ import com.project.portal.user.request.TeacherSaveUpdateRequest;
 import com.project.portal.user.request.TeacherUploadFileRequest;
 import com.project.portal.util.MyExcleUtil;
 import com.project.schoolroll.service.LearnCenterService;
-import com.project.teachplan.service.TeachPlanCourseService;
 import com.project.token.annotation.PassToken;
 import com.project.token.annotation.UserLoginToken;
 import com.project.token.service.TokenService;
@@ -39,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.project.base.common.keyword.Dic.VERIFY_STATUS_AGREE;
 import static com.project.portal.request.ValideSortVo.valideSort;
 
 /**
@@ -271,12 +269,13 @@ public class TeacherController {
     public WebResult verifyTeacher(@RequestBody TeacherVerifyVo teacherVerifyVo, HttpServletRequest httpServletRequest) {
         MyAssert.isNull(teacherVerifyVo.getTeacherId(), DefineCode.ERR0010, "教师Id不能为空");
         MyAssert.isTrue(StrUtil.isBlank(teacherVerifyVo.getVerifyStatus()), DefineCode.ERR0010, "状态不能为空");
-        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
-        TeacherVerify teacherVerify = teacherService.verifyTeacher(teacherVerifyVo);
+//        String userId = tokenService.getUserId(httpServletRequest.getHeader("token"));
+//        TeacherVerify teacherVerify =
+        teacherService.verifyTeacher(teacherVerifyVo);
         // 注册修改微信用户
-        if (VERIFY_STATUS_AGREE.equals(teacherVerifyVo.getVerifyStatus())){
-            weChatUserService.saveTeacher(teacherVerify.getPhone(), teacherVerify.getTeacherName(), teacherVerify.getGender(), teacherVerify.getCenterAreaId(), userId);
-        }
+//        if (VERIFY_STATUS_AGREE.equals(teacherVerifyVo.getVerifyStatus())){
+//            weChatUserService.saveTeacher(teacherVerify.getPhone(), teacherVerify.getTeacherName(), teacherVerify.getGender(), teacherVerify.getCenterAreaId(), userId);
+//        }
         return WebResult.okResult();
     }
 

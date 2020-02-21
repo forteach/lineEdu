@@ -63,6 +63,12 @@ public interface CourseService {
 
     List<Course> findAll();
 
+    List<Course> findAllByCourseId(List<String> courseIds);
+
+    List<Course> findCourseListByKey(String key);
+
+    void setCourseListRedis(List<Course> list, String key);
+
     Page<ICourseStudyDto> findCourseStudyPageAll(String courseId, String studentId, PageRequest pageRequest);
 
     Page<ICourseStudyDto> findAllByStudentId(String studentId, Pageable pageable);

@@ -2,9 +2,6 @@ package com.project.portal.train.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.project.base.common.keyword.DefineCode;
-import com.project.base.exception.MyAssert;
 import com.project.portal.response.WebResult;
 import com.project.portal.train.request.TrainClassFindAllPage;
 import com.project.portal.train.request.TrainClassSaveUpdateRequest;

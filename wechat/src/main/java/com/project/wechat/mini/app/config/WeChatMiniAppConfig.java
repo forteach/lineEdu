@@ -2,22 +2,14 @@ package com.project.wechat.mini.app.config;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
-import cn.binarywang.wx.miniapp.bean.WxMaKefuMessage;
-import cn.binarywang.wx.miniapp.bean.WxMaTemplateData;
-import cn.binarywang.wx.miniapp.bean.WxMaTemplateMessage;
 import cn.binarywang.wx.miniapp.config.WxMaInMemoryConfig;
-import cn.binarywang.wx.miniapp.message.WxMaMessageHandler;
-import cn.binarywang.wx.miniapp.message.WxMaMessageRouter;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
-import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import java.io.File;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 

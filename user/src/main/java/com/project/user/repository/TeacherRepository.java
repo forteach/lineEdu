@@ -3,10 +3,7 @@ package com.project.user.repository;
 
 import com.project.user.domain.Teacher;
 import com.project.user.repository.dto.TeacherDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -15,6 +15,7 @@ import com.project.schoolroll.repository.dto.StudentOnLineDto;
 import com.project.schoolroll.repository.online.IStudentOnLineDto;
 import com.project.schoolroll.repository.online.StudentOnLineRepository;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -37,7 +38,7 @@ import static com.project.schoolroll.domain.excel.Dic.IMPORT_STUDENTS_ONLINE;
 import static com.project.schoolroll.domain.excel.Dic.STUDENT_ON_LINE_IMPORT_STATUS_IMPORT;
 import static com.project.schoolroll.domain.excel.StudentEnum.*;
 import static java.util.stream.Collectors.toList;
-
+@Slf4j
 @Service
 public class StudentOnLineService {
 
@@ -63,7 +64,9 @@ public class StudentOnLineService {
 
     @SuppressWarnings(value = "all")
     public void deleteKey() {
-        redisTemplate.delete(IMPORT_STUDENTS_ONLINE);
+        if (redisTemplate.hasKey(IMPORT_STUDENTS_ONLINE)) {
+            redisTemplate.delete(IMPORT_STUDENTS_ONLINE);
+        }
     }
 
     @SuppressWarnings(value = "all")

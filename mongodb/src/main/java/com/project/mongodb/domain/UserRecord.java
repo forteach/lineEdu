@@ -2,7 +2,10 @@ package com.project.mongodb.domain;
 
 import cn.hutool.core.util.StrUtil;
 import com.project.mongodb.domain.base.BaseEntity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 /**

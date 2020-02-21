@@ -3,7 +3,6 @@ package com.project.portal.user.request;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
