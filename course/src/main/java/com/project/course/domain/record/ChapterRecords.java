@@ -1,5 +1,7 @@
 package com.project.course.domain.record;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.course.domain.pk.ChapterRecordsPk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,10 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -33,7 +32,18 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@IdClass(ChapterRecordsPk.class)
 public class ChapterRecords extends AbstractRecord implements Serializable {
+
+    @EmbeddedId
+    @JsonIgnore
+    private ChapterRecordsPk chapterRecordsPk;
+
+    private String studentId;
+
+    private String courseId;
+
+    private String chapterId;
 
     @Column(name = "video_duration", columnDefinition = "INT(11) DEFAULT 0 COMMENT '视频时长(单位秒)'", nullable = false)
     private Integer videoDuration = this.videoDuration == null ? 0 : this.videoDuration;

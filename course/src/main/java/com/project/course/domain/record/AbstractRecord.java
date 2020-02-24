@@ -1,13 +1,13 @@
 package com.project.course.domain.record;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.course.domain.pk.CourseRecordPk;
 import com.project.mysql.domain.Entitys;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EntityListeners;
+import javax.persistence.MappedSuperclass;
 
 /**
  * @author: zhangyy
@@ -20,18 +20,7 @@ import javax.persistence.*;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
-@IdClass(CourseRecordPk.class)
 abstract class AbstractRecord extends Entitys {
-
-    @EmbeddedId
-    @JsonIgnore
-    private CourseRecordPk courseRecordPk;
-
-    private String studentId;
-
-    private String courseId;
-
-    private String chapterId;
 
     @Column(name = "course_name", columnDefinition = "VARCHAR(32) COMMENT '课程名称'")
     private String courseName;

@@ -1,13 +1,14 @@
 package com.project.course.domain.record;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.course.domain.pk.ChapterRecordsPk;
+import com.project.course.domain.pk.CourseRecordPk;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -27,6 +28,18 @@ import java.io.Serializable;
         @Index(columnList = "course_id", name = "course_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
+@IdClass(ChapterRecordsPk.class)
 public class CourseRecords extends AbstractRecord implements Serializable {
+
+    @EmbeddedId
+    @JsonIgnore
+    private CourseRecordPk courseRecordPk;
+
+    private String studentId;
+
+    private String courseId;
+
+    @Column(name = "chapter_id", columnDefinition = "VARCHAR(32) COMMENT '章节id'")
+    private String chapterId;
 
 }
