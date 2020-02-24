@@ -1,7 +1,6 @@
 package com.project.course.domain.record;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.course.domain.pk.ChapterRecordsPk;
 import com.project.course.domain.pk.CourseRecordPk;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,7 +27,7 @@ import java.io.Serializable;
         @Index(columnList = "course_id", name = "course_id_index")
 })
 @EqualsAndHashCode(callSuper = true)
-@IdClass(ChapterRecordsPk.class)
+@IdClass(CourseRecordPk.class)
 public class CourseRecords extends AbstractRecord implements Serializable {
 
     @EmbeddedId
