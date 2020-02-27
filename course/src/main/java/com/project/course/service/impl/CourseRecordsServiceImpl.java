@@ -76,9 +76,6 @@ public class CourseRecordsServiceImpl implements CourseRecordsService {
 
     @Override
     public ChapterRecords findChapterRecordsByStudentIdAndChapterId(String studentId, String courseId, String chapterId) {
-        if (log.isDebugEnabled()) {
-            log.debug("findChapterRecord ERROR : {studentId}, {courseId},{chapterId}", studentId, courseId, chapterId);
-        }
         List<ChapterRecords> list = chapterRecordsRepository.findByStudentIdAndCourseIdAndChapterId(studentId, courseId, chapterId);
         if (list.isEmpty()) {
             return new ChapterRecords();

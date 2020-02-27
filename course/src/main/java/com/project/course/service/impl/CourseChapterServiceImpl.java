@@ -205,7 +205,7 @@ public class CourseChapterServiceImpl implements CourseChapterService {
         List<CourseTreeResp> courseTreeResps = new ArrayList<>(32);
         builderCourseTreeRespList(courseId, studentId, courseTreeResps);
         if (!courseTreeResps.isEmpty()) {
-            stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(courseTreeResps), Duration.ofSeconds(5));
+            stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(courseTreeResps), Duration.ofSeconds(10));
         }
         return courseTreeResps;
     }
