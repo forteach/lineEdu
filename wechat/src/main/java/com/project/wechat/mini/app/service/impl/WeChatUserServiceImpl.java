@@ -199,6 +199,7 @@ public class WeChatUserServiceImpl implements WeChatUserService {
                 weChatUserRepository.save(w);
                 String studentKey = STUDENT_ADO.concat(w.getStudentId());
                 stringRedisTemplate.opsForHash().put(studentKey, "portrait", portrait);
+                stringRedisTemplate.expire(studentKey, TOKEN_VALIDITY_TIME, TimeUnit.DAYS);
             });
         }
 
