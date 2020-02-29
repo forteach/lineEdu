@@ -20,7 +20,7 @@ public class TokenKey {
      */
     public final static String USER_TOKEN_PREFIX ="userToken$";
 
-    /** 管理端用户角色*/
+    /** 管理端用户角色 1 管理员 2 学习中心 3 教师*/
     public final static String USER_ROLE_CODE_ADMIN = "1";
     public final static String USER_ROLE_CODE_CENTER = "2";
     public final static String USER_ROLE_CODE_TEACHER = "3";

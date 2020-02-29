@@ -50,11 +50,12 @@ public class Dic {
      */
 //    public static final String COURSE_CHAPTER_LEVERL = "2";
     /**
-     * 教师信息 roleId 0 studentId 1 学习中心 2
+     * 教师信息 roleId 0 studentId 1 学习中心 2, 管理员 3
      */
     public static final String WECHAT_ROLE_ID_TEACHER = "0";
     public static final String WECHAT_ROLE_ID_STUDENT = "1";
     public static final String WECHAT_ROLE_ID_CENTER = "2";
+    public static final String WECHAT_ROLE_ID_ADMIN = "3";
 
 
     /**

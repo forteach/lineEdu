@@ -79,7 +79,7 @@ public class WeChatUser extends Entitys implements Serializable {
     private String className;
 
     /**
-     * 添加角色记录，teacher 0 student 1 学习中心 2
+     * 添加角色记录，teacher 0 student 1 学习中心 2,  管理员 3
      */
     @Column(name = "role_id", nullable = false, columnDefinition = "VARCHAR(32) DEFAULT 1 COMMENT '角色 0 教师 1 学生 2 学习中心'")
     private String roleId;

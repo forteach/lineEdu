@@ -31,16 +31,6 @@ public interface WeChatUserService {
     void updateStatus(String studentId, String status, String userId);
 
     /**
-     * 注册微信教师登录信息
-     * @param phone 教师注册电话
-     * @param gender 教师性别
-     * @param userId 审核人id
-     */
-//    void saveTeacher(String phone, String teacherName, String gender, String centerId, String userId);
-
-//    void saveCenter(String centerName, String centerId, String userId);
-
-    /**
      * 学习中心修改微信绑定的手机号码
      * @param newCenterName 新换的手机号码
      * @param centerName 学习中心名称
