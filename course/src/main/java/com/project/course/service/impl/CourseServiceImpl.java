@@ -21,6 +21,7 @@ import com.project.course.repository.dto.ICourseListDto;
 import com.project.course.repository.dto.ICourseStudyDto;
 import com.project.course.repository.record.CourseRecordsRepository;
 import com.project.course.service.CourseService;
+import com.project.course.service.CoursewareService;
 import com.project.course.web.req.CourseImagesReq;
 import com.project.course.web.resp.CourseListResp;
 import com.project.course.web.vo.CourseAllStudyVo;
@@ -76,6 +77,9 @@ public class CourseServiceImpl implements CourseService {
     private CourseStudyRepository courseStudyRepository;
     @Resource
     private QuestionListsRepository questionListsRepository;
+
+    @Resource
+    private CoursewareService coursewareService;
 
     /**
      * 保存课程基本信息
@@ -306,6 +310,16 @@ public class CourseServiceImpl implements CourseService {
             c.setVideoTimeNum(videoTimeNum);
             courseRepository.save(c);
         });
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void taskUpdateVideoTimeSum(){
+        List<Course> list = courseRepository.findAllByIsValidatedEqualsAndCourseTypeIn(TAKE_EFFECT_OPEN, CollUtil.toList(1, 3));
+        list.forEach(c -> c.setVideoTimeNum(coursewareService.findVideoTimeSum(c.getCourseId())));
+        if (!list.isEmpty()){
+            courseRepository.saveAll(list);
+        }
     }
 
     @Override

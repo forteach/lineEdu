@@ -133,4 +133,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 
     @Transactional(readOnly = true)
     List<Course> findAllByIsValidatedEqualsAndCourseNumberIn(String isValidated, List<String> courseNumberIds);
+
+    @Transactional(readOnly = true)
+    List<Course> findAllByIsValidatedEqualsAndCourseTypeIn(String isValidated, List<Integer> courseTypeIds);
 }

@@ -161,8 +161,9 @@ public class CoursewareServiceImpl implements CoursewareService {
          Optional<IVideoTimeSumDto> optional = impCoursewareRepoitory.findVideoTimeSumByCourseId(courseId);
          if (optional.isPresent()){
              return optional.get().getVideoTimeSum();
+         }else {
+             return 0;
          }
-         return 0;
     }
 
     @Override

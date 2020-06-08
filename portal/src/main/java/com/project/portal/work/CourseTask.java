@@ -179,4 +179,19 @@ public class CourseTask {
         teachService.computeFinishSchool();
         log.info(" <== end compute student finish school async");
     }
+
+    /** 计算课程 的总时长 每天执行*/
+    @Schedules({
+//            @Scheduled(cron = "0 0/2 * * * ?")
+            @Scheduled(cron = "0 0 1,13 * * ?")
+    })
+    public void courseVideoTimeNum(){
+        log.info("start course sum videoTime async ==> ");
+        if (log.isDebugEnabled()) {
+            log.debug("task thread name : {}", Thread.currentThread().getName());
+        }
+        //重新计算课程时长
+        courseService.taskUpdateVideoTimeSum();
+        log.info(" <== end course sum videoTime async");
+    }
 }

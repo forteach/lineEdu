@@ -57,6 +57,8 @@ public interface CourseService {
 
     void updateCourseTime(String courseId, Integer videoTimeNum);
 
+    void taskUpdateVideoTimeSum();
+
     void taskCourseStudy();
 
     void taskCourseQuestions();
