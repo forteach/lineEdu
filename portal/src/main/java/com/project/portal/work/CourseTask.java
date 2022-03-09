@@ -46,7 +46,7 @@ public class CourseTask {
      * TODO
      */
     @Schedules({
-            @Scheduled(cron = "0 0/2 * * * ?")
+            @Scheduled(cron = "0 0/50 * * * ?")
     })
     @Async
     public void asyncRedisQuestion() {
@@ -64,7 +64,7 @@ public class CourseTask {
      */
     @Schedules({
 //            @Scheduled(cron = "0 0 0/2 * * ?")
-            @Scheduled(cron = "0 0/3 * * * ?")
+            @Scheduled(cron = "0 0/50 * * * ?")
     })
     @Async
     public void asyncCourseRecordsCount() {
@@ -83,7 +83,7 @@ public class CourseTask {
      */
     @Schedules({
 //            @Scheduled(cron = "0 0 0/2 * * ?")
-            @Scheduled(cron = "0 0/5 * * * ?")
+            @Scheduled(cron = "0 0/50 * * * ?")
     })
     @Async
     public void asyncCourseStudyCount() {
@@ -101,7 +101,7 @@ public class CourseTask {
      * 统计计算学习课程章节习题数量,生成快照数量,回答正确的数量
      */
     @Schedules({
-            @Scheduled(cron = "0 0/4 * * * ?")
+            @Scheduled(cron = "0 0/50 * * * ?")
 //            @Scheduled(cron = "0 0 0/1 * * ?")
     })
     @Async
@@ -119,7 +119,7 @@ public class CourseTask {
      * 统计学习课程占比
      */
     @Schedules({
-            @Scheduled(cron = "0 0/5 * * * ?")
+            @Scheduled(cron = "0 0/50 * * * ?")
 //            @Scheduled(cron = "0 0 0/1 * * ?")
     })
     @Async
@@ -147,7 +147,7 @@ public class CourseTask {
      */
     @Schedules({
 //            @Scheduled(cron = "0 10 3 * * ?")
-            @Scheduled(cron = "0 0 0/10 * * ?")
+            @Scheduled(cron = "0 0 0/50 * * ?")
     })
     @Async
     public void asyncCenter() {
@@ -166,7 +166,7 @@ public class CourseTask {
     /** 计算所有课程都完成没，是否达到毕业条件*/
     @Schedules({
 //            @Scheduled(cron = "0 10 3 * * ?")
-            @Scheduled(cron = "0 0 0/20 * * ?")
+            @Scheduled(cron = "0 0 0/50 * * ?")
     })
     @Async
     public void computeFinishSchool(){
@@ -183,7 +183,7 @@ public class CourseTask {
     /** 计算课程 的总时长 每天执行*/
     @Schedules({
 //            @Scheduled(cron = "0 0/2 * * * ?")
-            @Scheduled(cron = "0 0 1,13 * * ?")
+            @Scheduled(cron = "0 0 1 * * ?")
     })
     public void courseVideoTimeNum(){
         log.info("start course sum videoTime async ==> ");
